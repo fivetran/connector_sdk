@@ -330,8 +330,6 @@ def _trigger_scrape(
                 f"Failed to trigger Bright Data scrape after {retries} retries: {str(exc)}"
             ) from exc
 
-    raise RuntimeError("Failed to trigger Bright Data scrape after retries")
-
 
 def _poll_snapshot(
     api_token: str,
