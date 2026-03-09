@@ -336,7 +336,7 @@ def _poll_snapshot(
     snapshot_id: str,
     poll_interval: int,
     timeout: int,
-    max_attempts: int = 1000,
+    max_attempts: int = 100,
 ) -> Union[Dict[str, Any], List[Dict[str, Any]]]:
     """
     Poll the snapshot endpoint until status is "ready" or "failed".
