@@ -1,0 +1,12 @@
+{
+    "tenant_id": "<YOUR_TENANT_ID>",
+    "client_id": "<YOUR_CLIENT_ID>",
+    "client_secret": "<YOUR_CLIENT_SECRET>",
+    "site_urls": "<YOUR_SITE_URLS>",
+    "site_ids": "",
+    "folder_path": "",
+    "sync_subfolders": "true",
+    "file_pattern": "",
+    "delimiter": "",
+    "skip_rows": "0"
+}
