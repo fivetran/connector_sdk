@@ -1,5 +1,0 @@
-numpy==1.17.3
-pandas==1.3.5
-dolphindb==3.0.2.4
-pydolphindb==1.1.2
-sqlalchemy==1.4.54

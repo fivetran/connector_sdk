@@ -1,7 +1,0 @@
-{
-  "token": "<YOUR_INFLUXDB_TOKEN>",
-  "org": "<YOUR_INFLUXDB_ORGANIZATION_NAME>",
-  "hostname": "<YOUR_INFLUXDB_HOST_URL>",
-  "database": "<YOUR_INFLUXDB_DATABASE_NAME>",
-  "measurement": "<YOUR_INFLUXDB_MEASUREMENT_NAME>"
-}

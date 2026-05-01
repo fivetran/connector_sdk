@@ -1,9 +1,0 @@
-BASE_URL = "https://{deployment}.api.accelo.com/api/v0"
-RATE_LIMIT = 5000  # Requests per hour
-RATE_LIMIT_INTERVAL = 3600  # 1 hour in seconds
-CHECKPOINT_INTERVAL = 1000  # Number of records to process before creating a checkpoint
-MAX_WORKERS = 5  # Number of concurrent API requests
-REQUEST_TIMEOUT = 30  # Default timeout in seconds
-SYNC_TIMEOUT = 3600  # Timeout for the entire sync operation in seconds
-BATCH_SIZE = 100  # Maximum number of records per page in Accelo API (API limit)
-RETRIES = 3

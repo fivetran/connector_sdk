@@ -1,8 +1,0 @@
-{
-    "client_id": "YOUR_CLIENT_ID",
-    "client_secret": "YOUR_CLIENT_SECRET",
-    "traffic_metrics": "ins,outs",
-    "occupancy_metrics": "occupancy(max),occupancy(min),occupancy(avg)",
-    "static_endpoints": "location,site,zone,space,sensor",
-    "start_date": "2022-01-01"
-  }

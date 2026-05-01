@@ -1,1 +1,0 @@
-redshift_connector==2.1.8

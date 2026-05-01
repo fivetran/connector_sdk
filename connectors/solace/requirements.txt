@@ -1,2 +1,0 @@
-pandas==2.3.0
-solace-pubsubplus==1.10.0

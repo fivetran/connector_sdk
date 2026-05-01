@@ -1,7 +1,0 @@
-{
-  "aws_access_key_id": "<YOUR_AWS_ACCESS_KEY>",
-  "aws_secret_access_key": "<YOUR_AWS_SECRET_KEY>",
-  "region_name": "<YOUR_AWS_REGION>",
-  "bucket_name": "<YOUR_S3_BUCKET>",
-  "file_name": "<path/to/your/file.xlsx>"
-}

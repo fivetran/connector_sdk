@@ -1,2 +1,0 @@
-influxdb3_python
-pandas

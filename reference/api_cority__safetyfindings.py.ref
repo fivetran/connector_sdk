@@ -1,0 +1,74 @@
+import pandas as pd
+import numpy as np
+import zeep
+from zeep import helpers
+import re
+import _snowflake
+
+def model(dbt, session):
+    dbt.config(
+        materialized="table",
+        packages=["zeep"],
+        external_access_integrations=["cority_external_access_integration"],
+        secrets={"cred":"security.integrations.cority_secret_password"}
+    )
+
+    id = 1474
+    wsdl = 'https://jbssa.cority.com/WebService/MRWPService.svc?singleWsdl'
+    credentials = _snowflake.get_username_password("cred")
+
+    client = zeep.Client(wsdl=wsdl)
+    key = client.service.ValidateUser(username = credentials.username, password = credentials.password)
+    data = client.service.GetUserReportResults(key = key, username = credentials.username, userReportId = id)
+    _json = helpers.serialize_object(data, dict)
+    df = pd.json_normalize(_json)
+
+    field_label_cority =[
+        'Action Finding Id', 
+        'Action Id',
+        'Created Date',
+        'Assigned To',
+        'Organization Code',
+        'Organization',
+        'Action Taken',
+        'Root Cause',
+        'Finding Type',
+        'Corporative Initiative',
+        'Date Completed',
+        'Verified Date',
+        'Status',
+        'Type',
+        'Finding Detail',
+        'Group Number',
+        'Modified Date'
+    ]
+
+    source_label_cority=[
+        'Field0',
+        'Field1',
+        'Field2',
+        'Field3',
+        'Field4',
+        'Field5',
+        'Field6',
+        'Field7',
+        'Field8',
+        'Field9',
+        'Field10',
+        'Field11', 
+        'Field12', 
+        'Field13',
+        'Field14',
+        'Field15',
+        'Field16'
+    ]
+
+    dict_pair={}
+    for i in range(len(source_label_cority)):
+        dict_pair[source_label_cority[i]]=field_label_cority[i].replace(' ','_').upper()
+
+    df_prepared = df.rename(columns=dict_pair)
+    df_prepared = df_prepared[list(dict_pair.values())]
+    df_prepared = df_prepared.reset_index(drop = True)
+
+    return df_prepared

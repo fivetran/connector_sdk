@@ -1,4 +1,0 @@
-SQLAlchemy==2.0.40
-PyHive==0.7.0
-thrift_sasl
-sasl

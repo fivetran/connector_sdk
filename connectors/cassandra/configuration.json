@@ -1,7 +1,0 @@
-{
-  "hostname": "<YOUR_CASSANDRA_HOSTNAME>",
-  "username": "<YOUR_CASSANDRA_USERNAME>",
-  "password": "<YOUR_CASSANDRA_PASSWORD>",
-  "keyspace": "<YOUR_CASSANDRA_KEYSPACE>",
-  "port": "<YOUR_CASSANDRA_PORT>"
-}

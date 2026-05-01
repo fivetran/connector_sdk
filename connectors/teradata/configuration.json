@@ -1,7 +1,0 @@
-{
-  "teradata_host": "<YOUR_TERADATA_HOST>",
-  "teradata_user": "<YOUR_TERADATA_USER>",
-  "teradata_password": "<YOUR_TERADATA_PASSWORD>",
-  "teradata_database": "<YOUR_TERADATA_DATABASE>",
-  "teradata_table": "<YOUR_TERADATA_TABLE>"
-}

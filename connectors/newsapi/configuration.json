@@ -1,5 +1,0 @@
-{
-    "API_KEY": "<your_api_key from newsAPI>",
-    "pageSize": "100",
-    "topic": "[\"Artificial Intelligence\", \"Michigan\", \"Taylor Swift\"]"
-}

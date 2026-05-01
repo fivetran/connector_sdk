@@ -1,3 +1,0 @@
-redshift_connector==2.1.8
-boto3==1.35.0
-pyarrow==17.0.0
