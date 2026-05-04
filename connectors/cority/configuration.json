@@ -1,5 +1,5 @@
 {
-  "base_url": "https://jbssa.cority.com/WebService/MRWPService.svc?singleWsdl",
-  "username": "Cority_HRIE",
-  "password": "Cardin@l1"
+  "base_url": "<YOUR_CORITY_TENANT_WSDL_URL>",
+  "username": "<YOUR_CORITY_API_USERNAME>",
+  "password": "<YOUR_CORITY_API_PASSWORD>"
 }
