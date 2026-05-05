@@ -76,10 +76,9 @@ __REPORTS = [
     },
 ]
 
-# Per-report mapping from a row's value-array index (Sequence in Cority metadata)
-# to the destination column name. GetUserReportResultsNonPreview returns each row as
-# an array of strings indexed by Sequence; gaps are normal (some reports start at
-# Sequence=0, others at Sequence=1; sparse sequences are also possible).
+# Per-report mapping from a row's value-array index to the destination column name.
+# GetUserReportResultsNonPreview returns each row as a 0-indexed array of strings;
+# sparse keys are allowed (skipped indices are simply not mapped to a column).
 # Captured from GetUserReportById on 2026-05-01. Update if Cority modifies a report.
 __COLUMN_MAPS = {
     1474: {
@@ -156,34 +155,34 @@ __COLUMN_MAPS = {
         38: "udfflag5",
     },
     1477: {
-        1: "safety_incident_id",
-        2: "case_no",
-        3: "employee",
-        4: "date_sent_to_carrier",
-        5: "injured_date",
-        6: "date_reported",
-        7: "personnel_area_code",
-        8: "personnel_area_description",
-        9: "location_toi",
-        10: "organizational_unit",
-        11: "osha_recordable",
-        12: "recordable_date",
-        13: "filed_date",
-        14: "severe_injury_date",
-        15: "severity_type",
-        16: "position",
-        17: "injury_illness",
-        18: "specific_activity",
-        19: "description_safety",
-        20: "part_of_body",
-        21: "how_occurred",
-        22: "cause",
-        23: "cause_of_injury",
-        24: "reason_recordable",
-        25: "hire_date",
-        26: "shift",
-        27: "priority_description",
-        28: "line_out",
+        0: "safety_incident_id",
+        1: "case_no",
+        2: "employee",
+        3: "date_sent_to_carrier",
+        4: "injured_date",
+        5: "date_reported",
+        6: "personnel_area_code",
+        7: "personnel_area_description",
+        8: "location_toi",
+        9: "organizational_unit",
+        10: "osha_recordable",
+        11: "recordable_date",
+        12: "filed_date",
+        13: "severe_injury_date",
+        14: "severity_type",
+        15: "position",
+        16: "injury_illness",
+        17: "specific_activity",
+        18: "description_safety",
+        19: "part_of_body",
+        20: "how_occurred",
+        21: "cause",
+        22: "cause_of_injury",
+        23: "reason_recordable",
+        24: "hire_date",
+        25: "shift",
+        26: "priority_description",
+        27: "line_out",
     },
 }
 
