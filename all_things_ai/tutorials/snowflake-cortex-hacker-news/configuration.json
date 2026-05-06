@@ -1,0 +1,10 @@
+{
+    "max_stories": "<MAX_STORIES_PER_SYNC>",
+    "batch_size": "<BATCH_SIZE>",
+    "enable_cortex": "<TRUE_OR_FALSE>",
+    "snowflake_account": "<YOUR_SNOWFLAKE_ACCOUNT.snowflakecomputing.com>",
+    "snowflake_pat_token": "<YOUR_SNOWFLAKE_PAT>",
+    "cortex_model": "<CORTEX_MODEL_NAME>",
+    "cortex_timeout": "<CORTEX_TIMEOUT_SECONDS>",
+    "max_enrichments": "<MAX_CORTEX_ENRICHMENTS>"
+}
