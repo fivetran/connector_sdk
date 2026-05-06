@@ -8,6 +8,8 @@ examples/**/build/
 examples/**/dist/
 .venv*
 
+connectors/cority/configuration.json
+
 .DS_Store
 **/*_pb2.py
 **/*_pb2.pyi
