@@ -65,7 +65,7 @@ def get_access_token(configuration: dict):
         __REFRESH_TIME = int(data["expires_in"]) + time.time()
         return
     else:
-        log.severe(f"Failed to obtain access token: {response.text}")
+        log.error(f"Failed to obtain access token: {response.text}")
         log.info(uri)
         raise Exception("Failed to obtain access token")
 
@@ -201,15 +201,15 @@ def get_data(method, params, headers, configuration, body=None):
     elif method == "companies":
         response = requests.get(COMPANY_URL, params=params, headers=headers)
     else:
-        log.severe("Failed to fetch data. Method: " + method)
+        log.error("Failed to fetch data. Method: " + method)
         raise Exception("Unknown method")
 
     if response.ok:
-        log.fine("Fetched data for method: " + method)
+        log.debug("Fetched data for method: " + method)
         data = response.json()
         return data
     else:
-        log.severe(f"Failed to obtain access token: {response.text}")
+        log.error(f"Failed to obtain access token: {response.text}")
         raise Exception("Failed to obtain access token")
 
 

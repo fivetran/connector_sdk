@@ -113,10 +113,10 @@ def _connect(configuration: dict):
         )
         return connection
     except pytds.LoginError as login_error:
-        log.severe(f"Authentication failed — check mssql_user and mssql_password: {login_error}")
+        log.error(f"Authentication failed — check mssql_user and mssql_password: {login_error}")
         raise
     except pytds.InterfaceError as interface_error:
-        log.severe(f"Connection failed — check mssql_server and mssql_port: {interface_error}")
+        log.error(f"Connection failed — check mssql_server and mssql_port: {interface_error}")
         raise
 
 
@@ -306,7 +306,7 @@ def schema(configuration: dict):
 
         for table_name in table_names:
             natural_pks = _get_natural_primary_keys(connection, schema_name, table_name)
-            log.fine("Natural Primary Keys: {}".format(natural_pks))
+            log.debug("Natural Primary Keys: {}".format(natural_pks))
             column_definitions = _get_columns(connection, schema_name, table_name)
             table_has_incremental_column = _table_has_column(
                 connection, schema_name, table_name, incremental_col
@@ -442,10 +442,10 @@ def update(configuration: dict, state: dict):
             log.info(f"Finished {destination_table}: {records_processed} rows processed")
 
     except pytds.ProgrammingError as sql_error:
-        log.severe(f"SQL error during sync (permanent — check query or schema): {sql_error}")
+        log.error(f"SQL error during sync (permanent — check query or schema): {sql_error}")
         raise
     except pytds.InterfaceError as connection_error:
-        log.severe(
+        log.error(
             f"Connection lost during sync (transient — will retry on next run): {connection_error}"
         )
         raise

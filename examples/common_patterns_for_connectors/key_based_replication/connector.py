@@ -114,7 +114,7 @@ def update(configuration: dict, state: dict):
         f"'{last_updated_at}' ORDER BY {REPLICATION_KEY}"
     )
     # This log message will only show while debugging.
-    log.fine(f"fetching records from `customer` table modified after {last_updated_at}")
+    log.debug(f"fetching records from `customer` table modified after {last_updated_at}")
     result = conn.execute(query).fetchall()
 
     # Upsert operation to insert/update the row in the "customers" table.

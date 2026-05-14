@@ -92,7 +92,7 @@ def schema(configuration: dict):
 ```
 
 ## 2. Logging - CRITICAL: Use EXACT method names
-- **CORRECT:** `log.info()`, `log.warning()`, `log.severe()`, `log.fine()`
+- **CORRECT:** `log.info()`, `log.warning()`, `log.error()`, `log.debug()`
 - **WRONG:** `log.error()` (does NOT exist in Fivetran Connector SDK)
 
 ## 3. Type Hints - CRITICAL: Use simple built-in types only
@@ -267,6 +267,6 @@ After completing the fix, provide a comprehensive explanation:
 - **Fix**: Use correct imports: `from fivetran_connector_sdk import Connector, Operations as op, Logging as log`
 
 ## **Logging Method Errors** 
-- **Pattern**: `AttributeError: 'Logging' object has no attribute 'error'`
+- **Pattern**: `AttributeError: 'Logging' object has no attribute 'severe'`
 - **Solution**: Use correct logging method names in Fivetran Connector SDK
-- **Fix**: Replace `log.error()` with `log.severe()` - the Connector SDK does NOT have a `log.error()` method
+- **Fix**: Replace `log.severe()` with `log.error()` - use `log.error()` for error-level logs

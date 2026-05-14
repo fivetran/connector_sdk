@@ -344,7 +344,7 @@ def fetch_data_with_retry(session, url, params=None, headers=None):
                 log.warning(f"Retrying in {delay}s " f"(attempt {attempt + 1}/{__MAX_RETRIES})")
                 time.sleep(delay)
             else:
-                log.severe(f"Connection failed after {__MAX_RETRIES} " f"attempts: {url}")
+                log.error(f"Connection failed after {__MAX_RETRIES} " f"attempts: {url}")
                 raise RuntimeError(
                     f"Connection failed after {__MAX_RETRIES} " f"attempts: {e}"
                 ) from e
@@ -356,7 +356,7 @@ def fetch_data_with_retry(session, url, params=None, headers=None):
                 log.warning(f"Retrying in {delay}s " f"(attempt {attempt + 1}/{__MAX_RETRIES})")
                 time.sleep(delay)
             else:
-                log.severe(f"Timeout after {__MAX_RETRIES} attempts: {url}")
+                log.error(f"Timeout after {__MAX_RETRIES} attempts: {url}")
                 raise RuntimeError(f"Timeout after {__MAX_RETRIES} attempts: {e}") from e
 
         except requests.exceptions.RequestException as e:
@@ -368,7 +368,7 @@ def fetch_data_with_retry(session, url, params=None, headers=None):
 
             if status_code in (401, 403):
                 msg = f"HTTP {status_code}: Check your API credentials " f"and scopes. URL: {url}"
-                log.severe(msg)
+                log.error(msg)
                 raise RuntimeError(msg) from e
 
             should_retry = status_code in __RETRYABLE_STATUS_CODES
@@ -383,7 +383,7 @@ def fetch_data_with_retry(session, url, params=None, headers=None):
                 time.sleep(delay)
             else:
                 attempts = attempt + 1
-                log.severe(
+                log.error(
                     f"Request failed after {attempts} attempt(s). "
                     f"URL: {url}, "
                     f"Status: {status_code or 'N/A'}, "
@@ -1154,7 +1154,7 @@ def update(configuration: dict, state: dict):
                 op.checkpoint(state=state)
 
     except Exception as e:
-        log.severe(f"Unexpected error during sync: {str(e)}")
+        log.error(f"Unexpected error during sync: {str(e)}")
         raise
 
     finally:

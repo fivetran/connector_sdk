@@ -787,7 +787,7 @@ def update(configuration: dict, state: dict):
         log.info(f"Sync complete: {total_synced} products synced")
 
     except Exception as e:
-        log.severe(f"Unexpected error: {str(e)}")
+        log.error(f"Unexpected error: {str(e)}")
         raise
 
     finally:

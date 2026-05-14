@@ -240,9 +240,9 @@ def get_api_response(base_url, params, headers, max_retries=__MAX_RETRIES):
             else:
                 # No retry needed: either non-retryable error or exhausted all retries
                 if is_retryable:
-                    log.severe(f"API call failed after {max_retries + 1} attempts")
+                    log.error(f"API call failed after {max_retries + 1} attempts")
                 else:
-                    log.severe(f"API call failed: {str(e)}")
+                    log.error(f"API call failed: {str(e)}")
                 raise
 
 

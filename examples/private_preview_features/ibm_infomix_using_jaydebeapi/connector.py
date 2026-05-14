@@ -78,7 +78,7 @@ def set_up_connection(configuration: dict):
         return connection
     except Exception as e:
         # In case of an error, log the error message and raise the exception
-        log.severe("Error establishing connection", e)
+        log.error("Error establishing connection", e)
         raise e
 
 
@@ -155,7 +155,7 @@ def update(configuration: dict, state: dict):
         op.checkpoint(state)
     except Exception as e:
         # In case of an error, log the error message and raise the exception
-        log.severe("Error during update", e)
+        log.error("Error during update", e)
         raise e
     finally:
         # Ensure that the cursor and connection are closed properly in the finally block

@@ -184,7 +184,7 @@ This connector follows Fivetran Connector SDK best practices:
 
 - `INFO`: Status updates, progress, cursors
 - `WARNING`: Rate limits, potential issues
-- `SEVERE`: Errors, failures, critical issues
+- `ERROR`: Errors, failures, critical issues
 
 ## API Reference
 

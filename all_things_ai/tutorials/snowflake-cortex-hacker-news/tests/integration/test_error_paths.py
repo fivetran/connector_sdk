@@ -161,7 +161,7 @@ class TestEnrichStoryPartialFailures:
 
 
 class TestUpdateExceptionSpecificity:
-    """The connector wraps the entire sync in `except Exception as e: log.severe(...); raise`.
+    """The connector wraps the entire sync in `except Exception as e: log.error(...); raise`.
     This re-raises (good — Fivetran retries the sync) but the broad catch is
     still wider than ideal per hazard #6. Test verifies the re-raise contract."""
 

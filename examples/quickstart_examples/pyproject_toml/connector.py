@@ -153,7 +153,7 @@ def update(configuration: dict, state: dict):
     try:
         exchange_rates = fetch_exchange_rates(url)
     except requests.RequestException as e:
-        log.severe(f"API request failed after {__MAX_RETRY_ATTEMPTS} retry attempts: {e}")
+        log.error(f"API request failed after {__MAX_RETRY_ATTEMPTS} retry attempts: {e}")
         raise RuntimeError(f"Failed to fetch exchange rates from API: {e}") from e
 
     # The API returns a single record for the configured currency pair.

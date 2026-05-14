@@ -40,7 +40,7 @@ fivetran --help
 
 ## Best Practices
 - **Primary Keys**: Define in schema to prevent data duplication
-- **Logging**: Use `log.info()`, `log.warning()`, `log.severe()` (and `log.fine()` for debugging)
+- **Logging**: Use `log.info()`, `log.warning()`, `log.error()` (and `log.debug()` for debugging)
 - **Checkpoints**: Use regularly with large datasets (incremental syncs)
 - **Data Types**: Supported types include BOOLEAN, INT, STRING, JSON, DECIMAL, FLOAT, UTC_DATETIME, etc.
 - **Error Handling**: Use specific exceptions with descriptive messages

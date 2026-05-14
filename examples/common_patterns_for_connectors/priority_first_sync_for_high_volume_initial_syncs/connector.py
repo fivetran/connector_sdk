@@ -108,7 +108,7 @@ def update(configuration: dict, state: dict):
         op.checkpoint(state)
     except Exception:
         # logs stack trace
-        log.severe(traceback.format_exc())
+        log.error(traceback.format_exc())
 
 
 def is_historical_data_completely_synced(state, endpoints):

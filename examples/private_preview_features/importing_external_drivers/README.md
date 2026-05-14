@@ -78,7 +78,7 @@ The connector reads the data from the configured `table_name` (assumed to match 
 
 ## Error handling
 - Configuration is validated at the start of the sync; missing fields raise a `ValueError`.
-- Any errors during MySQL connection or query execution are caught and logged using `log.severe()`.
+- Any errors during MySQL connection or query execution are caught and logged using `log.error()`.
 - The connector re-raises critical errors after logging to ensure sync visibility and failure propagation.
 
 ## Tables created

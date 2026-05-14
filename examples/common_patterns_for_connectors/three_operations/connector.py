@@ -49,15 +49,15 @@ def update(configuration: dict, state: dict):
 
     # Loop through the generated ids and perform an upsert operation for each.
     for ii, id in enumerate(ids):
-        log.fine(f"adding {id}")
+        log.debug(f"adding {id}")
         # Upsert operation to insert/update the row in the "three" table.
         op.upsert(table="three", data={"id": id, "val1": id, "val2": ii})
 
-    log.fine(f"updating {ids[1]} to 'abc'")
+    log.debug(f"updating {ids[1]} to 'abc'")
     # Update operation to modify the row with the second id in the "three" table.
     op.update(table="three", modified={"id": ids[1], "val1": "abc"})
 
-    log.fine(f"deleting {ids[2]}")
+    log.debug(f"deleting {ids[2]}")
     # Delete operation to remove the row with the third id from the "three" table.
     op.delete(table="three", keys={"id": ids[2]})
 

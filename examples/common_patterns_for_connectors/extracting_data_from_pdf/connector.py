@@ -180,7 +180,7 @@ def process_single_pdf(s3_client, bucket_name: str, file_key: dict, state: dict,
             state["last_modified_time"] = file_last_modified
 
     except Exception as e:
-        log.severe(f"Error processing {file_name}", e)
+        log.error(f"Error processing {file_name}", e)
     finally:
         # Delete the downloaded invoice file after processing
         if os.path.exists(temp_file_path):

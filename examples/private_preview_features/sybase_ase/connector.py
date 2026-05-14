@@ -740,13 +740,13 @@ def update(configuration: dict, state: dict):
         log.info("Sync completed successfully")
 
     except ValueError as e:
-        log.severe(f"Configuration error: {str(e)}")
+        log.error(f"Configuration error: {str(e)}")
         raise
     except pyodbc.Error as e:
-        log.severe(f"Database error: {str(e)}")
+        log.error(f"Database error: {str(e)}")
         raise
     except Exception as e:
-        log.severe(f"Unexpected error during sync: {str(e)}")
+        log.error(f"Unexpected error during sync: {str(e)}")
         raise
     finally:
         # Close the connection to the Sybase ASE database

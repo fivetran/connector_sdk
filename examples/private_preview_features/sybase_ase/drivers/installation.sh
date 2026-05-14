@@ -20,7 +20,7 @@ else
   apt-get update -qq 2>/dev/null || true
   apt-get install -y --no-install-recommends tdsodbc unixodbc unixodbc-dev freetds-dev freetds-bin 2>/dev/null
   if [ $? -ne 0 ]; then
-    echo '{"level":"SEVERE", "message": "apt-get install FAILED and no bundled driver found", "message_origin": "installation_sh"}'
+    echo '{"level":"ERROR", "message": "apt-get install FAILED and no bundled driver found", "message_origin": "installation_sh"}'
     exit 1
   fi
 
@@ -38,7 +38,7 @@ else
   done
 
   if [ -z "$DRIVER_PATH" ]; then
-    echo '{"level":"SEVERE", "message": "libtdsodbc.so not found after apt-get install", "message_origin": "installation_sh"}'
+    echo '{"level":"ERROR", "message": "libtdsodbc.so not found after apt-get install", "message_origin": "installation_sh"}'
     exit 1
   fi
 

@@ -81,7 +81,7 @@ Not applicable - the connector performs a single transformation on each sync.
 ## Error handling
 - If the key is missing from configuration, `schema()` raises a `ValueError`.
 - Decryption failures will result in a runtime exception (e.g. invalid token format).
-- Logs are written using `log.warning()` and `log.fine()` to trace execution.
+- Logs are written using `log.warning()` and `log.debug()` to trace execution.
 
 
 ## Tables Created

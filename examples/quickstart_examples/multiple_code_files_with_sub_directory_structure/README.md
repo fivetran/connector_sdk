@@ -70,7 +70,7 @@ Not applicable - only two records are processed per sync.
 ## Error handling
 - If a timestamp string does not match any known format, a `ValueError` is raised with a descriptive message.
 - Invalid formats are caught early via the `parse_timestamp()` method.
-- Logs are recorded using the Fivetran SDK’s Logging module (`log.warning`, `log.fine`).
+- Logs are recorded using the Fivetran SDK’s Logging module (`log.warning`, `log.debug`).
 
 
 ## Tables Created

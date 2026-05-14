@@ -188,10 +188,10 @@ You are an AI code reviewer for Python Pull Requests. Your responsibility is to 
     - Example: `log.info(f"Processing page {page_num} of {total_pages}")`
   - `log.warning()` - Potential issues, rate limit warnings, retry attempts
     - Example: `log.warning(f"Rate limit approaching: {remaining_calls} calls left")`
-  - `log.severe()` - Errors, failures, critical issues requiring attention
-    - Example: `log.severe(f"API request failed: {error_message}")`
-  - `log.fine()` - Detailed debug info, very high frequency, only for deep debugging
-    - Example: `log.fine(f"Full API response: {response_json}")`
+  - `log.error()` - Errors, failures, critical issues requiring attention
+    - Example: `log.error(f"API request failed: {error_message}")`
+  - `log.debug()` - Detailed debug info, very high frequency, only for deep debugging
+    - Example: `log.debug(f"Full API response: {response_json}")`
 - **NO secrets in logs**: Never log:
   - API keys, tokens, passwords
   - Full configuration objects

@@ -40,7 +40,7 @@ def schema(configuration: dict):
 ```
 
 ## 2. Logging - CRITICAL: Use EXACT method names
-- **CORRECT:** `log.info()`, `log.warning()`, `log.severe()`, `log.fine()`
+- **CORRECT:** `log.info()`, `log.warning()`, `log.error()`, `log.debug()`
 - **WRONG:** `log.error()` (does NOT exist in Fivetran Connector SDK)
 
 ## 3. Type Hints - CRITICAL: Use simple built-in types only
