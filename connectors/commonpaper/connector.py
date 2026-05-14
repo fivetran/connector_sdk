@@ -51,7 +51,7 @@ def fetch_agreements(api_key, updated_at):
     """
     # Format the URL with the filter parameter
     url = f"{__API_URL}?filter[updated_at_gt]={updated_at}"
-    log.fine(f"Fetching agreements from URL: {url}")
+    log.debug(f"Fetching agreements from URL: {url}")
 
     for attempt in range(__MAX_RETRIES):
         try:
@@ -68,7 +68,7 @@ def fetch_agreements(api_key, updated_at):
                     time.sleep(delay)
                     continue
                 else:
-                    log.severe(
+                    log.error(
                         f"Failed to fetch agreements after {__MAX_RETRIES} attempts. Last status: {response.status_code} - {response.text}"
                     )
                     raise RuntimeError(
@@ -76,7 +76,7 @@ def fetch_agreements(api_key, updated_at):
                     )
             else:
                 # Non-retryable status codes (4xx errors except 429)
-                log.severe(f"Failed to fetch agreements: {response.status_code} - {response.text}")
+                log.error(f"Failed to fetch agreements: {response.status_code} - {response.text}")
                 raise RuntimeError(f"API returned {response.status_code}: {response.text}")
 
         except requests.exceptions.RequestException as e:
@@ -88,7 +88,7 @@ def fetch_agreements(api_key, updated_at):
                 time.sleep(delay)
                 continue
             else:
-                log.severe(
+                log.error(
                     f"Failed to fetch agreements after {__MAX_RETRIES} attempts due to network error",
                     e,
                 )

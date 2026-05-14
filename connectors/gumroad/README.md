@@ -105,7 +105,7 @@ Retryable errors include:
 - Request timeouts
 - Connection errors
 
-Non-retryable errors such as authentication failures (HTTP 401) or invalid requests (HTTP 400) are logged and raised immediately without retry attempts. All errors are logged using the SDK's logging mechanism with appropriate severity levels (warning for retries, severe for final failures).
+Non-retryable errors such as authentication failures (HTTP 401) or invalid requests (HTTP 400) are logged and raised immediately without retry attempts. All errors are logged using the SDK's logging mechanism with appropriate severity levels (warning for retries, error for final failures).
 
 ## Tables created
 

@@ -120,7 +120,7 @@ Refer to `validate_configuration()` and `connect_to_database()` for implementati
 
 - Missing or empty configuration keys – `validate_configuration()` raises a `ValueError` before any connection is attempted, identifying the missing key.
 - Invalid port – `validate_configuration()` checks that `port` is an integer in the range 1–65535 and raises a `ValueError` with the actual value if not.
-- Connection failures – these are caught in `connect_to_database()`, logged with `log.severe()`, and re-raised as a `RuntimeError`.
+- Connection failures – these are caught in `connect_to_database()`, logged with `log.error()`, and re-raised as a `RuntimeError`.
 - Unknown ASN operations – these are logged as a warning by `process_cdc_changes()` and skipped; the sync continues.
 - Resumable syncs – the composite `(IBMSNAP_COMMITSEQ, IBMSNAP_INTENTSEQ)` cursor is checkpointed regularly so a mid-sync failure resumes from the last checkpoint.
 

@@ -200,7 +200,7 @@ def make_api_request(
                 log.warning(f"Request timeout for URL: {url}. Retrying in {delay} seconds...")
                 time.sleep(delay)
                 continue
-            log.severe(f"Request timeout for URL: {url}")
+            log.error(f"Request timeout for URL: {url}")
             raise
         except requests.exceptions.HTTPError as e:
             is_retryable_error = response and (
@@ -214,10 +214,10 @@ def make_api_request(
                 )
                 time.sleep(delay)
                 continue
-            log.severe(f"HTTP error for URL: {url}", e)
+            log.error(f"HTTP error for URL: {url}", e)
             raise
         except (requests.exceptions.RequestException, ValueError) as e:
-            log.severe(f"Request failed for URL: {url}", e)
+            log.error(f"Request failed for URL: {url}", e)
             raise
 
     raise requests.exceptions.RequestException(

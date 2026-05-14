@@ -314,16 +314,16 @@ def sync_topic(client, tenant: str, namespace: str, topic: str, state: dict) -> 
         reader.close()
 
     except pulsar.ReaderNotInitializedError as e:
-        log.severe(f"Reader not initialized for topic {topic}: {str(e)}")
+        log.error(f"Reader not initialized for topic {topic}: {str(e)}")
         raise RuntimeError(f"Failed to initialize reader for topic {topic}: {str(e)}")
     except pulsar.InvalidTopicName as e:
-        log.severe(f"Invalid topic name {topic}: {str(e)}")
+        log.error(f"Invalid topic name {topic}: {str(e)}")
         raise ValueError(f"Invalid Pulsar topic name {topic}: {str(e)}")
     except pulsar.PulsarException as e:
-        log.severe(f"Pulsar error syncing topic {topic}: {str(e)}")
+        log.error(f"Pulsar error syncing topic {topic}: {str(e)}")
         raise RuntimeError(f"Pulsar error syncing topic {topic}: {str(e)}")
     except Exception as e:
-        log.severe(f"Unexpected error syncing topic {topic}: {str(e)}")
+        log.error(f"Unexpected error syncing topic {topic}: {str(e)}")
         raise
 
 

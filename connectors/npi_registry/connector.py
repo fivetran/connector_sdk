@@ -147,11 +147,11 @@ def update(configuration: dict, state: dict):
 
     except requests.exceptions.RequestException as e:
         # Handle API request errors
-        log.severe(f"API request failed: {str(e)}")
+        log.error(f"API request failed: {str(e)}")
         raise RuntimeError(f"Failed to fetch data from NPI Registry API: {str(e)}")
     except Exception as e:
         # In case of an exception, raise a runtime error
-        log.severe(f"Unexpected error during sync: {str(e)}")
+        log.error(f"Unexpected error during sync: {str(e)}")
         raise RuntimeError(f"Failed to sync data: {str(e)}")
 
 

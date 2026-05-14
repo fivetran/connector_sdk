@@ -176,7 +176,7 @@ def handle_retry_with_backoff(attempt: int, error_message: str) -> None:
         )
         time.sleep(delay)
     else:
-        log.severe(f"{error_message} after {__MAX_RETRIES} attempts")
+        log.error(f"{error_message} after {__MAX_RETRIES} attempts")
         raise RuntimeError(f"{error_message} after {__MAX_RETRIES} attempts")
 
 
@@ -199,7 +199,7 @@ def handle_response_status(response, attempt: int) -> dict:
         handle_retry_with_backoff(attempt, error_message)
         return None
 
-    log.severe(f"API request failed with status {response.status_code}: {response.text}")
+    log.error(f"API request failed with status {response.status_code}: {response.text}")
     raise RuntimeError(f"API request failed with status {response.status_code}: {response.text}")
 
 
@@ -228,7 +228,7 @@ def make_api_request(url: str, headers: dict, params: dict | None = None) -> dic
             handle_retry_with_backoff(attempt, "Request timeout")
 
         except requests.RequestException as e:
-            log.severe(f"Request failed: {str(e)}")
+            log.error(f"Request failed: {str(e)}")
             raise RuntimeError(f"Request failed: {str(e)}")
 
     raise RuntimeError("Failed to complete API request")
@@ -247,7 +247,7 @@ def fetch_metric_names(prometheus_url: str, headers: dict) -> list[str]:
     response_data = make_api_request(url, headers)
 
     if response_data.get("status") != "success":
-        log.severe(f"Failed to fetch metric names: {response_data}")
+        log.error(f"Failed to fetch metric names: {response_data}")
         raise RuntimeError(f"Failed to fetch metric names: {response_data}")
 
     metric_names = response_data.get("data", [])
@@ -350,7 +350,7 @@ def fetch_time_series_data(
     response_data = make_api_request(url, headers, params)
 
     if response_data.get("status") != "success":
-        log.severe(f"Failed to fetch time-series data: {response_data}")
+        log.error(f"Failed to fetch time-series data: {response_data}")
         raise RuntimeError(f"Failed to fetch time-series data: {response_data}")
 
     result_data = response_data.get("data", {})

@@ -83,7 +83,7 @@ def connect_to_db(configuration: dict):
         log.info("Connected to Informix database successfully!")
         return conn
     except Exception as e:
-        log.severe("Connection failed", e)
+        log.error("Connection failed", e)
         raise RuntimeError("Connection failed") from e
 
 

@@ -91,7 +91,7 @@ Pagination is handled via:
 
 
 ## Error handling
-- Errors during schema discovery or sync are logged with `log.severe()`.
+- Errors during schema discovery or sync are logged with `log.error()`.
 - Exceptions are re-raised to surface failures in the connector.
 - You can extend error handling with retry/backoff for robustness.
 

@@ -242,7 +242,7 @@ def update(configuration: dict, state: dict):
         log.info(f"Sync completed successfully at {state['last_sync_timestamp']}")
 
     except Exception as e:
-        log.severe("Failed to sync data from Dgraph", e)
+        log.error("Failed to sync data from Dgraph", e)
         raise RuntimeError(f"Failed to sync data: {str(e)}") from e
 
 
@@ -288,13 +288,13 @@ def sync_schema_metadata(admin_endpoint: str, api_key: str, state: dict):
             log.warning("Unable to retrieve schema from Dgraph")
 
     except (requests.HTTPError, requests.ConnectionError, requests.Timeout) as e:
-        log.severe("Network error syncing schema metadata", e)
+        log.error("Network error syncing schema metadata", e)
         raise
     except ValueError as e:
-        log.severe("JSON parsing error syncing schema metadata", e)
+        log.error("JSON parsing error syncing schema metadata", e)
         raise
     except Exception as e:
-        log.severe("Unexpected error syncing schema metadata", e)
+        log.error("Unexpected error syncing schema metadata", e)
         raise
 
 
@@ -379,7 +379,7 @@ def sync_entity(
             requests.Timeout,
             ValueError,
         ) as e:
-            log.severe(f"Error syncing {entity_name} at offset {offset}", e)
+            log.error(f"Error syncing {entity_name} at offset {offset}", e)
             raise
 
     # Update state with the most recent timestamp
@@ -741,12 +741,12 @@ def check_response_status(response: requests.Response):
     """
     # Authentication errors - don't retry
     if response.status_code in (401, 403):
-        log.severe(f"Authentication failed: {response.status_code}")
+        log.error(f"Authentication failed: {response.status_code}")
         raise RuntimeError(f"Authentication failed with status {response.status_code}")
 
     # Bad request - don't retry
     if response.status_code == 400:
-        log.severe(f"Bad request: {response.text}")
+        log.error(f"Bad request: {response.text}")
         raise RuntimeError(f"Bad request: {response.text}")
 
     response.raise_for_status()
@@ -760,7 +760,7 @@ def handle_retry_logic(attempt: int, error: Exception):
         error: The exception that was raised.
     """
     if attempt == __MAX_RETRIES - 1:
-        log.severe(f"Request failed after {__MAX_RETRIES} retries", error)
+        log.error(f"Request failed after {__MAX_RETRIES} retries", error)
         raise
 
     sleep_time = min(60, __RETRY_BASE_DELAY_SECONDS**attempt)
@@ -808,7 +808,7 @@ def execute_graphql_query(endpoint: str, query: str, api_key: str):
             if hasattr(e, "response") and e.response is not None and e.response.status_code >= 500:
                 handle_retry_logic(attempt, e)
             else:
-                log.severe("HTTP error", e)
+                log.error("HTTP error", e)
                 raise
 
         # Removed generic exception catch block to comply with SDK best practices.

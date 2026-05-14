@@ -106,7 +106,7 @@ The connector implements comprehensive error handling with specific exception ty
 - Query errors - `psycopg2.ProgrammingError` caught with guidance about table existence and permissions
 - General database errors - Other `psycopg2.Error` exceptions caught and logged
 - Graceful cleanup - Connection closure in finally block with error handling for cleanup failures
-- Detailed logging - All errors logged using SDK logging framework (`log.severe()`, `log.warning()`) before raising
+- Detailed logging - All errors logged using SDK logging framework (`log.error()`, `log.warning()`) before raising
 - Descriptive error messages - Runtime exceptions include context about what failed and how to fix it
 
 Refer to the `create_connection()` function for connection error handling and the `update()` function for comprehensive sync error handling.

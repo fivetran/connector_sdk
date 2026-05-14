@@ -134,7 +134,7 @@ class OAuth2TokenManager:
                         time.sleep(wait_time)
                         continue
                     else:
-                        log.severe(
+                        log.error(
                             f"OAuth2 token request failed after {max_retries} attempts: {error_msg}"
                         )
                         raise RuntimeError(
@@ -152,7 +152,7 @@ class OAuth2TokenManager:
                     time.sleep(wait_time)
                     continue
                 else:
-                    log.severe(
+                    log.error(
                         f"OAuth2 token request failed after {max_retries} attempts: {error_msg}"
                     )
                     raise RuntimeError(
@@ -277,7 +277,7 @@ def parse_csv_data(csv_data: str, report_type: str, report_date: str):
         return records
 
     except Exception as e:
-        log.severe(f"Failed to parse CSV data for {report_type} on {report_date}", e)
+        log.error(f"Failed to parse CSV data for {report_type} on {report_date}", e)
         return []
 
 
@@ -331,16 +331,16 @@ def fetch_report_data(token_manager: OAuth2TokenManager, report_type: str, repor
                 return records
 
             except Exception as retry_error:
-                log.severe(
+                log.error(
                     f"Failed to fetch {report_type} report for {report_date} even after token refresh",
                     retry_error,
                 )
                 return []
         else:
-            log.severe(f"Failed to fetch {report_type} report for {report_date}", e)
+            log.error(f"Failed to fetch {report_type} report for {report_date}", e)
             return []
     except Exception as e:
-        log.severe(f"Failed to fetch {report_type} report for {report_date}", e)
+        log.error(f"Failed to fetch {report_type} report for {report_date}", e)
         return []
 
 
@@ -366,7 +366,7 @@ def generate_reports_to_process(state: dict, is_initial_sync: bool):
             start_date = datetime.strptime(__INITIAL_SYNC_START_DATE, "%Y-%m-%d").date()
             log.info(f"Initial sync: generating reports from {start_date} to {today}")
         except ValueError as e:
-            log.severe(
+            log.error(
                 f"Invalid INITIAL_SYNC_START_DATE format: {__INITIAL_SYNC_START_DATE}. Expected YYYY-MM-DD",
                 e,
             )
@@ -480,7 +480,7 @@ def _process_report(
         return len(records)
 
     except Exception as e:
-        log.severe(f"Error processing {report_type} for {report_date}", e)
+        log.error(f"Error processing {report_type} for {report_date}", e)
         return 0
 
 
@@ -560,7 +560,7 @@ def update(configuration: dict, state: dict):
 
     except Exception as e:
         # In case of an exception, raise a runtime error
-        log.severe("Sync failed with error", e)
+        log.error("Sync failed with error", e)
         raise RuntimeError(f"Failed to sync Pindrop data: {str(e)}")
 
 

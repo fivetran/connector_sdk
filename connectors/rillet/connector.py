@@ -317,7 +317,7 @@ def update(configuration: Dict, state: Dict):
             )
 
     except Exception as e:
-        log.severe(f"Failed to sync Rillet data: {e}")
+        log.error(f"Failed to sync Rillet data: {e}")
         raise
 
 

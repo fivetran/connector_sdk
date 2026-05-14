@@ -88,7 +88,7 @@ The connector handles data as follows (see the `update()` function):
 
 - `validate_configuration()` verifies all required configuration keys before any work begins and raises descriptive errors when values are missing
 - `connect_oracle()` catches invalid port values 
-- `update()` function logs connection failures with `log.severe()` before re-raising the exception.
+- `update()` function logs connection failures with `log.error()` before re-raising the exception.
 - During syncs, the connector wraps Oracle interactions in a `try/finally` block to ensure the database connection is closed
 - Progress checkpoints are created with `op.checkpoint()` to prevent re-processing if an error occurs mid-batch.
 

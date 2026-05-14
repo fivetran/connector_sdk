@@ -160,17 +160,17 @@ def handle_http_error(error: requests.exceptions.HTTPError, attempt: int):
 
     # Fail fast for permanent errors
     if status_code in [400, 401, 403, 404]:
-        log.severe(f"API request failed with status {status_code}: {str(error)}")
+        log.error(f"API request failed with status {status_code}: {str(error)}")
         raise RuntimeError(f"Failed to fetch shipments: {str(error)}")
 
     # Handle retryable errors
     is_last_attempt = attempt >= __MAX_RETRIES - 1
     if is_last_attempt:
-        log.severe(
+        log.error(
             f"Failed to fetch shipments after {__MAX_RETRIES} attempts. Status: {status_code}"
         )
         if error.response is not None:
-            log.severe(f"Response content: {error.response.text[:__ERROR_LOG_MAX_LENGTH]}")
+            log.error(f"Response content: {error.response.text[:__ERROR_LOG_MAX_LENGTH]}")
         raise RuntimeError(
             f"API returned {status_code} after {__MAX_RETRIES} attempts: {str(error)}"
         )
@@ -194,7 +194,7 @@ def handle_network_error(error: Exception, attempt: int):
     """
     is_last_attempt = attempt >= __MAX_RETRIES - 1
     if is_last_attempt:
-        log.severe(f"Failed to fetch shipments after {__MAX_RETRIES} attempts: {str(error)}")
+        log.error(f"Failed to fetch shipments after {__MAX_RETRIES} attempts: {str(error)}")
         raise RuntimeError(f"Failed to fetch shipments: {str(error)}")
 
     # Retry with exponential backoff

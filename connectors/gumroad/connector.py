@@ -121,7 +121,7 @@ def sync_sales(access_token: str, state: dict):
         response_data = make_api_request(endpoint="/sales", params=params)
 
         if not response_data.get("success"):
-            log.severe(f"Failed to fetch sales: {response_data}")
+            log.error(f"Failed to fetch sales: {response_data}")
             break
 
         sales = response_data.get("sales", [])
@@ -175,7 +175,7 @@ def sync_products(access_token: str, state: dict):
     response_data = make_api_request(endpoint="/products", params=params)
 
     if not response_data.get("success"):
-        log.severe(f"Failed to fetch products: {response_data}")
+        log.error(f"Failed to fetch products: {response_data}")
         return
 
     products = response_data.get("products", [])
@@ -210,7 +210,7 @@ def sync_subscribers(access_token: str, state: dict):
     products_response = make_api_request(endpoint="/products", params=products_params)
 
     if not products_response.get("success"):
-        log.severe(f"Failed to fetch products for subscribers sync: {products_response}")
+        log.error(f"Failed to fetch products for subscribers sync: {products_response}")
         return
 
     products = products_response.get("products", [])
@@ -255,7 +255,7 @@ def sync_payouts(access_token: str, state: dict):
         response_data = make_api_request(endpoint="/payouts", params=params)
 
         if not response_data.get("success"):
-            log.severe(f"Failed to fetch payouts: {response_data}")
+            log.error(f"Failed to fetch payouts: {response_data}")
             break
 
         payouts = response_data.get("payouts", [])
@@ -620,7 +620,7 @@ def make_api_request(endpoint: str, params: dict) -> dict:
                 continue
 
             # Non-retryable status code error
-            log.severe(
+            log.error(
                 f"API request failed with status {response.status_code}: " f"{response.text}"
             )
             raise RuntimeError(f"API request failed: {response.status_code} - {response.text}")
@@ -630,7 +630,7 @@ def make_api_request(endpoint: str, params: dict) -> dict:
                 handle_retry_delay(attempt, "Request timeout")
                 continue
 
-            log.severe(f"Request timeout after {__MAX_RETRIES} attempts")
+            log.error(f"Request timeout after {__MAX_RETRIES} attempts")
             raise RuntimeError(f"Request timeout after {__MAX_RETRIES} attempts") from e
 
         except requests.ConnectionError as e:
@@ -638,7 +638,7 @@ def make_api_request(endpoint: str, params: dict) -> dict:
                 handle_retry_delay(attempt, "Connection error")
                 continue
 
-            log.severe(f"Connection error after {__MAX_RETRIES} attempts")
+            log.error(f"Connection error after {__MAX_RETRIES} attempts")
             raise RuntimeError(f"Connection error after {__MAX_RETRIES} attempts") from e
 
     return {}

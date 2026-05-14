@@ -91,11 +91,11 @@ The connector fetches, processes, and delivers data to Fivetran as outlined in t
 
 ## Error handling
 The connector implements several error-handling strategies within the `update` function.
-- It checks the HTTP status code of each API response. If the status is not 200, it logs a `severe` error with details from the response and stops processing for that CWE.
+- It checks the HTTP status code of each API response. If the status is not 200, it logs an `error` with details from the response and stops processing for that CWE.
 - It implements an exponential backoff retry strategy for transient network errors, 5xx server errors, and rate limit errors (HTTP 403 and 429).
 - To proactively manage rate limits, the connector applies a fixed delay of 0.6 seconds (`__API_RATE_LIMIT_DELAY`) between paginated requests.
-- It wraps the JSON decoding process in a `try...except` block to catch `json.JSONDecodeError` and logs a `severe` error if the response is not valid JSON.
-- A general `try...except` block is used to catch any other exceptions during the API request and processing loop, logging a `severe` error to prevent the entire sync from failing.
+- It wraps the JSON decoding process in a `try...except` block to catch `json.JSONDecodeError` and logs an `error` if the response is not valid JSON.
+- A general `try...except` block is used to catch any other exceptions during the API request and processing loop, logging an `error` to prevent the entire sync from failing.
 
 ## Tables created
 The connector creates two tables in the destination, as defined in the `schema` function.

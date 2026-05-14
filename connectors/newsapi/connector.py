@@ -81,7 +81,7 @@ def update(configuration: dict, state: dict):
 
         # Update the state with the new cursor position, incremented by 1.
         new_state = {"to_ts": to_ts}
-        log.fine(f"state updated, new state: {repr(new_state)}")
+        log.debug(f"state updated, new state: {repr(new_state)}")
 
         # Save the progress by checkpointing the state. This is important for ensuring that the sync process can resume
         # from the correct position in case of next sync or interruptions.

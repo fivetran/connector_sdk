@@ -126,7 +126,7 @@ def update(configuration: dict, state: dict):
         sync_submissions(api_token, state)
 
     except (requests.exceptions.RequestException, RuntimeError) as e:
-        log.severe(f"Failed to sync data: {str(e)}")
+        log.error(f"Failed to sync data: {str(e)}")
         raise
 
 
@@ -528,7 +528,7 @@ def make_api_request_with_retry(url: str, api_token: str):
             handle_request_exception(e, attempt)
 
     # If we've exhausted all retries without returning, raise an error
-    log.severe(f"Failed to fetch data from {url} after {__MAX_RETRIES} attempts")
+    log.error(f"Failed to fetch data from {url} after {__MAX_RETRIES} attempts")
     raise RuntimeError(f"Failed to fetch data after {__MAX_RETRIES} attempts")
 
 
@@ -554,7 +554,7 @@ def handle_api_response(response, attempt: int):
         handle_retryable_error(response.status_code, response.text, attempt)
         return None  # Continue to next retry attempt
 
-    log.severe(f"API request failed with status {response.status_code}: {response.text}")
+    log.error(f"API request failed with status {response.status_code}: {response.text}")
     raise RuntimeError(f"API request failed with status {response.status_code}: {response.text}")
 
 
@@ -569,7 +569,7 @@ def handle_retryable_error(status_code: int, response_text: str, attempt: int):
         RuntimeError: If this was the last retry attempt.
     """
     if attempt >= __MAX_RETRIES - 1:
-        log.severe(
+        log.error(
             f"Failed to fetch data after {__MAX_RETRIES} attempts. Last status: {status_code} - {response_text}"
         )
         raise RuntimeError(
@@ -593,7 +593,7 @@ def handle_request_exception(exception: requests.exceptions.RequestException, at
         RuntimeError: If this was the last retry attempt.
     """
     if attempt >= __MAX_RETRIES - 1:
-        log.severe(f"Failed to fetch data after {__MAX_RETRIES} attempts: {str(exception)}")
+        log.error(f"Failed to fetch data after {__MAX_RETRIES} attempts: {str(exception)}")
         raise RuntimeError(
             f"Failed to fetch data after {__MAX_RETRIES} attempts: {str(exception)}"
         )

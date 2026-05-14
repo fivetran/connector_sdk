@@ -139,7 +139,7 @@ class ODataClient:
                 if state_var not in self.state or current_value > self.state[state_var]:
                     self.state[state_var] = current_value
             except KeyError as e:
-                log.severe(f"{column} not found in the fetched data", e)
+                log.error(f"{column} not found in the fetched data", e)
 
     def _upsert_formatted_data(self, formatted_data, table, update_state, query_options=None):
         """Upsert the formatted data and update the state tracker."""
@@ -453,7 +453,7 @@ class ODataClient:
         content_type = response.headers.get("Content-Type", "")
 
         if "multipart/mixed" not in content_type:
-            log.severe(f"Invalid content type: {content_type}")
+            log.error(f"Invalid content type: {content_type}")
             raise ValueError(f"Expected multipart/mixed response, got: {content_type}")
 
         try:
@@ -469,7 +469,7 @@ class ODataClient:
                 self._process_batch_part(part=part, part_index=i)
 
         except Exception as e:
-            log.severe("Failed to process batch response.", e)
+            log.error("Failed to process batch response.", e)
             raise
 
     def _process_batch_part(self, part, part_index: int):
@@ -483,7 +483,7 @@ class ODataClient:
         log.info(f"Processing part {part_index + 1} for entity: {entity_set}")
 
         if not part.content:
-            log.severe(f"Empty content in part {part_index}")
+            log.error(f"Empty content in part {part_index}")
             return
 
         try:
@@ -526,7 +526,7 @@ class ODataClient:
                 return http_body.strip()
 
         except UnicodeDecodeError:
-            log.severe(f"Unicode decode error in part {part_index}")
+            log.error(f"Unicode decode error in part {part_index}")
             raise
 
     @staticmethod

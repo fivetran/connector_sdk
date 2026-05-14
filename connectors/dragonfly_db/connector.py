@@ -164,14 +164,14 @@ def create_dragonfly_client(configuration: dict):
                 time.sleep(backoff_time)
                 backoff_time = min(backoff_time * 2, __MAX_BACKOFF_SEC)
             else:
-                log.severe(
+                log.error(
                     f"Failed to create DragonflyDB client after {__MAX_RETRIES} attempts: {e}"
                 )
         except redis.AuthenticationError as e:
-            log.severe(f"Authentication failed: {e}")
+            log.error(f"Authentication failed: {e}")
             raise RuntimeError(f"Failed to create DragonflyDB client: {str(e)}")
         except redis.RedisError as e:
-            log.severe(f"Redis error during client creation: {e}")
+            log.error(f"Redis error during client creation: {e}")
             raise RuntimeError(f"Redis error during client creation: {str(e)}")
 
     raise RuntimeError(
@@ -382,7 +382,7 @@ def scan_keys(
         log.info(f"Scanned {len(keys)} keys, next cursor: {cursor}")
         return cursor, keys
     except redis.RedisError as e:
-        log.severe(f"Failed to scan keys: {e}")
+        log.error(f"Failed to scan keys: {e}")
         raise RuntimeError(f"Failed to scan keys: {str(e)}")
 
 
@@ -584,10 +584,10 @@ def update(configuration: dict, state: dict):
         log.info(f"Successfully synced {total_records_processed} records from DragonflyDB")
 
     except redis.RedisError as e:
-        log.severe(f"Redis error during sync: {e}")
+        log.error(f"Redis error during sync: {e}")
         raise RuntimeError(f"Failed to sync data due to Redis error: {str(e)}")
     except (ValueError, KeyError, TypeError) as e:
-        log.severe(f"Data processing error during sync: {e}")
+        log.error(f"Data processing error during sync: {e}")
         raise RuntimeError(f"Failed to sync data due to processing error: {str(e)}")
     finally:
         close_dragonfly_client(dragonfly_client)

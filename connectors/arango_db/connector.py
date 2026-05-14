@@ -61,7 +61,7 @@ def connect_to_arangodb(configuration: dict) -> Any:
 
     if missing_fields:
         error_msg = f"Missing required configuration fields: {', '.join(missing_fields)}"
-        log.severe(error_msg)
+        log.error(error_msg)
         raise RuntimeError(error_msg)
 
     try:
@@ -76,13 +76,13 @@ def connect_to_arangodb(configuration: dict) -> Any:
         log.info(f"Successfully connected to ArangoDB database '{database_name}'")
         return database
     except ServerConnectionError as e:
-        log.severe("Failed to connect to ArangoDB server", e)
+        log.error("Failed to connect to ArangoDB server", e)
         raise RuntimeError(f"Failed to connect to ArangoDB server: {str(e)}")
     except ArangoServerError as e:
-        log.severe("ArangoDB server error during connection", e)
+        log.error("ArangoDB server error during connection", e)
         raise RuntimeError(f"ArangoDB server error during connection: {str(e)}")
     except Exception as e:
-        log.severe("Unexpected error connecting to ArangoDB", e)
+        log.error("Unexpected error connecting to ArangoDB", e)
         raise RuntimeError(f"Unexpected error connecting to ArangoDB: {str(e)}")
 
 
@@ -202,12 +202,12 @@ def sync_collection(database: Any, collection_name: str, table_name: str, state:
         )
         return state[f"{collection_name}_offset"]
     except ArangoServerError as e:
-        log.severe(f"ArangoDB server error while syncing collection '{collection_name}'", e)
+        log.error(f"ArangoDB server error while syncing collection '{collection_name}'", e)
         raise RuntimeError(
             f"ArangoDB server error while syncing collection '{collection_name}': {str(e)}"
         )
     except Exception as e:
-        log.severe(f"Unexpected error syncing collection '{collection_name}'", e)
+        log.error(f"Unexpected error syncing collection '{collection_name}'", e)
         raise RuntimeError(f"Unexpected error syncing collection '{collection_name}': {str(e)}")
 
 

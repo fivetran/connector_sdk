@@ -158,7 +158,7 @@ def handle_http_error(response, attempt: int):
             )
             time.sleep(delay)
         else:
-            log.severe(
+            log.error(
                 f"Failed to fetch data after {__MAX_RETRIES} attempts. "
                 f"Last status: {response.status_code} - {response.text}"
             )
@@ -166,7 +166,7 @@ def handle_http_error(response, attempt: int):
                 f"API returned {response.status_code} after {__MAX_RETRIES} attempts: {response.text}"
             )
     else:
-        log.severe(f"API request failed with status {response.status_code}: {response.text}")
+        log.error(f"API request failed with status {response.status_code}: {response.text}")
         raise RuntimeError(f"API returned {response.status_code}: {response.text}")
 
 
@@ -187,7 +187,7 @@ def handle_network_error(error: Exception, attempt: int):
         )
         time.sleep(delay)
     else:
-        log.severe(f"Network error after {__MAX_RETRIES} attempts: {str(error)}")
+        log.error(f"Network error after {__MAX_RETRIES} attempts: {str(error)}")
         raise RuntimeError(f"Network error after {__MAX_RETRIES} attempts: {str(error)}")
 
 
@@ -458,7 +458,7 @@ def update(configuration: dict, state: dict):
             op.checkpoint(state)
 
         except Exception as e:
-            log.severe(f"Failed to sync {endpoint_name}: {str(e)}")
+            log.error(f"Failed to sync {endpoint_name}: {str(e)}")
             raise
 
 
