@@ -118,7 +118,7 @@ Backoff behavior by category:
 - Request exceptions (connection/timeouts): retries using configured strategy.
 - Non-`429` `4xx`: fails immediately as non-retryable.
 
-Refer to the `validate_configuration`, `compute_delay`, and `get_api_response` functions in `connector.py.
+Refer to the `validate_configuration`, `compute_delay`, and `get_api_response` functions in `connector.py`.
 
 ## Tables created
 

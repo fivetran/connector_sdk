@@ -9,13 +9,25 @@ See the Technical Reference documentation (https://fivetran.com/docs/connectors/
 and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details.
 """
 
+# For reading configuration from a JSON file
 import json
+
+# For randomized jitter in exponential backoff
 import random
+
+# For retry delays and exponential backoff
 import time
 
+# For making API requests to the source
 import requests as rq
+
+# Import required classes from fivetran_connector_sdk
 from fivetran_connector_sdk import Connector
+
+# For enabling Logs in your connector code
 from fivetran_connector_sdk import Logging as log
+
+# For supporting Data operations like upsert(), update(), delete() and checkpoint()
 from fivetran_connector_sdk import Operations as op
 
 __DEFAULT_API_URL = "http://127.0.0.1:5001/pagination/next_page_url"
@@ -46,7 +58,7 @@ def schema(configuration: dict):
     """
     return [
         {
-            "table": "user",
+            "table": "USER",
             "primary_key": ["id"],
             "columns": {
                 "id": "STRING",
@@ -84,7 +96,13 @@ def validate_configuration(configuration: dict):
 
 
 def get_api_url(configuration: dict) -> str:
-    """Return the fully qualified pagination endpoint based on configuration."""
+    """
+    Return the fully qualified pagination endpoint based on configuration.
+    Args:
+        configuration: a dictionary that holds the configuration settings for the connector.
+    Returns:
+        The configured API URL, or the default API URL when one is not provided.
+    """
     return configuration.get("api_url", __DEFAULT_API_URL)
 
 
@@ -289,16 +307,31 @@ def sync_items(current_url: str, params: dict, state: dict, strategy: str):
         log.info(f"Processing page with {len(items)} items")
 
         for user in items:
-            op.upsert(table="user", data=user)
+            # The 'upsert' operation is used to insert or update data in the destination table.
+            # The first argument is the name of the destination table.
+            # The second argument is a dictionary containing the record to be upserted.
+            op.upsert(table="USER", data=user)
             state["last_updated_at"] = user["updatedAt"]
             rows_since_checkpoint += 1
 
             if rows_since_checkpoint >= __CHECKPOINT_INTERVAL:
+                # Save the progress by checkpointing the state. This is important for ensuring that the sync process can resume
+                # from the correct position in case of next sync or interruptions.
+                # You should checkpoint even if you are not using incremental sync, as it tells Fivetran it is safe to write to destination.
+                # For large datasets, checkpoint regularly (e.g., every N records) not only at the end.
+                # Learn more about how and where to checkpoint by reading our best practices documentation
+                # (https://fivetran.com/docs/connector-sdk/best-practices#optimizingperformancewhenhandlinglargedatasets).
                 op.checkpoint(state)
                 log.info(f"Checkpoint saved at cursor: {state['last_updated_at']}")
                 rows_since_checkpoint = 0
 
         # Checkpoint at the end of every page as well
+        # Save the progress by checkpointing the state. This is important for ensuring that the sync process can resume
+        # from the correct position in case of next sync or interruptions.
+        # You should checkpoint even if you are not using incremental sync, as it tells Fivetran it is safe to write to destination.
+        # For large datasets, checkpoint regularly (e.g., every N records) not only at the end.
+        # Learn more about how and where to checkpoint by reading our best practices documentation
+        # (https://fivetran.com/docs/connector-sdk/best-practices#optimizingperformancewhenhandlinglargedatasets).
         op.checkpoint(state)
         log.info(f"Page complete. Cursor: {state['last_updated_at']}")
         rows_since_checkpoint = 0
@@ -339,9 +372,23 @@ def update(configuration: dict, state: dict):
     sync_items(get_api_url(configuration), params, state, strategy)
 
 
+# Create the connector object using the schema and update functions
 connector = Connector(update=update, schema=schema)
 
+# Check if the script is being run as the main module.
+# This is Python's standard entry method allowing your script to be run directly from the command line or IDE 'run' button.
+#
+# IMPORTANT: The recommended way to test your connector is using the Fivetran debug command:
+#   fivetran debug
+#
+# This local testing block is provided as a convenience for quick debugging during development,
+# such as using IDE debug tools (breakpoints, step-through debugging, etc.).
+# Note: This method is not called by Fivetran when executing your connector in production.
+# Always test using 'fivetran debug' prior to finalizing and deploying your connector.
 if __name__ == "__main__":
+    # Open the configuration.json file and load its contents
     with open("configuration.json", "r") as f:
         configuration = json.load(f)
+
+    # Test the connector locally
     connector.debug(configuration=configuration)
