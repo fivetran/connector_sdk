@@ -58,7 +58,7 @@ def schema(configuration: dict):
     """
     return [
         {
-            "table": "USER",
+            "table": "user",
             "primary_key": ["id"],
             "columns": {
                 "id": "STRING",
