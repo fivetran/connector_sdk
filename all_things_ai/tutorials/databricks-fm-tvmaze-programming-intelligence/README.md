@@ -81,11 +81,12 @@ The TVMaze API is public and requires no authentication or API key.
 
 Databricks access requires a Personal Access Token (PAT) with SQL execution permissions:
 
-1. Navigate to your Databricks workspace
+1. Navigate to your Databricks workspace.
 2. Click your username in the top-right corner and select **Settings**
-3. Click **Developer** in the left panel
-4. Click **Manage** next to **Access tokens**
-5. Click **Generate new token**, provide a description, and click **Generate**
+```.
+3. Click **Developer** in the left panel.
+4. Click **Manage** next to **Access tokens**.
+5. Click **Generate new token**, provide a description, and click **Generate**.
 6. Copy the token value and set it as `databricks_token` in your `configuration.json`
 
 ## Pagination
