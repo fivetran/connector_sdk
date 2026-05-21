@@ -835,8 +835,9 @@ def upsert_assessment(table_name, report_id, assessment, assessment_type):
         log.warning(f"Skipping {assessment_type} for {report_id}: no response")
         return False
 
-    record = {"safety_report_id": report_id, "assessment_type": assessment_type}
-    record.update(flatten_dict(assessment))
+    record = flatten_dict(assessment) if assessment else {}
+    record["safety_report_id"] = report_id
+    record["assessment_type"] = assessment_type
 
     # The 'upsert' operation is used to insert or update data in the destination table.
     # The first argument is the name of the destination table.
@@ -950,14 +951,12 @@ def create_genie_space(session, configuration, state):
         "version": 2,
         "config": {
             "sample_questions": [
-                {"id": uuid.uuid4().hex, "question": [q]} for q in __GENIE_SPACE_SAMPLE_QUESTIONS
+                {"id": uuid.uuid4().hex, "question": q} for q in __GENIE_SPACE_SAMPLE_QUESTIONS
             ]
         },
         "data_sources": {"tables": [{"identifier": table_id}]},
         "instructions": {
-            "text_instructions": [
-                {"id": uuid.uuid4().hex, "content": [__GENIE_SPACE_INSTRUCTIONS]}
-            ]
+            "text_instructions": [{"id": uuid.uuid4().hex, "content": __GENIE_SPACE_INSTRUCTIONS}]
         },
     }
 
@@ -972,7 +971,14 @@ def create_genie_space(session, configuration, state):
     }
 
     try:
-        resp = session.post(url, headers=headers, json=payload, timeout=60)
+        resp = session.post(
+            url,
+            headers=headers,
+            json=payload,
+            timeout=_optional_int(
+                configuration, "databricks_timeout", __DEFAULT_DATABRICKS_TIMEOUT
+            ),
+        )
         resp.raise_for_status()
         result = resp.json()
         space_id = result.get("space_id")
