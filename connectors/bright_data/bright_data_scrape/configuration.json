@@ -1,0 +1,6 @@
+{
+  "api_token": "<YOUR_BRIGHT_DATA_API_TOKEN>",
+  "dataset_id": "<YOUR_BRIGHT_DATA_DATASET_ID>",
+  "scrape_url": "<YOUR_BRIGHT_DATA_SCRAPE_URL>"
+}
+
