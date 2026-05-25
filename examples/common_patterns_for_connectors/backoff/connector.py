@@ -134,7 +134,7 @@ def compute_delay(strategy: str, attempt: int, retry_after_seconds: float = None
     if strategy == "retry_after":
         if retry_after_seconds is not None:
             return retry_after_seconds
-        # Fallback: exponential with cap when the header is absent
+        log.warning("Could not get Retry-After header. Falling back to exponential with cap.")
         return min(__MAX_DELAY, __BASE_DELAY * (2**attempt))
 
     raise ValueError(f"Unknown strategy: {strategy}")
@@ -186,9 +186,7 @@ def retry_or_raise(url: str, strategy: str, attempt: int, response=None, error=N
             try:
                 retry_after_seconds = float(retry_after_header)
             except ValueError:
-                log.warning(
-                    f"Retry-After header was present but could not be parsed: {retry_after_header}"
-                )
+                pass
 
     delay = compute_delay(strategy, attempt, retry_after_seconds)
     log.warning(f"{reason}. Strategy='{strategy}', attempt={attempt}, sleeping {delay:.2f}s")
