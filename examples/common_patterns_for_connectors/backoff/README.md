@@ -90,7 +90,7 @@ Behavior:
 3. Move to `next_page_url` when present.
 4. Stop when page has no data or no `next_page_url`.
 
-Refer to the `sync_items` and `get_api_response` functions in `connector.py` .
+Refer to the `sync_items` and `get_api_response` functions in `connector.py`.
 
 ## Data handling
 
@@ -109,14 +109,16 @@ Retry logic is applied with a max retry cap:
 - `__MAX_RETRIES = 5`
 - `__REQUEST_TIMEOUT_SECONDS = 10`
 
+Retry handling is centralized in `retry_or_raise`, which computes the delay, sleeps before the next attempt, and raises when retries are exhausted or when a response is non-retryable.
+
 Backoff behavior by category:
 
-- `429`: retries using configured strategy and `Retry-After` header when strategy is `retry_after`.
+- `429`: retries using the configured strategy. When the strategy is `retry_after`, `retry_or_raise` reads the `Retry-After` header before computing the delay.
 - `5xx`: retries using configured strategy.
 - Request exceptions (connection/timeouts): retries using configured strategy.
 - Non-`429` `4xx`: fails immediately as non-retryable.
 
-Refer to the `validate_configuration`, `compute_delay`, and `get_api_response` functions in `connector.py`.
+Refer to the `validate_configuration`, `compute_delay`, `retry_or_raise`, and `get_api_response` functions in `connector.py`.
 
 ## Tables created
 

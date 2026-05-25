@@ -39,11 +39,17 @@ __MAX_DELAY = 10
 __CHECKPOINT_INTERVAL = 50
 
 __VALID_STRATEGIES = {
+    # Use the same delay for every retry.
     "fixed",
+    # Increase delay by a fixed amount on each retry.
     "linear",
+    # Double the delay on each retry.
     "exponential",
+    # Double the delay but cap it at the maximum delay.
     "exponential_with_cap",
+    # Randomize the exponential delay to avoid synchronized retries.
     "exponential_with_jitter",
+    # Honor Retry-After on rate limits and fall back to capped exponential backoff.
     "retry_after",
 }
 
@@ -145,85 +151,48 @@ def is_retryable_response(response) -> bool:
     return response.status_code == 429 or 500 <= response.status_code < 600
 
 
-def get_retry_after_seconds(response, strategy: str):
-    """
-    Extract Retry-After seconds when the selected strategy should honor it.
-    Args:
-        response: the HTTP response returned by requests.
-        strategy: the backoff strategy name.
-    Returns:
-        The Retry-After value as seconds when present and valid, otherwise None.
-    """
-    if response.status_code != 429 or strategy != "retry_after":
-        return None
-
-    retry_after_header = response.headers.get("Retry-After")
-    if retry_after_header is None:
-        return None
-
-    try:
-        return float(retry_after_header)
-    except ValueError:
-        return None
-
-
-def get_retry_reason(response, strategy: str) -> str:
-    """
-    Build a concise retry reason for logs and final errors.
-    Args:
-        response: the HTTP response returned by requests.
-        strategy: the backoff strategy name.
-    Returns:
-        A retry reason string.
-    """
-    if response.status_code == 429:
-        retry_after_header = None
-        if strategy == "retry_after":
-            retry_after_header = response.headers.get("Retry-After")
-        return f"Rate limited (429), Retry-After header={retry_after_header}"
-
-    return f"Server error ({response.status_code})"
-
-
-def retry_or_raise(
-    url: str, strategy: str, attempt: int, reason: str, retry_after_seconds: float = None
-):
+def retry_or_raise(url: str, strategy: str, attempt: int, response=None, error=None):
     """
     Sleep before the next retry or raise when retry attempts are exhausted.
     Args:
         url: the endpoint URL.
         strategy: the backoff strategy name.
         attempt: 1-based retry attempt number.
-        reason: short description of the retryable failure.
-        retry_after_seconds: value from Retry-After, only used by retry_after strategy.
+        response: the HTTP response, when one is available.
+        error: the request exception, when one is available.
     Raises:
-        Exception: when retry attempts are exhausted.
+        Exception: when the response is non-retryable or retry attempts are exhausted.
     """
+    if response is not None and not is_retryable_response(response):
+        raise Exception(
+            f"Non-retryable HTTP response for {url}: HTTP {response.status_code}, "
+            f"response body: {response.text}"
+        )
+
+    if error is not None:
+        reason = f"Request failed ({type(error).__name__}): {error}"
+    elif response.status_code == 429:
+        reason = "Rate limited (429)"
+    else:
+        reason = f"Server error ({response.status_code})"
+
     if attempt == __MAX_RETRIES:
         raise Exception(f"API request failed after {__MAX_RETRIES} attempts for {url}: {reason}")
+
+    retry_after_seconds = None
+    if response is not None and response.status_code == 429 and strategy == "retry_after":
+        retry_after_header = response.headers.get("Retry-After")
+        if retry_after_header is not None:
+            try:
+                retry_after_seconds = float(retry_after_header)
+            except ValueError:
+                log.warning(
+                    f"Retry-After header was present but could not be parsed: {retry_after_header}"
+                )
 
     delay = compute_delay(strategy, attempt, retry_after_seconds)
     log.warning(f"{reason}. Strategy='{strategy}', attempt={attempt}, sleeping {delay:.2f}s")
     time.sleep(delay)
-
-
-def raise_for_non_retryable_response(response, url: str):
-    """
-    Raise an actionable error for non-retryable HTTP responses.
-    Args:
-        response: the HTTP response returned by requests.
-        url: the endpoint URL.
-    Raises:
-        Exception: when the response is a non-retryable client error.
-        requests.HTTPError: when requests raises for any other non-success response.
-    """
-    if 400 <= response.status_code < 500:
-        raise Exception(
-            f"Non-retryable client error for {url}: HTTP {response.status_code}, "
-            f"response body: {response.text}"
-        )
-
-    response.raise_for_status()
 
 
 def get_api_response(url: str, params: dict, strategy: str) -> dict:
@@ -242,29 +211,15 @@ def get_api_response(url: str, params: dict, strategy: str) -> dict:
         log.info(f"API call attempt {attempt}/{__MAX_RETRIES}: {url}")
         try:
             response = rq.get(url, params=params, timeout=__REQUEST_TIMEOUT_SECONDS)
+
+            if response.status_code == 200:
+                return response.json()
+
+            retry_or_raise(url, strategy, attempt, response=response)
         except rq.RequestException as exc:
-            retry_or_raise(
-                url,
-                strategy,
-                attempt,
-                f"Request failed ({type(exc).__name__}): {exc}",
-            )
-            continue
+            retry_or_raise(url, strategy, attempt, error=exc)
 
-        if response.status_code == 200:
-            return response.json()
-
-        if is_retryable_response(response):
-            retry_or_raise(
-                url,
-                strategy,
-                attempt,
-                get_retry_reason(response, strategy),
-                get_retry_after_seconds(response, strategy),
-            )
-            continue
-
-        raise_for_non_retryable_response(response, url)
+        continue
 
     raise Exception(f"Exceeded {__MAX_RETRIES} retries for {url}")
 
