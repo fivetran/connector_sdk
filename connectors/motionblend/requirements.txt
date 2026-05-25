@@ -1,0 +1,2 @@
+# Google Cloud Storage client library for accessing GCS buckets and blobs
+google-cloud-storage==2.18.2

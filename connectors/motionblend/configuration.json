@@ -1,0 +1,8 @@
+{
+  "google_cloud_storage_bucket": "<YOUR_GCS_BUCKET_NAME>",
+  "google_cloud_storage_prefixes": "<YOUR_COMMA_SEPARATED_PREFIXES>",
+  "batch_limit": "<YOUR_OPTIONAL_BATCH_LIMIT>",
+  "include_extensions": "<YOUR_OPTIONAL_FILE_EXTENSIONS>",
+  "max_blend_pairs": "<YOUR_OPTIONAL_MAX_BLEND_PAIRS>",
+  "max_motion_buffer_size": "<YOUR_OPTIONAL_MAX_BUFFER_SIZE>"
+}
