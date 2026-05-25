@@ -30,7 +30,7 @@ from fivetran_connector_sdk import Logging as log
 # For supporting Data operations like upsert(), update(), delete() and checkpoint()
 from fivetran_connector_sdk import Operations as op
 
-__DEFAULT_API_URL = "http://127.0.0.1:5001/pagination/next_page_url"
+__API_URL = "http://127.0.0.1:5001/pagination/next_page_url"
 __MAX_RETRIES = 5
 __REQUEST_TIMEOUT_SECONDS = 10
 __FIXED_DELAY = 2
@@ -89,21 +89,6 @@ def validate_configuration(configuration: dict):
         raise ValueError(
             f"Invalid backoff_strategy '{strategy}'. Must be one of: {sorted(__VALID_STRATEGIES)}"
         )
-
-    api_url = configuration.get("api_url", __DEFAULT_API_URL)
-    if not isinstance(api_url, str) or not api_url.strip():
-        raise ValueError("Invalid configuration value: 'api_url' must be a non-empty string")
-
-
-def get_api_url(configuration: dict) -> str:
-    """
-    Return the fully qualified pagination endpoint based on configuration.
-    Args:
-        configuration: a dictionary that holds the configuration settings for the connector.
-    Returns:
-        The configured API URL, or the default API URL when one is not provided.
-    """
-    return configuration.get("api_url", __DEFAULT_API_URL)
 
 
 def compute_delay(strategy: str, attempt: int, retry_after_seconds: float = None) -> float:
@@ -369,7 +354,7 @@ def update(configuration: dict, state: dict):
         "per_page": 50,
     }
 
-    sync_items(get_api_url(configuration), params, state, strategy)
+    sync_items(__API_URL, params, state, strategy)
 
 
 # Create the connector object using the schema and update functions

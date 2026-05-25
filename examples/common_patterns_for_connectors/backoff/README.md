@@ -58,15 +58,13 @@ Use `configuration.json`:
 
 ```json
 {
-  "backoff_strategy": "<YOUR_BACKOFF_STRATEGY>",
-  "api_url": "<YOUR_API_URL>"
+  "backoff_strategy": "<YOUR_BACKOFF_STRATEGY>"
 }
 ```
 
 Fields:
 
 - `backoff_strategy`: one of `fixed`, `linear`, `exponential`, `exponential_with_cap`, `exponential_with_jitter`, `retry_after`.
-- `api_url`: full API endpoint URL, for example `http://127.0.0.1:5001/pagination/next_page_url`.
 
 > Note: When submitting connector code as a [Community Connector](https://github.com/fivetran/fivetran_connector_sdk/tree/main/connectors) or enhancing an [example](https://github.com/fivetran/fivetran_connector_sdk/tree/main/examples) in the open-source [Connector SDK repository](https://github.com/fivetran/fivetran_connector_sdk/tree/main), ensure the `configuration.json` file has placeholder values.
 When adding the connector to your production repository, ensure that the `configuration.json` file is not checked into version control to protect sensitive information.
