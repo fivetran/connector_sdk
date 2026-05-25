@@ -1,7 +1,0 @@
-{
-  "server": "<YOUR_SYBASE_IQ_SERVER>",
-  "port": "<YOUR_SYBASE_IQ_PORT>",
-  "database": "<YOUR_SYBASE_IQ_DATABASE>",
-  "user_id": "<YOUR_SYBASE_IQ_USER_ID>",
-  "password": "<YOUR_SYBASE_IQ_PASSWORD>"
-}
