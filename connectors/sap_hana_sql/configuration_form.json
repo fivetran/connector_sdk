@@ -1,0 +1,46 @@
+{
+  "connector_name": "SAP HANA",
+  "description": "Sync enterprise data from SAP HANA in-memory database to any Fivetran-supported destination. Supports incremental replication of SAP HANA tables.",
+  "category": "Database",
+  "tags": ["sap", "enterprise", "in-memory", "sql"],
+  "fields": [
+    {
+      "name": "host",
+      "label": "Host",
+      "description": "The hostname or IP address of your SAP HANA server",
+      "type": "text",
+      "required": true,
+      "placeholder": "your-hana-host.example.com"
+    },
+    {
+      "name": "port",
+      "label": "Port",
+      "description": "The SQL port for your SAP HANA instance (typically 39015 for single-container or 3XX15 for multi-tenant)",
+      "type": "text",
+      "required": true,
+      "placeholder": "39015"
+    },
+    {
+      "name": "user",
+      "label": "Username",
+      "description": "SAP HANA user with SELECT privileges on the target schema",
+      "type": "text",
+      "required": true
+    },
+    {
+      "name": "password",
+      "label": "Password",
+      "description": "Password for the SAP HANA user",
+      "type": "password",
+      "required": true
+    },
+    {
+      "name": "schema",
+      "label": "Schema",
+      "description": "The SAP HANA schema containing the tables you want to sync",
+      "type": "text",
+      "required": true,
+      "placeholder": "MY_SCHEMA"
+    }
+  ]
+}

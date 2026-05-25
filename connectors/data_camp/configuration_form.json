@@ -1,0 +1,15 @@
+{
+  "connector_name": "DataCamp",
+  "description": "Sync learning analytics from DataCamp — track team progress, course completions, assessments, and skill development over time.",
+  "category": "Learning & Development",
+  "tags": ["learning", "analytics", "education", "hr"],
+  "fields": [
+    {
+      "name": "api_key",
+      "label": "DataCamp API Key",
+      "description": "Your DataCamp API key. Found in your DataCamp account settings under API Access.",
+      "type": "password",
+      "required": true
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "connector_name": "Neo4j",
+  "description": "Sync graph and relational data from your Neo4j database to any Fivetran-supported destination. Supports incremental syncs using timestamp-based cursors.",
+  "category": "Database",
+  "tags": ["graph-database", "nosql", "cypher"],
+  "fields": [
+    {
+      "name": "neo4j_uri",
+      "label": "Neo4j Connection URI",
+      "description": "The Bolt or HTTP URI for your Neo4j instance (e.g. bolt://localhost:7687 or neo4j+s://xxxxx.databases.neo4j.io)",
+      "type": "text",
+      "required": true,
+      "placeholder": "bolt://localhost:7687"
+    },
+    {
+      "name": "username",
+      "label": "Username",
+      "description": "Your Neo4j database username",
+      "type": "text",
+      "required": true,
+      "placeholder": "neo4j"
+    },
+    {
+      "name": "password",
+      "label": "Password",
+      "description": "Your Neo4j database password",
+      "type": "password",
+      "required": true
+    },
+    {
+      "name": "database",
+      "label": "Database Name",
+      "description": "The Neo4j database to sync data from. Defaults to the home database if not specified.",
+      "type": "text",
+      "required": false,
+      "placeholder": "neo4j"
+    }
+  ]
+}

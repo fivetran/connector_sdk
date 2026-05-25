@@ -1,0 +1,72 @@
+{
+  "version": "1.0",
+  "description": "Fivetran SDK Connector Marketplace — community-built connectors with zero-config setup",
+  "connectors": [
+    {
+      "id": "neo4j",
+      "connector_name": "Neo4j",
+      "description": "Sync graph and relational data from your Neo4j database to any Fivetran-supported destination. Supports incremental syncs using timestamp-based cursors.",
+      "category": "Database",
+      "tags": ["graph-database", "nosql", "cypher"],
+      "author": "Fivetran Community",
+      "form_path": "connectors/neo4j/configuration_form.json",
+      "readme_path": "connectors/neo4j/README.md",
+      "icon": "neo4j"
+    },
+    {
+      "id": "clickhouse",
+      "connector_name": "ClickHouse",
+      "description": "Sync analytical data from your ClickHouse OLAP database. Optimized for high-volume columnar data extraction.",
+      "category": "Database",
+      "tags": ["olap", "columnar", "analytics", "sql"],
+      "author": "Fivetran Community",
+      "form_path": "connectors/clickhouse/configuration_form.json",
+      "readme_path": "connectors/clickhouse/README.md",
+      "icon": "clickhouse"
+    },
+    {
+      "id": "sap_hana_sql",
+      "connector_name": "SAP HANA",
+      "description": "Sync enterprise data from SAP HANA in-memory database. Supports incremental replication of SAP HANA tables.",
+      "category": "Database",
+      "tags": ["sap", "enterprise", "in-memory", "sql"],
+      "author": "Fivetran Community",
+      "form_path": "connectors/sap_hana_sql/configuration_form.json",
+      "readme_path": "connectors/sap_hana_sql/README.md",
+      "icon": "sap_hana"
+    },
+    {
+      "id": "data_camp",
+      "connector_name": "DataCamp",
+      "description": "Sync learning analytics from DataCamp — track team progress, course completions, and skill development.",
+      "category": "Learning & Development",
+      "tags": ["learning", "analytics", "education", "hr"],
+      "author": "Fivetran Community",
+      "form_path": "connectors/data_camp/configuration_form.json",
+      "readme_path": "connectors/data_camp/README.md",
+      "icon": "datacamp"
+    },
+    {
+      "id": "apache_druid",
+      "connector_name": "Apache Druid",
+      "description": "Sync real-time analytics data from Apache Druid for high-performance event-driven pipelines.",
+      "category": "Database",
+      "tags": ["real-time", "analytics", "apache", "timeseries"],
+      "author": "Fivetran Community",
+      "form_path": "connectors/apache_druid/configuration_form.json",
+      "readme_path": "connectors/apache_druid/README.md",
+      "icon": "apache_druid"
+    },
+    {
+      "id": "couchbase_capella",
+      "connector_name": "Couchbase Capella",
+      "description": "Sync JSON document data from Couchbase Capella cloud database to your destination.",
+      "category": "Database",
+      "tags": ["nosql", "document", "json", "cloud"],
+      "author": "Fivetran Community",
+      "form_path": "connectors/couchbase_capella/configuration_form.json",
+      "readme_path": "connectors/couchbase_capella/README.md",
+      "icon": "couchbase"
+    }
+  ]
+}

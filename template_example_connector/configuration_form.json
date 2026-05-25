@@ -1,0 +1,38 @@
+{
+  "connector_name": "Your Connector Name",
+  "description": "A one-paragraph description of what data this connector syncs and what customers use it for.",
+  "category": "Database",
+  "tags": ["tag1", "tag2"],
+  "fields": [
+    {
+      "name": "api_key",
+      "label": "API Key",
+      "description": "Your API key. Found in your account settings under API Access.",
+      "type": "password",
+      "required": true
+    },
+    {
+      "name": "base_url",
+      "label": "API Base URL",
+      "description": "The base URL for your API instance.",
+      "type": "text",
+      "required": true,
+      "placeholder": "https://api.example.com"
+    },
+    {
+      "name": "region",
+      "label": "Region",
+      "description": "The region where your data is hosted.",
+      "type": "dropdown",
+      "required": true,
+      "options": ["us-east-1", "us-west-2", "eu-west-1", "ap-southeast-1"]
+    },
+    {
+      "name": "enable_incremental",
+      "label": "Enable Incremental Sync",
+      "description": "When enabled, only syncs records changed since the last sync.",
+      "type": "toggle",
+      "required": false
+    }
+  ]
+}

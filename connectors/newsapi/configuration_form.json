@@ -1,0 +1,32 @@
+{
+  "connector_name": "News API",
+  "description": "Sync news articles from NewsAPI.org into your destination. Supports topic-based filtering and incremental syncs.",
+  "category": "Media & News",
+  "tags": ["news", "api", "articles", "media"],
+  "fields": [
+    {
+      "name": "API_KEY",
+      "label": "API Key",
+      "description": "Your NewsAPI.org API key. Get one free at newsapi.org/register.",
+      "type": "password",
+      "required": true,
+      "placeholder": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+    },
+    {
+      "name": "pageSize",
+      "label": "Page Size",
+      "description": "Number of articles to fetch per page. Maximum is 100 (free tier capped at 100 total results).",
+      "type": "text",
+      "required": true,
+      "placeholder": "100"
+    },
+    {
+      "name": "topic",
+      "label": "Topics",
+      "description": "JSON array of topics to search for, e.g. [\"AI\", \"Finance\"]. Each topic syncs into the ARTICLE table.",
+      "type": "text",
+      "required": true,
+      "placeholder": "[\"Artificial Intelligence\", \"Technology\"]"
+    }
+  ]
+}

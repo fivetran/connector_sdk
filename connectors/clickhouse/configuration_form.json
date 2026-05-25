@@ -1,0 +1,39 @@
+{
+  "connector_name": "ClickHouse",
+  "description": "Sync analytical data from your ClickHouse OLAP database to any Fivetran-supported destination. Optimized for high-volume columnar data extraction.",
+  "category": "Database",
+  "tags": ["olap", "columnar", "analytics", "sql"],
+  "fields": [
+    {
+      "name": "hostname",
+      "label": "Hostname",
+      "description": "The hostname or IP address of your ClickHouse server",
+      "type": "text",
+      "required": true,
+      "placeholder": "your-clickhouse-host.example.com"
+    },
+    {
+      "name": "username",
+      "label": "Username",
+      "description": "Your ClickHouse username with SELECT privileges",
+      "type": "text",
+      "required": true,
+      "placeholder": "default"
+    },
+    {
+      "name": "password",
+      "label": "Password",
+      "description": "Your ClickHouse user password",
+      "type": "password",
+      "required": true
+    },
+    {
+      "name": "database",
+      "label": "Database Name",
+      "description": "The ClickHouse database to sync tables from",
+      "type": "text",
+      "required": true,
+      "placeholder": "default"
+    }
+  ]
+}
