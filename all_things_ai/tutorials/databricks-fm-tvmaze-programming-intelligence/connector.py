@@ -459,7 +459,7 @@ def call_ai_query(session, configuration, prompt):
             return None
 
         if state_val not in ("PENDING", "RUNNING"):
-            log.warning(f"Unexpected Databricks SQL state: {state_val}")
+            log.info(f"Unexpected Databricks SQL state: {state_val}")
             return None
 
         if poll_attempt == 0:
@@ -741,13 +741,7 @@ def update(configuration: dict, state: dict):
     tvmaze_session = requests.Session()
     tvmaze_session.headers.update({"Accept": "application/json"})
 
-    databricks_session = requests.Session()
-    databricks_session.headers.update(
-        {
-            "Authorization": f"Bearer {configuration['databricks_token']}",
-            "Content-Type": "application/json",
-        }
-    )
+    databricks_session = None
 
     try:
         # -----------------------------------------------------------------------
@@ -897,6 +891,15 @@ def update(configuration: dict, state: dict):
         # -----------------------------------------------------------------------
         # Phase 2: DEBATE — Programming Optimist vs Skeptic vs Consensus
         # -----------------------------------------------------------------------
+        if enable_enrichment or enable_genie_space:
+            databricks_session = requests.Session()
+            databricks_session.headers.update(
+                {
+                    "Authorization": f"Bearer {configuration.get('databricks_token', '')}",
+                    "Content-Type": "application/json",
+                }
+            )
+
         if enable_enrichment and shows_this_sync:
             shows_to_enrich = shows_this_sync[:max_enrichments]
             log.info(
@@ -947,7 +950,8 @@ def update(configuration: dict, state: dict):
 
     finally:
         tvmaze_session.close()
-        databricks_session.close()
+        if databricks_session is not None:
+            databricks_session.close()
 
 
 # Create the connector object using the schema and update functions

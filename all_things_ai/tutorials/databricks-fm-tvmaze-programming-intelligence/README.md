@@ -30,7 +30,7 @@ Refer to the [Connector SDK Setup Guide](https://fivetran.com/docs/connectors/co
 
 - Syncs TV show metadata from the TVMaze public catalog (~70,000 shows)
 - Initial sync paginates `/shows?page=N` with configurable page cap and per-page checkpointing for safe resume
-- Incremental sync uses `/updates/shows?since=week` as a cursor, fetching only shows updated since the last sync
+- Incremental sync uses `/updates/shows?since=month` as a cursor, fetching only shows updated since the last sync
 - AI enrichment via Databricks `ai_query()` with a three-agent Multi-Agent Debate: Programming Optimist, Programming Skeptic, and Consensus
 - `disagreement_flag` surfaces shows where the two analysts meaningfully disagree for human review queues
 - Optional genre and status filtering to scope syncs to relevant shows
@@ -93,7 +93,7 @@ Databricks access requires a Personal Access Token (PAT) with SQL execution perm
 
 The TVMaze API uses page-based pagination for the initial catalog sync. The connector fetches pages via `GET /shows?page=N`, where each page returns approximately 250 shows. Pagination ends when the API returns HTTP 404. The `initial_sync_max_pages` parameter caps the number of pages fetched per sync run, enabling safe multi-run initial loads with per-page checkpointing.
 
-For incremental syncs, the connector calls `GET /updates/shows?since=week` to retrieve a map of show IDs updated in the past week, then filters to shows updated after the stored `last_updates_poll` timestamp.
+For incremental syncs, the connector calls `GET /updates/shows?since=month` to retrieve a map of show IDs updated in the past month, then filters to shows updated after the stored `last_updates_poll` timestamp.
 
 ## Data handling
 
