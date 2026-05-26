@@ -1,0 +1,1 @@
+fivetran_connector_sdk>=2.0.0
