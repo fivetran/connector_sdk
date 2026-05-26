@@ -17,16 +17,19 @@
 </p>
 
 # Overview
+
 Explore practical examples and helpful resources for building custom data connectors with the Fivetran [Connector SDK](https://fivetran.com/docs/connectors/connector-sdk). Learn how to develop and deploy [custom data connectors](https://fivetran.com/docs/connectors/connector-sdk/setup-guide) in Python, and extend Fivetran’s capabilities to fit your data integration needs.
 
-You’ll also find tips on [using AI to help you build a Connector SDK connection](https://github.com/fivetran/fivetran_connector_sdk/tree/main/all_things_ai/tutorials/README.md) quickly.
+You’ll also find tips on [using AI to help you code a custom connector](https://github.com/fivetran/fivetran_connector_sdk/tree/main/all_things_ai/tutorials/README.md) quickly.
 
 ## Why Connector SDK?
+
 Fivetran Connector SDK allows you to code a custom data connector using Python and deploy it as an extension of Fivetran. Fivetran automatically manages running Connector SDK connections on your scheduled frequency and manages the required compute resources, eliminating the need for a third-party provider.
 
 Connector SDK provides native support for many Fivetran features and relies on existing Fivetran technology. It also eliminates timeout and data size limitations seen in AWS Lambda.
 
 ## Requirements
+
 - Python version ≥3.10 and ≤3.13
 - Operating system:
   - Windows: 10 or later (64-bit only)
@@ -39,29 +42,13 @@ See [Setup guide](https://fivetran.com/docs/connectors/connector-sdk/setup-guide
 
 Run the `.github/scripts/setup-hooks.sh` script from the root of the repository to set up pre-commit hooks. This ensures that your code is formatted correctly and passes all tests before you commit them.
 
-## Repository Structure
-
-```
-fivetran_connector_sdk/
-├── all_things_ai/                          # AI-assisted development: tutorials and agent configs
-├── connectors/                             # Community connectors — ready-to-use source-specific implementations
-├── examples/
-│   ├── common_patterns_for_connectors/     # Reusable building blocks: auth, pagination, sync strategies, error handling
-│   ├── private_preview_features/           # Examples for features currently in private preview
-│   ├── quickstart_examples/                # Getting-started examples — from hello world to a first REST API connector
-│   └── workflows/                          # CI/CD and deployment workflow examples
-├── fivetran_platform_features/             # Native Fivetran platform feature examples
-└── template_connector/                     # Default template for new projects — used by `fivetran init` (no --template flag)
-```
-
 ## Examples
 
-> Note: To simplify the processes of building and maintaining connectors with Connector SDK, we've removed the need to use the Python generator pattern with Connector SDK operations, `yield`, starting with Connector SDK version 2.0.0. This change is fully backward compatible, so your existing Connector SDK connections will continue to function without modification. For more information, refer to our [Connector SDK release notes](https://fivetran.com/docs/connector-sdk/changelog#august2025).
+Explore working code examples for common Connector SDK use cases. These [examples](examples/README.md) help you understand core implementation patterns and quickly adapt them to your own connector.
 
-### Community connectors
+## Community connectors
 
-These are ready-to-use connectors, requiring minimal modifications to get started.
-There are many Community Connectors (nearly 100) and we are adding more all the time. You can find these connectors under `/connectors/`.
+Explore ready-to-use full connectors to get started. These connectors are useful when you want a stronger starting point or want to adapt an existing implementation for your source. For the full list, see the [Community Connectors Catalog](https://github.com/fivetran/fivetran_csdk_connectors/blob/main/README.md).
 
 <details class="details-heading" open="open">
 <summary>List of community connectors</summary>
@@ -320,37 +307,21 @@ These examples demonstrate common patterns and best practices for building conne
 - [claude_fda_drug tutorial](https://github.com/fivetran/fivetran_connector_sdk/tree/main/all_things_ai/tutorials/claude/fda_drug_tutorial) - This example demonstrates how to use Claude to create a CSDK connector to get data from the FDA drug API.
 - [cursor_fda_food tutorial](https://github.com/fivetran/fivetran_connector_sdk/tree/main/all_things_ai/tutorials/cursor/fda_food_tutorial/fda_food_connector) - This example demonstrates how to use Cursor to create a CSDK connector to get data from the FDA food API.
 - [vscode_fda_tobacco tutorial](https://github.com/fivetran/fivetran_connector_sdk/tree/main/all_things_ai/tutorials/vscode/fda_tobacco_tutorial/fda_tobacco_connector) - This example demonstrates how to use VSCode to create a CSDK connector to get data from the FDA tobacco API.
-
 - [snowflake-cortex-livestock-weather-intelligence](https://github.com/fivetran/fivetran_connector_sdk/tree/main/all_things_ai/tutorials/snowflake-cortex-livestock-weather-intelligence) - This example demonstrates real-time AI enrichment via Snowflake Cortex Agent REST API during Fivetran data ingestion. It syncs weather forecasts and enriches them with livestock health risk assessments using Snowflake's llama3.3-70b model with Cortex Analyst. It shows how to integrate Snowflake Intelligence into Fivetran pipelines for any industry vertical.
-- [snowflake-cortex-hacker-news](https://github.com/fivetran/fivetran_connector_sdk/tree/main/all_things_ai/tutorials/snowflake-cortex-hacker-news) - This example syncs top stories from the Hacker News API and enriches them with AI-powered sentiment analysis and topic classification using the Snowflake Cortex REST API during ingestion. It demonstrates configurable model selection, cost-controlled enrichment limits, and incremental sync with batch checkpointing.
-- [databricks-fm-fda-drug-label-intelligence](https://github.com/fivetran/fivetran_connector_sdk/tree/main/all_things_ai/tutorials/databricks-fm-fda-drug-label-intelligence) - This example syncs FDA drug labeling data from the OpenFDA API and enriches each label with AI-powered analysis using Databricks `ai_query()` SQL function with Claude Sonnet 4.6. Optionally, it creates a Genie Space for natural language analytics on the enriched data. This is the first Databricks AI tutorial in the repository, demonstrating the full MOVE, TRANSFORM, AGENT data lifecycle on the Databricks Intelligence Platform.
-- [snowflake-cortex-code-nvd-cve-threat-intelligence](https://github.com/fivetran/fivetran_connector_sdk/tree/main/all_things_ai/tutorials/snowflake-cortex-code-nvd-cve-threat-intelligence) - This example demonstrates the Multi-Agent Debate pattern: two Snowflake Cortex Agent personas (a risk-maximizing Threat Analyst and a context-aware Triage Analyst) provide competing vulnerability assessments on NVD CVE data during ingestion, with a Consensus agent that synthesizes both perspectives and flags disagreements for human review. Built with Claude Code and the Fivetran Connector Builder Skill.
-- [databricks-fm-bestbuy-retail-intelligence](https://github.com/fivetran/fivetran_connector_sdk/tree/main/all_things_ai/tutorials/databricks-fm-bestbuy-retail-intelligence) - This example syncs Best Buy product catalog data via the Best Buy Products API and enriches each product with AI-powered retail analytics using Databricks ai_query(). Generates competitive positioning, price optimization recommendations, and sentiment analysis to demonstrate AI-driven retail intelligence at ingestion time.
-- [snowflake-cortex-code-nhtsa-safety-intelligence](https://github.com/fivetran/fivetran_connector_sdk/tree/main/all_things_ai/tutorials/snowflake-cortex-code-nhtsa-safety-intelligence) - Built entirely with Snowflake Cortex Code, this example demonstrates Agent-Driven Discovery where Snowflake Cortex COMPLETE analyzes NHTSA automotive safety data during Fivetran ingestion and autonomously recommends related vehicles to fetch. It syncs recalls, complaints, and vehicle specs, then uses AI to discover cross-vehicle safety patterns and generate fleet-wide risk assessments.
-- [snowflake-cortex-code-clinical-trial-intelligence](https://github.com/fivetran/fivetran_connector_sdk/tree/main/all_things_ai/tutorials/snowflake-cortex-code-clinical-trial-intelligence) - This example combines agent-driven discovery and multi-agent debate patterns. It syncs clinical trial records from the ClinicalTrials.gov API v2.0 for a configured therapeutic area, then uses a [Snowflake Cortex Agent](https://www.snowflake.com/en/developers/guides/getting-started-with-cortex-agents/) to analyze seed trials and recommend related trials to fetch automatically. Two Cortex Agent personas (Optimist and Skeptic) evaluate each trial, followed by a Consensus synthesizer that selects a debate winner and produces a disagreement flag, directing human expert review to the trials that matter most.
-- [databricks-fm-sec-edgar-risk-intelligence](https://github.com/fivetran/fivetran_connector_sdk/tree/main/all_things_ai/tutorials/databricks-fm-sec-edgar-risk-intelligence) - This example syncs SEC EDGAR financial filing data and enriches it with AI-powered credit risk analysis using Databricks ai_query() with Claude Sonnet 4.6. It uses an Agent-Driven Discovery pattern where the AI analyzes seed company financials and autonomously recommends related companies to investigate for systemic risk exposure. The second Databricks AI tutorial, demonstrating adaptive AI-driven data pipelines.
-- [databricks-fm-cpsc-product-safety-intelligence](https://github.com/fivetran/fivetran_connector_sdk/tree/main/all_things_ai/tutorials/databricks-fm-cpsc-product-safety-intelligence) - This example syncs CPSC consumer product recall data and enriches each recall with Multi-Agent Debate analysis using Databricks `ai_query()` with Claude Sonnet 4.6. Two AI personas (Product Safety Analyst vs Manufacturing Quality Engineer) debate each recall, and a consensus agent synthesizes their views with a disagreement flag for human review. The third Databricks AI tutorial, demonstrating the multi-agent debate pattern.
-- [databricks-fm-noaa-weather-risk-intelligence](https://github.com/fivetran/fivetran_connector_sdk/tree/main/all_things_ai/tutorials/databricks-fm-noaa-weather-risk-intelligence) - This example syncs NOAA weather alerts and applies hybrid AI analysis using Databricks `ai_query()` with Claude Sonnet 4.6 — combining agent-driven discovery (identifying related regions affected by an event) with multi-agent debate (Emergency Response vs Resource Planning perspectives). Demonstrates the most advanced Databricks AI tutorial pattern.
-- [databricks-fm-fda-faers-pv-intelligence](https://github.com/fivetran/fivetran_connector_sdk/tree/main/all_things_ai/tutorials/databricks-fm-fda-faers-pv-intelligence) - This example syncs FDA adverse event reports (FAERS) and applies Multi-Agent Debate analysis using Databricks `ai_query()` with Claude Sonnet 4.6. Two AI personas (Safety Advocate vs Clinical Realist) debate each report's signal strength, and a consensus synthesizer flags disagreements for pharmacovigilance team review. Pairs with the FDA drug label connector for end-to-end drug safety intelligence on the Databricks Intelligence Platform.
-> Note: As of Connector SDK version 2.0.0, `yield` is no longer required for Connector SDK operations. This folder contains examples that still use `yield`, but we recommend using the latest version of Connector SDK and avoiding `yield` in your connector code. For more information, refer to our [Connector SDK release notes](https://fivetran.com/docs/connector-sdk/changelog#august2025).
 
 ## Issue
+
 Found an issue? Submit the [issue](https://github.com/fivetran/fivetran_connector_sdk/issues) and get connected to a Fivetran developer.
 
+## Fivetran platform features
+
+- [schema_change](https://github.com/fivetran/fivetran_connector_sdk/blob/main/examples/common_patterns_for_connectors/schema_change/README.md) - This is an example that illustrates how a deployed Connector SDK connection uses Fivetran's native [data type changes](https://fivetran.com/docs/core-concepts#changingdatatype) to change data types in the destination if they are changed in the source data.
+
+
 ## Support
+
 Learn how we [support Fivetran Connector SDK](https://fivetran.com/docs/connector-sdk#support).
 
-## Contributing
-
-We welcome contributions to the Fivetran Connector SDK repository. 
-
-This repository is open source and intended specifically for Connector SDK examples. We encourage the community to contribute by suggesting improvements, bug fixes, new examples, and additional use cases that expand and strengthen the collection.
-
-### How to contribute
-
-Please read the [CONTRIBUTING.md](https://github.com/fivetran/fivetran_connector_sdk/blob/main/CONTRIBUTING.md) guide for detailed information on contributing to this repository.
-
-We appreciate all contributions, whether they're small bug fixes or major new features.
 
 ## Additional considerations
 
@@ -360,7 +331,8 @@ Note that API calls made by your Connector SDK connection may count towards your
 
 It's important to choose the right design pattern for your target API. Using an inappropriate pattern may lead to data integrity issues. We recommend that you review all our examples carefully to select the one that best suits your target API. Keep in mind that some APIs may not support patterns for which we currently have examples.
 
-As with other new connections, Connector SDK connections have a [14-day trial period](https://fivetran.com/docs/getting-started/free-trials#newconnectorfreeuseperiod) during which your usage counts towards free [MAR](https://fivetran.com/docs/usage-based-pricing). After the 14-day trial period, your usage counts towards paid MAR. To avoid incurring charges, pause or delete any connections you created to run these examples before the trial ends.
+As with other new connectors, SDK connectors have a [14-day trial period](https://fivetran.com/docs/getting-started/free-trials#newconnectorfreeuseperiod) during which your usage counts towards free [MAR](https://fivetran.com/docs/usage-based-pricing). After the 14-day trial period, your usage counts towards paid MAR. To avoid incurring charges, pause or delete any connections you created to run these examples before the trial ends.
 
 ## Maintenance
+
 The `fivetran_connector_sdk` repository is actively maintained by Fivetran Developers. Reach out to our [Support team](https://support.fivetran.com/hc/en-us) for any inquiries.
