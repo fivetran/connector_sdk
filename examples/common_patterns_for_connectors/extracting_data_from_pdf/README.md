@@ -84,7 +84,7 @@ The connector implements several error handling mechanisms:
 
 - Configuration validation to ensure all required parameters are present (Refer to `validate_configuration()` method)
 - Try/except blocks around PDF processing to handle individual file failures gracefully
-- Logging at different severity levels (info, warning, severe) to provide visibility into connector operations
+- Logging at different severity levels (info, warning, error) to provide visibility into connector operations
 - Proper cleanup of temporary files in finally blocks to prevent resource leaks
 
 ## Tables created

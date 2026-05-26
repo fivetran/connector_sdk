@@ -218,8 +218,8 @@ log.info(f'Processing batch {batch_number}, cursor: {current_cursor}')
 # WARNING - Potential issues, rate limits
 log.warning(f'Rate limit approaching: {remaining_calls} calls left')
 
-# SEVERE - Errors, failures, critical issues
-log.severe(f"API request failed: {error_details}")
+# ERROR - Errors, failures, critical issues
+log.error(f"API request failed: {error_details}")
 ```
 
 ## Configuration Management
@@ -318,7 +318,7 @@ try:
     response = requests.get(url, headers=headers)
     response.raise_for_status()
 except requests.exceptions.RequestException as e:
-    log.severe(f"API request failed: {e}")
+    log.error(f"API request failed: {e}")
     raise
 
 # Data Validation

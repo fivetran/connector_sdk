@@ -122,7 +122,7 @@ def schema(configuration: dict):
 ```
 2. LOGGING
 - **CRITICAL - Use EXACT logging method names:**
-  - ✅ **CORRECT**: `log.info()`, `log.warning()`, `log.severe()`
+  - ✅ **CORRECT**: `log.info()`, `log.warning()`, `log.error()`
   - ❌ **WRONG**: `log.error()` (does NOT exist in Fivetran SDK)
 - Examples:
 ```python
@@ -132,8 +132,8 @@ log.info(f'Current cursor: {current_cursor}')
 # WARNING - Potential issues, rate limits
 log.warning(f'Rate limit approaching: {remaining_calls}')
 
-# SEVERE - Errors, failures, critical issues
-log.severe(f"Error details: {error_details}")
+# ERROR - Errors, failures, critical issues
+log.error(f"Error details: {error_details}")
 ```
 3. **Checkpoints**: Use regularly with large datasets (incremental syncs)
 4. **Type Hints**: **CRITICAL - Use simple built-in types only:**

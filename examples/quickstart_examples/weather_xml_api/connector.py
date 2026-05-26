@@ -158,7 +158,7 @@ def get_weather_data(station_code: str) -> Dict[str, Any]:
     response = rq.get(url, headers=headers)
     response.raise_for_status()
 
-    log.fine(f"Received XML response for {station_code}: {len(response.text)} characters")
+    log.debug(f"Received XML response for {station_code}: {len(response.text)} characters")
 
     # Parse the XML response
     weather_data = parse_xml_weather_data(response.text)
@@ -219,14 +219,14 @@ def update(configuration: dict, state: dict):
             # - The first argument is the name of the table to upsert the data into.
             # - The second argument is a dictionary containing the data to be upserted
             op.upsert(table="weather_stations", data=station_data)
-            log.fine(f"Upserted station data for {station_code}")
+            log.debug(f"Upserted station data for {station_code}")
 
             # Check if this observation is newer than our cursor
             observation_time = weather_data.get("observation_time_rfc822", "")
             if observation_time and observation_time > cursor:
                 # Upsert weather observation data
                 op.upsert(table="weather_observations", data=weather_data)
-                log.fine(f"Upserted weather observation for {station_code}: {observation_time}")
+                log.debug(f"Upserted weather observation for {station_code}: {observation_time}")
 
                 # Track the latest observation time
                 if observation_time > latest_observation_time:
@@ -235,7 +235,7 @@ def update(configuration: dict, state: dict):
                 log.info(f"Skipping observation for {station_code} - not newer than cursor")
 
         except Exception as e:
-            log.severe(f"Error processing station {station_code}", e)
+            log.error(f"Error processing station {station_code}", e)
             raise
 
     # Update state with the latest observation time

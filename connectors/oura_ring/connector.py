@@ -195,7 +195,7 @@ def fetch_data_with_retry(session, url, params=None):
                 )
                 time.sleep(delay_seconds)
             else:
-                log.severe(f"Connection failed after {__MAX_RETRIES} attempts: {url}")
+                log.error(f"Connection failed after {__MAX_RETRIES} attempts: {url}")
                 raise RuntimeError(f"Connection failed after {__MAX_RETRIES} attempts: {e}")
 
         except requests.exceptions.Timeout as e:
@@ -207,7 +207,7 @@ def fetch_data_with_retry(session, url, params=None):
                 )
                 time.sleep(delay_seconds)
             else:
-                log.severe(f"Timeout after {__MAX_RETRIES} attempts: {url}")
+                log.error(f"Timeout after {__MAX_RETRIES} attempts: {url}")
                 raise RuntimeError(f"Timeout after {__MAX_RETRIES} attempts: {e}")
 
         except requests.exceptions.RequestException as e:
@@ -223,7 +223,7 @@ def fetch_data_with_retry(session, url, params=None):
                     f"HTTP {status_code}: Check your personal_access_token "
                     f"and API scopes. URL: {url}"
                 )
-                log.severe(msg)
+                log.error(msg)
                 raise RuntimeError(msg) from e
 
             should_retry = status_code in __RETRYABLE_STATUS_CODES
@@ -238,7 +238,7 @@ def fetch_data_with_retry(session, url, params=None):
                 time.sleep(delay_seconds)
             else:
                 attempts = attempt + 1
-                log.severe(
+                log.error(
                     f"Request failed after {attempts} attempt(s). "
                     f"URL: {url}, Status: {status_code or 'N/A'}, "
                     f"Error: {str(e)}"

@@ -47,7 +47,7 @@ def update(configuration: dict, state: dict):
     # Upsert operation to insert/update the row in the "unspecified" table.
     # The data dictionary contains various data types.
     # Since the schema does not specify column types, they will be inferred from the data.
-    log.fine("upserting to table 'unspecified'")
+    log.debug("upserting to table 'unspecified'")
     op.upsert(
         table="unspecified",
         data={  # The keys sent here, e.g. id, _bool, _short, _ndatetime etc,. will be used as column names

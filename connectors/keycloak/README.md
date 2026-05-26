@@ -125,7 +125,7 @@ The connector implements comprehensive error handling with the following strateg
 - Graceful degradation - If optional resources like events or admin-events are unavailable, the connector logs warnings and continues with other tables
 - Authentication failures - Immediately fails on HTTP 401 (invalid token) and HTTP 403 (insufficient permissions) with actionable error messages
 
-All errors are logged using the Fivetran SDK logging framework with appropriate severity levels (warning for retryable errors, severe for fatal errors).
+All errors are logged using the Fivetran SDK logging framework with appropriate severity levels (warning for retryable errors, error for fatal errors).
 
 ## Tables created
 

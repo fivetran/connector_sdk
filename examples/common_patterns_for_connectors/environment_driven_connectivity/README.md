@@ -83,7 +83,7 @@ The connector implements comprehensive error handling:
 - Exponential backoff: Doubles wait time between retries (1s, 2s, 4s), capped at 16 seconds
 - Rate limiting: Handles HTTP 429 responses by respecting the Retry-After header
 - Request timeout: 20-second timeout for all API requests to prevent hanging
-- Exception logging: Logs warnings for each retry attempt and severe errors when all retries are exhausted
+- Exception logging: Logs warnings for each retry attempt and errors when all retries are exhausted
 - Graceful degradation: Skips invalid records (missing url field) with warnings rather than failing the entire sync
 
 

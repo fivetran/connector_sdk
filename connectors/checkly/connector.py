@@ -272,7 +272,7 @@ def make_api_request(url: str, headers: dict):
 
         except requests.exceptions.RequestException as e:
             if attempt == __MAX_RETRIES - 1:  # Last attempt
-                log.severe(f"API request failed after {__MAX_RETRIES} attempts", e)
+                log.error(f"API request failed after {__MAX_RETRIES} attempts", e)
                 raise RuntimeError(f"API request failed: {str(e)}")
 
             # Wait before retry with exponential backoff
@@ -400,7 +400,7 @@ def process_single_check(check_record: dict, configuration: dict, state: dict) -
         try:
             get_analytics_data(configuration, check_id, check_type, state)
         except Exception as e:
-            log.severe(f"Failed to process analytics for check {check_id}", e)
+            log.error(f"Failed to process analytics for check {check_id}", e)
             # Continue with other checks for non-critical errors
 
 
@@ -465,7 +465,7 @@ def get_checks_data(configuration: dict, state: dict):
             page += 1
 
         except Exception as e:
-            log.severe(f"Error fetching checks data on page {page}", e)
+            log.error(f"Error fetching checks data on page {page}", e)
             raise
 
     log.info(f"Successfully processed {total_records} check records")

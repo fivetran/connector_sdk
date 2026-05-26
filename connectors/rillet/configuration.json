@@ -1,0 +1,5 @@
+{
+  "api_key": "<YOUR_API_KEY>",
+  "base_url": "<YOUR_BASE_URL_OPTIONAL_DEFAULT_HTTPS_API_RILLET_COM>",
+  "api_version": "<YOUR_API_VERSION_DEFAULT_3>"
+}

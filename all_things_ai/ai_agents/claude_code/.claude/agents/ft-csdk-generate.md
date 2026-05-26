@@ -137,12 +137,12 @@ def schema(configuration: dict):
 ```
 
 ## 2. Logging - CRITICAL: Use EXACT method names
-- **CORRECT:** `log.info()`, `log.warning()`, `log.severe()`, `log.fine()`
+- **CORRECT:** `log.info()`, `log.warning()`, `log.error()`, `log.debug()`
 - **WRONG:** `log.error()` (does NOT exist in Fivetran Connector SDK)
 
 ```python
-# FINE - Detailed debugging information, verbose logging
-log.fine(f'Processing record: {record_id}')
+# DEBUG - Detailed debugging information, verbose logging
+log.debug(f'Processing record: {record_id}')
 
 # INFO - Status updates, cursors, progress
 log.info(f'Current cursor: {current_cursor}')
@@ -150,8 +150,8 @@ log.info(f'Current cursor: {current_cursor}')
 # WARNING - Potential issues, rate limits
 log.warning(f'Rate limit approaching: {remaining_calls}')
 
-# SEVERE - Errors, failures, critical issues
-log.severe(f"Error details: {error_details}")
+# ERROR - Errors, failures, critical issues
+log.error(f"Error details: {error_details}")
 ```
 
 ## 3. Type Hints - CRITICAL: Use simple built-in types only

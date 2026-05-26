@@ -45,7 +45,7 @@ def get_access_token(tenant_id, client_id, client_secret):
         access_token = response.json().get("access_token")
         return access_token
     else:
-        log.severe(f"Error: {response.status_code} - {response.text}")
+        log.error(f"Error: {response.status_code} - {response.text}")
         raise RuntimeError("Unable to fetch access_token")
 
 

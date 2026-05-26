@@ -129,7 +129,7 @@ def handle_retryable_error(attempt: int, error_message: str):
         )
         time.sleep(delay)
     else:
-        log.severe(f"{error_message} after {__MAX_RETRIES} attempts")
+        log.error(f"{error_message} after {__MAX_RETRIES} attempts")
         raise RuntimeError(f"{error_message} after {__MAX_RETRIES} attempts")
 
 
@@ -159,7 +159,7 @@ def make_api_request(url: str, headers: dict, payload: dict) -> dict:
                 handle_retryable_error(attempt, error_msg)
                 continue
 
-            log.severe(f"API request failed with status {response.status_code}: {response.text}")
+            log.error(f"API request failed with status {response.status_code}: {response.text}")
             raise RuntimeError(f"API request failed: {response.status_code} - {response.text}")
 
         except requests.exceptions.Timeout:

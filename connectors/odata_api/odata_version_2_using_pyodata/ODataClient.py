@@ -20,7 +20,7 @@ class ODataClient:
             self.client = pyodata.Client(service_url, session)
             log.info("OData Version 2 client initialized")
         except Exception as e:
-            log.severe("Failed to initialize OData client", e)
+            log.error("Failed to initialize OData client", e)
             raise ConnectionError(f"OData client initialization failed: {str(e)}")
         self.batch_requests = []
 
@@ -222,7 +222,7 @@ class ODataClient:
             return self.state
 
         except Exception as e:
-            log.severe(f"Error fetching entity set {entity_set}", e)
+            log.error(f"Error fetching entity set {entity_set}", e)
             raise ConnectionError(f"Error fetching entity set: {str(e)}")
 
     def upsert_multiple_entity(self, entity_list: List[Dict], state: Dict = None):
@@ -360,7 +360,7 @@ class ODataClient:
                     if state_var not in self.state or current_value > self.state[state_var]:
                         self.state[state_var] = current_value
             except KeyError:
-                log.severe(f"{column} not found in the fetched data while updating state")
+                log.error(f"{column} not found in the fetched data while updating state")
 
     def _process_expanded_entities(self, entity, record: Dict, expand_options: Dict):
         """
@@ -410,7 +410,7 @@ class ODataClient:
                 )
 
         except Exception as e:
-            log.severe(f"Error processing expanded entity {nav_prop}", e)
+            log.error(f"Error processing expanded entity {nav_prop}", e)
             record[nav_prop] = None
 
     def _process_expanded_collection(self, collection, options: Dict) -> List:

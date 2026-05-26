@@ -1,0 +1,11 @@
+# This pyproject.toml declares project metadata and dependencies.
+# The Connector SDK prioritizes pyproject.toml over requirements.txt when both are present.
+
+[project]
+name = "pyproject-toml-example"
+version = "0.1.0"
+description = "A Fivetran connector example demonstrating pyproject.toml for dependency management"
+requires-python = ">=3.10"
+dependencies = [
+    "tenacity==9.1.4",
+]

@@ -75,7 +75,7 @@ def get_coordinates_from_zip(zip_code: str) -> tuple:
     response.raise_for_status()
     data = response.json()
 
-    log.fine(f"API Response: {json.dumps(data, indent=2)}")
+    log.debug(f"API Response: {json.dumps(data, indent=2)}")
 
     # Extract coordinates from the response
     zip_info = data["places"][0]  # Get the first place in the zip code
@@ -168,13 +168,13 @@ def update(configuration: dict, state: dict):
                 # Add zip code to the period data
                 forecast["zip_code"] = zip_code
                 # This log message will only show while debugging.
-                log.fine(f"forecast_period={forecast['name']} for zip code {zip_code}")
+                log.debug(f"forecast_period={forecast['name']} for zip code {zip_code}")
 
                 # Upsert operation to insert/update the row in the "forecast" table.
                 op.upsert(table="forecast", data=forecast)
 
         except Exception as e:
-            log.severe(f"Unexpected error occurred while processing ZIP code {zip_code}", e)
+            log.error(f"Unexpected error occurred while processing ZIP code {zip_code}", e)
             raise
 
     # Update the cursor to the end time of the current period.

@@ -121,7 +121,7 @@ def update(configuration: dict, state: dict):
             name = pokemon_entry.get("name")
             pokemon_url = pokemon_entry.get("url")
 
-            log.fine(f"Processing Pokémon: {name}")
+            log.debug(f"Processing Pokémon: {name}")
 
             # Get detailed Pokémon data
             pokemon_response = requests.get(pokemon_url)
@@ -223,7 +223,7 @@ def update(configuration: dict, state: dict):
         yield op.checkpoint(state={"offset": new_offset})
 
     except Exception as e:
-        log.severe("Error during sync process", e)
+        log.error("Error during sync process", e)
         # Still checkpoint to avoid reprocessing the same data
         new_offset = offset + processed_count
         yield op.checkpoint(state={"offset": new_offset})

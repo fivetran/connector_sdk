@@ -300,7 +300,7 @@ def update(configuration: dict, state: dict) -> None:
             break
         except (oracledb.OperationalError, oracledb.DatabaseError) as exc:
             if attempt == __MAX_RETRIES - 1:
-                log.severe(f"Oracle connection failed after {__MAX_RETRIES} attempts: {exc}")
+                log.error(f"Oracle connection failed after {__MAX_RETRIES} attempts: {exc}")
                 raise
             sleep_time = min(60, 2**attempt)
             log.warning(

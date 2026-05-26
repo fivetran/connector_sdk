@@ -119,17 +119,17 @@ def fetch_emails_from_api(url: str, headers: dict, params: Optional[dict] = None
                 log.warning("Request timeout.")
                 retry_with_backoff(attempt)
                 continue
-            log.severe(f"Request timeout after {__MAX_RETRIES} attempts")
+            log.error(f"Request timeout after {__MAX_RETRIES} attempts")
             raise
         except requests.exceptions.HTTPError as e:
             if is_retryable_http_error(response) and attempt < __MAX_RETRIES - 1:
                 log.warning(f"HTTP {response.status_code} error.")
                 retry_with_backoff(attempt)
                 continue
-            log.severe(f"HTTP error {response.status_code}: {e}")
+            log.error(f"HTTP error {response.status_code}: {e}")
             raise
         except (requests.exceptions.RequestException, ValueError) as e:
-            log.severe(f"Request failed: {e}")
+            log.error(f"Request failed: {e}")
             raise
 
     raise requests.exceptions.RequestException(f"Request failed after {__MAX_RETRIES} attempts")
@@ -208,7 +208,7 @@ def update(configuration: dict, state: dict):
         op.checkpoint(new_state)
 
     except (requests.exceptions.RequestException, ValueError) as e:
-        log.severe(f"Failed to sync data: {str(e)}")
+        log.error(f"Failed to sync data: {str(e)}")
         raise
 
 
@@ -385,7 +385,7 @@ def sync_emails(headers: dict, last_synced_email_id: Optional[str] = None) -> Op
             time.sleep(__RATE_LIMIT_DELAY_SECONDS)
 
         except (requests.exceptions.RequestException, ValueError) as e:
-            log.severe(f"Error syncing emails: {e}")
+            log.error(f"Error syncing emails: {e}")
             raise
 
     log.info(f"Email sync completed. Total new emails synced: {total_new_emails_count}")

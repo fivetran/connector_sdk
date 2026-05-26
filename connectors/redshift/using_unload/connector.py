@@ -172,7 +172,7 @@ def update(configuration: dict, state: dict):
                         log.info(f"{stream}: Sync Finished.")
                     except Exception as e:
                         # Log the error but continue processing other threads
-                        log.severe(f"{plan.stream}: Error during sync: {e}")
+                        log.error(f"{plan.stream}: Error during sync: {e}")
                         errors.append((plan.stream, e))
 
                 # After all threads complete, raise an error if any failed

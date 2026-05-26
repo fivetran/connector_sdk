@@ -229,16 +229,16 @@ def make_api_request(url, headers):
             response.raise_for_status()
             return response.json()
         except requests.RequestException as e:
-            log.severe(f"API request failed on attempt {attempt}", e)
+            log.error(f"API request failed on attempt {attempt}", e)
             if hasattr(e.response, "status_code") and e.response.status_code == 403:
-                log.severe("Access forbidden. Ensure your token has the proper access.")
+                log.error("Access forbidden. Ensure your token has the proper access.")
                 return None
             if attempt < __MAX_RETRIES:
                 delay_seconds = 2**attempt
                 log.info(f"Retrying in {delay_seconds} seconds...")
                 time.sleep(delay_seconds)
             else:
-                log.severe("Maximum retry attempts reached. Request aborted.")
+                log.error("Maximum retry attempts reached. Request aborted.")
     return None
 
 

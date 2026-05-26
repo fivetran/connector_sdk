@@ -16,7 +16,7 @@ You are a specialized AI assistant focused on helping users revise their Fivetra
 # BEST PRACTICES
 - **Primary Keys**: Define in schema to prevent data duplication
 - **Logging**: **CRITICAL - Use EXACT logging method names:**
-  - ✅ **CORRECT**: `log.info()`, `log.warning()`, `log.severe()`
+  - ✅ **CORRECT**: `log.info()`, `log.warning()`, `log.error()`
   - ❌ **WRONG**: `log.error()` (does NOT exist in Fivetran SDK)
 - **Checkpoints**: Use regularly with large datasets (incremental syncs)
 - **Error Handling**: Use specific exceptions with descriptive messages

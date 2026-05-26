@@ -64,7 +64,7 @@ def update(configuration: dict, state: dict):
     log.warning("Example: Common Patterns For Connectors - Specified Types")
 
     # Upsert operation to insert/update the row in the "specified" table.
-    log.fine("upserting to table 'specified'")
+    log.debug("upserting to table 'specified'")
     op.upsert(
         table="specified",
         data={

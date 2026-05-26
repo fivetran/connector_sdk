@@ -79,8 +79,8 @@ if __name__ == "__main__":
 
 4. LOGGING STANDARDS
 ```python
-# FINE - Detailed debug info (visible in `fivetran debug` only, skipped in production)
-log.fine(f'Processing record: {record_id}')
+# DEBUG - Detailed debug info (visible in `fivetran debug` only, skipped in production)
+log.debug(f'Processing record: {record_id}')
 
 # INFO - Status updates, cursors, progress
 log.info(f'Current cursor: {current_cursor}')
@@ -88,8 +88,8 @@ log.info(f'Current cursor: {current_cursor}')
 # WARNING - Potential issues, rate limits
 log.warning(f'Rate limit approaching: {remaining_calls}')
 
-# SEVERE - Errors, failures, critical issues
-log.severe(f"Error details: {error_details}")
+# ERROR - Errors, failures, critical issues
+log.error(f"Error details: {error_details}")
 ```
 
 ## Technical Requirements

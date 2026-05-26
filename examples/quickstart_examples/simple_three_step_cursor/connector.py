@@ -56,7 +56,7 @@ def update(configuration: dict, state: dict):
     # Retrieve the cursor from the state object to determine the current position in the SOURCE_DATA.
     # If the cursor is not present in the state, start from the beginning (cursor = 0).
     cursor = state["cursor"] if "cursor" in state else 0
-    log.fine(f"current cursor is {repr(cursor)}")
+    log.debug(f"current cursor is {repr(cursor)}")
 
     # Get the row of data from SOURCE_DATA using the cursor position.
     if cursor >= SOURCE_DATA.__len__():
@@ -70,7 +70,7 @@ def update(configuration: dict, state: dict):
 
     # Update the state with the new cursor position, incremented by 1.
     new_state = {"cursor": cursor + 1}
-    log.fine(f"state updated, new state: {repr(new_state)}")
+    log.debug(f"state updated, new state: {repr(new_state)}")
 
     # Save the progress by checkpointing the state. This is important for ensuring that the sync process can resume
     # from the correct position in case of next sync or interruptions.

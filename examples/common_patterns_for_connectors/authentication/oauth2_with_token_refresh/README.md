@@ -109,7 +109,7 @@ The connector implements error handling strategies:
 
 - Configuration validation – Ensures all required configuration parameters (`refresh_token`, `client_secret`, `client_id`) are present before processing.
 - Access token refresh – Automatically refreshes the access token when it expires by comparing the refresh time with the current time. If token refresh fails, an exception is raised with error details.
-- API request errors – Logs severe errors when API requests fail and raises exceptions to stop processing.
+- API request errors – Logs errors when API requests fail and raises exceptions to stop processing.
 
 Refer to `validate_configuration(configuration: dict)`, `get_access_token(configuration: dict)`, `get_data(method, params, headers, configuration, body=None)`
 

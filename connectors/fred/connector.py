@@ -101,7 +101,7 @@ def update(configuration: dict, state: dict):
     series_ids = parse_series_ids(series_ids_str)
 
     if not series_ids:
-        log.severe("No series IDs provided in configuration")
+        log.error("No series IDs provided in configuration")
         raise RuntimeError("No series IDs configured for sync")
 
     sync_categories(api_key, state)
@@ -179,7 +179,7 @@ def handle_api_response(response, url, attempt):
         return response.json()
 
     if response.status_code == 400:
-        log.severe(f"Bad request: {response.text}")
+        log.error(f"Bad request: {response.text}")
         raise RuntimeError(f"Bad request to {url}: {response.text}")
 
     if response.status_code == 404:
@@ -190,7 +190,7 @@ def handle_api_response(response, url, attempt):
         handle_retryable_error(attempt, response.status_code, f"API request to {url}")
         return None
 
-    log.severe(f"Unexpected API error: {response.status_code} - {response.text}")
+    log.error(f"Unexpected API error: {response.status_code} - {response.text}")
     raise RuntimeError(f"API error: {response.status_code} - {response.text}")
 
 
@@ -212,9 +212,7 @@ def handle_retryable_error(attempt, status_code, operation_name):
         )
         time.sleep(delay)
     else:
-        log.severe(
-            f"{operation_name} failed after {__MAX_RETRIES} attempts. Status: {status_code}"
-        )
+        log.error(f"{operation_name} failed after {__MAX_RETRIES} attempts. Status: {status_code}")
         raise RuntimeError(f"{operation_name} failed after {__MAX_RETRIES} attempts")
 
 
@@ -234,7 +232,7 @@ def handle_timeout_error(attempt, operation_name):
         )
         time.sleep(delay)
     else:
-        log.severe(f"{operation_name} timed out after {__MAX_RETRIES} attempts")
+        log.error(f"{operation_name} timed out after {__MAX_RETRIES} attempts")
         raise RuntimeError(f"{operation_name} timed out after {__MAX_RETRIES} attempts")
 
 
@@ -255,7 +253,7 @@ def handle_request_exception(attempt, operation_name, error):
         )
         time.sleep(delay)
     else:
-        log.severe(f"{operation_name} failed after {__MAX_RETRIES} attempts")
+        log.error(f"{operation_name} failed after {__MAX_RETRIES} attempts")
         raise RuntimeError(f"{operation_name} failed: {str(error)}")
 
 

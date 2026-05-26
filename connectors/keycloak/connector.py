@@ -90,7 +90,7 @@ def get_access_token(keycloak_url: str, realm: str, client_id: str, client_secre
                     time.sleep(delay)
                     continue
                 else:
-                    log.severe(
+                    log.error(
                         f"Failed to obtain access token after {__MAX_RETRIES} attempts. "
                         f"Last status: {response.status_code}"
                     )
@@ -99,7 +99,7 @@ def get_access_token(keycloak_url: str, realm: str, client_id: str, client_secre
                         f"{response.text}"
                     )
             else:
-                log.severe(
+                log.error(
                     f"Authentication failed with status {response.status_code}: {response.text}"
                 )
                 raise RuntimeError(
@@ -115,7 +115,7 @@ def get_access_token(keycloak_url: str, realm: str, client_id: str, client_secre
                 time.sleep(delay)
                 continue
             else:
-                log.severe(
+                log.error(
                     f"Failed to obtain access token after {__MAX_RETRIES} attempts due to: {str(e)}"
                 )
                 raise RuntimeError(f"Failed to obtain access token: {str(e)}")
@@ -139,11 +139,11 @@ def handle_http_status_code(response, url: str, attempt: int):
         return response.json()
 
     if response.status_code == 401:
-        log.severe(f"Unauthorized access to {url}. Token may be expired or invalid.")
+        log.error(f"Unauthorized access to {url}. Token may be expired or invalid.")
         raise RuntimeError("Unauthorized: Check token and permissions")
 
     if response.status_code == 403:
-        log.severe(f"Forbidden access to {url}. Service account may lack required roles.")
+        log.error(f"Forbidden access to {url}. Service account may lack required roles.")
         raise RuntimeError("Forbidden: Service account needs view permissions")
 
     if response.status_code == 404:
@@ -160,7 +160,7 @@ def handle_http_status_code(response, url: str, attempt: int):
             time.sleep(delay)
             return None
         else:
-            log.severe(
+            log.error(
                 f"Failed to fetch data from {url} after {__MAX_RETRIES} attempts. "
                 f"Last status: {response.status_code}"
             )
@@ -168,7 +168,7 @@ def handle_http_status_code(response, url: str, attempt: int):
                 f"API returned {response.status_code} after {__MAX_RETRIES} attempts: {response.text}"
             )
 
-    log.severe(f"Unexpected status {response.status_code} from {url}: {response.text}")
+    log.error(f"Unexpected status {response.status_code} from {url}: {response.text}")
     raise RuntimeError(f"API error {response.status_code}: {response.text}")
 
 
@@ -187,7 +187,7 @@ def handle_request_exception(e: Exception, url: str, attempt: int):
         log.warning(f"Request exception: {str(e)}, retrying in {delay} seconds")
         time.sleep(delay)
     else:
-        log.severe(
+        log.error(
             f"Failed to fetch data from {url} after {__MAX_RETRIES} attempts due to: {str(e)}"
         )
         raise RuntimeError(f"Request failed: {str(e)}")

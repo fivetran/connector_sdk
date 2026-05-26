@@ -116,7 +116,7 @@ def update(configuration: dict, state: dict):
     )
 
     # This log message will only show while debugging.
-    log.fine(f"fetching records from `customer` table modified after {last_updated_at}")
+    log.debug(f"fetching records from `customer` table modified after {last_updated_at}")
     cursor.execute(query)
 
     while True:

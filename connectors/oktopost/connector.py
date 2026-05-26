@@ -178,7 +178,7 @@ def extract_csv_from_zip(zip_content: bytes) -> List[Dict[str, Any]]:
                 if file_info.filename.lower().endswith(".csv") and not file_info.is_dir()
             ]
     except Exception as e:
-        log.severe("Error extracting ZIP file", e)
+        log.error("Error extracting ZIP file", e)
         raise
 
 
@@ -224,7 +224,7 @@ def process_csv_data(csv_content: str, filename: str, export_id: str) -> List[Di
             for row in csv.DictReader(io.StringIO(csv_content))
         ]
     except Exception as e:
-        log.severe(f"Error processing CSV content from {filename}", e)
+        log.error(f"Error processing CSV content from {filename}", e)
         raise
 
 
@@ -366,7 +366,7 @@ def _process_export_file(export_info: Dict[str, Any]) -> None:
             _process_csv_file(file_response, export_id)
 
     except Exception as e:
-        log.severe(f"Error processing file for export {export_id}", e)
+        log.error(f"Error processing file for export {export_id}", e)
 
 
 def update(configuration: Dict[str, str], state: Dict[str, Any]):
@@ -418,7 +418,7 @@ def update(configuration: Dict[str, str], state: Dict[str, Any]):
         log.info("Sync completed successfully")
 
     except Exception as e:
-        log.severe("Error in update function", e)
+        log.error("Error in update function", e)
         raise
 
 
