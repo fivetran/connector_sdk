@@ -1,0 +1,3 @@
+{
+  "backoff_strategy": "retry_after"
+}
