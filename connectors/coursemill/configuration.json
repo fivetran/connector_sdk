@@ -1,0 +1,5 @@
+{
+  "base_url": "<YOUR_COURSEMILL_BASE_URL>",
+  "username": "<YOUR_ADMIN_USERNAME>",
+  "password": "<YOUR_ADMIN_PASSWORD>"
+}

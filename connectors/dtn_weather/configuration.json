@@ -1,0 +1,12 @@
+{
+  "api_key": "<YOUR_DTN_API_KEY>",
+  "client_id": "<YOUR_DTN_CLIENT_ID>",
+  "client_secret": "<YOUR_DTN_CLIENT_SECRET>",
+  "station_ids": "<COMMA_SEPARATED_STATION_IDS>",
+  "locations": "<JSON_ARRAY_OF_LAT_LON_OBJECTS>",
+  "lightning_lat": "<LIGHTNING_LATITUDE>",
+  "lightning_lon": "<LIGHTNING_LONGITUDE>",
+  "lightning_radius_km": "<LIGHTNING_RADIUS_KM>",
+  "enabled_apis": "<ENABLED_APIS>",
+  "units": "<UNITS>"
+}
