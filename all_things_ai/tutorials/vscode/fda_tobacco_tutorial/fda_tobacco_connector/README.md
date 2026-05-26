@@ -208,7 +208,7 @@ Checkpoints   | 1
 
 - **INFO**: Normal operations and progress
 - **WARNING**: Rate limits and retries
-- **SEVERE**: Errors and failures
+- **ERROR**: Errors and failures
 
 ## API Reference
 

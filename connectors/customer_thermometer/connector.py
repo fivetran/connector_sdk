@@ -124,7 +124,7 @@ def make_api_request(
             return response
         except requests.RequestException as e:
             if attempt == __MAX_RETRIES:
-                log.severe(
+                log.error(
                     f"API request failed for endpoint {endpoint} after {__MAX_RETRIES} retries", e
                 )
                 raise
@@ -184,7 +184,7 @@ def parse_xml_response_and_upsert(
 
         return records_processed
     except et.ParseError as e:
-        log.severe("Failed to parse XML response", e)
+        log.error("Failed to parse XML response", e)
         raise
 
 
@@ -407,19 +407,19 @@ def update(configuration: dict, state: dict):
 
     except requests.RequestException as e:
         # Handle API request failures
-        log.severe("API request failed", e)
+        log.error("API request failed", e)
         raise
     except et.ParseError as e:
         # Handle XML parsing errors
-        log.severe("XML parsing failed", e)
+        log.error("XML parsing failed", e)
         raise
     except ValueError as e:
         # Handle validation and data errors
-        log.severe("Validation error", e)
+        log.error("Validation error", e)
         raise
     except Exception as e:
         # Catch-all for unexpected errors
-        log.severe("Sync failed with unexpected error", e)
+        log.error("Sync failed with unexpected error", e)
         raise
 
 

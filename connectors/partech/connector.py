@@ -91,13 +91,13 @@ def update(configuration: dict, state: dict):
         op.checkpoint(state)
 
     except requests.exceptions.HTTPError as e:
-        log.severe(f"HTTP error occurred: {e}")
+        log.error(f"HTTP error occurred: {e}")
         raise
     except requests.exceptions.RequestException as e:
-        log.severe(f"Request error occurred: {e}")
+        log.error(f"Request error occurred: {e}")
         raise
     except Exception as e:
-        log.severe(f"Unexpected error occurred: {e}")
+        log.error(f"Unexpected error occurred: {e}")
         raise
 
 
@@ -291,7 +291,7 @@ def handle_http_error(error, endpoint, attempt):
     """
     # Don't retry for client errors (4xx)
     if 400 <= error.response.status_code < 500:
-        log.severe(f"Client error {error.response.status_code} for {endpoint}: {error}")
+        log.error(f"Client error {error.response.status_code} for {endpoint}: {error}")
         raise
 
     # Retry for server errors (5xx)
@@ -300,7 +300,7 @@ def handle_http_error(error, endpoint, attempt):
         log.warning(f"Server error on attempt {attempt + 1}, retrying in {backoff_time}s: {error}")
         sleep(backoff_time)
     else:
-        log.severe(f"Max retries reached for {endpoint}: {error}")
+        log.error(f"Max retries reached for {endpoint}: {error}")
         raise
 
 
@@ -321,7 +321,7 @@ def handle_request_error(error, endpoint, attempt):
         )
         sleep(backoff_time)
     else:
-        log.severe(f"Max retries reached for {endpoint}: {error}")
+        log.error(f"Max retries reached for {endpoint}: {error}")
         raise
 
 

@@ -88,7 +88,7 @@ class CircuitBreaker:
                 self.failure_count += 1
                 self.last_failure_time = time.time()
                 if self.failure_count >= self.failure_threshold:
-                    log.severe(
+                    log.error(
                         f"Circuit breaker: Opening circuit after {self.failure_count} failures"
                     )
                     self.state = "open"
@@ -222,7 +222,7 @@ def sync_items_parallel(current_url: str, params: dict, state: dict, max_workers
             op.checkpoint(state)
 
         except Exception as e:
-            log.severe(f"Fatal error processing page {page_count}", e)
+            log.error(f"Fatal error processing page {page_count}", e)
             # Record error and re-raise to fail the sync
             with __ERROR_STATS_LOCK:
                 __ERROR_STATS["fatal_page_errors"] += 1
@@ -311,7 +311,7 @@ def process_single_item(item: dict) -> str:
                     # Wait before retry with exponential backoff
                     wait_time = (2**attempt) * 0.1
                     time.sleep(wait_time)
-                    log.fine(f"Retrying item {item['id']} after error: {str(e)}")
+                    log.debug(f"Retrying item {item['id']} after error: {str(e)}")
                 else:
                     # Final attempt failed
                     raise
@@ -392,14 +392,14 @@ def get_api_response_with_retry(current_url: str, params: dict, max_retries: int
 
             # Client errors (4xx) except 429 - don't retry
             else:
-                log.severe(f"HTTP error {status_code}", e)
+                log.error(f"HTTP error {status_code}", e)
                 with __ERROR_STATS_LOCK:
                     __ERROR_STATS["client_errors"] += 1
                 raise
 
         except Exception as e:
             # Unexpected errors
-            log.severe(f"Unexpected error on attempt {attempt + 1}/{max_retries}", e)
+            log.error(f"Unexpected error on attempt {attempt + 1}/{max_retries}", e)
             with __ERROR_STATS_LOCK:
                 __ERROR_STATS["unexpected_errors"] += 1
 
@@ -414,7 +414,7 @@ def sleep_for_attempt(attempt, current_url, max_retries):
         time.sleep(wait_time)
         return True
     else:
-        log.severe(f"Max retries exceeded for URL: {current_url}")
+        log.error(f"Max retries exceeded for URL: {current_url}")
         return False
 
 
@@ -461,7 +461,7 @@ def should_continue_pagination(
     if next_page_url:
         current_url = next_page_url
         params = {}  # Clear params since the next URL contains the query params
-        log.fine(f"Continuing to next page: {current_url}")
+        log.debug(f"Continuing to next page: {current_url}")
     else:
         has_more_pages = False  # End pagination if there is no 'next' URL in the response.
         log.info("No next_page_url found, pagination complete")
@@ -486,7 +486,7 @@ def get_api_response(current_url: str, params: dict) -> dict:
         requests.exceptions.Timeout: For request timeouts
         requests.exceptions.ConnectionError: For connection issues
     """
-    log.fine(f"Making API call to url: {current_url} with params: {params}")
+    log.debug(f"Making API call to url: {current_url} with params: {params}")
 
     # Set reasonable timeout to prevent hanging requests
     timeout = 30

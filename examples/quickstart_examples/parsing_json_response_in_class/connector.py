@@ -86,7 +86,7 @@ def update(configuration: dict, state: dict):
                 log.info(f"Retrying in {delay} seconds...")
                 time.sleep(delay)
             else:
-                log.severe("Maximum retry attempts reached. Request aborted.")
+                log.error("Maximum retry attempts reached. Request aborted.")
                 return
 
     for post_dict in post_list:

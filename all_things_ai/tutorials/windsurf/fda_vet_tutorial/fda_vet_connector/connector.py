@@ -79,7 +79,7 @@ def fetch_fda_data(params: dict):
         response.raise_for_status()
         return response.json()
     except requests.RequestException as e:
-        log.severe("Failed to fetch data from FDA API", e)
+        log.error("Failed to fetch data from FDA API", e)
         raise
 
 
@@ -114,7 +114,7 @@ def process_event_data(event_data: list, state: dict):
                 log.info(f"Processed {processed_count} records")
 
         except Exception as e:
-            log.severe("Error processing event record", e)
+            log.error("Error processing event record", e)
             # Continue processing other records even if one fails
             continue
 
@@ -187,7 +187,7 @@ def update(configuration: dict, state: dict = None):
 
     except Exception as e:
         # In case of an exception, log the error and raise a runtime error
-        log.severe("Failed to sync FDA Veterinary data", e)
+        log.error("Failed to sync FDA Veterinary data", e)
         raise RuntimeError(f"Failed to sync data: {str(e)}")
 
 

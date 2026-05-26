@@ -95,7 +95,7 @@ def _connect_to_mssql(configuration: dict):
         log.info(f"Successfully connected to MSSQL database: {database}")
         return connection
     except Exception as e:
-        log.severe(f"Failed to connect to MSSQL: {e}")
+        log.error(f"Failed to connect to MSSQL: {e}")
         raise
 
 
@@ -128,7 +128,7 @@ def _get_table_list(connection) -> list[tuple[str, str]]:
             log.info(f"Found {len(tables)} tables: {tables}")
             return tables
     except Exception as e:
-        log.severe(f"Failed to get table list: {e}")
+        log.error(f"Failed to get table list: {e}")
         raise
 
 
@@ -346,7 +346,7 @@ def _get_table_data(
                     yield {column: _serialize_value(value) for column, value in zip(columns, row)}
 
     except Exception as e:
-        log.severe(f"Failed to get data from table {schema_name}.{table_name}: {e}")
+        log.error(f"Failed to get data from table {schema_name}.{table_name}: {e}")
         raise
 
 
@@ -526,7 +526,7 @@ def update(configuration: dict, state: dict):
         upsert_to_sync_history(state, sync_start, destination_table_names, total_records)
 
     except Exception as e:
-        log.severe(f"Failed to sync data: {e}")
+        log.error(f"Failed to sync data: {e}")
         raise
     finally:
         # Ensure the database connection is closed after the sync process completes

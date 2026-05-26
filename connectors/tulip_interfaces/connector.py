@@ -316,16 +316,16 @@ def schema(configuration: dict):
         return [{"table": table_name, "primary_key": ["id"], "columns": columns}]
 
     except ValueError as e:
-        log.severe(f"Configuration validation failed: {e}")
+        log.error(f"Configuration validation failed: {e}")
         raise
     except KeyError as e:
-        log.severe(f"Missing required field in API response: {e}")
+        log.error(f"Missing required field in API response: {e}")
         raise
     except requests.exceptions.HTTPError as e:
-        log.severe(f"HTTP error during schema discovery: {e}")
+        log.error(f"HTTP error during schema discovery: {e}")
         raise
     except Exception as e:
-        log.severe(f"Schema discovery failed: {str(e)}")
+        log.error(f"Schema discovery failed: {str(e)}")
         raise
 
 
@@ -370,13 +370,13 @@ def _fetch_with_retry(url, auth, params=None, max_retries=__MAX_RETRY_ATTEMPTS):
 
             # Fail fast on permanent 4xx errors (except 429, already handled)
             if 400 <= response.status_code < 500:
-                log.severe(f"Permanent client error {response.status_code}: {response.text}")
+                log.error(f"Permanent client error {response.status_code}: {response.text}")
                 response.raise_for_status()
 
             # Retry on 5xx server errors
             if response.status_code >= 500:
                 if attempt == max_retries - 1:
-                    log.severe(
+                    log.error(
                         f"Server error {response.status_code} after {max_retries} attempts: {response.text}"
                     )
                     response.raise_for_status()
@@ -391,7 +391,7 @@ def _fetch_with_retry(url, auth, params=None, max_retries=__MAX_RETRY_ATTEMPTS):
         except (requests.exceptions.ConnectionError, requests.exceptions.Timeout) as e:
             # Retry on connection errors and timeouts
             if attempt == max_retries - 1:
-                log.severe(f"Connection/timeout error after {max_retries} attempts: {e}")
+                log.error(f"Connection/timeout error after {max_retries} attempts: {e}")
                 raise
             wait_time = __RATE_LIMIT_RETRY_BASE_SECONDS * (2**attempt)
             log.warning(
@@ -983,19 +983,19 @@ def update(configuration: dict, state: dict):
         )
 
     except json.JSONDecodeError as e:
-        log.severe(f"Invalid custom_filter_json format: {e}")
+        log.error(f"Invalid custom_filter_json format: {e}")
         raise
     except ValueError as e:
-        log.severe(f"Configuration validation failed: {e}")
+        log.error(f"Configuration validation failed: {e}")
         raise
     except KeyError as e:
-        log.severe(f"Missing required field in API response or state: {e}")
+        log.error(f"Missing required field in API response or state: {e}")
         raise
     except requests.exceptions.HTTPError as e:
-        log.severe(f"HTTP error during sync: {e}")
+        log.error(f"HTTP error during sync: {e}")
         raise
     except Exception as e:
-        log.severe(f"Update failed: {str(e)}")
+        log.error(f"Update failed: {str(e)}")
         raise
 
 

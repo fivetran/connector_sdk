@@ -27,7 +27,7 @@ fivetran version
 # BEST PRACTICES
 - **Primary Keys**: Define in schema to prevent data duplication
 - **Logging**: **CRITICAL - Use EXACT logging method names:**
-  - ✅ **CORRECT**: `log.info()`, `log.warning()`, `log.severe()`
+  - ✅ **CORRECT**: `log.info()`, `log.warning()`, `log.error()`
   - ❌ **WRONG**: `log.error()` (does NOT exist in Fivetran SDK)
 - **Checkpoints**: Use regularly with large datasets (incremental syncs)
 - **Error Handling**: Use specific exceptions with descriptive messages
@@ -170,6 +170,6 @@ After completing the fix, provide a comprehensive explanation:
 - **Fix**: Use correct imports: `from fivetran_connector_sdk import Connector, Operations as op, Logging as log`
 
 ## **Logging Method Errors** 
-- **Pattern**: `AttributeError: 'Logging' object has no attribute 'error'`
+- **Pattern**: `AttributeError: 'Logging' object has no attribute 'severe'`
 - **Solution**: Use correct logging method names in Fivetran SDK
-- **Fix**: Replace `log.error()` with `log.severe()` - the SDK does NOT have a `log.error()` method
+- **Fix**: Replace `log.severe()` with `log.error()` - use `log.error()` for error-level logs

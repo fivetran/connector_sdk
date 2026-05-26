@@ -73,10 +73,10 @@ def start_veeva_session(configuration: dict):
         if response_json.get("responseStatus") == "SUCCESS":
             session_id = response_json.get("sessionId")
         else:
-            log.severe(f"Failed to create session for user with username: {username}")
+            log.error(f"Failed to create session for user with username: {username}")
             session_id = None
     else:
-        log.severe(
+        log.error(
             f"Authentication failed: {auth_url} returned {response.status_code}. Expected 200."
         )
         session_id = None

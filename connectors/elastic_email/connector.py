@@ -339,7 +339,7 @@ def update(configuration: dict, state: dict):
         log.info("Sync completed successfully")
 
     except Exception as e:
-        log.severe(f"Sync failed with error: {str(e)}")
+        log.error(f"Sync failed with error: {str(e)}")
         raise RuntimeError(f"Failed to sync data: {str(e)}")
 
 

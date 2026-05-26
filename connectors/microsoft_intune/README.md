@@ -65,7 +65,7 @@ The connector handles pagination using the `@odata.nextLink` field returned by t
 
 ## Error handling
 
-* Uses Fivetran Connector SDK logging for info and severe error messages (see `log` usage throughout)
+* Uses Fivetran Connector SDK logging for info and error messages (see `log` usage throughout)
 * Raises exceptions for failed authentication or API errors (see `get_access_token` and `update` functions)
 
 ## Tables created

@@ -69,7 +69,7 @@ def handle_rethinkdb_error(
                 error_msg = f"{error_type} during {operation_name}: {str(e)}"
 
                 if raise_error:
-                    log.severe(error_msg)
+                    log.error(error_msg)
                     raise RuntimeError(f"{operation_name} failed: {str(e)}")
                 else:
                     log.warning(error_msg)
@@ -116,13 +116,13 @@ def connect_to_rethinkdb(configuration: dict):
 
         except ReqlAuthError as e:
             # Don't retry authentication failures - these are permanent errors
-            log.severe(f"Authentication failed for RethinkDB: {str(e)}")
+            log.error(f"Authentication failed for RethinkDB: {str(e)}")
             raise RuntimeError(f"Unable to authenticate with RethinkDB: {str(e)}")
 
         except (ReqlDriverError, ConnectionError, OSError) as e:
             # Retry transient network/connection errors
             if attempt == __MAX_RETRIES - 1:
-                log.severe(f"Failed to connect after {__MAX_RETRIES} attempts: {str(e)}")
+                log.error(f"Failed to connect after {__MAX_RETRIES} attempts: {str(e)}")
                 raise RuntimeError(f"Unable to establish RethinkDB connection: {str(e)}")
 
             sleep_time = min(60, 2**attempt)
@@ -133,7 +133,7 @@ def connect_to_rethinkdb(configuration: dict):
 
         except (ValueError, TypeError) as e:
             # Don't retry configuration errors - these are permanent errors
-            log.severe(f"Configuration error: {str(e)}")
+            log.error(f"Configuration error: {str(e)}")
             raise RuntimeError(f"Unable to establish RethinkDB connection: {str(e)}")
 
 
@@ -352,7 +352,7 @@ def schema(configuration: dict):
         return schema_definition
 
     except (ReqlOpFailedError, ReqlDriverError, ReqlRuntimeError, ReqlAuthError) as e:
-        log.severe(f"Error generating schema: {str(e)}")
+        log.error(f"Error generating schema: {str(e)}")
         raise RuntimeError(f"Schema generation failed: {str(e)}")
 
     finally:
@@ -387,7 +387,7 @@ def update(configuration: dict, state: dict):
         )
 
     except (ReqlOpFailedError, ReqlDriverError, ReqlRuntimeError, ReqlAuthError) as e:
-        log.severe(f"Error during sync: {str(e)}")
+        log.error(f"Error during sync: {str(e)}")
         raise RuntimeError(f"Failed to sync data from RethinkDB: {str(e)}")
 
     finally:

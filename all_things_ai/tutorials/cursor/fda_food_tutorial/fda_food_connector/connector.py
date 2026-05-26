@@ -156,7 +156,7 @@ def fetch_fda_food_data(configuration: dict, state: dict) -> List[Dict[str, Any]
 
             # Check for API errors
             if "error" in data:
-                log.severe(f"API error: {data['error']}")
+                log.error(f"API error: {data['error']}")
                 raise RuntimeError(f"FDA API error: {data['error']['message']}")
 
             # Check if we have results
@@ -202,10 +202,10 @@ def fetch_fda_food_data(configuration: dict, state: dict) -> List[Dict[str, Any]
                 time.sleep(0.25)  # 240 requests per minute = 0.25 seconds between requests
 
         except requests.exceptions.RequestException as e:
-            log.severe("API request failed", e)
+            log.error("API request failed", e)
             raise RuntimeError(f"Failed to fetch data from FDA API: {str(e)}")
         except Exception as e:
-            log.severe("Unexpected error during data fetch", e)
+            log.error("Unexpected error during data fetch", e)
             raise RuntimeError(f"Unexpected error: {str(e)}")
 
     log.info(f"Completed data fetch. Total records processed: {processed_count}")
@@ -302,7 +302,7 @@ def update(configuration: dict, state: dict):
 
     except Exception as e:
         # In case of an exception, raise a runtime error
-        log.severe("Sync failed", e)
+        log.error("Sync failed", e)
         raise RuntimeError(f"Failed to sync data: {str(e)}")
 
 

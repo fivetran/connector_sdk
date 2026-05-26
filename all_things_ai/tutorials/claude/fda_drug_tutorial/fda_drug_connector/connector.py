@@ -106,7 +106,7 @@ class FDADrugConnector:
             return response.json()
 
         except requests.exceptions.RequestException as e:
-            log.severe("API request failed", e)
+            log.error("API request failed", e)
             return None
 
     def discover_endpoints(self) -> List[str]:
@@ -439,7 +439,7 @@ def update(configuration: dict, state: dict):
     endpoints = connector.discover_endpoints()
 
     if not endpoints:
-        log.severe("No available endpoints discovered")
+        log.error("No available endpoints discovered")
         return
 
     total_api_calls = 0
@@ -465,7 +465,7 @@ def update(configuration: dict, state: dict):
                 log.info(f"Completed {endpoint}: {endpoint_calls} API calls used")
 
             except Exception as e:
-                log.severe(f"Error syncing endpoint {endpoint}", e)
+                log.error(f"Error syncing endpoint {endpoint}", e)
                 continue
 
         log.info(f"FDA Drug API sync completed - Total API calls used: {total_api_calls}")

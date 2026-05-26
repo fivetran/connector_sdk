@@ -79,7 +79,7 @@ To handle pagination for large datasets, use a cursor in combination with LIMIT/
 
 ## Error handling
 - If the DuckDB engine or SQL query fails, the connector raises an exception.
-- Use `log.fine()` and `log.warning()` to debug cursor values and row counts.
+- Use `log.debug()` and `log.warning()` to debug cursor values and row counts.
 - The use of `op.checkpoint()` ensures recoverability on restart.
 
 

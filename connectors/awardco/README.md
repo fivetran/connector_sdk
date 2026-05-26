@@ -89,7 +89,7 @@ This connector implements simple page-based pagination. The `update` loop reques
 The connector validates the configuration and wraps network and processing steps in a try/except, surfacing failures with a clear error message. Logging uses the [Connector SDK logger](https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-logs) for observability.
 
 Recommendations:
-- Add `log.severe(...)` on critical failures where appropriate.
+- Add `log.error(...)` on critical failures where appropriate.
 - Consider retries and rate-limit handling if the Awardco API enforces limits.
 
 ## Tables created

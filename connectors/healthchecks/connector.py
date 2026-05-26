@@ -77,7 +77,7 @@ def handle_retryable_error(attempt: int, error_message: str, error_context: str)
     is_last_attempt = attempt >= __MAX_RETRIES - 1
 
     if is_last_attempt:
-        log.severe(f"{error_context} after {__MAX_RETRIES} attempts: {error_message}")
+        log.error(f"{error_context} after {__MAX_RETRIES} attempts: {error_message}")
         raise RuntimeError(f"{error_context} after {__MAX_RETRIES} attempts: {error_message}")
 
     # Calculate exponential backoff delay and retry
@@ -112,7 +112,7 @@ def make_api_request(url: str, api_key: str):
 
             # Non-retryable error - fail fast
             if response.status_code not in __RETRYABLE_STATUS_CODES:
-                log.severe(
+                log.error(
                     f"API request failed with status {response.status_code}: {response.text}"
                 )
                 raise RuntimeError(f"API returned {response.status_code}: {response.text}")
@@ -164,12 +164,12 @@ def fetch_check_pings(check_uuid: str, api_key: str):
         List of ping dictionaries containing ping event data.
     """
     url = f"{__BASE_API_URL}/checks/{check_uuid}/pings/"
-    log.fine(f"Fetching pings for check {check_uuid}")
+    log.debug(f"Fetching pings for check {check_uuid}")
 
     try:
         response_data = make_api_request(url, api_key)
         pings = response_data.get("pings", [])
-        log.fine(f"Retrieved {len(pings)} pings for check {check_uuid}")
+        log.debug(f"Retrieved {len(pings)} pings for check {check_uuid}")
         return pings
     except RuntimeError as e:
         log.warning(f"Failed to fetch pings for check {check_uuid}: {str(e)}")
@@ -187,12 +187,12 @@ def fetch_check_flips(check_uuid: str, api_key: str):
         List of flip dictionaries containing status change event data.
     """
     url = f"{__BASE_API_URL}/checks/{check_uuid}/flips/"
-    log.fine(f"Fetching flips for check {check_uuid}")
+    log.debug(f"Fetching flips for check {check_uuid}")
 
     try:
         response_data = make_api_request(url, api_key)
         flips = response_data.get("flips", [])
-        log.fine(f"Retrieved {len(flips)} flips for check {check_uuid}")
+        log.debug(f"Retrieved {len(flips)} flips for check {check_uuid}")
         return flips
     except RuntimeError as e:
         log.warning(f"Failed to fetch flips for check {check_uuid}: {str(e)}")

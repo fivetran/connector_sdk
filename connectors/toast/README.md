@@ -69,7 +69,7 @@ The connector syncs data in 30-day time windows, iterating from `initialSyncStar
 
 ## Error handling
 
-- 401 Unauthorized – Retries up to three times before logging a severe error and skipping the endpoint.
+- 401 Unauthorized – Retries up to three times before logging an error and skipping the endpoint.
 - 403 Forbidden – Skips the endpoint.
 - 429 Too Many Requests – Backs off on rate limit response before retrying.
 - 400 and 409 errors – Skips with logging.

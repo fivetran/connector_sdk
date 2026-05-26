@@ -120,19 +120,19 @@ Data transformation:
 The connector implements comprehensive error handling with retry logic. Refer to the `execute_graphql_query` function.
 
 Error handling strategies:
-- Authentication errors (401, 403): Fail immediately without retry, log as severe error
+- Authentication errors (401, 403): Fail immediately without retry, log as error
 - Bad requests (400): Fail immediately with detailed error message, no retry
 - Server errors (5xx): Retry up to 5 times with exponential backoff (base 2 seconds, max 60 seconds)
 - Network errors (timeout, connection): Retry with exponential backoff, configurable timeout (30 seconds default)
 - GraphQL errors: Log warnings but continue processing if data is present
-- Unexpected exceptions: Log severe error and re-raise with context
+- Unexpected exceptions: Log error and re-raise with context
 
 Configuration validation (`validate_configuration`):
 - Ensures required fields (dgraph_url, api_key) are present
 - Validates URL format (must start with http:// or https://)
 - Raises ValueError with descriptive message for invalid configuration
 
-All errors are logged using the SDK logging framework with appropriate severity levels (info, warning, severe).
+All errors are logged using the SDK logging framework with appropriate severity levels (info, warning, error).
 
 ## Tables created
 

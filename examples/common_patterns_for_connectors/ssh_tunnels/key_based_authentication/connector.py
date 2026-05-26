@@ -123,7 +123,7 @@ def get_api_response(params, headers, configuration):
     try:
         private_key = paramiko.RSAKey.from_private_key(key_stream, password=key_passphrase)
     except Exception as e:
-        log.severe("Failed to load SSH private key", e)
+        log.error("Failed to load SSH private key", e)
         raise
 
     local_port = int(
@@ -142,7 +142,7 @@ def get_api_response(params, headers, configuration):
             remote_bind_address=("127.0.0.1", remote_port),
             local_bind_address=("127.0.0.1", local_port),
         ) as _:
-            log.severe(f"Tunnel open at http://127.0.0.1:{local_port}")
+            log.error(f"Tunnel open at http://127.0.0.1:{local_port}")
 
             base_url = f"http://127.0.0.1:{local_port}/auth/api_key"
             try:
@@ -150,14 +150,14 @@ def get_api_response(params, headers, configuration):
                 response.raise_for_status()
                 response_page = response.json()
             except rq.exceptions.RequestException as e:
-                log.severe("HTTP request failed", e)
+                log.error("HTTP request failed", e)
                 raise
             except ValueError as e:
-                log.severe("Failed to parse JSON response", e)
+                log.error("Failed to parse JSON response", e)
                 raise
             return response_page
     except Exception as e:
-        log.severe("SSH tunnel or API call failed", e)
+        log.error("SSH tunnel or API call failed", e)
         raise
 
 

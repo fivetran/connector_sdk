@@ -433,12 +433,12 @@ def handle_failed_response(response, attempt: int):
 
     if is_retryable_error:
         error_message = f"Failed after {__MAX_RETRIES} attempts. Last status: {response.status_code} - {response.text}"
-        log.severe(error_message)
+        log.error(error_message)
         raise RuntimeError(
             f"API returned {response.status_code} after {__MAX_RETRIES} attempts: {response.text}"
         )
 
-    log.severe(f"API request failed with status {response.status_code}: {response.text}")
+    log.error(f"API request failed with status {response.status_code}: {response.text}")
     raise RuntimeError(f"API returned {response.status_code}: {response.text}")
 
 
@@ -455,7 +455,7 @@ def handle_timeout_error(attempt: int, error: Exception):
         retry_with_backoff("Request timeout", attempt)
         return
 
-    log.severe(f"Request timeout after {__MAX_RETRIES} attempts")
+    log.error(f"Request timeout after {__MAX_RETRIES} attempts")
     raise RuntimeError(f"Request timeout after {__MAX_RETRIES} attempts: {str(error)}")
 
 
@@ -472,7 +472,7 @@ def handle_connection_error(attempt: int, error: Exception):
         retry_with_backoff("Connection error", attempt)
         return
 
-    log.severe(f"Connection error after {__MAX_RETRIES} attempts")
+    log.error(f"Connection error after {__MAX_RETRIES} attempts")
     raise RuntimeError(f"Connection error after {__MAX_RETRIES} attempts: {str(error)}")
 
 

@@ -172,7 +172,7 @@ def handle_retry_logic(attempt: int, error_message: str):
         )
         time.sleep(delay)
     else:
-        log.severe(f"{error_message} after {__MAX_RETRIES} attempts")
+        log.error(f"{error_message} after {__MAX_RETRIES} attempts")
         raise RuntimeError(f"{error_message} after {__MAX_RETRIES} attempts")
 
 
@@ -196,7 +196,7 @@ def handle_response_status(response: requests.Response, attempt: int) -> Any | N
         return None
 
     # Non-retryable error
-    log.severe(f"Query execution failed with status {response.status_code}: {response.text}")
+    log.error(f"Query execution failed with status {response.status_code}: {response.text}")
     raise RuntimeError(f"Query execution failed: {response.status_code} - {response.text}")
 
 
@@ -228,7 +228,7 @@ def execute_questdb_query(configuration: dict, query: str) -> Any:
             handle_retry_logic(attempt, f"Request exception: {str(e)}")
 
     # If we've exhausted all retries, raise an exception
-    log.severe(f"Failed to execute query after {__MAX_RETRIES} attempts")
+    log.error(f"Failed to execute query after {__MAX_RETRIES} attempts")
     raise RuntimeError(f"Failed to execute query after {__MAX_RETRIES} attempts")
 
 
@@ -433,7 +433,7 @@ def sync_table_data(configuration: dict, table_name: str, state: dict) -> int:
                 break
 
         except (RuntimeError, requests.RequestException, KeyError, ValueError, IndexError) as e:
-            log.severe(f"Error syncing table {table_name}: {str(e)}")
+            log.error(f"Error syncing table {table_name}: {str(e)}")
             raise RuntimeError(f"Failed to sync table {table_name}: {str(e)}")
 
     # Final checkpoint
@@ -474,7 +474,7 @@ def update(configuration: dict, state: dict):
             records_synced = sync_table_data(configuration, table_name, state)
             log.info(f"Successfully synced {records_synced} records from table {table_name}")
         except RuntimeError as e:
-            log.severe(f"Failed to sync table {table_name}: {str(e)}")
+            log.error(f"Failed to sync table {table_name}: {str(e)}")
             raise
 
 

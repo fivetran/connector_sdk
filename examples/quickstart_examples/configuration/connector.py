@@ -79,7 +79,7 @@ def update(configuration: dict, state: dict):
     f = Fernet(key.encode())
 
     # Decrypt the encrypted message using the Fernet object.
-    log.fine("decrypting the message")
+    log.debug("decrypting the message")
     message = f.decrypt(encrypted_message)
 
     # Upsert operation to insert/update the decrypted message in the "crypto" table.

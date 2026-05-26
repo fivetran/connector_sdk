@@ -155,7 +155,7 @@ def update(configuration: dict, state: dict):
     # The op.upsert method is called with two arguments:
     # - The first argument is the name of the table to upsert the data into, in this case, "signed_message".
     # - The second argument is a dictionary containing the data to be upserted,
-    log.fine("upserting to table 'signed_message'")
+    log.debug("upserting to table 'signed_message'")
     op.upsert(table="signed_message", data={"id": 1, "message": signed_message})
 
     # Save the progress by checkpointing the state. This is important for ensuring that the sync process can resume

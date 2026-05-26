@@ -98,14 +98,14 @@ def make_api_request(url: str, headers: dict):
                     time.sleep(delay)
                     continue
                 else:
-                    log.severe(
+                    log.error(
                         f"Failed to fetch data after {__MAX_RETRIES} attempts. Last status: {response.status_code} - {response.text}"
                     )
                     raise RuntimeError(
                         f"API returned {response.status_code} after {__MAX_RETRIES} attempts: {response.text}"
                     )
             else:
-                log.severe(
+                log.error(
                     f"API request failed with status {response.status_code}: {response.text}"
                 )
                 raise RuntimeError(f"API returned {response.status_code}: {response.text}")
@@ -119,7 +119,7 @@ def make_api_request(url: str, headers: dict):
                 time.sleep(delay)
                 continue
             else:
-                log.severe(f"Network error after {__MAX_RETRIES} attempts", e)
+                log.error(f"Network error after {__MAX_RETRIES} attempts", e)
                 raise RuntimeError(f"Network error after {__MAX_RETRIES} attempts: {str(e)}")
     return None
 

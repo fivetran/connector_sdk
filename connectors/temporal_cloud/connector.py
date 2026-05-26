@@ -117,12 +117,12 @@ async def _connect_temporal_client(
         except Exception as e:
             # Check if error is transient
             if not is_transient_error(e):
-                log.severe(f"Permanent error connecting to Temporal Cloud: {str(e)}")
+                log.error(f"Permanent error connecting to Temporal Cloud: {str(e)}")
                 raise
 
             # Last attempt - raise error
             if attempt == __MAX_RETRIES - 1:
-                log.severe(f"Failed to connect after {__MAX_RETRIES} attempts: {str(e)}")
+                log.error(f"Failed to connect after {__MAX_RETRIES} attempts: {str(e)}")
                 raise
 
             # Calculate exponential backoff and retry
@@ -289,21 +289,19 @@ async def fetch_temporal_data(client, state: dict, process_fn, data_type: str):
 
         except ValueError as ve:
             # Configuration errors are permanent - don't retry
-            log.severe(f"Configuration error: {str(ve)}")
+            log.error(f"Configuration error: {str(ve)}")
             raise
         except Exception as e:
             last_error = e
 
             # Check if error is transient
             if not is_transient_error(e):
-                log.severe(f"Permanent error fetching {data_type}: {str(e)}")
+                log.error(f"Permanent error fetching {data_type}: {str(e)}")
                 raise
 
             # Last attempt - raise error
             if attempt == __MAX_RETRIES - 1:
-                log.severe(
-                    f"All {__MAX_RETRIES} retry attempts exhausted for fetching {data_type}"
-                )
+                log.error(f"All {__MAX_RETRIES} retry attempts exhausted for fetching {data_type}")
                 raise
 
             # Retry with exponential backoff

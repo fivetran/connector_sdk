@@ -94,7 +94,7 @@ def create_supabase_client(configuration: dict):
         log.info(f"Successfully created Supabase client for schema: {schema_name}")
         return supabase_client
     except Exception as e:
-        log.severe("Failed to create Supabase client", e)
+        log.error("Failed to create Supabase client", e)
         raise RuntimeError(f"Failed to create Supabase client: {str(e)}")
 
 
@@ -149,7 +149,7 @@ def fetch_employee_data_batch(
             return [], False
 
     except Exception as e:
-        log.severe(f"Failed to fetch batch from table {table_name} at offset {offset}", e)
+        log.error(f"Failed to fetch batch from table {table_name} at offset {offset}", e)
         raise RuntimeError(
             f"Failed to fetch batch from table {table_name} at offset {offset}: {str(e)}"
         )

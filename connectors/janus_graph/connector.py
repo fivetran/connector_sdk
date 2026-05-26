@@ -634,7 +634,7 @@ def update(configuration: dict, state: dict):
         log.info("Sync completed successfully")
 
     except Exception as e:
-        log.severe(f"Failed to sync JanusGraph data: {str(e)}")
+        log.error(f"Failed to sync JanusGraph data: {str(e)}")
         raise RuntimeError(f"Failed to sync data: {str(e)}")
 
     finally:

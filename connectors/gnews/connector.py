@@ -159,7 +159,7 @@ def upsert_news_stories(rows: List[Dict[str, Any]]) -> int:
             op.upsert(table="news_stories", data=record)
             upserts_count += 1
         except Exception as e:
-            log.severe(f"Failed to upsert record: {record}\nError: {e}")
+            log.error(f"Failed to upsert record: {record}\nError: {e}")
             continue
 
     return upserts_count

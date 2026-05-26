@@ -191,7 +191,7 @@ def create_document_store(configuration: dict) -> Tuple[DocumentStore, str]:
                 log.info("Cleaned up temporary certificate after failure")
             except OSError as cleanup_err:
                 log.warning(f"Failed to remove temporary certificate file: {cleanup_err}")
-        log.severe(f"Failed to create RavenDB DocumentStore: {e}")
+        log.error(f"Failed to create RavenDB DocumentStore: {e}")
         raise RuntimeError(f"Failed to create RavenDB DocumentStore: {e}")
 
 
@@ -331,7 +331,7 @@ def fetch_documents_batch(
         except (ConnectionError, TimeoutError, RavenException) as e:
             retry_count += 1
             if retry_count >= max_retries:
-                log.severe(
+                log.error(
                     f"Failed to fetch batch from collection {collection_name} at skip {skip} "
                     f"after {max_retries} retries: {e}"
                 )
@@ -351,7 +351,7 @@ def fetch_documents_batch(
 
         except (ValueError, KeyError, TypeError) as e:
             # Non-retryable errors (data/configuration issues)
-            log.severe(
+            log.error(
                 f"Data error while fetching batch from collection {collection_name} at skip {skip}: {e}"
             )
             raise RuntimeError(
@@ -558,7 +558,7 @@ def update(configuration: dict, state: dict):
 
     except (RuntimeError, ValueError, KeyError, ConnectionError, RavenException) as e:
         # In case of a known exception, raise a runtime error
-        log.severe(f"Failed to sync data: {e}")
+        log.error(f"Failed to sync data: {e}")
         raise RuntimeError(f"Failed to sync data: {str(e)}")
     finally:
         # Always close the document store

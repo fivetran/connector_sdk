@@ -274,7 +274,7 @@ def make_api_request(url: str, headers: dict, params=None) -> Any:
 
         except requests.exceptions.RequestException as e:
             if attempt == __MAX_RETRIES - 1:  # Last attempt
-                log.severe(f"API request failed after {__MAX_RETRIES} attempts", e)
+                log.error(f"API request failed after {__MAX_RETRIES} attempts", e)
                 raise RuntimeError(f"Failed to fetch data from SuiteDash API: {str(e)}")
 
             # Calculate delay with exponential backoff
@@ -367,7 +367,7 @@ def sync_endpoint_with_pagination(
         response_data = make_api_request(url, headers, params)
 
         if not response_data.get("success", False):
-            log.severe(f"API returned error: {response_data.get('message', 'Unknown error')}")
+            log.error(f"API returned error: {response_data.get('message', 'Unknown error')}")
             break
 
         records = response_data.get("data", [])

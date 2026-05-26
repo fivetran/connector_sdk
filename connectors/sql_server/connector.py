@@ -76,10 +76,10 @@ def connect_to_database(configuration):
         log.info("Connection established!")
         return connection
     except pyodbc.Error as e:
-        log.severe(f"Error connecting to database: {e}")
+        log.error(f"Error connecting to database: {e}")
         raise e
     except Exception as e:
-        log.severe(f"Unexpected error: {e}")
+        log.error(f"Unexpected error: {e}")
         raise e
 
 
@@ -95,10 +95,10 @@ def probe(connection):
             cursor.execute("SELECT 1")
             log.info("Database connection tested successfully")
     except pyodbc.Error as e:
-        log.severe(f"Error testing database connection: {e}")
+        log.error(f"Error testing database connection: {e}")
         raise e
     except Exception as e:
-        log.severe(f"Unexpected error during testing database connection: {e}")
+        log.error(f"Unexpected error during testing database connection: {e}")
         raise e
 
 
@@ -113,7 +113,7 @@ def close_database_connection(connection):
             connection.close()
         log.info("Connection closed")
     except Exception as e:
-        log.severe(f"Error closing database connection: {e}")
+        log.error(f"Error closing database connection: {e}")
         raise e
 
 
@@ -182,10 +182,10 @@ def sync_data(connection, sql_query, last_query_date, state):
         return max_query_date
 
     except pyodbc.Error as e:
-        log.severe(f"Error executing query: {e}")
+        log.error(f"Error executing query: {e}")
         raise e
     except Exception as e:
-        log.severe(f"Unexpected error during syncing data: {e}")
+        log.error(f"Unexpected error during syncing data: {e}")
         raise e
 
 
