@@ -2,9 +2,11 @@
 
 ## Connector overview
 
-This connector syncs clinical data from a FHIR R4 server and enriches it with AI-powered hybrid analysis using Databricks `ai_query()`. It implements the Hybrid pattern (Discovery + Debate) to provide population health risk stratification and per-patient intervention recommendations.
+This connector syncs clinical data from a FHIR R4 server and enriches it with AI-powered hybrid analysis using Databricks' `ai_query()`. It implements the Hybrid pattern (Discovery + Debate) to provide population health risk stratification and per-patient intervention recommendations.
 
-The connector fetches Patient, Condition, Observation, and MedicationRequest resources from any FHIR R4-compliant server, then applies two AI enrichment phases: a Discovery phase that analyzes the patient cohort to identify at-risk populations, and a Debate phase where a Clinical Risk Analyst and a Resource Allocation Analyst debate intervention priorities for each patient, producing a consensus intervention level with a disagreement flag. An optional Genie Space can be created in Databricks for natural language clinical analytics.
+The connector fetches Patient, Condition, Observation, and MedicationRequest resources from any FHIR R4-compliant server, then applies two AI enrichment phases: a Discovery phase that analyzes the patient cohort to identify at-risk populations, and a Debate phase where a Clinical Risk Analyst and a Resource Allocation Analyst debate intervention priorities for each patient, producing a consensus intervention level with a disagreement flag. 
+
+Optionally, the connector can create a [Genie Space in Databricks](https://docs.databricks.com/aws/en/genie/) for natural language clinical analytics.
 
 ## Requirements
 
@@ -25,7 +27,7 @@ Refer to the [Connector SDK Setup Guide](https://fivetran.com/docs/connectors/co
 - Fetches Patient, Condition, Observation, and MedicationRequest resources from any FHIR R4-compliant server
 - Supports optional ICD-10 code prefix filtering to target a specific patient cohort (e.g., `E11` for diabetes)
 - Supports incremental sync using FHIR `_lastUpdated` filtering based on the previous sync timestamp
-- Discovery phase: calls Databricks `ai_query()` to identify at-risk populations, dominant conditions, and recommended screenings across the cohort
+- Discovery phase: calls Databricks' `ai_query()` to identify at-risk populations, dominant conditions, and recommended screenings across the cohort
 - Debate phase: for each patient, a Clinical Risk Analyst and a Resource Allocation Analyst independently assess the patient, then a Consensus Agent synthesizes a final intervention level with a disagreement flag
 - Produces eight destination tables: four FHIR resource tables and four AI enrichment tables
 - Optional Genie Space creation in Databricks for natural language clinical analytics
@@ -40,19 +42,19 @@ Note: The `fivetran_connector_sdk` and `requests` packages are pre-installed in 
 
 | Parameter | Description | Required | Default |
 |---|---|---|---|
-| fhir_base_url | Base URL of the FHIR R4 server | No | https://hapi.fhir.org/baseR4 |
-| databricks_workspace_url | Databricks workspace URL (https://...) | Yes (if enrichment enabled) | None |
-| databricks_token | Databricks Personal Access Token | Yes (if enrichment enabled) | None |
-| databricks_warehouse_id | Databricks SQL warehouse ID | Yes (if enrichment enabled) | None |
-| databricks_model | Databricks Foundation Model name | No | databricks-claude-sonnet-4-6 |
-| enable_enrichment | Enable AI enrichment phases (true/false) | No | true |
-| enable_discovery | Enable Discovery phase (true/false) | No | true |
-| enable_genie_space | Create Databricks Genie Space (true/false) | No | false |
-| genie_table_identifier | Genie Space table identifier (catalog.schema.table) | Yes (if Genie enabled) | None |
-| max_patients | Maximum patients to sync per run | No | 20 |
-| max_enrichments | Maximum patients to enrich per run | No | 5 |
-| condition_filter | ICD-10 code prefix to filter patients (e.g., E11) | No | None |
-| databricks_timeout | Databricks API timeout in seconds | No | 120 |
+| `fhir_base_url` | Base URL of the FHIR R4 server | No | https://hapi.fhir.org/baseR4 |
+| `databricks_workspace_url` | Databricks workspace URL (https://...) | Yes (if enrichment enabled) | None |
+| `databricks_token` | Databricks Personal Access Token | Yes (if enrichment enabled) | None |
+| `databricks_warehouse_id` | Databricks SQL warehouse ID | Yes (if enrichment enabled) | None |
+| `databricks_model` | Databricks Foundation Model name | No | databricks-claude-sonnet-4-6 |
+| `enable_enrichment` | Enable AI enrichment phases (true/false) | No | true |
+| `enable_discovery` | Enable Discovery phase (true/false) | No | true |
+| `enable_genie_space` | Create Databricks Genie Space (true/false) | No | false |
+| `genie_table_identifier` | Genie Space table identifier (catalog.schema.table) | Yes (if Genie enabled) | None |
+| `max_patients` | Maximum patients to sync per run | No | 20 |
+| `max_enrichments` | Maximum patients to enrich per run | No | 5 |
+| `condition_filter` | ICD-10 code prefix to filter patients (e.g., E11) | No | None |
+| `databricks_timeout` | Databricks API timeout in seconds | No | 120 |
 
 ## Authentication
 
@@ -80,11 +82,11 @@ All remaining nested dictionaries are flattened using `flatten_dict()` before up
 
 FHIR API requests are retried up to 3 times with exponential backoff for status codes 429, 500, 502, 503, and 504. Authentication errors (401, 403) are not retried and raise an immediate error with a credential check message.
 
-Databricks `ai_query()` calls retry the initial POST up to 3 times with exponential backoff for status codes 429, 500, 502, 503, and 504. If all retry attempts fail, or if the statement returns a final FAILED state, that patient's assessment is skipped and a warning is logged, but the sync continues. Checkpoints are written after each patient debate and after each enrichment phase so that progress is not lost if a sync is interrupted.
+Databricks' `ai_query()` calls retry the initial POST up to 3 times with exponential backoff for status codes 429, 500, 502, 503, and 504. If all retry attempts fail, or if the statement returns a final FAILED state, that patient's assessment is skipped and a warning is logged, but the sync continues. Checkpoints are written after each patient debate and after each enrichment phase so that progress is not lost if a sync is interrupted.
 
 ## Tables created
 
-The connector creates the following tables in the destination.
+The connector creates the following tables in the destination:
 
 ### PATIENTS
 
@@ -92,23 +94,23 @@ The `PATIENTS` table consists of the following columns:
 
 | Column | Description |
 |---|---|
-| patient_id | Unique FHIR Patient resource ID (primary key) |
-| mrn | Medical record number from identifier |
-| given_name | Patient first name |
-| family_name | Patient last name |
-| gender | Administrative gender |
-| birth_date | Date of birth (YYYY-MM-DD) |
-| deceased_boolean | True if patient is deceased |
-| deceased_date_time | Date and time of death if applicable |
-| marital_status | Marital status display text |
-| language | Preferred communication language |
-| address_line | Street address |
-| city | City |
-| state | State or province |
-| postal_code | Postal code |
-| country | Country |
-| active | Whether the patient record is active |
-| last_updated | FHIR resource last updated timestamp |
+| `patient_id` | Unique FHIR Patient resource ID (primary key) |
+| `mrn` | Medical record number from identifier |
+| `given_name` | Patient first name |
+| `family_name` | Patient last name |
+| `gender` | Administrative gender |
+| `birth_date` | Date of birth (YYYY-MM-DD) |
+| `deceased_boolean` | True if patient is deceased |
+| `deceased_date_time` | Date and time of death if applicable |
+| `marital_status` | Marital status display text |
+| `language` | Preferred communication language |
+| `address_line` | Street address |
+| `city` | City |
+| `state` | State or province |
+| `postal_code` | Postal code |
+| `country` | Country |
+| `active` | Whether the patient record is active |
+| `last_updated` | FHIR resource last updated timestamp |
 
 ### CONDITIONS
 
@@ -116,18 +118,18 @@ The `CONDITIONS` table consists of the following columns:
 
 | Column | Description |
 |---|---|
-| condition_id | Unique FHIR Condition resource ID (primary key) |
-| patient_id | Reference to the patient |
-| code | ICD-10 or SNOMED condition code |
-| display | Human-readable condition name |
-| code_system | Coding system URI |
-| category | Condition category code |
-| clinical_status | active, resolved, inactive |
-| verification_status | confirmed, unconfirmed, refuted |
-| onset_date | Date condition began |
-| abatement_date | Date condition resolved |
-| recorded_date | Date condition was recorded |
-| last_updated | FHIR resource last updated timestamp |
+| `condition_id` | Unique FHIR Condition resource ID (primary key) |
+| `patient_id` | Reference to the patient |
+| `code` | ICD-10 or SNOMED condition code |
+| `display` | Human-readable condition name |
+| `code_system` | Coding system URI |
+| `category` | Condition category code |
+| `clinical_status` | active, resolved, inactive |
+| `verification_status` | confirmed, unconfirmed, refuted |
+| `onset_date` | Date condition began |
+| `abatement_date` | Date condition resolved |
+| `recorded_date` | Date condition was recorded |
+| `last_updated` | FHIR resource last updated timestamp |
 
 ### OBSERVATIONS
 
@@ -135,21 +137,21 @@ The `OBSERVATIONS` table consists of the following columns:
 
 | Column | Description |
 |---|---|
-| observation_id | Unique FHIR Observation resource ID (primary key) |
-| patient_id | Reference to the patient |
-| code | LOINC observation code |
-| display | Human-readable observation name |
-| code_system | Coding system URI |
-| category | Observation category (laboratory, vital-signs) |
-| value | Observation result value |
-| value_unit | Unit of measure |
-| status | final, preliminary, amended |
-| effective_date | Date observation was made |
-| issued | Date result was issued |
-| interpretation | Normal, High, Low, Critical |
-| reference_range_low | Lower bound of normal range |
-| reference_range_high | Upper bound of normal range |
-| last_updated | FHIR resource last updated timestamp |
+| `observation_id` | Unique FHIR Observation resource ID (primary key) |
+| `patient_id` | Reference to the patient |
+| `code` | LOINC observation code |
+| `display` | Human-readable observation name |
+| `code_system` | Coding system URI |
+| `category` | Observation category (laboratory, vital-signs) |
+| `value` | Observation result value |
+| `value_unit` | Unit of measure |
+| `status` | final, preliminary, amended |
+| `effective_date` | Date observation was made |
+| `issued` | Date result was issued |
+| `interpretation` | Normal, High, Low, Critical |
+| `reference_range_low` | Lower bound of normal range |
+| `reference_range_high` | Upper bound of normal range |
+| `last_updated` | FHIR resource last updated timestamp |
 
 ### MEDICATIONS
 
@@ -157,18 +159,18 @@ The `MEDICATIONS` table consists of the following columns:
 
 | Column | Description |
 |---|---|
-| medication_id | Unique FHIR MedicationRequest resource ID (primary key) |
-| patient_id | Reference to the patient |
-| medication_code | RxNorm or NDC medication code |
-| medication_display | Human-readable medication name |
-| medication_system | Coding system URI |
-| status | active, completed, stopped |
-| intent | order, plan, proposal |
-| authored_on | Date prescription was written |
-| dosage_text | Free-text dosage instructions |
-| dosage_timing | Dosage timing details (JSON) |
-| dosage_route | Route of administration |
-| last_updated | FHIR resource last updated timestamp |
+| `medication_id` | Unique FHIR MedicationRequest resource ID (primary key) |
+| `patient_id` | Reference to the patient |
+| `medication_code` | RxNorm or NDC medication code |
+| `medication_display` | Human-readable medication name |
+| `medication_system` | Coding system URI |
+| `status` | active, completed, stopped |
+| `intent` | order, plan, proposal |
+| `authored_on` | Date prescription was written |
+| `dosage_text` | Free-text dosage instructions |
+| `dosage_timing` | Dosage timing details (JSON) |
+| `dosage_route` | Route of administration |
+| `last_updated` | FHIR resource last updated timestamp |
 
 ### POPULATION_INSIGHTS
 
@@ -176,15 +178,15 @@ The `POPULATION_INSIGHTS` table consists of the following columns:
 
 | Column | Description |
 |---|---|
-| insight_id | Unique insight identifier (primary key) |
-| condition_filter | ICD-10 prefix used to filter cohort, or "none" |
-| patient_count | Number of patients analyzed |
-| dominant_conditions | Most prevalent conditions in cohort (JSON array) |
-| risk_factors | Key risk factors identified (JSON array) |
-| high_risk_indicators | Summary of high-risk indicators |
-| recommended_screenings | Preventive screenings recommended (JSON array) |
-| comorbidities_to_investigate | Comorbidities flagged for investigation (JSON array) |
-| population_risk_summary | Narrative population risk summary |
+| `insight_id` | Unique insight identifier (primary key) |
+| `condition_filter` | ICD-10 prefix used to filter cohort, or "none" |
+| `patient_count` | Number of patients analyzed |
+| `dominant_conditions` | Most prevalent conditions in cohort (JSON array) |
+| `risk_factors` | Key risk factors identified (JSON array) |
+| `high_risk_indicators` | Summary of high-risk indicators |
+| `recommended_screenings` | Preventive screenings recommended (JSON array) |
+| `comorbidities_to_investigate` | Comorbidities flagged for investigation (JSON array) |
+| `population_risk_summary` | Narrative population risk summary |
 
 ### CLINICAL_ASSESSMENTS
 
@@ -192,14 +194,14 @@ The `CLINICAL_ASSESSMENTS` table consists of the following columns:
 
 | Column | Description |
 |---|---|
-| patient_id | Reference to the patient (primary key) |
-| assessment_type | Always "clinical" |
-| clinical_risk_score | Risk score 1-10 (urgency-maximizing) |
-| worst_case_scenario | Description of worst-case clinical outcome |
-| intervention_recommendation | INPATIENT_CARE_MGMT, OUTPATIENT_INTENSIFY, TELEHEALTH, or ROUTINE |
-| immediate_actions | Immediate actions recommended (JSON array) |
-| complication_risks | Complication risks identified (JSON array) |
-| reasoning | Clinical analyst reasoning narrative |
+| `patient_id` | Reference to the patient (primary key) |
+| `assessment_type` | Always "clinical" |
+| `clinical_risk_score` | Risk score 1-10 (urgency-maximizing) |
+| `worst_case_scenario` | Description of worst-case clinical outcome |
+| `intervention_recommendation` | INPATIENT_CARE_MGMT, OUTPATIENT_INTENSIFY, TELEHEALTH, or ROUTINE |
+| `immediate_actions` | Immediate actions recommended (JSON array) |
+| `complication_risks` | Complication risks identified (JSON array) |
+| `reasoning` | Clinical analyst reasoning narrative |
 
 ### RESOURCE_ASSESSMENTS
 
@@ -207,14 +209,14 @@ The `RESOURCE_ASSESSMENTS` table consists of the following columns:
 
 | Column | Description |
 |---|---|
-| patient_id | Reference to the patient (primary key) |
-| assessment_type | Always "resource" |
-| resource_risk_score | Risk score 1-10 (proportional) |
-| expected_risk | Probability-weighted expected risk description |
-| intervention_recommendation | INPATIENT_CARE_MGMT, OUTPATIENT_INTENSIFY, TELEHEALTH, or ROUTINE |
-| cost_effective_actions | Cost-effective actions recommended (JSON array) |
-| mitigating_factors | Factors that reduce risk (JSON array) |
-| reasoning | Resource analyst reasoning narrative |
+| `patient_id` | Reference to the patient (primary key) |
+| `assessment_type` | Always "resource" |
+| `resource_risk_score` | Risk score 1-10 (proportional) |
+| `expected_risk` | Probability-weighted expected risk description |
+| `intervention_recommendation` | INPATIENT_CARE_MGMT, OUTPATIENT_INTENSIFY, TELEHEALTH, or ROUTINE |
+| `cost_effective_actions` | Cost-effective actions recommended (JSON array) |
+| `mitigating_factors` | Factors that reduce risk (JSON array) |
+| `reasoning` | Resource analyst reasoning narrative |
 
 ### DEBATE_CONSENSUS
 
@@ -222,18 +224,18 @@ The `DEBATE_CONSENSUS` table consists of the following columns:
 
 | Column | Description |
 |---|---|
-| patient_id | Reference to the patient (primary key) |
-| assessment_type | Always "consensus" |
-| intervention_level | Final intervention: INPATIENT_CARE_MGMT, OUTPATIENT_INTENSIFY, TELEHEALTH, or ROUTINE |
-| consensus_risk_score | Balanced risk score 1-10 |
-| debate_winner | CLINICAL, RESOURCE, or DRAW |
-| winner_rationale | Why one analyst was more persuasive |
-| agreement_areas | Areas of analyst agreement (JSON array) |
-| disagreement_areas | Areas of analyst disagreement (JSON array) |
-| disagreement_flag | True if analysts significantly disagreed |
-| disagreement_severity | NONE, MINOR, SIGNIFICANT, or FUNDAMENTAL |
-| recommended_next_step | Recommended immediate next step |
-| executive_summary | Narrative summary of the debate consensus |
+| `patient_id` | Reference to the patient (primary key) |
+| `assessment_type` | Always "consensus" |
+| `intervention_level` | Final intervention: INPATIENT_CARE_MGMT, OUTPATIENT_INTENSIFY, TELEHEALTH, or ROUTINE |
+| `consensus_risk_score` | Balanced risk score 1-10 |
+| `debate_winner` | CLINICAL, RESOURCE, or DRAW |
+| `winner_rationale` | Why one analyst was more persuasive |
+| `agreement_areas` | Areas of analyst agreement (JSON array) |
+| `disagreement_areas` | Areas of analyst disagreement (JSON array) |
+| `disagreement_flag` | True if analysts significantly disagreed |
+| `disagreement_severity` | NONE, MINOR, SIGNIFICANT, or FUNDAMENTAL |
+| `recommended_next_step` | Recommended immediate next step |
+| `executive_summary` | Narrative summary of the debate consensus |
 
 ## Additional considerations
 
