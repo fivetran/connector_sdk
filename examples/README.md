@@ -64,6 +64,7 @@ These examples demonstrate common patterns and best practices for building conne
 - [multiple_tables_with_cursors](https://github.com/fivetran/fivetran_connector_sdk/tree/main/examples/common_patterns_for_connectors/cursors/multiple_tables_with_cursors) - The parent-child relationship between tables from incremental API endpoints, with the complex cursor.
 - [time_window](https://github.com/fivetran/fivetran_connector_sdk/tree/main/examples/common_patterns_for_connectors/cursors/time_window) - This is an example of how to move the state forward in time by a set number of days until current time is reached.
 - [records_with_no_created_at_timestamp](https://github.com/fivetran/fivetran_connector_sdk/tree/main/examples/common_patterns_for_connectors/cursors/records_with_no_created_at_timestamp) - This example shows how to work with records where the source does not provide a `created_at` (or equivalent) field. It is useful when it's desired to keep track of when the record was first observed.
+- [importing_external_drivers](https://github.com/fivetran/fivetran_connector_sdk/tree/main/examples/common_patterns_for_connectors/importing_external_drivers) - This example demonstrates how to install drivers in your connector environment by writing an `installation.sh` file in the `drivers` folder. This script will be executed at the time of deploying your connector, before your `connector.py` is run to sync your data.
 
 ### Export
 
@@ -113,22 +114,4 @@ These examples demonstrate common patterns and best practices for building conne
 ### Workflows
 
 - [github](https://github.com/fivetran/fivetran_connector_sdk/tree/main/examples/workflows/github) - This is an example of a GitHub workflow to deploy a hello connector after a push to the hello directory. It uses GitHub secrets and environment variables to create a configuration.json file that is included in the deployment.
-</details>
-
-## Private Preview examples
-
-These examples rely on features that are currently in [Private Preview](https://fivetran.com/docs/core-concepts#releasephases). To enable them for your connector, please contact Fivetran professional services.
-
-<details open>
-<summary>List of connectors that use Private Preview features</summary>
-
-- [Importing External Libraries and Drivers](https://github.com/fivetran/fivetran_connector_sdk/tree/main/examples/private_preview_features/importing_external_drivers)
-  - This feature enables you to install drivers in your connector environment by writing a `installation.sh` file in the `drivers` folder, in the same directory as your connector.py file. This script will be executed at the time of deploying your connector, before your connector.py is run to sync your data.
-- [Sybase IQ](https://github.com/fivetran/fivetran_connector_sdk/tree/main/examples/private_preview_features/sybase_iq)
-  - This feature enables you to connect to Sybase IQ database using the `FreeTDS` driver and `PyODBC` by writing a `installation.sh` file in the `drivers` folder. This script will be executed at the time of deploying your connector, before your connector.py is run to sync your data.
-- [Sybase ASE](https://github.com/fivetran/fivetran_connector_sdk/tree/main/examples/private_preview_features/sybase_ase)
-  - This feature enables you to connect to Sybase ASE database using the `FreeTDS` driver and `PyODBC` by writing a `installation.sh` file in the `drivers` folder. This script will be executed at the time of deploying your connector, before your connector.py is run to sync your data.
-- [ibm_infomix_using_jaydebeapi](https://github.com/fivetran/fivetran_connector_sdk/tree/main/examples/private_preview_features/ibm_infomix_using_jaydebeapi)
-  - This example shows how to connect and sync data from IBM Informix using Connector SDK. This example uses the `jaydebeapi` library with external JDBC Informix driver, using `installation.sh` file in the `drivers` folder, to connect to the Informix database and fetch data.
-
 </details>
