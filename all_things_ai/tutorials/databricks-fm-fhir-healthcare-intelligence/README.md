@@ -239,6 +239,6 @@ The `DEBATE_CONSENSUS` table consists of the following columns:
 
 ## Additional considerations
 
-This connector was built by David Millman during a working session with Kelly Kohlleffel. It follows the Hybrid (Discovery + Debate) pattern established by the NOAA Weather Risk Intelligence connector (PR #570) and the FDA FAERS Pharmacovigilance Intelligence connector (PR #571). The HAPI FHIR public test server (`https://hapi.fhir.org/baseR4`) is used as the default data source and contains synthetic clinical data suitable for demonstration purposes.
+This connector was built by David Millman during a working session with Kelly Kohlleffel. It follows the Hybrid (Discovery + Debate) pattern established by the [NOAA Weather Risk Intelligence connector](https://github.com/fivetran/fivetran_connector_sdk/tree/main/all_things_ai/tutorials/databricks-fm-noaa-weather-risk-intelligence) and the [FDA FAERS Pharmacovigilance Intelligence connector](https://github.com/fivetran/fivetran_connector_sdk/tree/main/all_things_ai/tutorials/databricks-fm-fda-faers-pv-intelligence). The HAPI FHIR public test server (`https://hapi.fhir.org/baseR4`) is used as the default data source and contains synthetic clinical data suitable for demonstration purposes.
 
 The examples provided are intended to help you effectively use Fivetran's Connector SDK. While we've tested the code, Fivetran cannot be held responsible for any unexpected or negative consequences that may arise from using these examples. For inquiries, please reach out to our Support team.
