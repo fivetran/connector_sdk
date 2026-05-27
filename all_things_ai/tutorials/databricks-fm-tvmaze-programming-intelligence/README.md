@@ -82,8 +82,7 @@ The TVMaze API is public and requires no authentication or API key.
 Databricks access requires a Personal Access Token (PAT) with SQL execution permissions:
 
 1. Navigate to your Databricks workspace.
-2. Click your username in the top-right corner and select **Settings**
-```.
+2. Click your username in the top-right corner and select **Settings**.
 3. Click **Developer** in the left panel.
 4. Click **Manage** next to **Access tokens**.
 5. Click **Generate new token**, provide a description, and click **Generate**.
@@ -97,12 +96,12 @@ For incremental syncs, the connector calls `GET /updates/shows?since=month` to r
 
 ## Data handling
 
-The `def update(configuration, state)` function orchestrates the sync in three phases:
+The `def update(configuration, state)` function orchestrates the sync in several phases:
 
 1. Validates configuration via `def validate_configuration(configuration)` including Databricks credential checks and sanity ceilings on configurable limits
-2. Phase 1 - MOVE: Fetches shows from the TVMaze API via `def fetch_data_with_retry(session, url, params)`, normalizes nested structures via `def flatten_show(show)`, and upserts records with per-page checkpointing
-3. Phase 2 - DEBATE: For each show in the current sync batch (up to `max_enrichments`), fetches embedded cast and episode data, builds a context string via `def build_show_context(show, embedded)`, and runs three `ai_query()` calls via `def run_debate(databricks_session, configuration, show_record, embedded, state)`: Programming Optimist, Programming Skeptic, and Consensus
-4. Phase 3 - AGENT: Optionally creates a Genie Space via `def create_genie_space(databricks_session, configuration, state)` with programming-analytics instructions and sample questions
+2. MOVE: Fetches shows from the TVMaze API via `def fetch_data_with_retry(session, url, params)`, normalizes nested structures via `def flatten_show(show)`, and upserts records with per-page checkpointing.
+3. DEBATE: For each show in the current sync batch (up to `max_enrichments`), fetches embedded cast and episode data, builds a context string via `def build_show_context(show, embedded)`, and runs three `ai_query()` calls via `def run_debate(databricks_session, configuration, show_record, embedded, state)`: Programming Optimist, Programming Skeptic, and Consensus
+4. AGENT: Optionally creates a Genie Space via `def create_genie_space(databricks_session, configuration, state)` with programming-analytics instructions and sample questions
 
 ## Error handling
 

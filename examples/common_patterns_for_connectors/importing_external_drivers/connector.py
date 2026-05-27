@@ -6,7 +6,6 @@ import datetime
 # to communicate with MySql db and iterate over the data to update the connector
 
 # NOTE: libpq5 and libpq-dev are pre-installed in our connector-sdk base imagee.
-# NOTE: Do check with Customer Support to implement this or similar installation.sh script file.
 # See the Technical Reference documentation (https://fivetran.com/docs/connectors/connector-sdk/technical-reference#update)
 # and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details.
 

@@ -4,7 +4,6 @@
 
 This example demonstrates how to build a Fivetran connector that requires external system-level libraries, such as `libmysqlclient-dev`, by using an `installation.sh` script. It connects to a MySQL database, reads all records from a specified table, and upserts them into a destination table named `ORDERS`.
 
-Important: Using external drivers is in private preview. Contact our [Support team](https://support.fivetran.com/hc/en-us) to get more information about this feature and to enable it for your connector.
 
 ## Requirements
 - [Supported Python versions](https://github.com/fivetran/fivetran_connector_sdk/blob/main/README.md#requirements)   
@@ -20,7 +19,7 @@ Refer to the [Connector SDK Setup Guide](https://fivetran.com/docs/connector-sdk
 To initialize a new Connector SDK project using this connector as a starting point, run:
 
 ```bash
-fivetran init <project-path> --template examples/private_preview_features/importing_external_drivers
+fivetran init <project-path> --template examples/common_patterns_for_connectors/importing_external_drivers
 ```
 `fivetran init` initializes a new Connector SDK project by setting up the project structure, configuration files, and a connector you can run immediately with `fivetran debug`.
 If you do not specify a project path, Fivetran creates the project in your current directory.
@@ -103,7 +102,6 @@ The connector creates the `ORDERS` table:
 The connector uses `MySqldb` to connect to the MySQL database and retrieve data. The `MySqldb` requires an additional system package, `default-libmysqlclient-dev`, which contains MySQL database development files. The `drivers/installation.sh` script installs `MySqldb` dependencies files. The script updates the packages for Linux distributions and installs the `default-libmysqlclient-dev` package.
 Additionally, it's worth noting that the `installation.sh` script accepts a `configuration.json` file as a parameter. This file can be leveraged to provide any required configurations during package installation.
 
-> IMPORTANT: The feature to use external drivers is in private preview. Please connect with our professional services to get more information about them and enable it for your connector.
 
 ## Additional considerations
 The examples provided are intended to help you effectively use Fivetran's Connector SDK. While we've tested the code, Fivetran cannot be held responsible for any unexpected or negative consequences that may arise from using these examples. For inquiries, please reach out to our Support team.
