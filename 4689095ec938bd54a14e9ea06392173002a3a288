@@ -1,0 +1,33 @@
+examples/quickstart_examples/github_verify_cert/configuration.json
+  4ceb400a13d1225c 1-4
+examples/quickstart_examples/github/connector.py
+  4ceb400a13d1225c 1-44,46-51,54-99
+examples/quickstart_examples/github_hostname_verification/connector.py
+  4ceb400a13d1225c 72-73,77,79-83
+examples/quickstart_examples/github_hostname_verification/connector_urllib3.py
+  4ceb400a13d1225c 1-110
+examples/quickstart_examples/github/configuration.json
+  4ceb400a13d1225c 1-4
+examples/quickstart_examples/github_verify_cert/connector.py
+  4ceb400a13d1225c 1,6-13,15-46,48-60,64-68,74-80,83-106
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.1",
+  "base_commit_sha": "4689095ec938bd54a14e9ea06392173002a3a288",
+  "prompts": {
+    "4ceb400a13d1225c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4c7e6dbf-9f00-41c3-8bb0-491a5e9ed72b",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Sinchana Hegde <sinchana.hegde@fivetran.com>",
+      "messages": [],
+      "total_additions": 1185,
+      "total_deletions": 512,
+      "accepted_lines": 792,
+      "overriden_lines": 15
+    }
+  }
+}
