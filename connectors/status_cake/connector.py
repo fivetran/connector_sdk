@@ -248,7 +248,7 @@ def update(configuration: dict, state: dict):
             upsert_records_with_test_id("uptime_test_alert", alerts_data, test_id, state)
 
     except Exception as e:
-        log.severe("Error during sync", e)
+        log.error("Error during sync", e)
         raise
 
 

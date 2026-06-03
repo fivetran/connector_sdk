@@ -150,7 +150,7 @@ def make_api_request_with_retry(url: str, headers: Optional[Dict[str, str]] = No
                 )
                 time.sleep(delay)
             else:
-                log.severe(f"Request failed after {__MAX_RETRIES} attempts")
+                log.error(f"Request failed after {__MAX_RETRIES} attempts")
 
     raise last_exception
 

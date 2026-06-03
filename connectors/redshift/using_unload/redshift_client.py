@@ -117,7 +117,7 @@ class _ConnectionPool:
             try:
                 connection.close()
             except Exception as e:
-                log.severe(f"Error closing connection: {e}")
+                log.error(f"Error closing connection: {e}")
 
 
 def _get_config_bool(configuration: dict, key: str, default: bool = False) -> bool:

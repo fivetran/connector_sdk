@@ -104,7 +104,7 @@ The connector implements comprehensive error-handling strategies (refer to the `
 - Maximum of 3 retry attempts with delays of 1s, 2s, and 4s
 - Network timeout protection (30-second timeout for all requests)
 - Graceful degradation for non-critical endpoints (pings, flips, and integration failures are logged but don't halt the sync)
-- Detailed error logging using Fivetran SDK logging levels (info, warning, severe)
+- Detailed error logging using Fivetran SDK logging levels (info, warning, error)
 - Fail-fast behavior for authentication errors and permanent failures (4xx errors)
 
 ## Tables created

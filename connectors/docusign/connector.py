@@ -272,16 +272,16 @@ def fetch_envelopes(configuration: dict, state: Dict[str, Any]):
 
         except requests.exceptions.HTTPError as exc:
             if exc.response.status_code == 401:  # Check specifically for a 401 Unauthorized error
-                log.severe(
+                log.error(
                     "Received 401 Unauthorized. Access token is likely expired. Aborting fetch."
                 )
                 break
             else:
-                log.severe(f"Failed to fetch envelopes with HTTP error: {exc}")
+                log.error(f"Failed to fetch envelopes with HTTP error: {exc}")
                 break
 
         except Exception as exc:
-            log.severe(f"Failed to fetch envelopes: {exc}")
+            log.error(f"Failed to fetch envelopes: {exc}")
             raise RuntimeError(f"Failed to fetch envelopes: {exc}")
 
     log.info(f"Fetched {total_count} envelopes")
@@ -444,16 +444,16 @@ def fetch_templates(configuration: dict, state: Dict[str, Any]):
 
         except requests.exceptions.HTTPError as exc:
             if exc.response.status_code == 401:  # Check specifically for a 401 Unauthorized error
-                log.severe(
+                log.error(
                     "Received 401 Unauthorized. Access token is likely expired. Aborting fetch."
                 )
                 break
             else:
-                log.severe(f"Failed to fetch templates with HTTP error: {exc}")
+                log.error(f"Failed to fetch templates with HTTP error: {exc}")
                 break
 
         except Exception as exc:
-            log.severe(
+            log.error(
                 f"Failed to fetch templates: {exc}"
             )  # If a non-HTTP exception occurs, break the loop to avoid infinite calls
             raise RuntimeError(f"Failed to fetch templates: {exc}")

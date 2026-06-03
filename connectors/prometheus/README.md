@@ -123,7 +123,7 @@ Refer to the `sync_time_series_for_metrics()` function in `connector.py` for imp
 The connector implements comprehensive error handling:
 
 - API request retry logic: All HTTP requests to Prometheus include automatic retry logic with exponential backoff. The connector retries up to 3 times for transient errors (timeouts and HTTP status codes 429, 500, 502, 503, 504). The retry delay doubles with each attempt, starting from 1 second. Non-retryable errors like authentication failures result in immediate failure. This is implemented in the `make_api_request()` function in `connector.py`.
-- Specific exception handling: The connector catches specific exception types including `requests.Timeout` and `requests.RequestException` rather than generic exceptions. All errors are logged at the severe level with detailed error messages before raising RuntimeError to fail the sync.
+- Specific exception handling: The connector catches specific exception types including `requests.Timeout` and `requests.RequestException` rather than generic exceptions. All errors are logged at the error level with detailed error messages before raising RuntimeError to fail the sync.
 - Response validation: All API responses are validated to ensure the status field is success before processing data. Invalid responses trigger errors with detailed information about what went wrong.
 
 ## Tables created

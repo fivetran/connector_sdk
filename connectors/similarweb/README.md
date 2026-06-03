@@ -77,7 +77,7 @@ This connector does not implement explicit pagination. Data is retrieved in batc
 
 ## Error handling
 
-* Uses Fivetran Connector SDK logging for info, warning, and severe error messages (see `log` usage throughout)
+* Uses Fivetran Connector SDK logging for info, warning, and error messages (see `log` usage throughout)
 * Raises `RuntimeError` for failed report creation, failed status, or download errors (see `request_report`, `check_report_status`, `download_report`)
 
 ## Tables created

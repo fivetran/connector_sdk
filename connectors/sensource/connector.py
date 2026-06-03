@@ -103,14 +103,14 @@ def get_access_token(client_id: str, client_secret: str) -> str:
         access_token = token_data.get("access_token")
 
         if not access_token:
-            log.severe("No access token received from authentication endpoint")
+            log.error("No access token received from authentication endpoint")
             raise ValueError("No access token received from authentication endpoint")
 
-        log.fine("Successfully obtained access token")
+        log.debug("Successfully obtained access token")
         return access_token
 
     except requests.exceptions.RequestException as e:
-        log.severe("Authentication request failed", e)
+        log.error("Authentication request failed", e)
         raise ConnectionError(f"Failed to authenticate with Sensource API: {str(e)}")
 
 
@@ -222,7 +222,7 @@ def generate_date_ranges(start_date: str = None) -> List[tuple]:
     if start_date:
         # If start date is today or in the future, return empty list
         if start_date >= today:
-            log.fine(
+            log.debug(
                 f"Start date {start_date} is today or in the future, no date ranges to process"
             )
             return ranges
@@ -305,7 +305,7 @@ def update(configuration: Dict[str, Any], state: Dict[str, Any]):
     last_sync_date = state.get("last_sync_date")
 
     try:
-        log.fine("Starting Sensource data sync")
+        log.debug("Starting Sensource data sync")
 
         """
         Get access token and fetch static reference data.
@@ -329,13 +329,13 @@ def update(configuration: Dict[str, Any], state: Dict[str, Any]):
             return
 
         if last_sync_date:
-            log.fine(f"Resuming sync from {last_sync_date}")
+            log.debug(f"Resuming sync from {last_sync_date}")
             date_ranges = generate_date_ranges(start_date=last_sync_date)
         else:
-            log.fine(f"Starting initial sync from {start_date}")
+            log.debug(f"Starting initial sync from {start_date}")
             date_ranges = generate_date_ranges(start_date=start_date)
 
-        log.fine(f"Generated {len(date_ranges)} date ranges to process")
+        log.debug(f"Generated {len(date_ranges)} date ranges to process")
 
         """
         Process each date range to handle large datasets efficiently.
@@ -343,10 +343,10 @@ def update(configuration: Dict[str, Any], state: Dict[str, Any]):
         """
         for start_date, end_date in date_ranges:
             if last_sync_date and end_date < last_sync_date:
-                log.fine(f"Skipping already processed range: {start_date} to {end_date}")
+                log.debug(f"Skipping already processed range: {start_date} to {end_date}")
                 continue
 
-            log.fine(f"Processing date range: {start_date} to {end_date}")
+            log.debug(f"Processing date range: {start_date} to {end_date}")
 
             """
             Fetch and process traffic and occupancy data.
@@ -385,17 +385,17 @@ def update(configuration: Dict[str, Any], state: Dict[str, Any]):
             new_state["last_sync_date"] = actual_end_date
             op.checkpoint(state=new_state)
 
-            log.fine(f"Completed processing for {start_date} to {end_date}")
+            log.debug(f"Completed processing for {start_date} to {end_date}")
 
         # Final checkpoint to ensure the complete state is saved
         op.checkpoint(state=new_state)
-        log.fine("Sensource data sync completed")
+        log.debug("Sensource data sync completed")
 
     except Exception as e:
         """
         Handle exceptions by raising a runtime error with descriptive message.
         """
-        log.severe("Sync failed with error", e)
+        log.error("Sync failed with error", e)
         raise RuntimeError(f"Failed to sync data: {str(e)}")
 
 
@@ -431,7 +431,7 @@ def make_request_with_retry(method, url, **kwargs):
                 time.sleep(delay)
                 continue
             else:
-                log.severe(f"Request failed with status {response.status_code}: {response.text}")
+                log.error(f"Request failed with status {response.status_code}: {response.text}")
                 raise ConnectionError(f"Request failed with status {response.status_code}")
 
         except requests.exceptions.RequestException as e:
@@ -443,7 +443,7 @@ def make_request_with_retry(method, url, **kwargs):
                 time.sleep(delay)
                 continue
             else:
-                log.severe("Request failed", e)
+                log.error("Request failed", e)
                 raise ConnectionError(f"Request failed: {str(e)}")
 
     # This should never be reached, but ensures all code paths return or raise

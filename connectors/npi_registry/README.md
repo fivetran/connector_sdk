@@ -110,7 +110,7 @@ Error handling strategies:
 - Specific exception handling for `requests.exceptions.RequestException`
 - Validation of configuration parameters before starting the sync
 - Graceful handling of missing NPI numbers (records are skipped with a warning)
-- Comprehensive logging at INFO, WARNING, and SEVERE levels
+- Comprehensive logging at INFO, WARNING, and ERROR levels
 - All unhandled exceptions are caught and logged before raising a RuntimeError
 
 ## Tables created

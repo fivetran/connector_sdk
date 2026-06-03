@@ -184,7 +184,7 @@ def sync_table(params: dict, table: str, headers: dict, state: dict, sync_start:
     elif table == "item":
         columns = get_item_columns()
     else:
-        log.severe(f"Table {table} is not supported for sync.")
+        log.error(f"Table {table} is not supported for sync.")
         return
 
     # Reset offset to 0 for a full table sync.
@@ -283,7 +283,7 @@ def make_api_request(
                 time.sleep(wait)
             elif 400 <= response.status_code < 500:
                 # Client errors (other than 429) should fail immediately without retry
-                log.severe(f"Client error {response.status_code}: {response.text}")
+                log.error(f"Client error {response.status_code}: {response.text}")
                 response.raise_for_status()
             elif 500 <= response.status_code < 600:
                 log.warning(f"Server error {response.status_code}, retrying...")
@@ -302,7 +302,7 @@ def make_api_request(
             last_exception = e
             if attempt == retries:
                 break
-            log.severe(f"Network error: {e}")
+            log.error(f"Network error: {e}")
             time.sleep(delay * attempt)
 
     # Re-raise the last exception if all retries exhausted

@@ -94,7 +94,7 @@ The connector implements comprehensive error handling (refer to the `make_api_re
 
 - Retries transient errors (HTTP 429, 500, 502, 503, 504) up to 3 times
 - Uses exponential backoff strategy (2, 4, 8 seconds) between retries
-- Logs warnings for retry attempts and severe errors for failures
+- Logs warnings for retry attempts and errors for failures
 - Raises `RuntimeError` for permanent failures after exhausting retries
 - Catches network errors (`Timeout`, `ConnectionError`) with retry logic
 

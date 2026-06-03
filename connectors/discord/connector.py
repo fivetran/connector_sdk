@@ -142,7 +142,7 @@ def _handle_retry_with_backoff(
         error_log = error_message
         if error_detail:
             error_log = f"{error_message}: {error_detail}"
-        log.severe(f"{error_log} after {__MAX_RETRIES} attempts")
+        log.error(f"{error_log} after {__MAX_RETRIES} attempts")
         raise RuntimeError(f"{error_message} after {__MAX_RETRIES} attempts")
 
 
@@ -173,7 +173,7 @@ def make_discord_request(url: str, headers: dict, params: Optional[dict] = None)
                 )
                 continue
             else:
-                log.severe(f"Discord API error {response.status_code}: {response.text}")
+                log.error(f"Discord API error {response.status_code}: {response.text}")
                 raise RuntimeError(f"Discord API returned {response.status_code}: {response.text}")
 
         except requests.exceptions.RequestException as e:
@@ -738,7 +738,7 @@ def process_single_guild(
         }
 
     except Exception as e:
-        log.severe(f"Error processing guild {guild_name} (ID: {guild_id}): {str(e)}")
+        log.error(f"Error processing guild {guild_name} (ID: {guild_id}): {str(e)}")
         raise
 
 
@@ -802,7 +802,7 @@ def _process_single_guild_with_error_handling(
         return records_processed
 
     except Exception as e:
-        log.severe(f"Failed to process guild {guild_name} (ID: {guild_id}): {str(e)}")
+        log.error(f"Failed to process guild {guild_name} (ID: {guild_id}): {str(e)}")
         # Continue with other guilds even if one fails
         return 0
 
@@ -906,7 +906,7 @@ def update(configuration: dict, state: dict):
         _finalize_sync(guilds_state, total_processed_count, len(guilds_to_process), state)
 
     except Exception as e:
-        log.severe(f"Discord Connector: Multi-guild sync failed with error: {str(e)}")
+        log.error(f"Discord Connector: Multi-guild sync failed with error: {str(e)}")
         raise RuntimeError(f"Failed to sync Discord data: {str(e)}")
 
 

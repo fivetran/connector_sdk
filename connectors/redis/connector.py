@@ -140,7 +140,7 @@ def create_redis_client(configuration: dict):
         log.info(f"Successfully connected to Redis at {host}:{port}, database: {database}")
         return redis_client
     except Exception as e:
-        log.severe("Failed to create Redis client", e)
+        log.error("Failed to create Redis client", e)
         raise RuntimeError(f"Failed to create Redis client: {str(e)}")
 
 
@@ -341,7 +341,7 @@ def scan_redis_keys(
         log.info(f"Scanned {len(keys)} keys, next cursor: {cursor}")
         return cursor, keys
     except Exception as e:
-        log.severe("Failed to scan Redis keys", e)
+        log.error("Failed to scan Redis keys", e)
         raise RuntimeError(f"Failed to scan Redis keys: {str(e)}")
 
 

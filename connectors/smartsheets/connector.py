@@ -349,7 +349,7 @@ class SmartsheetAPI:
         if len(self.request_times) >= self.config.requests_per_minute:
             sleep_time = 60 - (current_time - self.request_times[0])
             if sleep_time > 0:
-                log.fine(f"Rate limit reached, sleeping for {sleep_time} seconds")
+                log.debug(f"Rate limit reached, sleeping for {sleep_time} seconds")
                 time.sleep(sleep_time)
 
         self.request_times.append(current_time)
@@ -381,7 +381,7 @@ class SmartsheetAPI:
 
         if response.status_code == 429:
             retry_after = int(response.headers.get("Retry-After", 60))
-            log.fine(f"Rate limited, retrying after {retry_after} seconds")
+            log.debug(f"Rate limited, retrying after {retry_after} seconds")
             time.sleep(retry_after)
             return self.get(endpoint, params)
 
@@ -409,12 +409,12 @@ class SmartsheetAPI:
         if self.config.sheet_ids:
             sheets = []
             for sheet_id in self.config.sheet_ids:
-                log.fine(f"Fetching specific sheet: {sheet_id}")
+                log.debug(f"Fetching specific sheet: {sheet_id}")
                 response = self.get(f"sheets/{sheet_id}")
                 sheets.append(response.json())
             return sheets
         else:
-            log.fine("Fetching all accessible sheets")
+            log.debug("Fetching all accessible sheets")
             response = self.get("sheets")
             return response.json().get("data", [])
 
@@ -443,7 +443,7 @@ class SmartsheetAPI:
         page_size = _DEFAULT_PAGE_SIZE
 
         while True:
-            log.fine(f"Fetching page {page} for {endpoint.split('/')[0]} {resource_id}")
+            log.debug(f"Fetching page {page} for {endpoint.split('/')[0]} {resource_id}")
             params = {"page": page, "pageSize": page_size}
             if modified_since:
                 params["modifiedSince"] = modified_since
@@ -453,7 +453,7 @@ class SmartsheetAPI:
 
             rows = data.get("rows", [])
             if not rows:
-                log.fine(f"No rows returned on page {page}, stopping pagination")
+                log.debug(f"No rows returned on page {page}, stopping pagination")
                 break
 
             # Check for duplicate rows to prevent infinite loops
@@ -465,11 +465,13 @@ class SmartsheetAPI:
                 break
 
             all_rows.extend(rows)
-            log.fine(f"Retrieved {len(rows)} rows from page {page}, total so far: {len(all_rows)}")
+            log.debug(
+                f"Retrieved {len(rows)} rows from page {page}, total so far: {len(all_rows)}"
+            )
 
             # Check if we've reached the end (less rows than requested)
             if len(rows) < page_size:
-                log.fine(
+                log.debug(
                     f"Received {len(rows)} rows (less than page size {page_size}), stopping pagination"
                 )
                 break
@@ -516,7 +518,7 @@ class SmartsheetAPI:
             parameter helps reduce data transfer by only fetching recent changes.
             Uses pagination to ensure all rows are retrieved.
         """
-        log.fine(f"Fetching sheet details for sheet ID: {sheet_id}")
+        log.debug(f"Fetching sheet details for sheet ID: {sheet_id}")
         return self._fetch_paginated_data(f"sheets/{sheet_id}", sheet_id, modified_since)
 
     def get_reports(self) -> List[Dict[str, Any]]:
@@ -541,7 +543,7 @@ class SmartsheetAPI:
         if self.config.report_ids:
             reports = []
             for report_id in self.config.report_ids:
-                log.fine(f"Fetching specific report: {report_id}")
+                log.debug(f"Fetching specific report: {report_id}")
                 response = self.get(f"reports/{report_id}")
                 reports.append(response.json())
             return reports
@@ -569,7 +571,7 @@ class SmartsheetAPI:
             columns and different column ID handling. This method fetches the
             complete report data including all rows using pagination.
         """
-        log.fine(f"Fetching report details for report ID: {report_id}")
+        log.debug(f"Fetching report details for report ID: {report_id}")
         return self._fetch_paginated_data(f"reports/{report_id}", report_id)
 
 
@@ -697,7 +699,7 @@ def _delete_removed_rows(
         log.info(f"{resource_label}: Found {len(deleted_row_ids)} deleted rows")
         for deleted_row_id in deleted_row_ids:
             deleted_record_id = hash_value(str(deleted_row_id))
-            log.fine(f"Deleting row for {resource_label}, row {deleted_row_id}")
+            log.debug(f"Deleting row for {resource_label}, row {deleted_row_id}")
             # The 'delete' operation is used to remove data from the destination table.
             # The first argument is the name of the destination table.
             # The second argument is a dictionary containing the primary key of the record to be deleted.
@@ -743,7 +745,7 @@ def _process_sheet(
         sheet_rows = sheet_data.get("rows", [])
         if _TEST_MODE:
             sheet_rows = sheet_rows[:_TEST_ROW_LIMIT]
-            log.fine(f"Test mode: Processing {len(sheet_rows)} rows for sheet '{sheet_name}'")
+            log.debug(f"Test mode: Processing {len(sheet_rows)} rows for sheet '{sheet_name}'")
 
         log.info(f"Sheet '{sheet_name}': Found {len(sheet_rows)} total rows")
         log.info(
@@ -777,7 +779,7 @@ def _process_sheet(
                 row_modified = row.get("modifiedAt", latest_sheet_modified)
                 latest_sheet_modified = max(latest_sheet_modified, row_modified)
 
-                log.fine(f"Upserting row for sheet '{sheet_name}', row {row['id']}")
+                log.debug(f"Upserting row for sheet '{sheet_name}', row {row['id']}")
                 # The 'upsert' operation is used to insert or update data in the destination table.
                 # The first argument is the name of the destination table.
                 # The second argument is a dictionary containing the record to be upserted.
@@ -859,7 +861,7 @@ def _process_report(
             row_record = flatten(row_data)
             row_record["id"] = hash_value(str(row["id"]))
 
-            log.fine(f"Upserting row for report '{report_name}', row {row['id']}")
+            log.debug(f"Upserting row for report '{report_name}', row {row['id']}")
             op.upsert(table_name, row_record)
 
         current_row_id_list = list(current_row_ids)
@@ -936,10 +938,10 @@ def update(configuration: dict, state: dict):
         # (https://fivetran.com/docs/connectors/connector-sdk/best-practices#largedatasetrecommendation).
         op.checkpoint(final_state)
 
-        log.fine(f"Sync completed successfully at {current_sync_time}")
+        log.debug(f"Sync completed successfully at {current_sync_time}")
 
     except Exception as e:
-        log.severe(f"Error during sync: {e}")
+        log.error(f"Error during sync: {e}")
         raise
 
 

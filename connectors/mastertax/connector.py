@@ -120,7 +120,7 @@ def sync_items(headers: dict, extract: dict):
         with zipfile.ZipFile(zip_path, "r") as zip_ref:
             zip_ref.extractall(extract_path)
 
-        log.fine(f"ZIP file extracted to: {extract_path}")
+        log.debug(f"ZIP file extracted to: {extract_path}")
 
         layout_name = next(
             (
@@ -137,7 +137,7 @@ def sync_items(headers: dict, extract: dict):
 
         for file in matching_files:
             full_path = os.path.join(extract_path, file)
-            log.fine(f"processing {full_path}")
+            log.debug(f"processing {full_path}")
             upsert_rows(full_path, layout_name)
 
     op.checkpoint({})
@@ -152,7 +152,7 @@ def upsert_rows(filename: str, layout_name: str):
     """
 
     layout_column_names = column_names[layout_name]
-    log.fine(f"upserting rows for {filename}")
+    log.debug(f"upserting rows for {filename}")
     with open(filename, "r", newline="", encoding="utf-8") as file:
         reader = csv.reader(file, delimiter="\t")  # Tab-delimited
 
@@ -184,7 +184,7 @@ def submit_process(url: str, headers: dict, payload: dict):
 
         response.raise_for_status()  # Ensure we raise an exception for HTTP errors.
         response_page = response.json()
-        log.fine(response_page)
+        log.debug(response_page)
         status = response_page.get("_confirmMessage", {}).get("requestStatus")
         resource_id = (
             response_page.get("_confirmMessage", {}).get("messages", [{}])[0].get("resourceID")
@@ -279,7 +279,7 @@ def write_to_file(text: str, filename: str):
     try:
         with open(filename, "w") as pem_file:
             pem_file.write(text)
-        log.fine(f"Successfully written to {filename}")
+        log.debug(f"Successfully written to {filename}")
     except Exception as e:
         log.info(f"Error writing to file: {e}")
 

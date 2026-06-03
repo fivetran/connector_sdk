@@ -1,0 +1,9 @@
+{
+  "hostname": "<YOUR_POSTGRESQL_HOSTNAME>",
+  "port": "<YOUR_POSTGRESQL_PORT>",
+  "database": "<YOUR_POSTGRESQL_DATABASE_NAME>",
+  "username": "<YOUR_POSTGRESQL_USERNAME>",
+  "password": "<YOUR_POSTGRESQL_PASSWORD>",
+  "sslmode": "<YOUR_SSL_MODE>",
+  "table_name": "<YOUR_POSTGRESQL_TABLE_NAME>"
+}

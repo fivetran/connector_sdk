@@ -39,7 +39,7 @@ def update(configuration: dict, state: dict):
     # get a start and end timestamp that could be used with an API
     from_timestamp, to_timestamp = set_timeranges(state, start_timestamp)
     # this "fine" log will only appear during debugging
-    log.fine(f"start: {from_timestamp} end: {to_timestamp}, until we reach {start_timestamp}")
+    log.debug(f"start: {from_timestamp} end: {to_timestamp}, until we reach {start_timestamp}")
 
     more_data = True
     while more_data:

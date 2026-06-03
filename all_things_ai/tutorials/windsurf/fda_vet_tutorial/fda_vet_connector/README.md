@@ -159,7 +159,7 @@ This connector follows Fivetran Connector SDK best practices:
 Look for these log messages:
 - `INFO`: Normal operation progress
 - `WARNING`: Potential issues (rate limits, empty responses)
-- `SEVERE`: Critical errors requiring attention
+- `ERROR`: Critical errors requiring attention
 
 ## API Reference
 

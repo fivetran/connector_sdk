@@ -308,19 +308,19 @@ def update(configuration: dict, state: dict):
         # Check if sync should be considered a failure
         if total_regions > 0 and len(failed_regions) == total_regions:
             # All regions failed
-            log.severe(
+            log.error(
                 f"Sync failed: All {total_regions} region(s) failed after {__MAX_RETRIES} retry attempts"
             )
-            log.severe(f"Failed regions: {', '.join(failed_regions)}")
+            log.error(f"Failed regions: {', '.join(failed_regions)}")
             raise RuntimeError(
                 f"All {total_regions} regions failed. No data was synced successfully."
             )
 
         if total_records_synced == 0:
             # No records synced at all
-            log.severe(f"Sync failed: 0 records synced from {total_regions} region(s)")
+            log.error(f"Sync failed: 0 records synced from {total_regions} region(s)")
             if failed_regions:
-                log.severe(f"Failed regions: {', '.join(failed_regions)}")
+                log.error(f"Failed regions: {', '.join(failed_regions)}")
             raise RuntimeError(
                 f"Sync failed: 0 records synced. {len(failed_regions)}/{total_regions} regions failed."
             )
@@ -357,11 +357,11 @@ def update(configuration: dict, state: dict):
             )
 
     except RuntimeError as e:
-        log.severe(f"Fatal error during sync: {str(e)}")
+        log.error(f"Fatal error during sync: {str(e)}")
         # Re-raise RuntimeError without wrapping to avoid nested exception messages
         raise
     except Exception as e:
-        log.severe(f"Fatal error during sync: {str(e)}")
+        log.error(f"Fatal error during sync: {str(e)}")
         # Wrap unexpected exceptions in a RuntimeError to provide a consistent error surface
         raise RuntimeError(f"Failed to sync Google Trends data: {str(e)}")
 
@@ -599,9 +599,9 @@ def process_region(
         # to fail the sync based on how many regions succeeded vs. failed.
         error_type = type(e).__name__
         error_msg = str(e)
-        log.severe(f"  Unexpected error for region {region_name} ({region_code})")
-        log.severe(f"  Error type: {error_type}, Message: {error_msg}")
-        log.severe(f"  Traceback:\n{traceback.format_exc()}")
+        log.error(f"  Unexpected error for region {region_name} ({region_code})")
+        log.error(f"  Error type: {error_type}, Message: {error_msg}")
+        log.error(f"  Traceback:\n{traceback.format_exc()}")
         failed_regions.append(f"{search_name}/{region_name}")
 
     return total_records_synced, total_regions
@@ -621,17 +621,17 @@ def log_http_response_details(e: Exception):
     if not hasattr(e, "response") or e.response is None:
         return
 
-    log.severe(f"[DEBUG] HTTP Status Code: {getattr(e.response, 'status_code', 'N/A')}")
+    log.error(f"[DEBUG] HTTP Status Code: {getattr(e.response, 'status_code', 'N/A')}")
     try:
         headers_dict = dict(getattr(e.response, "headers", {}))
-        log.severe(f"[DEBUG] Response Headers: {headers_dict}")
+        log.error(f"[DEBUG] Response Headers: {headers_dict}")
     except Exception as header_error:
-        log.severe(
+        log.error(
             f"[DEBUG] Failed to log response headers: {type(header_error).__name__}: {header_error}"
         )
     response_text = getattr(e.response, "text", "")
     if response_text:
-        log.severe(f"[DEBUG] Response Text (first 500 chars): {response_text[:500]}")
+        log.error(f"[DEBUG] Response Text (first 500 chars): {response_text[:500]}")
 
 
 def log_error_details(
@@ -660,14 +660,14 @@ def log_error_details(
     error_msg = str(e)
     error_type = type(e).__name__
 
-    log.severe(f"[DEBUG] Attempt {retry + 1}/{__MAX_RETRIES} failed")
-    log.severe(f"[DEBUG] Exception Type: {error_type}")
-    log.severe(f"[DEBUG] Exception Message: {error_msg}")
-    log.severe(f"[DEBUG] Region: {region_code}, Keywords: {keywords}, Timeframe: {timeframe}")
+    log.error(f"[DEBUG] Attempt {retry + 1}/{__MAX_RETRIES} failed")
+    log.error(f"[DEBUG] Exception Type: {error_type}")
+    log.error(f"[DEBUG] Exception Message: {error_msg}")
+    log.error(f"[DEBUG] Region: {region_code}, Keywords: {keywords}, Timeframe: {timeframe}")
 
     log_http_response_details(e)
 
-    log.severe(f"[DEBUG] Traceback:\n{traceback.format_exc()}")
+    log.error(f"[DEBUG] Traceback:\n{traceback.format_exc()}")
 
     return error_type, error_msg
 
@@ -767,10 +767,8 @@ def fetch_region_data_with_retry(
                 # Exponential: 60s, 120s, 240s, 480s, 960s + Random jitter: 0-30s
                 handle_retry_sleep(retry, error_type, error_msg)
             else:
-                log.severe(
-                    f"All {__MAX_RETRIES} retry attempts exhausted for region {region_code}"
-                )
-                log.severe(f"[DEBUG] Final error type: {error_type}, message: {error_msg}")
+                log.error(f"All {__MAX_RETRIES} retry attempts exhausted for region {region_code}")
+                log.error(f"[DEBUG] Final error type: {error_type}, message: {error_msg}")
         except Exception as e:
             # Catch other unexpected exceptions from pytrends library
             # Still retry these as they may be transient errors
@@ -782,10 +780,8 @@ def fetch_region_data_with_retry(
                 # Exponential: 60s, 120s, 240s, 480s, 960s + Random jitter: 0-30s
                 handle_retry_sleep(retry, error_type, error_msg)
             else:
-                log.severe(
-                    f"All {__MAX_RETRIES} retry attempts exhausted for region {region_code}"
-                )
-                log.severe(f"[DEBUG] Final error type: {error_type}, message: {error_msg}")
+                log.error(f"All {__MAX_RETRIES} retry attempts exhausted for region {region_code}")
+                log.error(f"[DEBUG] Final error type: {error_type}, message: {error_msg}")
 
     # All retries exhausted - re-raise the last error
     if last_error:

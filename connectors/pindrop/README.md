@@ -100,7 +100,7 @@ The connector implements comprehensive error handling strategies:
 - **Token refresh**: Automatic retry with fresh tokens on authentication failures
 - **Partial failures**: Continues processing other reports if individual requests fail
 - **State preservation**: Checkpoints progress to enable recovery from interruptions
-- **Detailed logging**: Comprehensive logging at INFO, WARNING, and SEVERE levels
+- **Detailed logging**: Comprehensive logging at INFO, WARNING, and ERROR levels
 
 Refer to the `OAuth2TokenManager._request_new_token` method for authentication error handling and the `fetch_report_data` function for API error handling.
 

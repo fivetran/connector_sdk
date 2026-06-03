@@ -439,7 +439,7 @@ Non-compliant Example:
                     time.sleep(delay)
                     continue
                 else:
-                    log.severe(f"Failed to fetch agreements after 3 attempts. Last status: {response.status_code} - {response.text}")
+                    log.error(f"Failed to fetch agreements after 3 attempts. Last status: {response.status_code} - {response.text}")
                     raise RuntimeError(f"API returned {response.status_code} after 3 attempts: {response.text}")
 
 
@@ -461,7 +461,7 @@ __BASE_DELAY = 1  # Base delay in seconds for API request retries
                     time.sleep(delay)
                     continue
                 else:
-                    log.severe(f"Failed to fetch agreements after {__MAX_RETRIES} attempts. Last status: {response.status_code} - {response.text}")
+                    log.error(f"Failed to fetch agreements after {__MAX_RETRIES} attempts. Last status: {response.status_code} - {response.text}")
                     raise RuntimeError(f"API returned {response.status_code} after {__MAX_RETRIES} attempts: {response.text}")
 
 ```

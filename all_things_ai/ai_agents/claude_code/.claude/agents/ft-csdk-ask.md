@@ -55,7 +55,7 @@ When analyzing code, reference these standards:
 - Data types auto-detected: BOOLEAN, INT, STRING, JSON, DECIMAL, FLOAT, UTC_DATETIME, etc.
 
 ## Logging Methods
-- **CORRECT:** `log.fine()`, `log.info()`, `log.warning()`, `log.severe()`
+- **CORRECT:** `log.debug()`, `log.info()`, `log.warning()`, `log.error()`
 - **WRONG:** `log.error()` (does NOT exist)
 
 ## Type Hints

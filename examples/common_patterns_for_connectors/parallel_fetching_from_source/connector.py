@@ -108,7 +108,7 @@ def process_file_get_stream(s3_client, bucket_name, file_key, table_name):
             # - The second argument is a dictionary containing the data to be upserted,
             op.upsert(table=table_name, data=record)
         except Exception as e:
-            log.severe(f"Error processing record from {file_key}", e)
+            log.error(f"Error processing record from {file_key}", e)
             # Continue processing other records even if one fails
             continue
 
@@ -216,7 +216,7 @@ def update(configuration: dict, state: dict):
             try:
                 future.result()
             except Exception as e:
-                log.severe(f"Error processing file for table {table_name}", e)
+                log.error(f"Error processing file for table {table_name}", e)
 
     # Save the progress by checkpointing the state. This is important for ensuring that the sync process can resume
     # from the correct position in case of next sync or interruptions.

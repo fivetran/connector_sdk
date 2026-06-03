@@ -103,10 +103,10 @@ def create_rabbitmq_connection(configuration: dict):
         return connection
 
     except AMQPConnectionError as e:
-        log.severe("Failed to connect to RabbitMQ", e)
+        log.error("Failed to connect to RabbitMQ", e)
         raise RuntimeError(f"Failed to connect to RabbitMQ: {str(e)}")
     except Exception as e:
-        log.severe("Unexpected error creating RabbitMQ connection", e)
+        log.error("Unexpected error creating RabbitMQ connection", e)
         raise RuntimeError(f"Unexpected error creating RabbitMQ connection: {str(e)}")
 
 
@@ -364,10 +364,10 @@ def fetch_and_upsert_messages_batch(
         return fetched_count, has_more_data, highest_delivery_tag
 
     except AMQPChannelError as e:
-        log.severe(f"Channel error while fetching from queue {queue_name}", e)
+        log.error(f"Channel error while fetching from queue {queue_name}", e)
         raise RuntimeError(f"Channel error while fetching from queue {queue_name}: {str(e)}")
     except Exception as e:
-        log.severe(f"Failed to fetch batch from queue {queue_name}", e)
+        log.error(f"Failed to fetch batch from queue {queue_name}", e)
         raise RuntimeError(f"Failed to fetch batch from queue {queue_name}: {str(e)}")
 
 

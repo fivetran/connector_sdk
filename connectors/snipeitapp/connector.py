@@ -145,7 +145,7 @@ def update(configuration: dict, state: dict):
             log.info(f"Completed sync for table: {table_name}")
 
         except (RuntimeError, ValueError, KeyError, TypeError) as e:
-            log.severe(f"Failed to sync table {table_name}: {str(e)}")
+            log.error(f"Failed to sync table {table_name}: {str(e)}")
             raise
 
 
@@ -264,7 +264,7 @@ def sync_table(
                 offset += __PAGE_SIZE
 
         except (RuntimeError, requests.RequestException, ValueError, KeyError) as e:
-            log.severe(f"Error processing page at offset {offset} for {table_name}: {str(e)}")
+            log.error(f"Error processing page at offset {offset} for {table_name}: {str(e)}")
             raise
 
     # Final checkpoint for this table
@@ -293,7 +293,7 @@ def handle_http_error(response, attempt):
     is_auth_error = response.status_code in [401, 403]
 
     if is_auth_error:
-        log.severe(f"Authentication failed: {response.status_code} - {response.text}")
+        log.error(f"Authentication failed: {response.status_code} - {response.text}")
         raise RuntimeError(f"Authentication failed: {response.status_code} - {response.text}")
 
     if is_retryable and attempt < __MAX_RETRIES - 1:
@@ -306,7 +306,7 @@ def handle_http_error(response, attempt):
         return True  # Continue retrying
 
     if is_retryable:
-        log.severe(
+        log.error(
             f"Failed to fetch data after {__MAX_RETRIES} attempts. "
             f"Last status: {response.status_code} - {response.text}"
         )
@@ -314,7 +314,7 @@ def handle_http_error(response, attempt):
             f"API returned {response.status_code} after {__MAX_RETRIES} attempts: {response.text}"
         )
 
-    log.severe(f"API request failed: {response.status_code} - {response.text}")
+    log.error(f"API request failed: {response.status_code} - {response.text}")
     raise RuntimeError(f"API request failed: {response.status_code} - {response.text}")
 
 
@@ -336,7 +336,7 @@ def handle_network_error(error, error_type, attempt):
         time.sleep(delay)
         return True  # Continue retrying
 
-    log.severe(f"{error_type} after {__MAX_RETRIES} attempts: {str(error)}")
+    log.error(f"{error_type} after {__MAX_RETRIES} attempts: {str(error)}")
     raise RuntimeError(f"{error_type} after {__MAX_RETRIES} attempts: {str(error)}")
 
 

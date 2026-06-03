@@ -182,7 +182,7 @@ def get_api_response(url, params, headers, base_url, configuration):
             log.warning(f"Retrying in {wait}s...")
             time.sleep(wait)
 
-    log.severe(f"Request to {url} failed after {__MAX_RETRIES} attempts.")
+    log.error(f"Request to {url} failed after {__MAX_RETRIES} attempts.")
     raise last_error
 
 

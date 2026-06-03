@@ -68,7 +68,7 @@ def get_access_token(client_id, client_secret, deployment):
         log.info("Access token obtained successfully")
         return response.json()["access_token"]
     else:
-        log.severe(f"Failed to obtain access token: {response.text}")
+        log.error(f"Failed to obtain access token: {response.text}")
         raise Exception("Failed to obtain access token")
 
 
@@ -93,7 +93,7 @@ def update(configuration: dict, state: dict):
     deployment = configuration.get("deployment")
 
     if not all([client_id, client_secret, deployment]):
-        log.severe("Missing required configuration parameters")
+        log.error("Missing required configuration parameters")
         return
 
     try:
@@ -123,7 +123,7 @@ def update(configuration: dict, state: dict):
             f"Update process completed. Total time: {update_duration:.2f} seconds. Final state: {thread_local_state.state}"
         )
     except Exception as e:
-        log.severe("Update process failed", e)
+        log.error("Update process failed", e)
 
 
 def sync_entity(
@@ -189,7 +189,7 @@ def sync_entity(
                 )
                 return entities
             except Exception as e:
-                log.severe(f"Error fetching {entity_name} data for page {page}", e)
+                log.error(f"Error fetching {entity_name} data for page {page}", e)
                 return []
 
         page = 0
@@ -243,10 +243,10 @@ def sync_entity(
         )
 
     except Exception as e:
-        log.severe(f"Unhandled exception during sync of {entity_name}", e)
+        log.error(f"Unhandled exception during sync of {entity_name}", e)
         import traceback
 
-        log.severe(f"Traceback: {traceback.format_exc()}")
+        log.error(f"Traceback: {traceback.format_exc()}")
 
     sync_duration = time.time() - start_time
     log.info(

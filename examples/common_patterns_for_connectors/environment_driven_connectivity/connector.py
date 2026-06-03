@@ -192,7 +192,7 @@ def make_api_request(
             time.sleep(backoff)
             backoff = min(backoff * 2.0, 16.0)
     # Escalate after retries exhausted
-    log.severe(f"Failed to fetch {url}", last_exception)
+    log.error(f"Failed to fetch {url}", last_exception)
     raise last_exception
 
 

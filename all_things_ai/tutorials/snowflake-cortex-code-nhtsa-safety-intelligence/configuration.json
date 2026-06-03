@@ -1,0 +1,12 @@
+{
+    "seed_make": "<VEHICLE_MAKE>",
+    "seed_model": "<VEHICLE_MODEL>",
+    "seed_year": "<MODEL_YEAR>",
+    "discovery_depth": "<DISCOVERY_DEPTH_1_TO_3>",
+    "max_discoveries": "<MAX_VEHICLES_PER_DISCOVERY>",
+    "enable_cortex": "<TRUE_OR_FALSE>",
+    "snowflake_account": "<YOUR_SNOWFLAKE_ACCOUNT_HOSTNAME>",
+    "snowflake_pat_token": "<YOUR_SNOWFLAKE_PAT>",
+    "cortex_model": "<CORTEX_MODEL_NAME>",
+    "max_enrichments": "<MAX_CORTEX_ENRICHMENTS>"
+}

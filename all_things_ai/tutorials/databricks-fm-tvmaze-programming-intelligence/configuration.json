@@ -1,0 +1,14 @@
+{
+  "databricks_workspace_url": "<DATABRICKS_WORKSPACE_URL>",
+  "databricks_token": "<DATABRICKS_PAT_TOKEN>",
+  "databricks_warehouse_id": "<DATABRICKS_WAREHOUSE_ID>",
+  "databricks_model": "<DATABRICKS_MODEL_NAME>",
+  "enable_enrichment": "<TRUE_OR_FALSE>",
+  "enable_genie_space": "<TRUE_OR_FALSE>",
+  "genie_table_identifier": "<CATALOG.SCHEMA.TABLE>",
+  "initial_sync_max_pages": "<MAX_PAGES_FOR_INITIAL_SYNC>",
+  "max_enrichments": "<MAX_ENRICHMENTS_PER_SYNC>",
+  "genre_filter": "<OPTIONAL_GENRE_FILTER>",
+  "status_filter": "<OPTIONAL_STATUS_FILTER>",
+  "databricks_timeout": "<DATABRICKS_TIMEOUT_SECONDS>"
+}

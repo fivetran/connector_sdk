@@ -1,0 +1,3 @@
+pytest>=8.0
+pytest-mock>=3.12
+responses>=0.25

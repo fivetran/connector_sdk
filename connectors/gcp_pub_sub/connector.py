@@ -106,7 +106,7 @@ def publish_test_messages(publisher, topic_path: str) -> None:
             # Publish the message to the topic and get a future
             # The future.result() call waits for the publish operation to complete
             future = publisher.publish(topic_path, message_data)
-            log.fine(f"Published message ID: {future.result()}")
+            log.debug(f"Published message ID: {future.result()}")
         except Exception as e:
             # If publishing fails, raise a RuntimeError with details
             raise RuntimeError(f"Error publishing message: {e}")

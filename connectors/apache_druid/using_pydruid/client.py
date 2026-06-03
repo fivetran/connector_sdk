@@ -274,7 +274,7 @@ class DruidPyDruidClient:
             log.info(f"Completed scan of {datasource}. Total records: {total_fetched}")
 
         except Exception as e:
-            log.severe(f"Failed to scan datasource {datasource}: {str(e)}")
+            log.error(f"Failed to scan datasource {datasource}: {str(e)}")
             raise RuntimeError(f"Failed to scan datasource {datasource}: {str(e)}")
 
     def incremental_scan(
@@ -370,7 +370,7 @@ class DruidPyDruidClient:
                 yield record
 
         except Exception as e:
-            log.severe(f"Failed to perform incremental scan: {str(e)}")
+            log.error(f"Failed to perform incremental scan: {str(e)}")
             raise RuntimeError(f"Failed to perform incremental scan: {str(e)}")
 
     def close(self):
