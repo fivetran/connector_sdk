@@ -50,6 +50,7 @@ def configuration_form():
             label="API Base URL",
             description="The base URL for your REST API endpoint.",
             required=True,
+            field_type=form_field.TextField.PlainText,
             placeholder="https://api.example.com/v1",
         )
     )
