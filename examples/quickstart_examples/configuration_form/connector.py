@@ -229,7 +229,7 @@ def update(configuration: dict, state: dict):
 
 # This creates the connector object that will use the update, schema, and configuration_form
 # functions defined in this connector.py file.
-connector = Connector(update=update, schema=schema, configuration_form=configuration_form)
+connector = Connector(update=update, schema=schema, configuration_form_fn=configuration_form)
 
 # Check if the script is being run as the main module.
 # This is Python's standard entry method allowing your script to be run directly from the command line or IDE 'run' button.
