@@ -48,7 +48,7 @@ Explore working code examples for common Connector SDK use cases. These [example
 
 ## Community connectors
 
-Explore ready-to-use full connectors to get started. These connectors are useful when you want a stronger starting point or want to adapt an existing implementation for your source. For the full list, see the [Community Connectors Catalog](https://github.com/fivetran/fivetran_csdk_connectors/blob/main/README.md).
+Explore ready-to-use full connectors to get started. These connectors are useful when you want a stronger starting point or want to adapt an existing implementation for your source. For the full list, see the [Community Connectors Catalog](https://github.com/fivetran/community_connectors/blob/main/README.md).
 
 <details class="details-heading" open="open">
 <summary>List of community connectors</summary>
