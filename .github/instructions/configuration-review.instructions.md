@@ -10,7 +10,7 @@ When a PR changes or adds a connector/example/template that includes a `configur
 ## JSON Structure and Syntax (BLOCKER if violated)
 - **Valid JSON**: File must parse correctly as valid JSON (no trailing commas, proper quotes, balanced braces)
 - **Root object**: Configuration must be a JSON object `{}`, not an array or primitive
-- **Template compliance**: Follow the structure in [template configuration.json](https://github.com/fivetran/fivetran_connector_sdk/blob/main/template_connector/configuration.json)
+- **Template compliance**: Follow the structure in [template configuration.json](https://github.com/fivetran/connector_sdk/blob/main/template_connector/configuration.json)
 
 ## Key Naming Conventions (REQUEST_CHANGES if violated)
 - **Descriptive names**: Keys must clearly describe their purpose (e.g., `api_key`, `database_url`, `max_retries`)
