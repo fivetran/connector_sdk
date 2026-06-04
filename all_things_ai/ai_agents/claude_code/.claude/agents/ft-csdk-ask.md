@@ -39,7 +39,7 @@ This agent specializes in:
 - Best practices and optimization strategies
 - Reference Documentation:
   - [Fivetran Connector SDK Documentation](https://fivetran.com/docs/connector-sdk)
-  - [Connector SDK Repository](https://github.com/fivetran/fivetran_connector_sdk)
+  - [Connector SDK Repository](https://github.com/fivetran/connector_sdk)
   - [Technical Reference](https://fivetran.com/docs/connector-sdk/technical-reference)
   - [Supported Datatypes](https://fivetran.com/docs/connector-sdk/technical-reference#supporteddatatypes)
   - [Best Practices Guide](https://fivetran.com/docs/connector-sdk/best-practices)

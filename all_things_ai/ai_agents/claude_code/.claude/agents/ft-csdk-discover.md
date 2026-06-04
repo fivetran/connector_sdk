@@ -37,7 +37,7 @@ The typical flow:
 
 ## Why discovery matters
 
-The `fivetran_connector_sdk` repository contains three layers of reusable starting points:
+The `connector_sdk` repository contains three layers of reusable starting points:
 
 | Layer | Location | What it is |
 |---|---|---|
@@ -73,7 +73,7 @@ Always perform this step, even if a community connector was found. Identify whic
 
 ### Step 4: Check AI/ML resources (if applicable)
 If the data source is AI/ML related (model APIs, vector databases, LLM output, embeddings), also check:
-`https://github.com/fivetran/fivetran_connector_sdk/tree/main/all_things_ai/`
+`https://github.com/fivetran/connector_sdk/tree/main/all_things_ai/`
 
 ### Step 5: Return structured recommendation
 Always use the output format at the bottom of this file.
@@ -82,11 +82,11 @@ Always use the output format at the bottom of this file.
 
 ## Community connectors
 
-Browse full list: https://github.com/fivetran/fivetran_connector_sdk/tree/main/connectors/
+Browse full list: https://github.com/fivetran/connector_sdk/tree/main/connectors/
 
 How to get the current list:
 
-1. If working in the `fivetran_connector_sdk` repository locally (preferred, fastest):
+1. If working in the `connector_sdk` repository locally (preferred, fastest):
    ```bash
    # From repository root
    ls -1 connectors/
@@ -98,7 +98,7 @@ How to get the current list:
 2. If not in the repository (requires network call):
    Use WebFetch to get the directory listing:
    ```
-   WebFetch url="https://github.com/fivetran/fivetran_connector_sdk/tree/main/connectors"
+   WebFetch url="https://github.com/fivetran/connector_sdk/tree/main/connectors"
             prompt="List all directory names in this GitHub directory page. Return only the directory names, one per line."
    ```
 
@@ -117,7 +117,7 @@ Fuzzy matching guidance:
 
 ## Common patterns reference
 
-Browse full list: https://github.com/fivetran/fivetran_connector_sdk/tree/main/examples/common_patterns_for_connectors/
+Browse full list: https://github.com/fivetran/connector_sdk/tree/main/examples/common_patterns_for_connectors/
 
 ### Authentication
 | Pattern folder | Use when |
@@ -184,7 +184,7 @@ Browse full list: https://github.com/fivetran/fivetran_connector_sdk/tree/main/e
 
 ## Quickstart examples reference
 
-Browse: https://github.com/fivetran/fivetran_connector_sdk/tree/main/examples/quickstart_examples/
+Browse: https://github.com/fivetran/connector_sdk/tree/main/examples/quickstart_examples/
 
 | Example | Use as reference when |
 |---|---|
@@ -203,20 +203,20 @@ Browse: https://github.com/fivetran/fivetran_connector_sdk/tree/main/examples/qu
 ## WebFetch usage
 
 For a map of all top-level directories in the Connector SDK repository:
-- https://github.com/fivetran/fivetran_connector_sdk#repository-structure
+- https://github.com/fivetran/connector_sdk#repository-structure
 
 When you need to inspect a community connector before recommending it:
 
 ```
 # Browse the connector's directory first — structure varies (some have subdirectories or multiple approaches)
-https://github.com/fivetran/fivetran_connector_sdk/tree/main/connectors/<name>/
+https://github.com/fivetran/connector_sdk/tree/main/connectors/<name>/
 
 # Then fetch specific files based on what you find in the directory listing
 # For connectors with a root connector.py:
-https://raw.githubusercontent.com/fivetran/fivetran_connector_sdk/main/connectors/<name>/connector.py
+https://raw.githubusercontent.com/fivetran/connector_sdk/main/connectors/<name>/connector.py
 
 # Read connector README
-https://raw.githubusercontent.com/fivetran/fivetran_connector_sdk/main/connectors/<name>/README.md
+https://raw.githubusercontent.com/fivetran/connector_sdk/main/connectors/<name>/README.md
 ```
 
 ---
@@ -238,7 +238,7 @@ DATA SOURCE: [what the user wants to connect]
     fivetran init --template connectors/<name>
 
   What it does: [brief description of what the connector syncs]
-  Preview: https://github.com/fivetran/fivetran_connector_sdk/tree/main/connectors/<name>/
+  Preview: https://github.com/fivetran/connector_sdk/tree/main/connectors/<name>/
   Customization needed: [none | list specific things to change]
 
 [FUZZY MATCH]
@@ -248,7 +248,7 @@ DATA SOURCE: [what the user wants to connect]
 
   Why it's relevant: [what's shared — same auth, same API platform, same patterns]
   What to change: [list specific differences to address]
-  Preview: https://github.com/fivetran/fivetran_connector_sdk/tree/main/connectors/<name>/
+  Preview: https://github.com/fivetran/connector_sdk/tree/main/connectors/<name>/
 
 [BUILD ON TEMPLATE]
   No community connector covers this source. Your template connector is the right
@@ -260,7 +260,7 @@ DATA SOURCE: [what the user wants to connect]
   Other:        examples/common_patterns_for_connectors/<other_pattern>    [if applicable]
 
   GitHub references:
-    https://raw.githubusercontent.com/fivetran/fivetran_connector_sdk/main/examples/common_patterns_for_connectors/<pattern>/connector.py
+    https://raw.githubusercontent.com/fivetran/connector_sdk/main/examples/common_patterns_for_connectors/<pattern>/connector.py
 
 ─── NEXT STEP ───────────────────────────────────────────────────
 [EXACT MATCH]

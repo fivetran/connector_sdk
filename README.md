@@ -9,18 +9,18 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/fivetran/fivetran_connector_sdk/stargazers" target="_blank"><img src="https://img.shields.io/github/stars/fivetran/fivetran_connector_sdk?style=social&label=Star"></a>
-  <a href="https://github.com/fivetran/fivetran_connector_sdk/blob/main/LICENSE" target="_blank"><img src="https://img.shields.io/badge/License-MIT-blue" alt="License"></a>
+  <a href="https://github.com/fivetran/connector_sdk/stargazers" target="_blank"><img src="https://img.shields.io/github/stars/fivetran/connector_sdk?style=social&label=Star"></a>
+  <a href="https://github.com/fivetran/connector_sdk/blob/main/LICENSE" target="_blank"><img src="https://img.shields.io/badge/License-MIT-blue" alt="License"></a>
   <a href="https://pypi.org/project/fivetran-connector-sdk/" target="_blank"><img src="https://img.shields.io/pypi/v/fivetran-connector-sdk" alt="PyPI Release"></a>
   <a href="https://pepy.tech/project/fivetran-connector-sdk" target="_blank"><img src="https://static.pepy.tech/badge/fivetran-connector-sdk" alt="PyPI Downloads"></a>
-<a href="https://github.com/fivetran/fivetran_connector_sdk/blob/main/README.md" target="_blank"><img src="https://img.shields.io/badge/Managed-Yes-green/" alt="Managed"></a>
+<a href="https://github.com/fivetran/connector_sdk/blob/main/README.md" target="_blank"><img src="https://img.shields.io/badge/Managed-Yes-green/" alt="Managed"></a>
 </p>
 
 # Overview
 
 Explore practical examples and helpful resources for building custom data connectors with the Fivetran [Connector SDK](https://fivetran.com/docs/connectors/connector-sdk). Learn how to develop and deploy [custom data connectors](https://fivetran.com/docs/connectors/connector-sdk/setup-guide) in Python, and extend Fivetran’s capabilities to fit your data integration needs.
 
-You’ll also find tips on [using AI to help you code a custom connector](https://github.com/fivetran/fivetran_connector_sdk/tree/main/all_things_ai/tutorials/README.md) quickly.
+You’ll also find tips on [using AI to help you code a custom connector](https://github.com/fivetran/connector_sdk/tree/main/all_things_ai/tutorials/README.md) quickly.
 
 ## Why Connector SDK?
 
@@ -301,22 +301,22 @@ These examples demonstrate common patterns and best practices for building conne
 </details>
 
 ## AI and Connector SDK
-- [Readme](https://github.com/fivetran/fivetran_connector_sdk/blob/main/all_things_ai/tutorials/README.md) - This is an introduction to using AI tools to leverage Connector SDK.
-- [agents.md](https://github.com/fivetran/fivetran_connector_sdk/blob/main/all_things_ai/ai_agents/AGENTS.md) - This is a system instruction file that can be used in any IDE, API call or conversation with AI to rapidly develop Connector SDK solutions while following best practice.
-- [claude_pokeapi tutorial](https://github.com/fivetran/fivetran_connector_sdk/tree/main/all_things_ai/tutorials/claude/pokeapi_tutorial) - This example contains the code produced by Claude AI to build a custom connector using our Connector SDK. See our [blog article](https://www.fivetran.com/blog/building-a-fivetran-connector-in-1-hour-with-anthropics-claude-ai) for more details.
-- [claude_fda_drug tutorial](https://github.com/fivetran/fivetran_connector_sdk/tree/main/all_things_ai/tutorials/claude/fda_drug_tutorial) - This example demonstrates how to use Claude to create a CSDK connector to get data from the FDA drug API.
-- [cursor_fda_food tutorial](https://github.com/fivetran/fivetran_connector_sdk/tree/main/all_things_ai/tutorials/cursor/fda_food_tutorial/fda_food_connector) - This example demonstrates how to use Cursor to create a CSDK connector to get data from the FDA food API.
-- [vscode_fda_tobacco tutorial](https://github.com/fivetran/fivetran_connector_sdk/tree/main/all_things_ai/tutorials/vscode/fda_tobacco_tutorial/fda_tobacco_connector) - This example demonstrates how to use VSCode to create a CSDK connector to get data from the FDA tobacco API.
-- [snowflake-cortex-livestock-weather-intelligence](https://github.com/fivetran/fivetran_connector_sdk/tree/main/all_things_ai/tutorials/snowflake-cortex-livestock-weather-intelligence) - This example demonstrates real-time AI enrichment via Snowflake Cortex Agent REST API during Fivetran data ingestion. It syncs weather forecasts and enriches them with livestock health risk assessments using Snowflake's llama3.3-70b model with Cortex Analyst. It shows how to integrate Snowflake Intelligence into Fivetran pipelines for any industry vertical.
-- [databricks-fm-tvmaze-programming-intelligence](https://github.com/fivetran/fivetran_connector_sdk/tree/main/all_things_ai/tutorials/databricks-fm-tvmaze-programming-intelligence) - Syncs TV show metadata from the TVMaze API and enriches each show with AI-powered multi-agent debate using Databricks ai_query(). A Programming Optimist and Programming Skeptic debate each show's renewal probability; a Consensus agent synthesizes a renewal rating and sets a disagreement_flag for shows that warrant human programming team review.
+- [Readme](https://github.com/fivetran/connector_sdk/blob/main/all_things_ai/tutorials/README.md) - This is an introduction to using AI tools to leverage Connector SDK.
+- [agents.md](https://github.com/fivetran/connector_sdk/blob/main/all_things_ai/ai_agents/AGENTS.md) - This is a system instruction file that can be used in any IDE, API call or conversation with AI to rapidly develop Connector SDK solutions while following best practice.
+- [claude_pokeapi tutorial](https://github.com/fivetran/connector_sdk/tree/main/all_things_ai/tutorials/claude/pokeapi_tutorial) - This example contains the code produced by Claude AI to build a custom connector using our Connector SDK. See our [blog article](https://www.fivetran.com/blog/building-a-fivetran-connector-in-1-hour-with-anthropics-claude-ai) for more details.
+- [claude_fda_drug tutorial](https://github.com/fivetran/connector_sdk/tree/main/all_things_ai/tutorials/claude/fda_drug_tutorial) - This example demonstrates how to use Claude to create a CSDK connector to get data from the FDA drug API.
+- [cursor_fda_food tutorial](https://github.com/fivetran/connector_sdk/tree/main/all_things_ai/tutorials/cursor/fda_food_tutorial/fda_food_connector) - This example demonstrates how to use Cursor to create a CSDK connector to get data from the FDA food API.
+- [vscode_fda_tobacco tutorial](https://github.com/fivetran/connector_sdk/tree/main/all_things_ai/tutorials/vscode/fda_tobacco_tutorial/fda_tobacco_connector) - This example demonstrates how to use VSCode to create a CSDK connector to get data from the FDA tobacco API.
+- [snowflake-cortex-livestock-weather-intelligence](https://github.com/fivetran/connector_sdk/tree/main/all_things_ai/tutorials/snowflake-cortex-livestock-weather-intelligence) - This example demonstrates real-time AI enrichment via Snowflake Cortex Agent REST API during Fivetran data ingestion. It syncs weather forecasts and enriches them with livestock health risk assessments using Snowflake's llama3.3-70b model with Cortex Analyst. It shows how to integrate Snowflake Intelligence into Fivetran pipelines for any industry vertical.
+- [databricks-fm-tvmaze-programming-intelligence](https://github.com/fivetran/connector_sdk/tree/main/all_things_ai/tutorials/databricks-fm-tvmaze-programming-intelligence) - Syncs TV show metadata from the TVMaze API and enriches each show with AI-powered multi-agent debate using Databricks ai_query(). A Programming Optimist and Programming Skeptic debate each show's renewal probability; a Consensus agent synthesizes a renewal rating and sets a disagreement_flag for shows that warrant human programming team review.
 
 ## Issue
 
-Found an issue? Submit the [issue](https://github.com/fivetran/fivetran_connector_sdk/issues) and get connected to a Fivetran developer.
+Found an issue? Submit the [issue](https://github.com/fivetran/connector_sdk/issues) and get connected to a Fivetran developer.
 
 ## Fivetran platform features
 
-- [schema_change](https://github.com/fivetran/fivetran_connector_sdk/blob/main/examples/common_patterns_for_connectors/schema_change/README.md) - This is an example that illustrates how a deployed Connector SDK connection uses Fivetran's native [data type changes](https://fivetran.com/docs/core-concepts#changingdatatype) to change data types in the destination if they are changed in the source data.
+- [schema_change](https://github.com/fivetran/connector_sdk/blob/main/examples/common_patterns_for_connectors/schema_change/README.md) - This is an example that illustrates how a deployed Connector SDK connection uses Fivetran's native [data type changes](https://fivetran.com/docs/core-concepts#changingdatatype) to change data types in the destination if they are changed in the source data.
 
 
 ## Support
@@ -336,4 +336,4 @@ As with other new connectors, SDK connectors have a [14-day trial period](https:
 
 ## Maintenance
 
-The `fivetran_connector_sdk` repository is actively maintained by Fivetran Developers. Reach out to our [Support team](https://support.fivetran.com/hc/en-us) for any inquiries.
+The `connector_sdk` repository is actively maintained by Fivetran Developers. Reach out to our [Support team](https://support.fivetran.com/hc/en-us) for any inquiries.

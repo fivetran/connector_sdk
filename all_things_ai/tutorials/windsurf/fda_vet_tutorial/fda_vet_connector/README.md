@@ -171,7 +171,7 @@ Look for these log messages:
 
 ### Fivetran Connector SDK
 - **Documentation**: [Fivetran Connector SDK Documentation](https://fivetran.com/docs/connector-sdk)
-- **Examples**: [SDK Examples Repository](https://github.com/fivetran/fivetran_connector_sdk/tree/main/examples)
+- **Examples**: [SDK Examples Repository](https://github.com/fivetran/connector_sdk/tree/main/examples)
 - **Best Practices**: [Best Practices Guide](https://fivetran.com/docs/connector-sdk/best-practices)
 
 ## Limitations and Constraints

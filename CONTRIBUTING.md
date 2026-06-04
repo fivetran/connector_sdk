@@ -4,7 +4,7 @@ Thank you for your interest in contributing to the Fivetran Connector SDK. This 
 
 ## Code of conduct
 
-This project adheres to the [Contributor Covenant Code of Conduct](https://github.com/fivetran/fivetran_connector_sdk/tree/main/CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code.
+This project adheres to the [Contributor Covenant Code of Conduct](https://github.com/fivetran/connector_sdk/tree/main/CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code.
 
 ## Ways to contribute
 
@@ -21,7 +21,7 @@ We encourage the community to contribute in the following ways:
 Before contributing, do the following:
 
 1. Familiarize yourself with the [Connector SDK documentation](https://fivetran.com/docs/connector-sdk).
-2. Browse the [existing examples](https://github.com/fivetran/fivetran_connector_sdk/tree/main/README.md#examples) to understand our coding patterns and structure.
+2. Browse the [existing examples](https://github.com/fivetran/connector_sdk/tree/main/README.md#examples) to understand our coding patterns and structure.
 3. Set up your environment - follow the [setup guide](https://fivetran.com/docs/connector-sdk/setup-guide) to install the Connector SDK.
 
 
@@ -29,7 +29,7 @@ Before contributing, do the following:
 
 ### Step 1: Fork the repository
 
-1. Navigate to the [Fivetran Connector SDK repository](https://github.com/fivetran/fivetran_connector_sdk) on GitHub.
+1. Navigate to the [Fivetran Connector SDK repository](https://github.com/fivetran/connector_sdk) on GitHub.
 2. Click **Fork** in the upper-right corner of the page.
 3. This creates a copy of the repository under your GitHub account.
 
@@ -37,13 +37,13 @@ Before contributing, do the following:
 
 ```bash
 # Clone your forked repository to your local machine
-git clone https://github.com/<YOUR_USERNAME>/fivetran_connector_sdk.git
+git clone https://github.com/<YOUR_USERNAME>/connector_sdk.git
 
 # Navigate to the repository directory
-cd fivetran_connector_sdk
+cd connector_sdk
 
 # Add the original repository as an upstream remote
-git remote add upstream https://github.com/fivetran/fivetran_connector_sdk.git
+git remote add upstream https://github.com/fivetran/connector_sdk.git
 ```
 
 ### Step 3: Set up pre-commit hooks
@@ -106,7 +106,7 @@ git push
 
 1. Navigate to your forked repository on GitHub.
 2. Click the `Compare & pull request` button.
-3. Ensure the base repository is `fivetran/fivetran_connector_sdk` and the base branch is `main`.
+3. Ensure the base repository is `fivetran/connector_sdk` and the base branch is `main`.
 4. Fill out the pull request template with:
    - Clear title message
    - Detailed description of your changes
@@ -137,8 +137,8 @@ All contributions must adhere to our coding standards and principles to ensure c
 
 Before submitting a pull request, thoroughly review these documents:
 
-- [Python Coding Standards](https://github.com/fivetran/fivetran_connector_sdk/tree/main/PYTHON_CODING_STANDARDS.md) - comprehensive guidelines for Python code style, naming conventions, and best practices
-- [Fivetran Coding Principles](https://github.com/fivetran/fivetran_connector_sdk/tree/main/FIVETRAN_CODING_PRINCIPLES.md) - high-level principles for code reviews, PR guidelines, and example development
+- [Python Coding Standards](https://github.com/fivetran/connector_sdk/tree/main/PYTHON_CODING_STANDARDS.md) - comprehensive guidelines for Python code style, naming conventions, and best practices
+- [Fivetran Coding Principles](https://github.com/fivetran/connector_sdk/tree/main/FIVETRAN_CODING_PRINCIPLES.md) - high-level principles for code reviews, PR guidelines, and example development
 - [Connector SDK Best Practices](https://fivetran.com/docs/connector-sdk/best-practices) - official documentation on best practices
 
 ### Documentation requirements
@@ -147,11 +147,11 @@ Every new connector example contribution must include proper documentation:
 
 #### README.md
 
-Each new connector example must include a `README.md` file in its directory. Refer to the [template connector](https://github.com/fivetran/fivetran_connector_sdk/tree/main/template_connector) for structure and formatting.
+Each new connector example must include a `README.md` file in its directory. Refer to the [template connector](https://github.com/fivetran/connector_sdk/tree/main/template_connector) for structure and formatting.
 
 #### Root README.md update
 
-When adding a new connector example, you must update the root [README.md](https://github.com/fivetran/fivetran_connector_sdk/tree/main/README.md) file to include your example in the appropriate section.
+When adding a new connector example, you must update the root [README.md](https://github.com/fivetran/connector_sdk/tree/main/README.md) file to include your example in the appropriate section.
 
 
 ## Review process
@@ -262,7 +262,7 @@ What to update in `README.md`:
 
 ### 3. Contributor license agreement
 
-All contributors must sign the Fivetran CLA before their contributions can be accepted. You can review the CLA [here](https://cla-assistant.io/fivetran/fivetran_connector_sdk).
+All contributors must sign the Fivetran CLA before their contributions can be accepted. You can review the CLA [here](https://cla-assistant.io/fivetran/connector_sdk).
 
 #### How the CLA works
 
