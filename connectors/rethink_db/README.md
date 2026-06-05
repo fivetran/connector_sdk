@@ -4,7 +4,7 @@
 This example demonstrates how to use the Fivetran Connector SDK to sync data from RethinkDB, an open-source database designed for real-time applications. RethinkDB is known for its changefeeds feature that pushes data to applications in real-time, making it ideal for collaborative apps, multiplayer games, streaming analytics, and IoT systems. This connector enables organizations to replicate their RethinkDB data to a data warehouse for analysis, reporting, and business intelligence.
 
 ## Requirements
-- [Supported Python versions](https://github.com/fivetran/fivetran_connector_sdk/blob/main/README.md#requirements)
+- [Supported Python versions](https://github.com/fivetran/connector_sdk/blob/main/README.md#requirements)
 - Operating system:
   - Windows: 10 or later (64-bit only)
   - macOS: 13 (Ventura) or later (Apple Silicon [arm64] or Intel [x86_64])

@@ -6,7 +6,7 @@ This example demonstrates how to build a connector for [Microsoft Intune](https:
 ## Requirements
 
 * Microsoft Intune credentials: `tenant_id`, `client_id`, and `client_secret`
-* [Supported Python versions](https://github.com/fivetran/fivetran_connector_sdk/blob/main/README.md#requirements)   
+* [Supported Python versions](https://github.com/fivetran/connector_sdk/blob/main/README.md#requirements)   
 * Operating System:  
   * Windows 10 or later  
   * macOS 13 (Ventura) or later
