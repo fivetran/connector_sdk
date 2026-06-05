@@ -6,7 +6,7 @@
 This connector example demonstrates how to sync data from Couchbase Capella using the Connector SDK. It connects to a Couchbase Capella instance, executes SQL++ (N1QL) queries to fetch data from a specific bucket, scope, and collection, and efficiently streams the data to destination table while implementing best practices for handling large datasets.  
 This connector is built for Couchbase Capella. It supports buckets using either the Magma or Couchstore storage engines.  
 
-> For syncing data from a Magma bucket on self-managed Couchbase Server, please refer to the [Couchbase Magma connector example](https://github.com/fivetran/connector_sdk/blob/main/examples/source_examples/couchbase_magma)
+> For syncing data from a Magma bucket on self-managed Couchbase Server, please refer to the [Couchbase Magma connector example](https://github.com/fivetran/connector_sdk/blob/main/connectors/couchbase_magma)
 
 
 ## Requirements
