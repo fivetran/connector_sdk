@@ -17,7 +17,7 @@ These are graded examples designed to help you get started with the Connector SD
 
 - [configuration](https://github.com/fivetran/fivetran_connector_sdk/tree/main/examples/quickstart_examples/configuration) - This example shows how to use secrets.
 
-- [configuration_form](https://github.com/fivetran/fivetran_connector_sdk/tree/main/examples/quickstart_examples/configuration_form) - This example shows how to define a connector setup form using `ConfigurationForm`, `form_field`, and `Test`. It demonstrates all available field types (plain text, password, dropdown, toggle, and descriptive dropdown) and how to register a connection test.
+- [configuration_form](https://github.com/fivetran/connector_sdk/tree/main/examples/quickstart_examples/configuration_form) - This example shows how to define a connector setup form using `ConfigurationForm`, `form_field`, and `Test`. It demonstrates all available field types (plain text, password, dropdown, toggle, and descriptive dropdown) and how to register a connection test.
 
 - [multiple_code_files](https://github.com/fivetran/fivetran_connector_sdk/tree/main/examples/quickstart_examples/multiple_code_files_with_sub_directory_structure) - This example shows how you can write a complex connector comprising multiple `.py` files.
 
