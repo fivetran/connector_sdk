@@ -4,7 +4,7 @@
 This connector demonstrates how to fetch email data from Resend and upsert it into your destination using the Fivetran Connector SDK. The custom connector synchronizes email records from your Resend account and implements pagination handling to efficiently process large datasets with incremental synchronization based on email IDs. The connector tracks the newest email ID from each sync and stops fetching when it encounters previously synced data, ensuring efficient incremental updates without fetching the entire dataset on each run.
 
 ## Requirements
-- [Supported Python versions](https://github.com/fivetran/fivetran_connector_sdk/blob/main/README.md#requirements)
+- [Supported Python versions](https://github.com/fivetran/connector_sdk/blob/main/README.md#requirements)
 - Operating system:
   - Windows: 10 or later (64-bit only)
   - macOS: 13 (Ventura) or later (Apple Silicon [arm64] or Intel [x86_64])

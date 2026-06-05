@@ -4,7 +4,7 @@
 This connector syncs Employee, Leave Transactions, and Attendance Insights data from the greytHR API to Fivetran destinations. greytHR is a cloud-based HR and payroll management platform that provides comprehensive employee data management capabilities. This connector implements incremental syncing with proper state management and handles the greytHR API's 31-day date range limitation for Leave and Attendance endpoints through intelligent date windowing.
 
 ## Requirements
-- [Supported Python versions](https://github.com/fivetran/fivetran_connector_sdk/blob/main/README.md#requirements)
+- [Supported Python versions](https://github.com/fivetran/connector_sdk/blob/main/README.md#requirements)
 - Operating system:
   - Windows: 10 or later (64-bit only)
   - macOS: 13 (Ventura) or later (Apple Silicon [arm64] or Intel [x86_64])

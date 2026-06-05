@@ -6,7 +6,7 @@ This connector integrates with the Clerk API to synchronize user data into your 
 Clerk is a user authentication and management platform that provides APIs for managing users, their email addresses, phone numbers, social accounts, and authentication methods. 
 
 ## Requirements
-- [Supported Python versions](https://github.com/fivetran/fivetran_connector_sdk/blob/main/README.md#requirements)
+- [Supported Python versions](https://github.com/fivetran/connector_sdk/blob/main/README.md#requirements)
 - Operating system:
   - Windows: 10 or later (64-bit only)
   - macOS: 13 (Ventura) or later (Apple Silicon [arm64] or Intel [x86_64])

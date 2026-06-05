@@ -4,7 +4,7 @@
 This custom Fivetran connector extracts NPS survey data from the [Iterate](https://iteratehq.com/) REST API and loads it into your destination. The connector fetches NPS surveys and their individual responses, providing complete survey analytics data for downstream analysis.
 
 ## Requirements
-- [Supported Python versions](https://github.com/fivetran/fivetran_connector_sdk/blob/main/README.md#requirements)
+- [Supported Python versions](https://github.com/fivetran/connector_sdk/blob/main/README.md#requirements)
 - Operating system:
   - Windows: 10 or later (64-bit only)
   - macOS: 13 (Ventura) or later (Apple Silicon [arm64] or Intel [x86_64])
