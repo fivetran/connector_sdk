@@ -50,6 +50,8 @@ Explore working code examples for common Connector SDK use cases. These [example
 
 Explore ready-to-use full connectors to get started. These connectors are useful when you want a stronger starting point or want to adapt an existing implementation for your source. For the full list, see the [Community Connectors Catalog](https://github.com/fivetran/community_connectors/blob/main/README.md).
 
+- [open_meteo_marine_weather](connectors/open_meteo_marine_weather) - Syncs hourly and daily marine weather conditions (wave height, wave period, swell, ocean current) from the Open-Meteo Marine Weather API. No authentication required.
+
 
 ## AI and Connector SDK
 - [Readme](https://github.com/fivetran/connector_sdk/blob/main/all_things_ai/tutorials/README.md) - This is an introduction to using AI tools to leverage Connector SDK.
