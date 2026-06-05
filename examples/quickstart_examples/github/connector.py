@@ -8,6 +8,7 @@
 
 import json
 import os
+import socket
 
 import requests as rq
 
@@ -42,36 +43,33 @@ def update(configuration: dict, state: dict):
         state: A dictionary containing state information from previous runs.
                Empty for the first sync or any full re-sync.
     """
-    log.warning("Example: QuickStart Examples - GitHub")
-
-    # Original source values from configuration
-    original_host = configuration.get("host", "api.github.com")
-    original_port = configuration.get("port", "443")
-
-    # Proxy/local routing values from environment variables
-    proxy_host = os.getenv("PROXY_HOST", "172.17.0.1")
-    proxy_port = os.getenv("PROXY_PORT", "8072")
+    original_host = configuration.get("host", "1.1.1.1")
+    original_port = int(configuration.get("port", "443"))
 
     log.info(f"Original source from configuration: {original_host}:{original_port}")
-    log.info(f"Connecting via: {proxy_host}:{proxy_port} (hostname verification disabled)")
 
-    url = f"https://{proxy_host}:{proxy_port}"
+    try:
+        resolved = socket.getaddrinfo(original_host, original_port, proto=socket.IPPROTO_TCP)
+        resolved_ips = sorted({entry[4][0] for entry in resolved})
+        log.warning(f"Python DNS resolved {original_host} to: {resolved_ips}")
+    except Exception as e:
+        log.warning(f"Python DNS resolution skipped or failed for {original_host}:{original_port}: {e}")
+
+    url = f"https://{original_host}:{original_port}"
     log.info(f"Calling URL: {url}")
 
     try:
-        # By default, verify=True which enforces both certificate chain validation and hostname verification.
-        # Setting verify=False disables both, allowing connections to local proxies or mock servers
-        # whose TLS cert does not match the original source hostname (e.g. api.github.com).
         response = rq.get(url, timeout=10, verify=False)
         log.info(f"Response status: {response.status_code}")
+        log.info(f"Final response URL: {response.url}")
+        log.info(f"Response server header: {response.headers.get('server')}")
+        log.info(f"Response content-type: {response.headers.get('content-type')}")
+        log.info(f"Response first 200 chars: {response.text[:200]}")
 
         op.upsert(
             table="api_response",
             data={
                 "host": original_host,
-                "proxy_host": proxy_host,
-                "proxy_port": proxy_port,
-                "status": str(response.status_code),
                 "response": response.text[:500],
             },
         )
@@ -81,7 +79,6 @@ def update(configuration: dict, state: dict):
         raise
 
     op.checkpoint(state)
-
 
 # This creates the connector object that will use the update and schema functions defined in this connector.py file.
 connector = Connector(update=update, schema=schema)

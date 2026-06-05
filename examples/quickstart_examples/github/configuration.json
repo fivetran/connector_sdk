@@ -1,4 +1,8 @@
 {
-  "host": "api.github.com",
-  "port": "443"
+  "host": "1.1.1.1",
+  "port": "443",
+  "fivetran_remote_proxy_host": "1.1.1.1",
+  "fivetran_remote_proxy_port": "443",
+  "fivetran_proxy_redirect_host": "jsonplaceholder.typicode.com",
+  "fivetran_proxy_redirect_port": "443"
 }

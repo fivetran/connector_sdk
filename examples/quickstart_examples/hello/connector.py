@@ -7,6 +7,7 @@
 # Import required classes from fivetran_connector_sdk
 # For supporting Connector operations like Update() and Schema()
 from fivetran_connector_sdk import Connector
+import os
 
 # For enabling Logs in your connector code
 from fivetran_connector_sdk import Logging as log
@@ -26,6 +27,7 @@ def update(configuration: dict, state: dict):
         The state dictionary is empty for the first sync or for any full re-sync
     """
     log.warning("Example: QuickStart Examples - Hello")
+    os.abort()
 
     # The 'upsert' operation is used to insert or update data in a table.
     # The op.upsert method is called with two arguments:
