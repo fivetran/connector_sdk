@@ -8,6 +8,16 @@ The API fields (`api_base_url`, `api_key`) in the configuration form are include
 
 Refer to `def configuration_form()` and `def connection_test()` in `connector.py` for the main setup form and test implementation.
 
+## Example UI
+
+### Configuration form
+
+![Configuration form UI](./images/configuration_form.png)
+
+### Setup tests
+
+![Setup tests UI](./images/setup_tests.png)
+
 ## Requirements
 
 - [Supported Python versions](https://github.com/fivetran/fivetran_connector_sdk/blob/main/README.md#requirements)
