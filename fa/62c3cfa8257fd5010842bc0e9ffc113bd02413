@@ -1,0 +1,21 @@
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.1",
+  "base_commit_sha": "fa62c3cfa8257fd5010842bc0e9ffc113bd02413",
+  "prompts": {
+    "52b1fca3bf5edabc": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8633156b-17f3-4efa-94f2-b5331c106aac",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Sahil Khirwal <sahil.khirwal@fivetran.com>",
+      "messages": [],
+      "total_additions": 79,
+      "total_deletions": 0,
+      "accepted_lines": 79,
+      "overriden_lines": 0
+    }
+  }
+}

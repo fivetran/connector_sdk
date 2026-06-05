@@ -1,0 +1,23 @@
+examples/common_patterns_for_connectors/truncate_operation/connector.py
+  69601f762bc839f0 103
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.1",
+  "base_commit_sha": "6e2a5598f2930e9e7e5f56526ba17eb07e1ab392",
+  "prompts": {
+    "69601f762bc839f0": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e31abd16-307b-4b3a-bb70-3571bff9321f",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "unknown",
+      "messages": [],
+      "total_additions": 8,
+      "total_deletions": 8,
+      "accepted_lines": 4,
+      "overriden_lines": 0
+    }
+  }
+}
