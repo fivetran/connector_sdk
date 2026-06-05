@@ -1,0 +1,25 @@
+examples/quickstart_examples/github/connector.py
+  231f7fd7ddefc453 11,54,57
+examples/quickstart_examples/github_hostname_verification/connector.py
+  231f7fd7ddefc453 14-15,61-65,67,69-70
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.1",
+  "base_commit_sha": "0beeffaeca3d0cc78dca551cc0ac2bca56d748af",
+  "prompts": {
+    "231f7fd7ddefc453": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a40d1edc-3f8c-4d32-b0f7-2d7c656364a5",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Sinchana Hegde <sinchana.hegde@fivetran.com>",
+      "messages": [],
+      "total_additions": 48,
+      "total_deletions": 48,
+      "accepted_lines": 17,
+      "overriden_lines": 0
+    }
+  }
+}
