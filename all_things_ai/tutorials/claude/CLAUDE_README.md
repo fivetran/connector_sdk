@@ -78,7 +78,7 @@ Follow the prompt templates provided in the Claude AI Prompt Templates section b
 
 #### **Learning Resources**
 - **Claude Documentation**: [help.anthropic.com](https://help.anthropic.com)
-- **Fivetran SDK Examples**: [GitHub Repository](https://github.com/fivetran/fivetran_connector_sdk/tree/main/examples)
+- **Fivetran SDK Examples**: [GitHub Repository](https://github.com/fivetran/connector_sdk/tree/main/examples)
 - **Community Support**: [Fivetran Community Forum](https://community.fivetran.com)
 
 ### Security and Privacy
@@ -98,7 +98,7 @@ Follow the prompt templates provided in the Claude AI Prompt Templates section b
 ## Prerequisites
 
 ### System Requirements
-- **Python**: 3.10-3.13 (as specified in [Fivetran SDK Requirements](https://github.com/fivetran/fivetran_connector_sdk/blob/main/README.md#requirements))
+- **Python**: 3.10-3.13 (as specified in [Fivetran SDK Requirements](https://github.com/fivetran/connector_sdk/blob/main/README.md#requirements))
 - **Operating System**: 
   - Windows 10 or later
   - macOS 13 (Ventura) or later
@@ -464,12 +464,12 @@ if remaining_calls < 10:
 
 ### Official Documentation
 - [Fivetran Connector SDK Documentation](https://fivetran.com/docs/connector-sdk)
-- [SDK Examples Repository](https://github.com/fivetran/fivetran_connector_sdk/tree/main/examples)
+- [SDK Examples Repository](https://github.com/fivetran/connector_sdk/tree/main/examples)
 - [Technical Reference](https://fivetran.com/docs/connector-sdk/technical-reference)
 - [Best Practices Guide](https://fivetran.com/docs/connector-sdk/best-practices)
 
 ### Community Resources
-- [GitHub Issues](https://github.com/fivetran/fivetran_connector_sdk/issues)
+- [GitHub Issues](https://github.com/fivetran/connector_sdk/issues)
 
 ## Important Notes
 

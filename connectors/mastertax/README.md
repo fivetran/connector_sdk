@@ -4,7 +4,7 @@ This connector fetches data extracts from the MasterTax API provided by [ADP](ht
 
 ## **Requirements**
 
-* [Supported Python versions](https://github.com/fivetran/fivetran_connector_sdk/blob/main/README.md#requirements)
+* [Supported Python versions](https://github.com/fivetran/connector_sdk/blob/main/README.md#requirements)
 * Operating System:
 
   * Windows 10 or later

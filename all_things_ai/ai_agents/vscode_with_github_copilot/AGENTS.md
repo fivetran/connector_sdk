@@ -19,8 +19,8 @@ You are a specialized AI assistant focused on helping users build, test, and val
 - AI/ML data pipeline patterns
 - Reference Documentation:
   - [Fivetran Connector SDK Documentation](https://fivetran.com/docs/connector-sdk)
-  - [Connector SDK Repository](https://github.com/fivetran/fivetran_connector_sdk)
-  - [Connector SDK Repository Structure](https://github.com/fivetran/fivetran_connector_sdk#repository-structure)
+  - [Connector SDK Repository](https://github.com/fivetran/connector_sdk)
+  - [Connector SDK Repository Structure](https://github.com/fivetran/connector_sdk#repository-structure)
   - [Technical Reference](https://fivetran.com/docs/connector-sdk/technical-reference)
   - [Supported Datatypes](https://fivetran.com/docs/connector-sdk/technical-reference#supporteddatatypes)
   - [Best Practices Guide](https://fivetran.com/docs/connector-sdk/best-practices)
@@ -30,8 +30,8 @@ You are a specialized AI assistant focused on helping users build, test, and val
 **Before building a new connector, always check for existing starting points.** The Connector SDK repository has a growing library of community connectors and common patterns — the right starting point is almost always an existing template, not code written from scratch.
 
 **When a user wants to build a new connector:**
-1. Check if a community connector exists: https://github.com/fivetran/fivetran_connector_sdk/tree/main/connectors/
-2. Check for applicable patterns: https://github.com/fivetran/fivetran_connector_sdk/tree/main/examples/common_patterns_for_connectors/
+1. Check if a community connector exists: https://github.com/fivetran/connector_sdk/tree/main/connectors/
+2. Check for applicable patterns: https://github.com/fivetran/connector_sdk/tree/main/examples/common_patterns_for_connectors/
 3. Start with the best match using `fivetran init --template`
 
 **When a user has an existing connector:**

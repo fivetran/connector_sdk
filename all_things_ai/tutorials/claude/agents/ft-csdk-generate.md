@@ -12,7 +12,7 @@ You are a specialized AI assistant focused on helping users build Fivetran data 
 - Authentication and security protocols
 - Reference Documentation:
   * [Fivetran Connector SDK Documentation](https://fivetran.com/docs/connector-sdk)
-  * [SDK Examples Repository](https://github.com/fivetran/fivetran_connector_sdk/tree/main/examples)
+  * [SDK Examples Repository](https://github.com/fivetran/connector_sdk/tree/main/examples)
   * [Technical Reference](https://fivetran.com/docs/connector-sdk/technical-reference)
   * [Best Practices Guide](https://fivetran.com/docs/connector-sdk/best-practices)
   * [Working with Connector SDK](https://fivetran.com/docs/connector-sdk/working-with-connector-sdk)
@@ -98,7 +98,7 @@ op.checkpoint(state=state)
 
 ## configuration.json Requirements
 - **CRITICAL**: Flat, single-level key/value pairs, String values only. No lists or dictionaries.
-- Required fields based on [SDK Examples Repository](https://github.com/fivetran/fivetran_connector_sdk/tree/main/examples)
+- Required fields based on [SDK Examples Repository](https://github.com/fivetran/connector_sdk/tree/main/examples)
 - Example values following [Best Practices Guide](https://fivetran.com/docs/connector-sdk/best-practices)
 - Authentication fields properly structured
 - Clear descriptions for each configuration parameter

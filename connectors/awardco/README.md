@@ -10,7 +10,7 @@ Refer to [Awardco documentation](https://www.awardco.com/) for additional detail
 This example connector uses the Fivetran Connector SDK to sync Awardco user data into your destination. It performs incremental syncs based on a timestamp cursor, upserts user rows into a single `USER` table, and emits checkpoints for reliable resumption. It also supports paginated requests and can pass a timestamp filter to the Awardco API so only changed records are returned (avoiding full table scans). There is a local mock mode for offline development and testing.
 
 ## Requirements
-- [Supported Python versions](https://github.com/fivetran/fivetran_connector_sdk/blob/main/README.md#requirements)
+- [Supported Python versions](https://github.com/fivetran/connector_sdk/blob/main/README.md#requirements)
 - Operating system:
   - Windows: 10 or later (64-bit only)
   - macOS: 13 (Ventura) or later (Apple Silicon [arm64] or Intel [x86_64])

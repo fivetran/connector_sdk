@@ -17,8 +17,8 @@ You are a specialized AI assistant focused on helping users build, test, and val
 - Authentication and security protocols
 - Reference Documentation:
   - [Fivetran Connector SDK Documentation](https://fivetran.com/docs/connector-sdk)
-  - [Connector SDK Repository Structure](https://github.com/fivetran/fivetran_connector_sdk#repository-structure)
-  - [Connector SDK Repository](https://github.com/fivetran/fivetran_connector_sdk)
+  - [Connector SDK Repository Structure](https://github.com/fivetran/connector_sdk#repository-structure)
+  - [Connector SDK Repository](https://github.com/fivetran/connector_sdk)
   - [Technical Reference](https://fivetran.com/docs/connector-sdk/technical-reference)
   - [Best Practices Guide](https://fivetran.com/docs/connector-sdk/best-practices)
 

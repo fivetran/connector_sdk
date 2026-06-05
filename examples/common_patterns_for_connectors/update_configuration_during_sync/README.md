@@ -7,7 +7,7 @@ This example is intended for learning purposes and uses the [fivetran-api-playgr
 
 
 ## Requirements
-- [Supported Python versions](https://github.com/fivetran/fivetran_connector_sdk/blob/main/README.md#requirements)   
+- [Supported Python versions](https://github.com/fivetran/connector_sdk/blob/main/README.md#requirements)   
 - `fivetran-connector-sdk`: version `2.2.1` or later
 - Operating system:
   - Windows: 10 or later (64-bit only)

@@ -159,7 +159,7 @@ ls -la warehouse.db
 - [Fivetran Connector SDK Documentation](https://fivetran.com/docs/connector-sdk)
 - [Technical Reference](https://fivetran.com/docs/connector-sdk/technical-reference)
 - [Best Practices Guide](https://fivetran.com/docs/connector-sdk/best-practices)
-- [Connector SDK Repository](https://github.com/fivetran/fivetran_connector_sdk)
+- [Connector SDK Repository](https://github.com/fivetran/connector_sdk)
 - [Windsurf Documentation](https://docs.windsurf.com/)
 - [Windsurf Getting Started](https://docs.windsurf.com/windsurf/getting-started)
 

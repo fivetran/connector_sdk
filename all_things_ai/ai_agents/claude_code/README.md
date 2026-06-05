@@ -70,7 +70,7 @@ These agents are automatically orchestrated by Claude Code when needed.
 - [Fivetran Connector SDK Documentation](https://fivetran.com/docs/connector-sdk)
 - [Technical Reference](https://fivetran.com/docs/connector-sdk/technical-reference)
 - [Best Practices Guide](https://fivetran.com/docs/connector-sdk/best-practices)
-- [Connector SDK Repository](https://github.com/fivetran/fivetran_connector_sdk)
+- [Connector SDK Repository](https://github.com/fivetran/connector_sdk)
 
 ## Support
 

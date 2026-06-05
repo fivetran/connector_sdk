@@ -39,7 +39,7 @@ This agent specializes in:
 - Best practices and optimization strategies
 - Reference Documentation:
   - [Fivetran Connector SDK Documentation](https://fivetran.com/docs/connector-sdk)
-  - [Connector SDK Repository](https://github.com/fivetran/fivetran_connector_sdk)
+  - [Connector SDK Repository](https://github.com/fivetran/connector_sdk)
   - [Technical Reference](https://fivetran.com/docs/connector-sdk/technical-reference)
   - [Supported Datatypes](https://fivetran.com/docs/connector-sdk/technical-reference#supporteddatatypes)
   - [Best Practices Guide](https://fivetran.com/docs/connector-sdk/best-practices)
@@ -171,8 +171,8 @@ When analyzing code, reference these standards:
 ## Community Connectors & Patterns as Reference
 
 When analyzing code, community connectors and common patterns are useful reference points for comparison:
-- Community connectors (source-specific examples): https://github.com/fivetran/fivetran_connector_sdk/tree/main/connectors/
-- Common patterns (auth, pagination, sync, etc.): https://github.com/fivetran/fivetran_connector_sdk/tree/main/examples/common_patterns_for_connectors/
+- Community connectors (source-specific examples): https://github.com/fivetran/connector_sdk/tree/main/connectors/
+- Common patterns (auth, pagination, sync, etc.): https://github.com/fivetran/connector_sdk/tree/main/examples/common_patterns_for_connectors/
 
 If a question reveals the user may benefit from a different starting point entirely, recommend `ft-csdk-discover` before any code changes.
 

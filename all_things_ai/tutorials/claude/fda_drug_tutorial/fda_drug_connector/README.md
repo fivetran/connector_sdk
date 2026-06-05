@@ -196,7 +196,7 @@ Cursors are stored in the connector state and automatically managed.
 ## References
 
 - [Fivetran Connector SDK Documentation](https://fivetran.com/docs/connector-sdk)
-- [SDK Examples Repository](https://github.com/fivetran/fivetran_connector_sdk/tree/main/examples)
+- [SDK Examples Repository](https://github.com/fivetran/connector_sdk/tree/main/examples)
 - [Technical Reference](https://fivetran.com/docs/connector-sdk/technical-reference)
 - [Best Practices Guide](https://fivetran.com/docs/connector-sdk/best-practices)
 - [FDA Drug API Documentation](https://open.fda.gov/apis/drug/)

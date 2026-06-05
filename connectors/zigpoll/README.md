@@ -3,7 +3,7 @@
 ## Connector overview
 This connector retrieves survey response data from [Zigpoll](https://apidocs.zigpoll.com/reference) API and syncs it using Fivetran Connector SDK. The connector fetches data from all accounts accessible via the provided API token. It also handles pagination and incremental syncing to efficiently process large datasets.
 ## Requirements
-- [Supported Python versions](https://github.com/fivetran/fivetran_connector_sdk/blob/main/README.md#requirements)
+- [Supported Python versions](https://github.com/fivetran/connector_sdk/blob/main/README.md#requirements)
 - Operating system:
   - Windows: 10 or later (64-bit only)
   - macOS: 13 (Ventura) or later (Apple Silicon [arm64] or Intel [x86_64])
