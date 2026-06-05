@@ -3,7 +3,7 @@
 ## Connector overview
 This connector retrieves weather observation data and active alerts from the [National Weather Service (NOAA) API](https://www.weather.gov/documentation/services-web-api) and syncs it to Fivetran destinations. The connector fetches current observations from specified weather stations and weather alerts for designated areas, supporting incremental syncing to efficiently process weather data over time.
 ## Requirements
-- [Supported Python versions](https://github.com/fivetran/fivetran_connector_sdk/blob/main/README.md#requirements)
+- [Supported Python versions](https://github.com/fivetran/connector_sdk/blob/main/README.md#requirements)
 - Operating system:
   - Windows: 10 or later (64-bit only)
   - macOS: 13 (Ventura) or later (Apple Silicon [arm64] or Intel [x86_64])

@@ -6,7 +6,7 @@ This connector demonstrates how to sync data from ArangoDB, a native multi-model
 The connector syncs three collections from a travel dataset: airports (document collection), flights (edge collection for graph relationships), and points-of-interest (document collection). This example showcases ArangoDB's unique multi-model architecture and is ideal for use cases involving interconnected data like social networks, recommendation engines, and travel planning systems.
 
 ## Requirements
-- [Supported Python versions](https://github.com/fivetran/fivetran_connector_sdk/blob/main/README.md#requirements)
+- [Supported Python versions](https://github.com/fivetran/connector_sdk/blob/main/README.md#requirements)
 - Operating system:
   - Windows: 10 or later (64-bit only)
   - macOS: 13 (Ventura) or later (Apple Silicon [arm64] or Intel [x86_64])

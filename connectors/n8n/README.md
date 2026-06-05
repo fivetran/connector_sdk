@@ -4,7 +4,7 @@
 This connector syncs workflow automation data from n8n, including workflows and workflow executions. It enables teams to analyze workflow performance, track execution history, and monitor automation health. The connector uses the n8n REST API to fetch data incrementally based on update timestamps and execution IDs, ensuring efficient synchronization of only new or modified data.
 
 ## Requirements
-- [Supported Python versions](https://github.com/fivetran/fivetran_connector_sdk/blob/main/README.md#requirements)
+- [Supported Python versions](https://github.com/fivetran/connector_sdk/blob/main/README.md#requirements)
 - Operating system:
   - Windows: 10 or later (64-bit only)
   - macOS: 13 (Ventura) or later (Apple Silicon [arm64] or Intel [x86_64])

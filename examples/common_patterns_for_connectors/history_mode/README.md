@@ -9,7 +9,7 @@ The Connector SDK does not support history mode natively. However, you can mimic
 This connector demonstrates that pattern using a Microsoft SQL Server source. For every table that contains the configured incremental column (e.g. `_LastUpdatedInstant`), the connector appends it to the table's natural primary keys to form a composite primary key. When a record's timestamp changes between syncs, Fivetran inserts a new row rather than overwriting the existing one — history mode behavior without native history mode support.
 
 ## Requirements
-- [Supported Python versions](https://github.com/fivetran/fivetran_connector_sdk/blob/main/README.md#requirements)   
+- [Supported Python versions](https://github.com/fivetran/connector_sdk/blob/main/README.md#requirements)   
 - Operating system:
   - Windows: 10 or later (64-bit only)
   - macOS: 13 (Ventura) or later (Apple Silicon [arm64] or Intel [x86_64])
@@ -68,7 +68,7 @@ Configuration parameters:
 - `mssql_schema` (optional) — schema to discover tables from; defaults to `dbo` if not provided.
 - `incremental_column` (required) — column used as the incremental cursor and composite PK component (e.g. `_LastUpdatedInstant`).
 
-> Note: When submitting connector code as a [Community Connector](https://github.com/fivetran/fivetran_connector_sdk/tree/main/connectors) or enhancing an [example](https://github.com/fivetran/fivetran_connector_sdk/tree/main/examples) in the open-source [Connector SDK repository](https://github.com/fivetran/fivetran_connector_sdk/tree/main), ensure the `configuration.json` file has placeholder values.
+> Note: When submitting connector code as a [Community Connector](https://github.com/fivetran/connector_sdk/tree/main/connectors) or enhancing an [example](https://github.com/fivetran/connector_sdk/tree/main/examples) in the open-source [Connector SDK repository](https://github.com/fivetran/connector_sdk/tree/main), ensure the `configuration.json` file has placeholder values.
 When adding the connector to your production repository, ensure that the `configuration.json` file is not checked into version control to protect sensitive information.
 
 

@@ -6,7 +6,7 @@ This connector extracts and syncs data from the [Toast POS API](https://doc.toas
 
 ## Requirements
 
-- [Supported Python versions](https://github.com/fivetran/fivetran_connector_sdk/blob/main/README.md#requirements)
+- [Supported Python versions](https://github.com/fivetran/connector_sdk/blob/main/README.md#requirements)
 - Operating system:
   - Windows: 10 or later (64-bit only)
   - macOS: 13 (Ventura) or later (Apple Silicon [arm64] or Intel [x86_64])
@@ -78,7 +78,7 @@ The connector syncs data in 30-day time windows, iterating from `initialSyncStar
 
 The entity-relationship diagram (ERD) below shows how tables are linked in the Toast schema.
 
- <img src="https://raw.githubusercontent.com/fivetran/fivetran_connector_sdk/main/connectors/toast/Toast_ERD.png" alt="Fivetran Toast Connector ERD" width="100%">
+ <img src="https://raw.githubusercontent.com/fivetran/connector_sdk/main/connectors/toast/Toast_ERD.png" alt="Fivetran Toast Connector ERD" width="100%">
 
 ### Core tables
 - `restaurant`

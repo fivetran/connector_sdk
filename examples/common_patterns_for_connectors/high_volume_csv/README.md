@@ -10,7 +10,7 @@ This example demonstrates efficient patterns for processing and ingesting high-v
 The connector fetches CSV data from an API endpoint, saves it locally, and processes it using each library to demonstrate their respective strengths. This example is ideal for scenarios involving large datasets where memory management and processing speed are critical.
 
 ## Requirements
-- [Supported Python versions](https://github.com/fivetran/fivetran_connector_sdk/blob/main/README.md#requirements)   
+- [Supported Python versions](https://github.com/fivetran/connector_sdk/blob/main/README.md#requirements)   
 - Operating system:
   - Windows: 10 or later (64-bit only)
   - macOS: 13 (Ventura) or later (Apple Silicon [arm64] or Intel [x86_64])

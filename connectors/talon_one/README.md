@@ -9,7 +9,7 @@ The connector maintains one table, `event`. This table contains application even
 
 ## Requirements
 
-- [Supported Python versions](https://github.com/fivetran/fivetran_connector_sdk/blob/main/README.md#requirements)   
+- [Supported Python versions](https://github.com/fivetran/connector_sdk/blob/main/README.md#requirements)   
 - Operating System:  
 - Windows 10 or later  
 - macOS 13 (Ventura) or later

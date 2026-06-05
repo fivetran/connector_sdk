@@ -1,6 +1,6 @@
 # Timestamp-based Incremental Sync Strategy Connector Example
 
-**Complete Example Link:** [examples/common_patterns_for_connectors/incremental_sync_strategies/timestamp_sync/](https://github.com/fivetran/fivetran_connector_sdk/tree/main/examples/common_patterns_for_connectors/incremental_sync_strategies/timestamp_sync/)
+**Complete Example Link:** [examples/common_patterns_for_connectors/incremental_sync_strategies/timestamp_sync/](https://github.com/fivetran/connector_sdk/tree/main/examples/common_patterns_for_connectors/incremental_sync_strategies/timestamp_sync/)
 
 ## Connector overview
 
@@ -8,7 +8,7 @@ This connector demonstrates **timestamp-based incremental sync** using the Fivet
 
 ## Requirements
 
-- [Supported Python versions](https://github.com/fivetran/fivetran_connector_sdk/blob/main/README.md#requirements)   
+- [Supported Python versions](https://github.com/fivetran/connector_sdk/blob/main/README.md#requirements)   
 - Operating system:
   - Windows: 10 or later (64-bit only)
   - macOS: 13 (Ventura) or later (Apple Silicon [arm64] or Intel [x86_64])

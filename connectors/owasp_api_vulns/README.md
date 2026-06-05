@@ -12,7 +12,7 @@ Ashish is a seasoned API Security and DevSecOps specialist with over a decade of
 The OWASP API Vulnerabilities connector was developed as part of Ashish’s submission to the AI Accelerate Hackathon 2025 – Fivetran Challenge - https://devpost.com/software/owasp-api-vulnerability-adviso.
 
 ## Requirements
-- [Supported Python versions](https://github.com/fivetran/fivetran_connector_sdk/blob/main/README.md#requirements)   
+- [Supported Python versions](https://github.com/fivetran/connector_sdk/blob/main/README.md#requirements)   
 - Operating system:
   - Windows: 10 or later (64-bit only)
   - macOS: 13 (Ventura) or later (Apple Silicon [arm64] or Intel [x86_64])

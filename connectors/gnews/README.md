@@ -4,7 +4,7 @@
 This example demonstrates how to build a Fivetran Connector SDK integration for [GNews v4 Search API](https://gnews.io/docs/v4#tag/Search), a REST API service to search articles from 60,000+ worldwide sources. The API provides access to real-time news and historical data, as well as top headlines based on Google News rankings. The connector pulls Google search information from GNews's API, and delivers it to your Fivetran destination.
 
 ## Requirements
-- [Supported Python versions](https://github.com/fivetran/fivetran_connector_sdk/blob/main/README.md#requirements)   
+- [Supported Python versions](https://github.com/fivetran/connector_sdk/blob/main/README.md#requirements)   
 - Operating system:
   - Windows: 10 or later (64-bit only)
   - macOS: 13 (Ventura) or later (Apple Silicon [arm64] or Intel [x86_64])
