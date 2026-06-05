@@ -215,7 +215,7 @@ The Genie Space is created only once. The `space_id` is persisted in the connect
 
 This example was contributed by [Kelly Kohlleffel](https://github.com/kellykohlleffel).
 
-This connector pairs with the [FDA Drug Label Intelligence community connector](https://github.com/fivetran/fivetran_connector_sdk/tree/main/all_things_ai/tutorials/databricks-fm-fda-drug-label-intelligence) to provide a complete drug safety pipeline on Databricks. Drug labels provide the reference data (interactions, contraindications, black box warnings) while FAERS adverse events provide post-market surveillance data. Together they map directly to the Databricks BioPharma outcome "Pharmacovigilance (Drug Safety and Adverse Event Detection)."
+This connector pairs with the [FDA Drug Label Intelligence community connector](https://github.com/fivetran/connector_sdk/tree/main/all_things_ai/tutorials/databricks-fm-fda-drug-label-intelligence) to provide a complete drug safety pipeline on Databricks. Drug labels provide the reference data (interactions, contraindications, black box warnings) while FAERS adverse events provide post-market surveillance data. Together they map directly to the Databricks BioPharma outcome "Pharmacovigilance (Drug Safety and Adverse Event Detection)."
 
 The OpenFDA Drug Event API is free and requires no authentication. Rate limits apply (240 requests per minute without key). The connector includes rate limiting delays between requests.
 
