@@ -1,7 +1,7 @@
 """This connector demonstrates log-based Change Data Capture (CDC) for IBM Db2 using the ASN SQL Replication framework.
 The asncap daemon reads the Db2 transaction log and writes every INSERT, UPDATE, and DELETE to a Change Data table;
 the connector reads exclusively from that table after the initial full load, making this genuine log-based replication.
-See the Technical Reference documentation (https://fivetran.com/docs/connectors/connector-sdk/technical-reference)
+See the Technical Reference documentation (https://fivetran.com/docs/connector-sdk/technical-reference)
 and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details
 """
 

@@ -12,7 +12,7 @@ human review without requiring dashboards or scheduled jobs.
 
 Data provided by TVmaze (https://www.tvmaze.com), licensed under CC BY-SA 4.0.
 
-See the Technical Reference documentation (https://fivetran.com/docs/connectors/connector-sdk/technical-reference)
+See the Technical Reference documentation (https://fivetran.com/docs/connector-sdk/technical-reference)
 and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details
 """
 

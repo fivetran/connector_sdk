@@ -130,7 +130,7 @@ def read_postgres_and_upsert(host, database, user, password, port, table_name):
 
 connector = Connector(update=update, schema=schema)
 
-# required inputs docs https://fivetran.com/docs/connectors/connector-sdk/technical-reference#technicaldetailsrequiredobjectconnector
+# required inputs docs https://fivetran.com/docs/connector-sdk/technical-reference#technicaldetailsrequiredobjectconnector
 if __name__ == "__main__":
     # Open the configuration.json file and load its contents into a dictionary.
     with open("configuration.json", "r") as f:

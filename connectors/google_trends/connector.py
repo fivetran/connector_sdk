@@ -10,7 +10,7 @@ Strategy:
 - Append-only design with sync_timestamp tracks historical changes
 - search_id groups keywords from same search (results are relative to each other)
 
-See the Technical Reference documentation: https://fivetran.com/docs/connectors/connector-sdk/technical-reference
+See the Technical Reference documentation: https://fivetran.com/docs/connector-sdk/technical-reference
 See the Best Practices documentation: https://fivetran.com/docs/connector-sdk/best-practices
 """
 

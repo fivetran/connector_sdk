@@ -8,7 +8,7 @@ This connector demonstrates how the Fivetran Connector SDK automatically infers 
 
 Each sync emits a single row containing a variety of types — strings, numbers, dates, JSON, binary, XML, and null values — into a table called `UNSPECIFIED`.
 
-For more details on supported types and inference logic, refer to the [Technical Reference - Data Types](https://fivetran.com/docs/connectors/connector-sdk/technical-reference#supporteddatatypes).
+For more details on supported types and inference logic, refer to the [Technical Reference - Data Types](https://fivetran.com/docs/connector-sdk/technical-reference#supporteddatatypes).
 
 
 ## Requirements

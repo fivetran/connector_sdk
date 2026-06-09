@@ -241,7 +241,7 @@ def schema(configuration: dict):
     ]
 
 
-# required inputs docs https://fivetran.com/docs/connectors/connector-sdk/technical-reference#technicaldetailsrequiredobjectconnector
+# required inputs docs https://fivetran.com/docs/connector-sdk/technical-reference#technicaldetailsrequiredobjectconnector
 connector = Connector(update=update, schema=schema)
 
 if __name__ == "__main__":

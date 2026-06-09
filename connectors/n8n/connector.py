@@ -3,7 +3,7 @@ This connector demonstrates how to sync workflow automation data from
 n8n including workflows, executions, and credentials using the
 n8n REST API.
 See the Technical Reference documentation
-(https://fivetran.com/docs/connectors/connector-sdk/technical-reference)
+(https://fivetran.com/docs/connector-sdk/technical-reference)
 and the Best Practices documentation
 (https://fivetran.com/docs/connector-sdk/best-practices)
 for details

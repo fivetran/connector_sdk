@@ -101,5 +101,5 @@ To adapt this connector for your own OData service:
 
 - [Python OData Documentation](https://tuomur-python-odata.readthedocs.io/en/latest/)
 - [OData Protocol Documentation](https://www.odata.org/documentation/)
-- [Fivetran Connector SDK Technical Reference](https://fivetran.com/docs/connectors/connector-sdk/technical-reference)
+- [Fivetran Connector SDK Technical Reference](https://fivetran.com/docs/connector-sdk/technical-reference)
 - [Fivetran Connector SDK Best Practices](https://fivetran.com/docs/connector-sdk/best-practices)

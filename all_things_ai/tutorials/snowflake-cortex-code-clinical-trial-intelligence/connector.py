@@ -26,7 +26,7 @@ APIs Used:
 2. Snowflake Cortex Agent - Discovery, Optimist, Skeptic, and Consensus personas
 
 See the Technical Reference documentation
-(https://fivetran.com/docs/connectors/connector-sdk/technical-reference)
+(https://fivetran.com/docs/connector-sdk/technical-reference)
 and the Best Practices documentation
 (https://fivetran.com/docs/connector-sdk/best-practices)
 for details

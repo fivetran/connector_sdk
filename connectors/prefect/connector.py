@@ -5,7 +5,7 @@ API and syncs it to your data warehouse.
 Supports incremental syncing of flow, deployment, work_pool,
 work_queue, flow_run, task_run, artifact, and variable.
 See the Technical Reference documentation
-(https://fivetran.com/docs/connectors/connector-sdk/technical-reference)
+(https://fivetran.com/docs/connector-sdk/technical-reference)
 and the Best Practices documentation
 (https://fivetran.com/docs/connector-sdk/best-practices)
 for details.
