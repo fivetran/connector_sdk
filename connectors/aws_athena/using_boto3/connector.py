@@ -2,7 +2,7 @@
 # This is an example to show how we can sync records from AWS Athena via Connector SDK using boto3.
 # You need to provide your credentials for this example to work.
 # See the Technical Reference documentation (https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update)
-# and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details
+# and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details
 import boto3
 import json  # Import the json module to handle JSON data.
 

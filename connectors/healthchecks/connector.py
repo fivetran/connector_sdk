@@ -2,7 +2,7 @@
 This connector syncs health check monitoring data from Healthchecks.io API to your destination.
 It supports incremental syncing of checks, pings, and integrations data.
 See the Technical Reference documentation (https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update)
-and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details
+and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details
 """
 
 # For reading configuration from a JSON file

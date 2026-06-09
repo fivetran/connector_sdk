@@ -11,7 +11,7 @@ The connector supports incremental syncing using story ID as a cursor and checkp
 after each batch for reliable resumable syncs.
 
 See the Technical Reference documentation (https://fivetran.com/docs/connectors/connector-sdk/technical-reference)
-and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details
+and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details
 """
 
 # For reading configuration from a JSON file

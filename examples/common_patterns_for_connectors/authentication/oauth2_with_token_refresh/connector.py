@@ -9,7 +9,7 @@ NOTE: We do not support programmatically updating refresh token currently.
     If the refresh token is updates, it has to be updated manually on the fivetran dashboard after deployment.
     Check readme file for more information on generating refresh token.
 See the Technical Reference documentation (https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update)
-and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details.
+and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details.
 """
 
 # imported constants from same directory

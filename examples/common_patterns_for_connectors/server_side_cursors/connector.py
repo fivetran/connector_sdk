@@ -1,6 +1,6 @@
 # This example demonstrates how to fetch data from postgres database using different cursor strategies to minimize memory usage.
 # See the Technical Reference documentation (https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update)
-# and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details.
+# and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details.
 
 # Import required classes from fivetran_connector_sdk
 # For supporting Connector operations like Update() and Schema()

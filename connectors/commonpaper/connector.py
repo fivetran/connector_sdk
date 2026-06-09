@@ -2,7 +2,7 @@
 # This connector fetches agreement data from the Common Paper API and syncs it to the destination.
 # It handles pagination and maintains sync state using checkpoints.
 # See the Technical Reference documentation (https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update)
-# and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details
+# and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details
 
 # Import required classes from fivetran_connector_sdk.
 # For supporting Connector operations like Update() and Schema()

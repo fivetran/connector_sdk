@@ -3,7 +3,7 @@ This is an example for how to work with the fivetran_connector_sdk module with X
 This connector fetches current weather observations from NOAA's National Weather Service XML API
 for specified weather station codes (like KOAK for Oakland, KJFK for JFK Airport, etc.).
 See the Technical Reference documentation (https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update)
-and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details
+and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details
 """
 
 # For reading configuration from a JSON file

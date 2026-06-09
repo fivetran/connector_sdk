@@ -3,7 +3,7 @@ This example details how to pull data from Similarweb, which is a digital intell
 that provides data,insights and analytics about websites and apps.
 Refer to SimilarWeb's API for more information (https://developers.similarweb.com/docs/similarweb-web-traffic-api)
 See the Technical Reference documentation (https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update)
-and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details
+and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details
 """
 
 # Import the json module to handle JSON data.

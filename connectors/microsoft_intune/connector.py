@@ -3,7 +3,7 @@
 # You will need to provide your own Microsoft credentials for this to work --> "tenant_id", "client_id", and "client_secret" in configuration.json
 # Relevant Microsoft API documentation: https://learn.microsoft.com/en-us/graph/api/intune-devices-manageddevice-list?view=graph-rest-1.0
 # See the Technical Reference documentation (https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update)
-# and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details
+# and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details
 
 # Import required classes from fivetran_connector_sdk
 from fivetran_connector_sdk import Connector

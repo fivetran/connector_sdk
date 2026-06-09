@@ -8,7 +8,7 @@ It is also an example of using OAuth 2.0 client credentials flow.
 Requires Accelo OAuth credentials to be passed in to work.
 Refer to the Multithreading Guidelines in api_threading_utils.py
 See the Technical Reference documentation (https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update)
-and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details
+and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details
 """
 
 import json

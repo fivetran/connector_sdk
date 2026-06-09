@@ -1,7 +1,7 @@
 # This is an example for how to work with the fivetran_connector_sdk module.
 # It defines a method, which fetches the Microsoft Excel file from S3, processes it using pandas,openpyxl and python-calamine and upserts the data using the Connector SDK.
 # See the Technical Reference documentation (https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update)
-# and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details
+# and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details
 
 # Import required classes from fivetran_connector_sdk
 from fivetran_connector_sdk import Connector

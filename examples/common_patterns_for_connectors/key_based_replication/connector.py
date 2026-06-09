@@ -3,7 +3,7 @@
 # Replication keys are columns that are used to identify new and updated data for replication.
 # When you set a table to use Incremental Replication, you’ll also need to define a replication key for that table.
 # See the Technical Reference documentation (https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update)
-# and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details.
+# and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details.
 
 # Import datetime for handling date and time conversions.
 from datetime import datetime

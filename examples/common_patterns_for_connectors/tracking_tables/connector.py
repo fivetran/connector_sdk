@@ -5,7 +5,7 @@
 # This example is the simplest possible as it doesn't define a schema() function,
 # it does not therefore provide a good template for writing a real connector.
 # See the Technical Reference documentation (https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update)
-# and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details
+# and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details
 
 # To observe how adding a new table would work:
 # 1. Run fivetran debug --configuration configuration.json (configuration.json provides initialSyncStart)

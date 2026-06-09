@@ -2,7 +2,7 @@
 # This example demonstrates how to create a connector that connects to a Neo4j database and syncs data from it.
 # It uses the public twitter database available at neo4j+s://demo.neo4jlabs.com:7687.
 # See the Technical Reference documentation (https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update)
-# and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details
+# and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details
 
 # Import the required classes from the connector SDK
 from fivetran_connector_sdk import Connector

@@ -3,7 +3,7 @@ This connector demonstrates how to fetch data from Redshift source and upsert it
 It supports both FULL and INCREMENTAL replication strategies, with automatic schema detection and column typing.
 This example also ensures that large datasets are handled efficiently by batching fetches and checkpointing progress periodically.
 See the Technical Reference documentation (https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update)
-and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details
+and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details
 """
 
 # For reading configuration from a JSON file

@@ -5,7 +5,7 @@
 # You can also define how far back in history to go on initial sync using the "initial_sync_start_date" in configuration.json
 # Relevant Hubspot API documentation: https://developers.hubspot.com/docs/reference/api/analytics-and-events/event-analytics
 # See the Technical Reference documentation (https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update)
-# and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details
+# and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details
 
 # Import required classes from fivetran_connector_sdk.
 # For supporting Connector operations like Update() and Schema()

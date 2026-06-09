@@ -11,7 +11,7 @@ Strategy:
 - search_id groups keywords from same search (results are relative to each other)
 
 See the Technical Reference documentation: https://fivetran.com/docs/connectors/connector-sdk/technical-reference
-See the Best Practices documentation: https://fivetran.com/docs/connectors/connector-sdk/best-practices
+See the Best Practices documentation: https://fivetran.com/docs/connector-sdk/best-practices
 """
 
 # Used for generating unique hash-based identifiers for search configurations

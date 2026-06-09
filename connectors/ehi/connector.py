@@ -5,7 +5,7 @@ This example is a simple implementation meant to provide basic understanding of 
 It detects the tables in the database, their columns, and primary keys, and performs incremental syncs based on a modified date column.
 This example also includes batch fetching and checkpointing to ensure reliable delivery of large datasets.
 See the Technical Reference documentation (https://fivetran.com/docs/connectors/connector-sdk/technical-reference)
-and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details
+and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details
 """
 
 # For JSON data serialization and configuration parsing

@@ -3,7 +3,7 @@ This is an example to show how to handle complex configuration options in your c
 It demonstrates combining configuration values from configuration.json with native Python types defined in a separate config.py file.
 It also shows how to define additional constant values directly in the connector code as well.
 See the Technical Reference documentation (https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update)
-and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details.
+and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details.
 """
 
 # Import the json module to handle JSON data.

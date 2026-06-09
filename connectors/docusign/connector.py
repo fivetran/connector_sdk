@@ -4,7 +4,7 @@ analytics for Sales, Legal and other departments and teams.
 See the Technical Reference documentation:
 https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update
 and the Best Practices documentation:
-https://fivetran.com/docs/connectors/connector-sdk/best-practices
+https://fivetran.com/docs/connector-sdk/best-practices
 for details.
 """
 

@@ -4,7 +4,7 @@ This is an example to show how we can sync records from SQL Server Db via Connec
 You would need to provide your SQL Server Db credentials for this example to work.
 Also, you need the driver locally installed on your machine to make 'fivetran debug' work.
 See the Technical Reference documentation (https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update)
-and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details
+and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details
 """
 
 # Import the json module to handle JSON data.

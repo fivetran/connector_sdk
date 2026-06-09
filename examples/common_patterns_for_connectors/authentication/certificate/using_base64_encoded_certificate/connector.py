@@ -1,7 +1,7 @@
 # This is a simple example for how to work with the fivetran_connector_sdk module.
 # It defines a simple `update` method, which uses certificates to make API calls.
 # See the Technical Reference documentation (https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update)
-# and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details
+# and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details
 
 import os  # Import required for file operations
 import base64  # Import required for decoding the certificate and key data

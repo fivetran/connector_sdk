@@ -2,7 +2,7 @@
 # It defines a simple `update` method, which uses python-gnupg to sign messages with a private key.
 # This example upserts the signed data to a table named "signed_message".
 # See the Technical Reference documentation (https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update)
-# and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details
+# and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details
 
 # Note on GPG Key Generation:
 # To use this example, you'll need a GPG key pair. To generate your own GPG key pair, you can follow these guides:

@@ -5,7 +5,7 @@ n8n REST API.
 See the Technical Reference documentation
 (https://fivetran.com/docs/connectors/connector-sdk/technical-reference)
 and the Best Practices documentation
-(https://fivetran.com/docs/connectors/connector-sdk/best-practices)
+(https://fivetran.com/docs/connector-sdk/best-practices)
 for details
 """
 

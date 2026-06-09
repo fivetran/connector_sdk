@@ -1,7 +1,7 @@
 """This connector demonstrates LIMIT/OFFSET pagination for syncing data from a PostgreSQL database.
 It queries rows using ORDER BY updated_at, id LIMIT <N> OFFSET <k>, advancing the offset after each page.
 See the Technical Reference documentation (https://fivetran.com/docs/connectors/connector-sdk/technical-reference)
-and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details.
+and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details.
 """
 
 # Import json library for handling JSON data

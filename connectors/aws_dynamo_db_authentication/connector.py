@@ -1,7 +1,7 @@
 # This is a simple example for how to work with the fivetran_connector_sdk module.
 # This shows how to authenticate to Aws using IAM role credentials and connector to DynamoDb to fetch records.
 # See the Technical Reference documentation (https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update)
-# and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details.
+# and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details.
 
 # Refer boto3 docs (https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/dynamodb.html)
 

@@ -21,7 +21,7 @@ See the Fivetran Connector SDK Technical Reference:
 https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update
 
 and Best Practices:
-https://fivetran.com/docs/connectors/connector-sdk/best-practices
+https://fivetran.com/docs/connector-sdk/best-practices
 for additional implementation guidance.
 """
 

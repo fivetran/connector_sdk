@@ -1,7 +1,7 @@
 # This is an example for how to work with the fivetran_connector_sdk module.
 # It shows how to fetch data from Apache Hive using the SQLAlchemy library and upsert it into a destination table.
 # See the Technical Reference documentation (https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update)
-# and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details
+# and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details
 
 # Import the required classes from the connector SDK
 from fivetran_connector_sdk import Connector

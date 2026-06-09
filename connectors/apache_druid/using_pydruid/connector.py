@@ -6,7 +6,7 @@ and sync it to destination. Supports native Druid queries, incremental sync, and
 See the Technical Reference documentation
 (https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update)
 and the Best Practices documentation
-(https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details.
+(https://fivetran.com/docs/connector-sdk/best-practices) for details.
 """
 
 # Import required classes from fivetran_connector_sdk

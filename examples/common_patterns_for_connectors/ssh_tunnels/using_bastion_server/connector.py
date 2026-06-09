@@ -5,7 +5,7 @@
 # For this example, an EC2 instance is running PostgreSQL database server and is only accessible via a Bastion server over SSH.
 # See the Technical Reference documentation
 # (https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update)
-# and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details.
+# and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details.
 
 # For reading configuration from a JSON file
 import json

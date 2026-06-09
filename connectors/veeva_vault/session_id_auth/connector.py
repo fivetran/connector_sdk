@@ -9,7 +9,7 @@ Retrieve Details from All Object Types endpoint: https://developer.veevavault.co
 VQL endpoint: https://developer.veevavault.com/api/24.2/#vault-query-language-vql
 You can also add code to extract from other endpoints as needed.
 See the Technical Reference documentation (https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update)
-and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details
+and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details
 """
 
 # Import required classes from fivetran_connector_sdk

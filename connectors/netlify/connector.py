@@ -1,7 +1,7 @@
 """Netlify API Connector for Fivetran Connector SDK.
 This connector demonstrates how to fetch data from Netlify API including sites, deploys, forms, and form submissions.
 See the Technical Reference documentation (https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update)
-and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details
+and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details
 """
 
 # For reading configuration from a JSON file

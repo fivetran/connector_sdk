@@ -1,7 +1,7 @@
 """Zigpoll Connector for Fivetran Connector SDK.
 This connector fetches survey response data from Zigpoll API and syncs it to Fivetran destinations.
 See the Technical Reference documentation (https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update)
-and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details
+and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details
 """
 
 # For reading configuration from a JSON file

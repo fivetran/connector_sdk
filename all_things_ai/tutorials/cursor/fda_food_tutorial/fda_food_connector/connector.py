@@ -2,7 +2,7 @@
 # This connector fetches data from the FDA Food Enforcement API and upserts it into the destination.
 # The connector supports both API key and no API key authentication, configurable batch sizes, and incremental syncs.
 # See the Technical Reference documentation (https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update)
-# and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details
+# and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details
 
 # Import required classes from fivetran_connector_sdk
 from fivetran_connector_sdk import Connector

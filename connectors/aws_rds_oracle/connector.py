@@ -1,6 +1,6 @@
 """Example connector demonstrating how to sync data from AWS RDS Oracle using the Fivetran Connector SDK.
 See the Technical Reference documentation (https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update)
-and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details.
+and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details.
 """
 
 # For datetime parsing and formatting of timestamp values

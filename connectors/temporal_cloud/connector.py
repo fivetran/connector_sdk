@@ -2,7 +2,7 @@
 This connector syncs workflow and schedule data from Temporal Cloud to Fivetran.
 It connects to Temporal Cloud using the Temporal Python SDK and fetches workflow executions and schedule configurations.
 See the Technical Reference documentation (https://fivetran.com/docs/connectors/connector-sdk/technical-reference)
-and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details
+and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details
 """
 
 # For reading configuration from a JSON file

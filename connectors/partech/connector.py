@@ -2,7 +2,7 @@
 See the Technical Reference documentation:
 https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update
 See the Best Practices documentation:
-https://fivetran.com/docs/connectors/connector-sdk/best-practices
+https://fivetran.com/docs/connector-sdk/best-practices
 """
 
 # For reading configuration from a JSON file

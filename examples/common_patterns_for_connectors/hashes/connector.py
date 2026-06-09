@@ -1,9 +1,9 @@
 # This example shows how to calculate hash of fields to be used as primary key. This is useful in scenarios where the
 # incoming rows do not have any field suitable to be used as a Primary Key.
-# Fivetran recommends to define primary keys (https://fivetran.com/docs/connectors/connector-sdk/best-practices#declaringprimarykeys) when writing a connector.
+# Fivetran recommends to define primary keys (https://fivetran.com/docs/connector-sdk/best-practices#declaringprimarykeys) when writing a connector.
 # This is to avoid disruptions caused due to a schema change (addition/removal of a column, etc) that might be needed in the maintenance phase of your connector.
 # See the Technical Reference documentation (https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update)
-# and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details.
+# and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details.
 
 # Import required classes from fivetran_connector_sdk
 # For supporting Connector operations like Update() and Schema()

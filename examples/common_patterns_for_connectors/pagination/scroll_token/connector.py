@@ -4,7 +4,7 @@ request to fetch the next page, stopping when the token is absent.
 THIS EXAMPLE IS TO HELP YOU UNDERSTAND CONCEPTS USING DUMMY DATA. IT REQUIRES THE FIVETRAN-API-PLAYGROUND PACKAGE
 (https://pypi.org/project/fivetran-api-playground/) TO RUN.
 See the Technical Reference documentation (https://fivetran.com/docs/connectors/connector-sdk/technical-reference)
-and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details.
+and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details.
 """
 
 # Import requests to make HTTP calls to API.

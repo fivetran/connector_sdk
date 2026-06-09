@@ -3,7 +3,7 @@
 # 1. Zippopotam.us API to get coordinates from ZIP codes
 # 2. National Weather Service (NWS) API to get weather forecasts
 # See the Technical Reference documentation (https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update)
-# and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details
+# and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details
 
 
 import json  # Import the json module to handle JSON data.

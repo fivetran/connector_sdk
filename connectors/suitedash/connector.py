@@ -1,6 +1,6 @@
 """This is an example to show how to sync CRM data from SuiteDash's API by using Connector SDK. You need to provide your SuiteDash Public ID and Secret Key for this example to work.
 See the Technical Reference documentation (https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update)
-and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details
+and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details
 """
 
 # Import required classes from fivetran_connector_sdk

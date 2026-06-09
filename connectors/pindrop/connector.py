@@ -3,7 +3,7 @@ This connector fetches nightly reports from Pindrop API and syncs them to the de
 It supports multiple report types: blacklist, calls, audit, cases, account_risk, enrollment, removal_list.
 On initial sync, it fetches the last month's worth of data. On incremental syncs, it looks back based on the configured days.
 See the Technical Reference documentation (https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update)
-and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details
+and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details
 """
 
 # Import required classes from fivetran_connector_sdk

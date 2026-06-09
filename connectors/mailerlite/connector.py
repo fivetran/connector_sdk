@@ -1,7 +1,7 @@
 """MailerLite Connector for Fivetran - fetches subscriber, group, campaign, and field data from MailerLite API.
 This connector demonstrates how to fetch data from MailerLite REST API and upsert it into destination using the Fivetran Connector SDK.
 See the Technical Reference documentation (https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update)
-and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details
+and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details
 """
 
 # For reading configuration from a JSON file

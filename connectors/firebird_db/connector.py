@@ -2,7 +2,7 @@
 # The code will retrieve data from tables in a Firebird DB, based on the tables defined in the schema.py file
 # You will need to provide your own Firebird DB and credentials for this to work --> see configuration.json
 # See the Technical Reference documentation (https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update)
-# and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details
+# and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details
 
 # Import required classes from fivetran_connector_sdk
 from fivetran_connector_sdk import Connector

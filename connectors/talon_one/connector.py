@@ -6,7 +6,7 @@ You will need to provide your own Talon.one credentials for this to work --> "ba
 You can also define how far back in history to go on initial sync using the "initial_sync_start_date" in configuration.json
 Relevant Talon.one API documentation: https://docs.talon.one/management-api#tag/Customer-data/operation/getApplicationEventsWithoutTotalCount
 See the Technical Reference documentation (https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update)
-and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details
+and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details
 """
 
 # For reading configuration from a JSON file

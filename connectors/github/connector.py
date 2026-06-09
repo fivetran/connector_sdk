@@ -3,7 +3,7 @@ This connector demonstrates how to fetch data from GitHub REST API and upsert it
 Fetches repositories, commits, and pull requests with proper pagination and incremental sync support.
 
 See the Technical Reference documentation (https://fivetran.com/docs/connectors/connector-sdk/technical-reference)
-and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details
+and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details
 """
 
 # Import required classes from fivetran_connector_sdk

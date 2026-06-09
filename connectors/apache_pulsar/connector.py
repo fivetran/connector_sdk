@@ -1,7 +1,7 @@
 """This connector demonstrates how to fetch data from Apache Pulsar topics and sync it to a destination using the Fivetran Connector SDK.
 It supports multiple topics and uses Pulsar's reader API to consume messages with proper checkpointing for incremental syncs.
 See the Technical Reference documentation (https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update)
-and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details
+and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details
 """
 
 # For reading configuration from a JSON file

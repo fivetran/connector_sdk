@@ -2,7 +2,7 @@
 # This is an example to show how we can sync records from redshift DB via Connector SDK.
 # You would need to provide your redshift credentials for this example to work.
 # See the Technical Reference documentation (https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update)
-# and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details
+# and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details
 
 import json  # Import the json module to handle JSON data.
 

@@ -2,7 +2,7 @@
 It uses timestamp-based sync with a buffer (goes back X hours from last timestamp) for read-replica scenarios with replication lag.
 This example is intended for learning purposes and uses the fivetran-api-playground package to mock the API responses locally. It is not meant for production use.
 See the Technical Reference documentation (https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update)
-and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details
+and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details
 """
 
 # Importing requests for fetching data over api calls

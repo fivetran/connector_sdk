@@ -14,7 +14,7 @@ Pattern 3 — Write as a JSON blob:
 A deeply nested or highly variable object is stored as a single JSON column.(users_data)
 
 See the Technical Reference documentation (https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update)
-and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details.
+and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details.
 """
 
 # Import datetime utilities to record the sync timestamp in state.

@@ -3,7 +3,7 @@ This connector fetches weather observations and alerts from the National Weather
 See the Technical Reference documentation
 (https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update)
 and the Best Practices documentation
-(https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details
+(https://fivetran.com/docs/connector-sdk/best-practices) for details
 """
 
 # For handling HTTP requests to NOAA API
@@ -337,7 +337,7 @@ def fetch_observations_for_station(
                 # ensuring that the sync process can resume from the correct position in
                 # case of next sync or interruptions. Learn more about how and where to
                 # checkpoint by reading our best practices documentation
-                # (https://fivetran.com/docs/connectors/connector-sdk/best-practices).
+                # (https://fivetran.com/docs/connector-sdk/best-practices).
                 op.checkpoint(state)
 
         # Check for next page URL in pagination metadata
@@ -462,7 +462,7 @@ def fetch_active_alerts(headers: Dict[str, str], alert_area: Optional[str], stat
                 # ensuring that the sync process can resume from the correct position in
                 # case of next sync or interruptions. Learn more about how and where to
                 # checkpoint by reading our best practices documentation
-                # (https://fivetran.com/docs/connectors/connector-sdk/best-practices).
+                # (https://fivetran.com/docs/connector-sdk/best-practices).
                 op.checkpoint(state)
 
         # Check for next page URL in pagination metadata

@@ -6,7 +6,7 @@ Requires the fivetran-api-playground package to run:
   playground start --rate-limit --capacity 1
 
 See the Technical Reference documentation (https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update)
-and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details.
+and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details.
 """
 
 # For reading configuration from a JSON file

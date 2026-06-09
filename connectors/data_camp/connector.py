@@ -1,6 +1,6 @@
 """This connector fetches course catalog data from DataCamp's LMS Catalog API including courses, projects, assessments, practices, tracks, and custom tracks. It flattens nested objects and creates breakout tables for array relationships following Fivetran best practices.
 See the Technical Reference documentation (https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update)
-and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details
+and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details
 """
 
 # Import required classes from fivetran_connector_sdk.

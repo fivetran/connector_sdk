@@ -1,7 +1,7 @@
 # This example details how to pull data from SensorTower, which is a market intelligence and analytics platform
 # that provides insights into mobile apps, app store trends, and digital advertising
 # See the Technical Reference documentation (https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update)
-# and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details
+# and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details
 
 # This SDK is pulling from the Sensor Tower Connector API for three specific tables sales_report_estimates, active_users and retention
 # You can change the app IDs to those of your choosing to gather the necessary information

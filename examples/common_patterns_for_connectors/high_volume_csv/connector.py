@@ -3,7 +3,7 @@ This connector example demonstrates common patterns for handling high-volume CSV
 It includes techniques for efficient reading and processing of large CSV files using libraries like Dask, Polars, and Pandas with PyArrow.
 We recommend to use Polars for high-volume CSV processing due to its performance and low memory usage.
 See the Technical Reference documentation (https://fivetran.com/docs/connectors/connector-sdk/technical-reference)
-and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details
+and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details
 """
 
 # For reading configuration from a JSON file

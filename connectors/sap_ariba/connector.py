@@ -7,7 +7,7 @@ Note: Incremental filtering is not supported by the current sandbox environment.
 
 See the Fivetran Connector SDK documentation:
 - Technical Reference: https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update
-- Best Practices: https://fivetran.com/docs/connectors/connector-sdk/best-practices
+- Best Practices: https://fivetran.com/docs/connector-sdk/best-practices
 """
 
 # For reading configuration from a JSON file

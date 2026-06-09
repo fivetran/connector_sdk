@@ -6,7 +6,7 @@ This Python-based connector is specifically intended for Hybrid Deployment (HD) 
 does not support Hybrid Deployment. For SaaS deployments, we recommend using the native DocumentDB connector
 available at https://fivetran.com/docs/connectors/databases/documentdb.
 See the Technical Reference documentation (https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update)
-and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details
+and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details
 """
 
 import datetime

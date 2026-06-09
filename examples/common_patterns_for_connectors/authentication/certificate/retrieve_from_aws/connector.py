@@ -1,7 +1,7 @@
 """
 This is an example of a Fivetran connector that demonstrates how to retrieve certificates from AWS S3 and use them for authentication.
 See the Technical Reference documentation (https://fivetran.com/docs/connectors/connector-sdk/technical-reference)
-and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details
+and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details
 """
 
 # Import required for SSL context

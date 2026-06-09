@@ -3,7 +3,7 @@ This is an example to extract data from Toast, technology platform primarily des
 It provides an all-in-one point-of-sale (POS) and management system tailored to meet the unique needs
 of restaurants, cafes, and similar businesses.
 See the Technical Reference documentation (https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update)
-and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details
+and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details
 """
 
 import requests as rq

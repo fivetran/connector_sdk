@@ -2,7 +2,7 @@
 """This connector demonstrates how Fivetran handles data type changes without defining them in Connector SDK."""
 
 # See the Technical Reference documentation (https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update)
-# and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details
+# and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details
 
 # This connector demonstrates schema changes by returning data with different types
 # First sync: int_to_string field is an integer (42)

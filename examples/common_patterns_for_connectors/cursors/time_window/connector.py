@@ -2,7 +2,7 @@
 # It defines a "from" and "to" timestamp that can be sent to an API, and limits the time range to DAYS_PER_SYNC days at a time for an initial sync.
 # It does not sync any data from a source.
 # See the Technical Reference documentation (https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update)
-# and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details
+# and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details
 
 
 from datetime import datetime, timezone, timedelta

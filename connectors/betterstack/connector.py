@@ -4,7 +4,7 @@ monitor groups, heartbeats, heartbeat groups, and on-call calendars.
 See the Technical Reference documentation at:
 https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update
 and the Best Practices documentation at:
-https://fivetran.com/docs/connectors/connector-sdk/best-practices for details
+https://fivetran.com/docs/connector-sdk/best-practices for details
 """
 
 # For reading configuration from a JSON file

@@ -3,7 +3,7 @@ This is a connector for fetching events from Solace using the Fivetran Connector
 It supports incremental sync by tracking the last processed event timestamp.
 The connector can work with Solace messaging APIs to fetch events.
 See the Technical Reference documentation (https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update)
-and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details
+and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details
 """
 
 # Import required classes from fivetran_connector_sdk.

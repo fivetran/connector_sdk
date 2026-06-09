@@ -1,7 +1,7 @@
 # This is an example for how to work with the fivetran_connector_sdk module.
 # This example demonstrates how to fetch data from an OData API version 4 and sync it to a destination using python_odata.
 # See the Technical Reference documentation (https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update)
-# and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details
+# and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details
 
 # Import required classes from fivetran_connector_sdk.
 # For supporting Connector operations like Update() and Schema()
