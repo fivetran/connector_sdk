@@ -30,7 +30,7 @@ The connector defines three tables:
 - `Filtered_Customers`: Customers whose contact name starts with 'S'
 - `Orders`: Order data with incremental sync support
 
-You can customize the schema to match your OData service and destination tables. For more reference about the schema method, see the [Fivetran Connector SDK documentation](https://fivetran.com/docs/connectors/connector-sdk/technical-reference#schema).
+You can customize the schema to match your OData service and destination tables. For more reference about the schema method, see the [Fivetran Connector SDK documentation](https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#schema).
 
 
 ### Key Functions

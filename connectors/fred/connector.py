@@ -1,6 +1,6 @@
 """This connector syncs economic data series and observations from FRED API to Fivetran destination.
 See the Technical Reference documentation
-(https://fivetran.com/docs/connectors/connector-sdk/technical-reference#update)
+(https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update)
 and the Best Practices documentation
 (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details
 """
@@ -68,7 +68,7 @@ def schema(configuration: dict):
     """
     Define the schema function which lets you configure the schema your connector delivers.
     See the technical reference documentation for more details on the schema function:
-    https://fivetran.com/docs/connectors/connector-sdk/technical-reference#schema
+    https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#schema
     Args:
         configuration: a dictionary that holds the configuration settings for the connector.
     """
@@ -84,7 +84,7 @@ def update(configuration: dict, state: dict):
     """
     Define the update function which lets you configure how your connector fetches data.
     See the technical reference documentation for more details on the update function:
-    https://fivetran.com/docs/connectors/connector-sdk/technical-reference#update
+    https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update
     Args:
         configuration: a dictionary that holds the configuration settings for the connector.
         state: a dictionary that holds the state of the connector.
@@ -281,7 +281,7 @@ def sync_categories(api_key, state):
     # Save the progress by checkpointing the state. This is important for ensuring that the sync process can resume
     # from the correct position in case of next sync or interruptions.
     # Learn more about how and where to checkpoint by reading our best practices documentation
-    # (https://fivetran.com/docs/connectors/connector-sdk/best-practices#largedatasetrecommendation).
+    # (https://fivetran.com/docs/connector-sdk/best-practices#optimizingperformancewhenhandlinglargedatasets).
     op.checkpoint(state)
 
     log.info(f"Completed categories sync. Synced {len(categories)} categories")
@@ -335,7 +335,7 @@ def sync_releases(api_key, state):
         # Save the progress by checkpointing the state. This is important for ensuring that the sync process can resume
         # from the correct position in case of next sync or interruptions.
         # Learn more about how and where to checkpoint by reading our best practices documentation
-        # (https://fivetran.com/docs/connectors/connector-sdk/best-practices#largedatasetrecommendation).
+        # (https://fivetran.com/docs/connector-sdk/best-practices#optimizingperformancewhenhandlinglargedatasets).
         op.checkpoint(state)
 
         if len(releases) < __PAGE_SIZE:
@@ -466,8 +466,7 @@ def sync_series_observations(api_key, series_id, sync_start_date, state):
                 # Save the progress by checkpointing the state. This is important for ensuring that
                 # the sync process can resume from the correct position in case of next sync or
                 # interruptions. Learn more about how and where to checkpoint by reading our best
-                # practices documentation (https://fivetran.com/docs/connectors/connector-sdk/
-                # best-practices#largedatasetrecommendation).
+                # practices documentation (https://fivetran.com/docs/connector-sdk/best-practices#optimizingperformancewhenhandlinglargedatasets).
                 op.checkpoint(state)
                 records_since_checkpoint = 0
 
@@ -481,7 +480,7 @@ def sync_series_observations(api_key, series_id, sync_start_date, state):
     # Save the progress by checkpointing the state. This is important for ensuring that the sync process can resume
     # from the correct position in case of next sync or interruptions.
     # Learn more about how and where to checkpoint by reading our best practices documentation
-    # (https://fivetran.com/docs/connectors/connector-sdk/best-practices#largedatasetrecommendation).
+    # (https://fivetran.com/docs/connector-sdk/best-practices#optimizingperformancewhenhandlinglargedatasets).
     op.checkpoint(state)
 
     log.info(

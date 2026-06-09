@@ -4,7 +4,7 @@
 # The list of tables to sync is thereafter stored in the state object.
 # This example is the simplest possible as it doesn't define a schema() function,
 # it does not therefore provide a good template for writing a real connector.
-# See the Technical Reference documentation (https://fivetran.com/docs/connectors/connector-sdk/technical-reference#update)
+# See the Technical Reference documentation (https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update)
 # and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details
 
 # To observe how adding a new table would work:
@@ -52,7 +52,7 @@ def update(configuration: dict, state: dict):
     """
     Define the update function, which is a required function, and is called by Fivetran during each sync.
     See the technical reference documentation for more details on the update function
-    https://fivetran.com/docs/connectors/connector-sdk/technical-reference#update
+    https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update
     Args:
         configuration: A dictionary containing connection details
         state: A dictionary containing state information from previous runs
@@ -90,7 +90,7 @@ def update(configuration: dict, state: dict):
 
     # Save the progress by checkpointing the state. This stores the list of tables that are up-to-date.
     # Learn more about how and where to checkpoint by reading our best practices documentation
-    # (https://fivetran.com/docs/connectors/connector-sdk/best-practices#largedatasetrecommendation).
+    # (https://fivetran.com/docs/connector-sdk/best-practices#optimizingperformancewhenhandlinglargedatasets).
     tables_synced_this_sync.sort()
     new_state["synced_tables"] = tables_synced_this_sync
     log.debug(new_state)

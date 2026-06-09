@@ -1,6 +1,6 @@
 """Clerk API Connector for Fivetran Connector SDK.
 This connector fetches user data from Clerk API and syncs it to the destination with flattened nested structures.
-See the Technical Reference documentation (https://fivetran.com/docs/connectors/connector-sdk/technical-reference#update)
+See the Technical Reference documentation (https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update)
 and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details
 """
 
@@ -69,7 +69,7 @@ def schema(configuration: dict):
     """
     Define the update function, which is a required function, and is called by Fivetran during each sync.
     See the technical reference documentation for more details on the update function
-    https://fivetran.com/docs/connectors/connector-sdk/technical-reference#update
+    https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update
     Args:
         configuration: A dictionary containing connection details
     """
@@ -114,7 +114,7 @@ def update(configuration: dict, state: dict):
     """
     Define the update function, which is a required function, and is called by Fivetran during each sync.
     See the technical reference documentation for more details on the update function:
-    https://fivetran.com/docs/connectors/connector-sdk/technical-reference#update
+    https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update
 
     Args:
         configuration: A dictionary containing connection details.
@@ -221,7 +221,7 @@ def checkpoint_sync_state(cursor_value, records_processed, is_final=False):
     # Save the progress by checkpointing the state. This is important for ensuring that the sync process can resume
     # from the correct position in case of next sync or interruptions.
     # Learn more about how and where to checkpoint by reading our best practices documentation
-    # (https://fivetran.com/docs/connectors/connector-sdk/best-practices#largedatasetrecommendation).
+    # (https://fivetran.com/docs/connector-sdk/best-practices#optimizingperformancewhenhandlinglargedatasets).
     op.checkpoint(checkpoint_state)
 
     if is_final:

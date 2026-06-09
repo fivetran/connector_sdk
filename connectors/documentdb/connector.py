@@ -5,7 +5,7 @@ NOTE: Fivetran already provides a native Java-based DocumentDB connector that su
 This Python-based connector is specifically intended for Hybrid Deployment (HD) scenarios, as the native connector
 does not support Hybrid Deployment. For SaaS deployments, we recommend using the native DocumentDB connector
 available at https://fivetran.com/docs/connectors/databases/documentdb.
-See the Technical Reference documentation (https://fivetran.com/docs/connectors/connector-sdk/technical-reference#update)
+See the Technical Reference documentation (https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update)
 and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details
 """
 
@@ -232,7 +232,7 @@ def schema(configuration: dict):
     """
     Define the schema function which lets you configure the schema your connector delivers.
     See the technical reference documentation for more details on the schema function:
-    https://fivetran.com/docs/connectors/connector-sdk/technical-reference#schema
+    https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#schema
     Args:
         configuration: a dictionary that holds the configuration settings for the connector.
     """
@@ -265,7 +265,7 @@ def update(configuration, state):
     """
     Define the update function, which is a required function, and is called by Fivetran during each sync.
     See the technical reference documentation for more details on the update function
-    https://fivetran.com/docs/connectors/connector-sdk/technical-reference#update
+    https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update
     Args:
         configuration: A dictionary containing connection details
         state: A dictionary containing state information from previous runs

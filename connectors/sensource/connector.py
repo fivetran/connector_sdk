@@ -257,7 +257,7 @@ def schema(configuration: Dict[str, Any]):
     Users can modify the primary keys or add additional columns as needed for their specific use case.
 
     See the technical reference documentation for more details on the schema function:
-    https://fivetran.com/docs/connectors/connector-sdk/technical-reference#schema
+    https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#schema
 
     Args:
         configuration: a dictionary that holds the configuration settings for the connector.
@@ -280,7 +280,7 @@ def update(configuration: Dict[str, Any], state: Dict[str, Any]):
     and incremental time-series data processing with proper state management.
 
     See the technical reference documentation for more details on the update function
-    https://fivetran.com/docs/connectors/connector-sdk/technical-reference#update
+    https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update
 
     Args:
         configuration: A dictionary containing connection details and sync parameters

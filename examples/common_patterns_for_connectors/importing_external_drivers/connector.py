@@ -6,7 +6,7 @@ import datetime
 # to communicate with MySql db and iterate over the data to update the connector
 
 # NOTE: libpq5 and libpq-dev are pre-installed in our connector-sdk base imagee.
-# See the Technical Reference documentation (https://fivetran.com/docs/connectors/connector-sdk/technical-reference#update)
+# See the Technical Reference documentation (https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update)
 # and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details.
 
 # Import datetime for handling date and time conversions.
@@ -20,7 +20,7 @@ from fivetran_connector_sdk import Connector, Logging as log, Operations as op
 
 # Define the schema function which lets you configure the schema your connector delivers.
 # See the technical reference documentation for more details on the schema function:
-# https://fivetran.com/docs/connectors/connector-sdk/technical-reference#schema
+# https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#schema
 # The schema function takes one parameter:
 # - configuration: a dictionary that holds the configuration settings for the connector.
 def schema(configuration: dict):
@@ -42,7 +42,7 @@ def schema(configuration: dict):
 
 # Define the update function, which is a required function, and is called by Fivetran during each sync.
 # See the technical reference documentation for more details on the update function
-# https://fivetran.com/docs/connectors/connector-sdk/technical-reference#update
+# https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update
 # The function takes two parameters:
 # - configuration: dictionary contains any secrets or payloads you configure when deploying the connector
 # - state: a dictionary contains whatever state you have chosen to checkpoint during the prior sync

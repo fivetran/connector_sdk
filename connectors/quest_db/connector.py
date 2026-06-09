@@ -1,6 +1,6 @@
 """QuestDB connector for Fivetran - syncs high-performance time-series data from QuestDB.
 This connector demonstrates how to fetch IoT sensor data, financial market data, and industrial telemetry from QuestDB and sync it to Fivetran using the Fivetran Connector SDK.
-See the Technical Reference documentation (https://fivetran.com/docs/connectors/connector-sdk/technical-reference#update)
+See the Technical Reference documentation (https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update)
 and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details
 """
 
@@ -95,7 +95,7 @@ def schema(configuration: dict):
     """
     Define the schema function which lets you configure the schema your connector delivers.
     See the technical reference documentation for more details on the schema function:
-    https://fivetran.com/docs/connectors/connector-sdk/technical-reference#schema
+    https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#schema
     Args:
         configuration: a dictionary that holds the configuration settings for the connector.
     """
@@ -326,7 +326,7 @@ def checkpoint_if_needed(
         # Save the progress by checkpointing the state. This is important for ensuring that the sync process can resume
         # from the correct position in case of next sync or interruptions.
         # Learn more about how and where to checkpoint by reading our best practices documentation
-        # (https://fivetran.com/docs/connectors/connector-sdk/best-practices#largedatasetrecommendation).
+        # (https://fivetran.com/docs/connector-sdk/best-practices#optimizingperformancewhenhandlinglargedatasets).
         op.checkpoint(state)
         log.info(f"Checkpointed at timestamp {max_timestamp} for {table_name}")
         return 0
@@ -443,7 +443,7 @@ def sync_table_data(configuration: dict, table_name: str, state: dict) -> int:
     # Save the progress by checkpointing the state. This is important for ensuring that the sync process can resume
     # from the correct position in case of next sync or interruptions.
     # Learn more about how and where to checkpoint by reading our best practices documentation
-    # (https://fivetran.com/docs/connectors/connector-sdk/best-practices#largedatasetrecommendation).
+    # (https://fivetran.com/docs/connector-sdk/best-practices#optimizingperformancewhenhandlinglargedatasets).
     op.checkpoint(state)
 
     log.info(f"Completed sync for {table_name}, total records: {total_records}")
@@ -454,7 +454,7 @@ def update(configuration: dict, state: dict):
     """
     Define the update function which lets you configure how your connector fetches data.
     See the technical reference documentation for more details on the update function:
-    https://fivetran.com/docs/connectors/connector-sdk/technical-reference#update
+    https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update
     Args:
         configuration: a dictionary that holds the configuration settings for the connector.
         state: a dictionary that holds the state of the connector.

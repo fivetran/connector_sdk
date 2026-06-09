@@ -5,7 +5,7 @@
 # THIS EXAMPLE USES DUMMY DATA AND REQUIRES THE FIVETRAN-API-PLAYGROUND PACKAGE (https://pypi.org/project/fivetran-api-playground/).
 # For this example, an EC2 instance is running fivetran-api-playground and is only accessible via an SSH tunnel.
 # See the Technical Reference documentation
-# (https://fivetran.com/docs/connectors/connector-sdk/technical-reference#update)
+# (https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update)
 # and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details.
 
 # Import requests to make HTTP calls to API.
@@ -77,7 +77,7 @@ def sync_items(params, state, configuration):
     # Save the progress by checkpointing the state. This ensures that the sync process can resume
     # from the correct position in case of next sync or interruptions.
     # Learn more about how and where to checkpoint by reading our Best Practices documentation
-    # (https://fivetran.com/docs/connectors/connector-sdk/best-practices#largedatasetrecommendation).
+    # (https://fivetran.com/docs/connector-sdk/best-practices#optimizingperformancewhenhandlinglargedatasets).
     op.checkpoint(state)
 
 
@@ -157,7 +157,7 @@ def update(configuration: dict, state: dict):
     """
     Define the update function, which is a required function, and is called by Fivetran during each sync.
     See the technical reference documentation for more details on the update function
-    https://fivetran.com/docs/connectors/connector-sdk/technical-reference#update
+    https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update
     Args:
         configuration: A dictionary containing connection details
         state: A dictionary containing state information from previous runs

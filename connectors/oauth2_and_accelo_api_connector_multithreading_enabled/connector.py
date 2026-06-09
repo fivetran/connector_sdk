@@ -7,7 +7,7 @@ Multithreading helps to make api calls in parallel to pull data faster.
 It is also an example of using OAuth 2.0 client credentials flow.
 Requires Accelo OAuth credentials to be passed in to work.
 Refer to the Multithreading Guidelines in api_threading_utils.py
-See the Technical Reference documentation (https://fivetran.com/docs/connectors/connector-sdk/technical-reference#update)
+See the Technical Reference documentation (https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update)
 and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details
 """
 
@@ -115,7 +115,7 @@ def update(configuration: dict, state: dict):
         # Save the progress by checkpointing the state. This is important for ensuring that the sync process can resume
         # from the correct position in case of next sync or interruptions.
         # Learn more about how and where to checkpoint by reading our best practices documentation
-        # (https://fivetran.com/docs/connectors/connector-sdk/best-practices#largedatasetrecommendation).
+        # (https://fivetran.com/docs/connector-sdk/best-practices#optimizingperformancewhenhandlinglargedatasets).
         op.checkpoint(thread_local_state.state)
 
         update_duration = time.time() - update_start_time
