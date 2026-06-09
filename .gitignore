@@ -17,3 +17,5 @@ connectors/cority/configuration.json
 *.spec
 **/__run.py
 **/Dockerfile
+
+connectors/cority/files/configuration.json

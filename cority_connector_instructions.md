@@ -39,7 +39,7 @@ Each report becomes one Fivetran table.
 |-------------------|--------------|------------------------|-------------|
 | `safetyfindings`  | 1474         | Qlik Safety Findings   | 52,691      |
 | `absences`        | 1475         | Qlik Absences          | 78,903      |
-| `ohcases`         | 1476         | Qlik Cases             | 95,054      |
+| `ohcases`         | 1499         | Qlik Cases             | 95,054      |
 | `incidents`       | 1477         | Qlik Incidents         | 143,745     |
 
 Only `incidents` exceeds the 100,000-row cap, so all four use the same

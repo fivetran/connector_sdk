@@ -65,7 +65,9 @@ __REPORTS = [
         "primary_key": "day_counts_with_status_id",
     },
     {
-        "userReportId": 1476,
+        # Report 1499 replaces 1476: same report definition with the line_out=false
+        # filter removed so previously-excluded (line_out=true) cases also sync.
+        "userReportId": 1499,
         "table": "ohcases",
         "primary_key": "case_no",
     },
@@ -113,7 +115,9 @@ __COLUMN_MAPS = {
         9: "restricted_days",
         10: "modified_date",
     },
-    1476: {
+    # Report 1499 replaces 1476 (line_out=false filter removed); column sequence is
+    # unchanged from 1476, so this positional map is reused as-is.
+    1499: {
         0: "case_no",
         1: "organization_code",
         2: "date_became_recordable",

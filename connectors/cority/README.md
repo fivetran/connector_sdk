@@ -4,7 +4,7 @@
 
 This connector syncs four user reports from a tenant of [Cority](https://www.cority.com/), an EHS and quality management SaaS platform. Cority does not expose a REST API for these reports; the connector talks to Cority's `MRWPService.svc` SOAP service using `zeep`. Reports are fetched with offset-based pagination via `GetUserReportResultsNonPreview` so that reports larger than the 100,000-row system cap (`GetSystemSettingReportWriterMaxRecords`) sync correctly.
 
-The connector ships with hardcoded report definitions for four destination tables: `safetyfindings` (Cority `userReportId` 1474), `absences` (1475), `ohcases` (1476), and `incidents` (1477). Each report's column map is captured from `GetUserReportById` metadata and stored in the `__COLUMN_MAPS` constant in `connector.py`.
+The connector ships with hardcoded report definitions for four destination tables: `safetyfindings` (Cority `userReportId` 1474), `absences` (1475), `ohcases` (1499), and `incidents` (1477). Each report's column map is captured from `GetUserReportById` metadata and stored in the `__COLUMN_MAPS` constant in `connector.py`.
 
 ## Requirements
 
@@ -99,7 +99,7 @@ The connector creates four destination tables, one per Cority user report. The t
 |---|---|---|---|---|
 | `safetyfindings` | 1474 | Qlik Safety Findings | `finding_id` | 52,691 |
 | `absences` | 1475 | Qlik Absences | `day_counts_with_status_id` | 78,903 |
-| `ohcases` | 1476 | Qlik Cases | `case_no` | 95,054 |
+| `ohcases` | 1499 | Qlik Cases | `case_no` | 95,054 |
 | `incidents` | 1477 | Qlik Incidents | `safety_incident_id` | 143,745 |
 
 Non-primary-key columns are inferred by Fivetran from upsert payloads. The full list of columns per table is the value set of the corresponding entry in `__COLUMN_MAPS` in `connector.py`.
