@@ -33,6 +33,13 @@ import re
 import requests
 
 
+DATA_RANGE_LIMITS = {
+    "last_7_days": 7,
+    "last_30_days": 30,
+    "all_time": None,
+}
+
+
 def configuration_form():
     """
     Define the setup form shown to users when configuring this connector in Fivetran.
@@ -42,6 +49,8 @@ def configuration_form():
         ConfigurationForm: the completed form with fields and tests.
     """
     config_form = ConfigurationForm()
+
+    log.info("Example: QuickStart Examples - Configuration Form start")
 
     # Plain text field — visible input, suitable for non-sensitive values like URLs
     config_form.add_field(
@@ -90,18 +99,23 @@ def configuration_form():
     # Descriptive dropdown — like a dropdown but each option includes an explanation
     config_form.add_field(
         form_field.DescriptiveDropdownField(
-            name="sync_mode",
-            label="Sync Mode",
+            name="data_range",
+            label="Data Range",
             values=[
                 {
-                    "value": "full",
-                    "label": "Full Sync",
-                    "description": "Re-syncs all records on every run. Use when the source does not expose a modification timestamp.",
+                    "value": "last_7_days",
+                    "label": "Last 7 Days",
+                    "description": "Fetches records created or updated in the last 7 days.",
                 },
                 {
-                    "value": "incremental",
-                    "label": "Incremental Sync",
-                    "description": "Syncs only records added or modified since the last run. Requires a cursor field in the API response.",
+                    "value": "last_30_days",
+                    "label": "Last 30 Days",
+                    "description": "Fetches records created or updated in the last 30 days.",
+                },
+                {
+                    "value": "all_time",
+                    "label": "All Time",
+                    "description": "Fetches all available historical records.",
                 },
             ],
         )
@@ -185,17 +199,25 @@ def update(configuration: dict, state: dict):
     api_key = configuration.get("api_key", "")
     batch_size = int(configuration.get("batch_size", 100))
     is_metrics_enabled = str(configuration.get("enable_metrics", "false")).lower() == "true"
-    sync_mode = configuration.get("sync_mode", "full")
-
-    cursor = state.get("cursor", 0) if sync_mode == "incremental" else 0
+    data_range = configuration.get("data_range", "all_time")
+    max_records = DATA_RANGE_LIMITS.get(data_range)
+    cursor = 0
 
     total_records = 0
 
     while True:
+        remaining_records = None if max_records is None else max_records - total_records
+        if remaining_records is not None and remaining_records <= 0:
+            break
+
+        current_batch_size = (
+            batch_size if remaining_records is None else min(batch_size, remaining_records)
+        )
+
         response = requests.get(
             f"{api_base_url}/posts",
             headers={"Authorization": f"Bearer {api_key}"},
-            params={"_start": cursor, "_limit": batch_size},
+            params={"_start": cursor, "_limit": current_batch_size},
             timeout=30,
         )
         response.raise_for_status()
@@ -221,11 +243,11 @@ def update(configuration: dict, state: dict):
         # (https://fivetran.com/docs/connector-sdk/best-practices#optimizingperformancewhenhandlinglargedatasets).
         op.checkpoint({"cursor": cursor})
 
-        if len(posts) < batch_size:
+        if len(posts) < current_batch_size:
             break
 
     if is_metrics_enabled:
-        log.info(f"Sync complete: {total_records} records extracted")
+        log.info(f"Sync complete for data_range={data_range}: {total_records} records extracted")
 
 
 # This creates the connector object that will use the update, schema, and configuration_form

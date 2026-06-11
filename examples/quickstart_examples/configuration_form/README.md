@@ -55,7 +55,7 @@ For available CLI commands, refer to the [Connector SDK Commands](https://fivetr
 - Demonstrates all available form field types: `TextField` (plain text and password variants), `DropdownField`, `ToggleField`, and `DescriptiveDropdownField`
 - Registers a connection test function that Fivetran calls by its `__name__` during connector setup
 - Shows how to read and use configuration form values inside `update()`
-- Supports full and incremental sync modes, controlled by a form field
+- Uses the `data_range` descriptive dropdown to control how much sample data the sync reads
 - Optionally logs extraction volume when the metrics toggle is enabled
 - Supports the `fivetran configuration` command, which interactively prompts for each form field value and generates (or overrides) `configuration.json` — the resulting file can then be used with `fivetran debug --configuration configuration.json` to run the connector locally or with `fivetran deploy` to deploy it. Setup tests registered via `add_test()` can be run independently using `fivetran configuration --test`, which is useful for validating credentials, field values, or connection health without running a full sync
 
@@ -67,7 +67,7 @@ This connector has no third-party dependencies. The `requirements.txt` file is p
 
 ## Data handling
 
-The example uses hardcoded sample records to illustrate the sync pattern without requiring a live data source. Configuration values from the form are read in `update()` to control sync behavior. `sync_mode` determines whether all records are re-synced or only records added since the last checkpoint, `batch_size` shows how a page limit would be applied, and `enable_metrics` controls whether extraction stats are logged.
+The example uses the JSONPlaceholder API to illustrate the sync pattern. Configuration values from the form are read in `update()` to control sync behavior. `data_range` limits how many records are fetched for the demo (`last_7_days`, `last_30_days`, or `all_time`), `batch_size` shows how a page limit would be applied, and `enable_metrics` controls whether extraction stats are logged.
 
 Refer to `def update()` for details.
 
