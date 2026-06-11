@@ -1,0 +1,27 @@
+connectors/noaa/connector.py
+  6576c877102cf801 617
+connectors/fred/connector.py
+  6576c877102cf801 469
+connectors/gumroad/connector.py
+  6576c877102cf801 147,159,279,291
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.1",
+  "base_commit_sha": "9288684a2972614d50cb54804c7e95733870d4aa",
+  "prompts": {
+    "6576c877102cf801": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6512c2ad-ee80-47ae-862e-fac8c4f4333a",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "fivetran-JenasVimal <jenas.vimal@fivetran.com>",
+      "messages": [],
+      "total_additions": 6,
+      "total_deletions": 12,
+      "accepted_lines": 6,
+      "overriden_lines": 0
+    }
+  }
+}
