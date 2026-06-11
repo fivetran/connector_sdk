@@ -167,7 +167,7 @@ All pull requests go through a multi-stage review process to ensure quality and 
 When you submit a pull request, automated checks will run:
 
 - Code quality check - Flake8 linting and Black formatting validation
-- README update check - verifies that the root README.md is updated for new examples
+- README update check - verifies that new directories are documented in the appropriate README
 - CLA verification - confirms that you have signed the Contributor License Agreement (CLA)
 
 The code quality and README update checks will run only when a Fivetran team member allows the check to run when the PR is opened. These checks must pass before human review begins.
@@ -253,12 +253,14 @@ black --line-length 99 .
 
 ### 2. README update check
 
-This check ensures that new examples are documented in the root `README.md`. This check runs when your pull request adds new directories. This check fails if new directories are added without updating the root `README.md` to document them.
+This check ensures that new directories are documented in the appropriate README. New directories under `examples/` must be documented in `examples/README.md`. New directories outside `examples/` must still be documented in the root `README.md`.
 
-What to update in `README.md`:
-- Add your connector to the appropriate section (Community Connectors, Quickstart Examples, etc.)
+What to update:
+- Update `examples/README.md` when adding a new directory under `examples/`
+- Update the root `README.md` when adding a new documented directory outside `examples/`
+- Add your connector or directory to the appropriate section
 - Include a brief description
-- Link to your connector's directory
+- Link to the relevant directory
 
 ### 3. Contributor license agreement
 
