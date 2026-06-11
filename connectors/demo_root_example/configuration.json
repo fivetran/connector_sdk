@@ -1,0 +1,5 @@
+
+{
+  "bearer_token": "<YOUR_DATACAMP_BEARER_TOKEN>",
+  "base_url": "<YOUR_OPTIONAL_DATACAMP_BASE_URL>"
+}
