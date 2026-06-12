@@ -6,4 +6,4 @@
 **/*.txt @fivetran/menon
 **/*.sh @fivetran/menon
 **/*.png @fivetran/menon
-**/*.md @fivetran/tech-writers
+^[Tech Writers]**/*.md @fivetran/tech-writers
