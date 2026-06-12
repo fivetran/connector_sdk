@@ -1,4 +1,4 @@
-name: README
+name: README Updates
 
 on:
   pull_request:
@@ -7,7 +7,7 @@ on:
 jobs:
   check-readme-update:
     runs-on: ubuntu-latest
-    name: Check Updates for New Examples
+    name: Check README Updates for New Directories
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -29,9 +29,24 @@ jobs:
         id: create-script
         run: |
           cat > check-readme-update.js << 'EOF'
-          const fs = require('fs');
           const path = require('path');
           const { execSync } = require('child_process');
+
+          const ROOT_README = 'README.md';
+          const EXAMPLES_README = 'examples/README.md';
+          const EXAMPLES_ROOT = 'examples';
+          const IGNORED_ROOT_README_DIRECTORIES = [
+            'ai_and_connector_sdk',
+            'git_hooks',
+            '.github',
+            '.github/workflows',
+            '.circleci',
+            '.devops',
+            'ci',
+            '.ci',
+            'scripts',
+            EXAMPLES_ROOT
+          ];
 
           // Get the list of files changed in the PR
           function getChangedFiles() {
@@ -72,71 +87,101 @@ jobs:
             }
           }
 
-          // Main function to check if directories were added without README update
+          function isUnderExamplesDirectory(dirPath) {
+            return dirPath === EXAMPLES_ROOT || dirPath.startsWith(EXAMPLES_ROOT + '/');
+          }
+
+          function isIgnoredRootReadmeDirectory(dirPath) {
+            return IGNORED_ROOT_README_DIRECTORIES.some(
+              ignored => dirPath === ignored || dirPath.startsWith(ignored + '/')
+            );
+          }
+
+          // Main function to check if new directories were added without the relevant README update
           function checkReadmeUpdate() {
-            // Define directories to ignore (infrastructure directories)
-            const ignoredDirectories = [
-              'ai_and_connector_sdk',
-              'git_hooks',
-              '.github',
-              '.github/workflows',
-              '.circleci',
-              '.devops',
-              'ci',
-              '.ci',
-              'scripts'
-            ];
-            
             // Get all files changed in this PR
             const changedFiles = getChangedFiles();
             
-            // Track added directories
-            const addedDirs = new Set();
+            // Track added example directories
+            const addedExampleDirs = new Set();
+            const addedRootReadmeDirs = new Set();
             
-            // Check for README.md update
-            let isReadmeUpdated = false;
+            // Check for README updates
+            let isRootReadmeUpdated = false;
+            let isExamplesReadmeUpdated = false;
             
             // Process each changed file
             changedFiles.forEach(file => {
-              // Skip deleted files
-              if (file.status === 'D') return;
-              
-              // Check if this is the root README.md
-              if (file.filename === 'README.md' && !file.filename.includes('/')) {
-                isReadmeUpdated = true;
+              if (file.filename === ROOT_README) {
+                isRootReadmeUpdated = true;
               }
-              
-              // Check if this file adds a new directory
+
+              if (file.filename === EXAMPLES_README) {
+                isExamplesReadmeUpdated = true;
+              }
+
+              // Skip deleted files
+              if (file.status === 'D') {
+                return;
+              }
+
               const dirPath = path.dirname(file.filename);
-              if (dirPath !== '.') {
-                // Add this directory and all parent directories, but only if they're new
+
+              if (isUnderExamplesDirectory(dirPath)) {
+                // Add this directory and all parent example directories, but only if they're new
                 let currentPath = dirPath;
-                while (currentPath && currentPath !== '.') {
-                // Only add if this directory doesn't exist in the base branch
-                  // and is not in our ignore list (including subdirectories)
-                  if (
-                    !directoryExistsInBase(currentPath) &&
-                    !ignoredDirectories.some(
-                      ignored => currentPath === ignored || currentPath.startsWith(ignored + '/')
-                    )
-                  ) {
-                    addedDirs.add(currentPath);
+                while (currentPath && currentPath !== '.' && currentPath !== EXAMPLES_ROOT) {
+                  if (!directoryExistsInBase(currentPath)) {
+                    addedExampleDirs.add(currentPath);
                   }
                   currentPath = path.dirname(currentPath);
                 }
+                return;
+              }
+
+              if (dirPath === '.' || isIgnoredRootReadmeDirectory(dirPath)) {
+                return;
+              }
+
+              // Add this directory and all parent directories, but only if they're new
+              let currentPath = dirPath;
+              while (currentPath && currentPath !== '.') {
+                if (
+                  !directoryExistsInBase(currentPath) &&
+                  !isIgnoredRootReadmeDirectory(currentPath)
+                ) {
+                  addedRootReadmeDirs.add(currentPath);
+                }
+                currentPath = path.dirname(currentPath);
               }
             });
             
             // Log what we found
-            if (addedDirs.size > 0) {
-              console.log(`New directories added: ${Array.from(addedDirs).join(', ')}`);
+            if (addedExampleDirs.size > 0) {
+              console.log(`New example directories added: ${Array.from(addedExampleDirs).join(', ')}`);
             } else {
-              console.log('No new directories added.');
+              console.log('No new example directories added.');
+            }
+
+            if (addedRootReadmeDirs.size > 0) {
+              console.log(`New non-example directories added: ${Array.from(addedRootReadmeDirs).join(', ')}`);
+            } else {
+              console.log('No new non-example directories added.');
             }
             
-            // If we have new directories but README isn't updated, fail the check
-            if (addedDirs.size > 0 && !isReadmeUpdated) {
-              console.error(`::error::PR adds new directories (${Array.from(addedDirs).join(', ')}) but README.md is not updated. Please update README.md to document these new directories.`);
+            let hasFailure = false;
+
+            if (addedExampleDirs.size > 0 && !isExamplesReadmeUpdated) {
+              console.error(`::error::PR adds new example directories (${Array.from(addedExampleDirs).join(', ')}) but examples/README.md is not updated. Please update examples/README.md to document these example directories.`);
+              hasFailure = true;
+            }
+
+            if (addedRootReadmeDirs.size > 0 && !isRootReadmeUpdated) {
+              console.error(`::error::PR adds new non-example directories (${Array.from(addedRootReadmeDirs).join(', ')}) but README.md is not updated. Please update README.md to document these directories.`);
+              hasFailure = true;
+            }
+
+            if (hasFailure) {
               process.exit(1);
             }
             
