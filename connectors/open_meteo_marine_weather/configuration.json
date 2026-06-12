@@ -1,0 +1,7 @@
+{
+    "latitude": "<YOUR_LATITUDE>",
+    "longitude": "<YOUR_LONGITUDE>",
+    "timezone": "<TIMEZONE>",
+    "forecast_days": "<FORECAST_DAYS>",
+    "past_days": "<PAST_DAYS>"
+}
