@@ -1,0 +1,1 @@
+psycopg2_binary==2.9.10

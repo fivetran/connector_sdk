@@ -1,0 +1,11 @@
+{
+  "host": "ec2-3-87-137-205.compute-1.amazonaws.com",
+  "port": "5432",
+  "database": "testdb",
+  "user": "testuser",
+  "password": "testpassword",
+  "fivetran_remote_proxy_host": "ec2-3-87-137-205.compute-1.amazonaws.com",
+  "fivetran_remote_proxy_port": "5432",
+  "fivetran_proxy_redirect_host": "ec2-54-224-175-190.compute-1.amazonaws.com",
+  "fivetran_proxy_redirect_port": "5432"
+}
