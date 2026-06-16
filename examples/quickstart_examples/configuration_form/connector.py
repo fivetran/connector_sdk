@@ -59,7 +59,7 @@ def configuration_form():
             label="API Base URL",
             description="The base URL for your REST API endpoint.",
             required=True,
-            field_type=form_field.TextField.PlainText,
+            field_type=form_field.TextField.plain_text,
             placeholder="https://api.example.com/v1",
         )
     )
@@ -71,7 +71,7 @@ def configuration_form():
             label="API Key",
             description="Your API authentication key. This value is stored securely.",
             required=True,
-            field_type=form_field.TextField.Password,
+            field_type=form_field.TextField.password,
             placeholder="your_api_key_here",
         )
     )
@@ -82,7 +82,10 @@ def configuration_form():
             name="batch_size",
             label="Batch Size",
             description="Number of records to fetch per API request.",
-            values=[10, 100, 500],
+            fields=[form_field.DropdownFieldParam(value=10),
+                    form_field.DropdownFieldParam(value=100),
+                    form_field.DropdownFieldParam(value=500)
+                    ],
             required=True,
         )
     )
@@ -98,26 +101,26 @@ def configuration_form():
 
     # Descriptive dropdown — like a dropdown but each option includes an explanation
     config_form.add_field(
-        form_field.DescriptiveDropdownField(
+        form_field.DropdownField(
             name="data_range",
             label="Data Range",
-            values=[
-                {
-                    "value": "last_7_days",
-                    "label": "Last 7 Days",
-                    "description": "Fetches records created or updated in the last 7 days.",
-                },
-                {
-                    "value": "last_30_days",
-                    "label": "Last 30 Days",
-                    "description": "Fetches records created or updated in the last 30 days.",
-                },
-                {
-                    "value": "all_time",
-                    "label": "All Time",
-                    "description": "Fetches all available historical records.",
-                },
-            ],
+            fields=[
+                form_field.DropdownFieldParam(
+                    value="last_7_days",
+                    label="Last 7 Days",
+                    description="Fetches records created or updated in the last 7 days."
+                ),
+                form_field.DropdownFieldParam(
+                    value="last_30_days",
+                    label="Last 30 Days",
+                    description="Fetches records created or updated in the last 30 days."
+                ),
+                form_field.DropdownFieldParam(
+                    value="all_time",
+                    label="All Time",
+                    description="Fetches all available historical records."
+                )
+            ]
         )
     )
 

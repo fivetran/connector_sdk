@@ -2,9 +2,9 @@
 
 ## Connector overview
 
-This example demonstrates how to define a connector setup form using `ConfigurationForm`, `form_field`, and `Test` from the Fivetran Connector SDK. It covers all available field types — plain text, password, dropdown, toggle, and descriptive dropdown — and shows how to register a connection test that Fivetran runs when the user clicks **Test Connection** during setup.
+This example demonstrates how to define a connector setup form using `ConfigurationForm`, `form_field`, and `Test` from the Fivetran Connector SDK. It covers plain text, password, dropdown, and toggle fields, including dropdown options with labels and descriptions. It also shows how to register a connection test that Fivetran runs when the user clicks **Test Connection** during setup.
 
-The API fields (`api_base_url`, `api_key`) in the configuration form are included to illustrate how a real connector would collect credentials. However, they are not required for this example to run. The `configuration.json` file provided contains sample values used only to demonstrate the form fields when running locally.
+The API fields (`api_base_url`, `api_key`) in the configuration form illustrate how a real connector would collect connection details. The `configuration.json` file provided contains sample values for running the connector locally.
 
 Refer to `def configuration_form()` and `def connection_test()` in `connector.py` for the main setup form and test implementation.
 
@@ -52,16 +52,16 @@ For available CLI commands, refer to the [Connector SDK Commands](https://fivetr
 
 ## Features
 
-- Demonstrates all available form field types: `TextField` (plain text and password variants), `DropdownField`, `ToggleField`, and `DescriptiveDropdownField`
+- Demonstrates form field types: `TextField` (plain text and password variants), `DropdownField`, and `ToggleField`
 - Registers a connection test function that Fivetran calls by its `__name__` during connector setup
 - Shows how to read and use configuration form values inside `update()`
-- Uses the `data_range` descriptive dropdown to control how much sample data the sync reads
+- Uses the `data_range` dropdown with option labels and descriptions to control how much sample data the sync reads
 - Optionally logs extraction volume when the metrics toggle is enabled
 - Supports the `fivetran configuration` command, which interactively prompts for each form field value and generates (or overrides) `configuration.json` — the resulting file can then be used with `fivetran debug --configuration configuration.json` to run the connector locally or with `fivetran deploy` to deploy it. Setup tests registered via `add_test()` can be run independently using `fivetran configuration --test`, which is useful for validating credentials, field values, or connection health without running a full sync
 
 ## Requirements file
 
-This connector has no third-party dependencies. The `requirements.txt` file is present but empty.
+This connector has no third-party dependencies and does not include a `requirements.txt` file.
 
 > Note: The `fivetran_connector_sdk:latest` and `requests:latest` packages are pre-installed in the Fivetran environment. To avoid dependency conflicts, do not declare them in your `requirements.txt`.
 
