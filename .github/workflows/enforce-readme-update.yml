@@ -1,4 +1,4 @@
-name: README Updates
+name: README
 
 on:
   pull_request:
@@ -7,7 +7,7 @@ on:
 jobs:
   check-readme-update:
     runs-on: ubuntu-latest
-    name: Check README Updates for New Directories
+    name: Check Updates for New Examples
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
