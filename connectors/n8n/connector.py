@@ -3,9 +3,9 @@ This connector demonstrates how to sync workflow automation data from
 n8n including workflows, executions, and credentials using the
 n8n REST API.
 See the Technical Reference documentation
-(https://fivetran.com/docs/connectors/connector-sdk/technical-reference)
+(https://fivetran.com/docs/connector-sdk/technical-reference)
 and the Best Practices documentation
-(https://fivetran.com/docs/connectors/connector-sdk/best-practices)
+(https://fivetran.com/docs/connector-sdk/best-practices)
 for details
 """
 
@@ -60,7 +60,7 @@ def schema(configuration: dict):
     your connector delivers.
     See the technical reference documentation for more details on the
     schema function:
-    https://fivetran.com/docs/connectors/connector-sdk/technical-reference#schema
+    https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#schema
     Args:
         configuration: a dictionary that holds configuration settings.
     """
@@ -76,7 +76,7 @@ def update(configuration: dict, state: dict):
     connector fetches data.
     See the technical reference documentation for more details on the
     update function:
-    https://fivetran.com/docs/connectors/connector-sdk/technical-reference#update
+    https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update
     Args:
         configuration: a dictionary that holds configuration settings.
         state: a dictionary that holds the state of the connector.
@@ -118,7 +118,7 @@ def update(configuration: dict, state: dict):
         # position in case of next sync or interruptions.
         # Learn more about how and where to checkpoint by reading our best
         # practices documentation
-        # (https://fivetran.com/docs/connectors/connector-sdk/best-practices#largedatasetrecommendation).
+        # (https://fivetran.com/docs/connector-sdk/best-practices#optimizingperformancewhenhandlinglargedatasets).
         op.checkpoint(new_state)
 
     except Exception as e:
@@ -170,7 +170,7 @@ def sync_workflows(base_url: str, api_key: str, last_update: str, last_execution
             # Save the progress by checkpointing the state. This is important for ensuring that the sync process can resume
             # from the correct position in case of next sync or interruptions.
             # Learn more about how and where to checkpoint by reading our best practices documentation
-            # (https://fivetran.com/docs/connectors/connector-sdk/best-practices#largedatasetrecommendation).
+            # (https://fivetran.com/docs/connector-sdk/best-practices#optimizingperformancewhenhandlinglargedatasets).
             op.checkpoint(temp_state)
             records_synced = 0
 
@@ -336,7 +336,7 @@ def checkpoint_execution_state(latest_execution_id: str, last_workflow_update: s
     # interruptions.
     # Learn more about how and where to checkpoint by reading
     # our best practices documentation
-    # (https://fivetran.com/docs/connectors/connector-sdk/best-practices#largedatasetrecommendation).
+    # (https://fivetran.com/docs/connector-sdk/best-practices#optimizingperformancewhenhandlinglargedatasets).
     op.checkpoint(temp_state)
 
 

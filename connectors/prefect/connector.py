@@ -5,9 +5,9 @@ API and syncs it to your data warehouse.
 Supports incremental syncing of flow, deployment, work_pool,
 work_queue, flow_run, task_run, artifact, and variable.
 See the Technical Reference documentation
-(https://fivetran.com/docs/connectors/connector-sdk/technical-reference)
+(https://fivetran.com/docs/connector-sdk/technical-reference)
 and the Best Practices documentation
-(https://fivetran.com/docs/connectors/connector-sdk/best-practices)
+(https://fivetran.com/docs/connector-sdk/best-practices)
 for details.
 """
 
@@ -77,7 +77,7 @@ def schema(configuration: dict):
     your connector delivers.
     See the technical reference documentation for more details on
     the schema function:
-    https://fivetran.com/docs/connectors/connector-sdk/technical-reference#schema
+    https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#schema
     Args:
         configuration: a dictionary that holds the configuration
         settings for the connector.
@@ -91,7 +91,7 @@ def update(configuration: dict, state: dict):
     connector fetches data.
     See the technical reference documentation for more details on
     the update function:
-    https://fivetran.com/docs/connectors/connector-sdk/technical-reference#update
+    https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update
     Args:
         configuration: a dictionary that holds the configuration
         settings for the connector.

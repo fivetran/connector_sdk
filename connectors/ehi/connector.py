@@ -4,8 +4,8 @@ and sync it to your Fivetran destination using the Fivetran Connector SDK.
 This example is a simple implementation meant to provide basic understanding of how to use the Fivetran Connector SDK for MSSQL server
 It detects the tables in the database, their columns, and primary keys, and performs incremental syncs based on a modified date column.
 This example also includes batch fetching and checkpointing to ensure reliable delivery of large datasets.
-See the Technical Reference documentation (https://fivetran.com/docs/connectors/connector-sdk/technical-reference)
-and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details
+See the Technical Reference documentation (https://fivetran.com/docs/connector-sdk/technical-reference)
+and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details
 """
 
 # For JSON data serialization and configuration parsing
@@ -437,7 +437,7 @@ def update(configuration: dict, state: dict):
     """
     Define the update function, which is a required function, and is called by Fivetran during each sync.
     See the technical reference documentation for more details on the update function
-    https://fivetran.com/docs/connectors/connector-sdk/technical-reference#update
+    https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update
     Args:
         configuration: A dictionary containing connection details
         state: A dictionary containing state information from previous runs

@@ -3,8 +3,8 @@ This is an example for how to use pyproject.toml for dependency management with 
 Instead of declaring dependencies in a requirements.txt file, this connector uses a pyproject.toml file.
 The pyproject.toml file is the modern Python standard for declaring project metadata and dependencies.
 The Connector SDK prioritizes pyproject.toml over requirements.txt when both are present.
-See the Technical Reference documentation (https://fivetran.com/docs/connectors/connector-sdk/technical-reference)
-and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details.
+See the Technical Reference documentation (https://fivetran.com/docs/connector-sdk/technical-reference)
+and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details.
 
 This connector fetches the latest exchange rates from the Frankfurter API (https://frankfurter.dev),
 a free, open-source API that requires no authentication.

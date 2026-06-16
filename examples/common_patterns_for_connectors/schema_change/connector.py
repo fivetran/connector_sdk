@@ -1,8 +1,8 @@
 # This is an example for how to work with the fivetran_connector_sdk module.
 """This connector demonstrates how Fivetran handles data type changes without defining them in Connector SDK."""
 
-# See the Technical Reference documentation (https://fivetran.com/docs/connectors/connector-sdk/technical-reference#update)
-# and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details
+# See the Technical Reference documentation (https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update)
+# and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details
 
 # This connector demonstrates schema changes by returning data with different types
 # First sync: int_to_string field is an integer (42)
@@ -26,7 +26,7 @@ def update(configuration: dict, state: dict):
     """
     Define the update function, which is a required function, and is called by Fivetran during each sync.
     See the technical reference documentation for more details on the update function
-    https://fivetran.com/docs/connectors/connector-sdk/technical-reference#update
+    https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update
 
     In this example the update function demonstrates schema evolution across syncs.
 

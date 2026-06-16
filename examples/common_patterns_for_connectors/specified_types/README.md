@@ -8,7 +8,7 @@ This is useful for:
 - Learning how to define and format each Fivetran-supported data type.
 - Building a schema reference or validation utility.
 
-For full type details, refer to the [Technical Reference – Supported Data Types](https://fivetran.com/docs/connectors/connector-sdk/technical-reference#supporteddatatypes).
+For full type details, refer to the [Technical Reference – Supported Data Types](https://fivetran.com/docs/connector-sdk/technical-reference#supporteddatatypes).
 
 
 ## Requirements

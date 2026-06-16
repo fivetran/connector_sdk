@@ -18,10 +18,10 @@ Refer to GNews API documentation for details:
 https://docs.gnews.io/endpoints/search-endpoint
 
 See the Fivetran Connector SDK Technical Reference:
-https://fivetran.com/docs/connectors/connector-sdk/technical-reference#update
+https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update
 
 and Best Practices:
-https://fivetran.com/docs/connectors/connector-sdk/best-practices
+https://fivetran.com/docs/connector-sdk/best-practices
 for additional implementation guidance.
 """
 
@@ -67,7 +67,7 @@ def schema(configuration: dict) -> List[Dict[str, Any]]:
     your connector delivers.
     See the technical reference documentation
     for more details on the schema function:
-    https://fivetran.com/docs/connectors/connector-sdk/technical-reference#schema
+    https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#schema
 
     Args:
         configuration: a dictionary that holds the configuration settings for the connector.
@@ -335,7 +335,7 @@ def update(configuration: dict, state: dict):
     Define the update function which lets you configure
     how your connector fetches data.
     See the technical reference documentation for more details
-    on the update function: https://fivetran.com/docs/connectors/connector-sdk/technical-reference#update
+    on the update function: https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update
 
     args:
         configuration: A dictionary containing connection details.

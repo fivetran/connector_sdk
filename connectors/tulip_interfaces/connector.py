@@ -5,10 +5,10 @@ This connector syncs data from Tulip Tables to Fivetran destinations using a
 two-phase synchronization strategy with cursor-based pagination.
 
 See the Technical Reference documentation:
-https://fivetran.com/docs/connectors/connector-sdk/technical-reference#update
+https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update
 
 And the Best Practices documentation:
-https://fivetran.com/docs/connectors/connector-sdk/best-practices
+https://fivetran.com/docs/connector-sdk/best-practices
 """
 
 # For datetime operations
@@ -930,7 +930,7 @@ def update(configuration: dict, state: dict):
     """
     Define the update function, which is a required function, and is called by Fivetran during each sync.
     See the technical reference documentation for more details on the update function
-    https://fivetran.com/docs/connectors/connector-sdk/technical-reference#update
+    https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update
 
     Args:
         configuration: A dictionary containing connection details

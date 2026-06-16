@@ -5,7 +5,7 @@ truncate() soft-deletes all rows that exist in the destination before the call (
 Rows upserted after truncate() in the same sync are not affected.
 
 See the Technical Reference documentation (https://fivetran.com/docs/connector-sdk/technical-reference)
-and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details.
+and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details.
 """
 
 # Import required classes from fivetran_connector_sdk

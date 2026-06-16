@@ -1,7 +1,7 @@
 """This connector demonstrates keyset pagination for syncing data from a PostgreSQL database.
 It pages through rows using a WHERE (updated_at, id) > (%s, %s) boundary that advances after each page.
-See the Technical Reference documentation (https://fivetran.com/docs/connectors/connector-sdk/technical-reference)
-and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details.
+See the Technical Reference documentation (https://fivetran.com/docs/connector-sdk/technical-reference)
+and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details.
 """
 
 # Import json library for handling JSON data

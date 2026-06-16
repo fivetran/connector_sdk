@@ -86,5 +86,5 @@ To observe how adding a new table works:
 ## Reference Documentation
 
 For more information, refer to:
-- [Fivetran Technical Reference](https://fivetran.com/docs/connectors/connector-sdk/technical-reference#update)
-- [Fivetran Best Practices](https://fivetran.com/docs/connectors/connector-sdk/best-practices)
+- [Fivetran Technical Reference](https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update)
+- [Fivetran Best Practices](https://fivetran.com/docs/connector-sdk/best-practices)
