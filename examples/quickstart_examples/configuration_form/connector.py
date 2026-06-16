@@ -95,7 +95,6 @@ def configuration_form():
         form_field.ToggleField(
             name="enable_metrics",
             label="Enable Metrics",
-            required=True,
             description="Log extraction volume metrics (record count and bytes) during each sync.",
         )
     )
@@ -105,7 +104,6 @@ def configuration_form():
         form_field.DropdownField(
             name="data_range",
             label="Data Range",
-            required=True,
             fields=[
                 form_field.DropdownFieldParam(
                     value="last_7_days",
@@ -113,7 +111,10 @@ def configuration_form():
                     description="Fetches records created or updated in the last 7 days."
                 ),
                 form_field.DropdownFieldParam(
-                    value="last_30_days"),
+                    value="last_30_days",
+                    label="Last 30 Days",
+                    description="Fetches records created or updated in the last 30 days."
+                ),
                 form_field.DropdownFieldParam(
                     value="all_time",
                     label="All Time",
