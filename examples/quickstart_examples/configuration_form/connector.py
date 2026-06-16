@@ -32,7 +32,6 @@ import re
 # For making HTTP requests to the example API in the connection test and sync logic
 import requests
 
-
 DATA_RANGE_LIMITS = {
     "last_7_days": 7,
     "last_30_days": 30,
