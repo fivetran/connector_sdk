@@ -1,7 +1,7 @@
 {
-    "latitude": "<YOUR_LATITUDE>",
-    "longitude": "<YOUR_LONGITUDE>",
-    "timezone": "<TIMEZONE>",
-    "forecast_days": "<FORECAST_DAYS>",
-    "past_days": "<PAST_DAYS>"
+  "latitude": "<YOUR_LATITUDE>",
+  "longitude": "<YOUR_LONGITUDE>",
+  "timezone": "<OPTIONAL_TIMEZONE_DEFAULT_America/Los_Angeles>",
+  "forecast_days": "<OPTIONAL_FORECAST_DAYS_DEFAULT_7>",
+  "past_days": "<OPTIONAL_PAST_DAYS_DEFAULT_7>"
 }

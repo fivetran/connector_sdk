@@ -63,7 +63,8 @@ def _is_placeholder(value):
         value: The configuration value to check.
 
     Returns:
-        True if the value is None, empty, non-string, or an angle-bracket placeholder.
+        True if the value is None or an empty string or an angle-bracket placeholder.
+        Non-string values (e.g. numeric 0, False) return False — they are real values.
     """
     if value is None or value == "":
         return True
@@ -143,7 +144,7 @@ def validate_configuration(configuration: dict):
     """
     # Latitude is required
     latitude = configuration.get("latitude")
-    if not latitude or _is_placeholder(latitude):
+    if latitude is None or _is_placeholder(latitude):
         raise ValueError("Missing required configuration value: latitude")
     try:
         lat_val = float(latitude)
@@ -154,7 +155,7 @@ def validate_configuration(configuration: dict):
 
     # Longitude is required
     longitude = configuration.get("longitude")
-    if not longitude or _is_placeholder(longitude):
+    if longitude is None or _is_placeholder(longitude):
         raise ValueError("Missing required configuration value: longitude")
     try:
         lon_val = float(longitude)
@@ -163,16 +164,30 @@ def validate_configuration(configuration: dict):
     if lon_val < -180 or lon_val > 180:
         raise ValueError("longitude must be between -180 and 180")
 
-    # Validate forecast_days if provided
-    forecast_days = _optional_int(configuration, "forecast_days", __DEFAULT_FORECAST_DAYS)
+    # Validate forecast_days if provided — fail fast on non-numeric input
+    raw_forecast = configuration.get("forecast_days")
+    if raw_forecast is not None and not _is_placeholder(raw_forecast):
+        try:
+            forecast_days = int(raw_forecast)
+        except (ValueError, TypeError):
+            raise ValueError(f"forecast_days must be a valid integer, got: {raw_forecast!r}")
+    else:
+        forecast_days = __DEFAULT_FORECAST_DAYS
     if forecast_days < 1 or forecast_days > __MAX_FORECAST_DAYS_CEILING:
         raise ValueError(
             f"forecast_days must be between 1 and "
             f"{__MAX_FORECAST_DAYS_CEILING}, got: {forecast_days}"
         )
 
-    # Validate past_days if provided
-    past_days = _optional_int(configuration, "past_days", __DEFAULT_PAST_DAYS)
+    # Validate past_days if provided — fail fast on non-numeric input
+    raw_past = configuration.get("past_days")
+    if raw_past is not None and not _is_placeholder(raw_past):
+        try:
+            past_days = int(raw_past)
+        except (ValueError, TypeError):
+            raise ValueError(f"past_days must be a valid integer, got: {raw_past!r}")
+    else:
+        past_days = __DEFAULT_PAST_DAYS
     if past_days < 0 or past_days > __MAX_PAST_DAYS_CEILING:
         raise ValueError(
             f"past_days must be between 0 and {__MAX_PAST_DAYS_CEILING}, got: {past_days}"
@@ -200,12 +215,20 @@ def fetch_data_with_retry(session, url, params=None):
             return response.json()
         except requests.exceptions.ConnectionError as e:
             if attempt < __MAX_RETRIES - 1:
-                time.sleep(__BASE_DELAY_SECONDS * (2**attempt))
+                delay = __BASE_DELAY_SECONDS * (2**attempt)
+                log.info(
+                    f"Connection error on attempt {attempt + 1}/{__MAX_RETRIES}, retrying in {delay}s: {e}"
+                )
+                time.sleep(delay)
             else:
                 raise RuntimeError(f"Connection failed after {__MAX_RETRIES} attempts: {e}") from e
         except requests.exceptions.Timeout as e:
             if attempt < __MAX_RETRIES - 1:
-                time.sleep(__BASE_DELAY_SECONDS * (2**attempt))
+                delay = __BASE_DELAY_SECONDS * (2**attempt)
+                log.info(
+                    f"Timeout on attempt {attempt + 1}/{__MAX_RETRIES}, retrying in {delay}s: {e}"
+                )
+                time.sleep(delay)
             else:
                 raise RuntimeError(f"Request timed out after {__MAX_RETRIES} attempts: {e}") from e
         except requests.exceptions.RequestException as e:
@@ -215,7 +238,11 @@ def fetch_data_with_retry(session, url, params=None):
                 else None
             )
             if status in __RETRYABLE_STATUS_CODES and attempt < __MAX_RETRIES - 1:
-                time.sleep(__BASE_DELAY_SECONDS * (2**attempt))
+                delay = __BASE_DELAY_SECONDS * (2**attempt)
+                log.info(
+                    f"HTTP {status} on attempt {attempt + 1}/{__MAX_RETRIES}, retrying in {delay}s"
+                )
+                time.sleep(delay)
             else:
                 raise RuntimeError(f"API request failed after {attempt + 1} attempts: {e}") from e
     raise RuntimeError("Unexpected: exhausted retries without returning or raising")
@@ -364,14 +391,12 @@ def schema(configuration: dict):
 
 def update(configuration: dict, state: dict):
     """
-    Define the update function, which is a required function,
-    and is called by Fivetran during each sync.
-    See the technical reference documentation for more details on the update function
+    Define the update function which lets you configure how your connector fetches data.
+    See the technical reference documentation for more details on the update function:
     https://fivetran.com/docs/connectors/connector-sdk/technical-reference#update
     Args:
-        configuration: A dictionary containing connection details
-        state: A dictionary containing state information from previous runs
-        The state dictionary is empty for the first sync or for any full re-sync
+        configuration: a dictionary that holds the configuration settings for the connector.
+        state: a dictionary that holds the state of the connector.
     """
     log.warning("Example: connectors : open_meteo_marine_weather")
     validate_configuration(configuration)
@@ -479,16 +504,19 @@ def update(configuration: dict, state: dict):
         session.close()
 
 
-# Create the connector object
-# The Connector class takes update and schema as required arguments.
-# update: the function that Fivetran will call on each sync
-# schema: the function that defines the destination tables and columns
+# Create the connector object using the schema and update functions
 connector = Connector(update=update, schema=schema)
 
+# Check if the script is being run as the main module.
+# This is Python's standard entry method allowing your script to be run directly from the
+# command line or IDE 'run' button.
+# This is useful for debugging while you write your code. Note this method is not called by
+# Fivetran when executing your connector in production.
+# Please test using the Fivetran debug command prior to finalizing and deploying your connector.
 if __name__ == "__main__":
     # Open the configuration.json file and load its contents
     with open("configuration.json", "r") as f:
         configuration = json.load(f)
-    # The connector.debug() method runs a local sync simulation
-    # This is only for local development/testing and will not affect production
+
+    # Test the connector locally
     connector.debug(configuration=configuration)

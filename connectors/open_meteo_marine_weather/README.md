@@ -76,9 +76,9 @@ Refer to the `fetch_data_with_retry` function in `connector.py`.
 
 ## Tables created
 
-### MARINE_HOURLY
+### marine_hourly
 
-The `MARINE_HOURLY` table consists of the following columns:
+The `marine_hourly` table consists of the following columns:
 - `location_id` (STRING, primary key): Composite location identifier from latitude and longitude
 - `timestamp` (UTC_DATETIME, primary key): The hourly timestamp for this observation
 - `wave_height` (FLOAT): Significant wave height in meters
@@ -95,9 +95,9 @@ The `MARINE_HOURLY` table consists of the following columns:
 - `elevation` (FLOAT): Location elevation in meters as reported by the API (typically 0 for marine locations)
 - `timezone` (STRING): Timezone of the location as reported by the API
 
-### MARINE_DAILY
+### marine_daily
 
-The `MARINE_DAILY` table consists of the following columns:
+The `marine_daily` table consists of the following columns:
 - `location_id` (STRING, primary key): Composite location identifier from latitude and longitude
 - `date` (STRING, primary key): The date for this daily aggregation
 - `wave_height_max` (FLOAT): Maximum wave height for the day in meters
