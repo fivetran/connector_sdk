@@ -99,7 +99,7 @@ def configuration_form():
         )
     )
 
-    # Dropdown — like a dropdown but each option includes an explanation (label and description)
+    # Dropdown — lets the user select one option from a fixed list but each option includes an explanation (label and description)
     config_form.add_field(
         form_field.DropdownField(
             name="data_range",
