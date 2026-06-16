@@ -82,10 +82,11 @@ def configuration_form():
             name="batch_size",
             label="Batch Size",
             description="Number of records to fetch per API request.",
-            fields=[form_field.DropdownFieldParam(value=10),
-                    form_field.DropdownFieldParam(value=100),
-                    form_field.DropdownFieldParam(value=500)
-                    ],
+            fields=[
+                form_field.DropdownFieldParam(value=10),
+                form_field.DropdownFieldParam(value=100),
+                form_field.DropdownFieldParam(value=500),
+            ],
             required=True,
         )
     )
@@ -99,7 +100,8 @@ def configuration_form():
         )
     )
 
-    # Dropdown — lets the user select one option from a fixed list but each option includes an explanation (label and description)
+    # Dropdown — lets the user select one option from a fixed list but each option
+    # includes an explanation (label and description)
     config_form.add_field(
         form_field.DropdownField(
             name="data_range",
@@ -108,19 +110,19 @@ def configuration_form():
                 form_field.DropdownFieldParam(
                     value="last_7_days",
                     label="Last 7 Days",
-                    description="Fetches records created or updated in the last 7 days."
+                    description="Fetches records created or updated in the last 7 days.",
                 ),
                 form_field.DropdownFieldParam(
                     value="last_30_days",
                     label="Last 30 Days",
-                    description="Fetches records created or updated in the last 30 days."
+                    description="Fetches records created or updated in the last 30 days.",
                 ),
                 form_field.DropdownFieldParam(
                     value="all_time",
                     label="All Time",
-                    description="Fetches all available historical records."
-                )
-            ]
+                    description="Fetches all available historical records.",
+                ),
+            ],
         )
     )
 
