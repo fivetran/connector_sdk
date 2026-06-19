@@ -42,11 +42,13 @@ Create a `configuration.json` file with the following parameters:
 }
 ```
 
-- `latitude` (required) is the latitude of the coastal location to monitor (e.g., `37.75` for San Francisco coast)
-- `longitude` (required) is the longitude of the coastal location to monitor (e.g., `-122.52` for San Francisco coast)
-- `timezone` (optional) is the timezone for timestamps in the response; defaults to `America/Los_Angeles`
-- `forecast_days` (optional) is the number of forecast days to fetch (1-16); defaults to `7`
-- `past_days` (optional) is the number of past days to include in each sync (0-92); defaults to `7`
+Configuration parameters:
+
+- `latitude` (required) - The latitude of the coastal location to monitor (e.g., `37.75` for San Francisco coast)
+- `longitude` (required) - The longitude of the coastal location to monitor (e.g., `-122.52` for San Francisco coast)
+- `timezone` (optional) - The timezone for timestamps in the response; defaults to `America/Los_Angeles`
+- `forecast_days` (optional) - The number of forecast days to fetch (1-16); defaults to `7`
+- `past_days` (optional) - The number of past days to include in each sync (0-92); defaults to `7`
 
 Note: Ensure that the `configuration.json` file is not checked into version control to protect sensitive information.
 
@@ -76,9 +78,11 @@ Refer to the `fetch_data_with_retry` function in `connector.py`.
 
 ## Tables created
 
-### marine_hourly
+The connector creates the `MARINE_HOURLY` and `MARINE_DAILY` tables.
 
-The `marine_hourly` table consists of the following columns:
+### MARINE_HOURLY
+
+The `MARINE_HOURLY` table consists of the following columns:
 - `location_id` (STRING, primary key): Composite location identifier from latitude and longitude
 - `timestamp` (UTC_DATETIME, primary key): The hourly timestamp for this observation
 - `wave_height` (FLOAT): Significant wave height in meters
@@ -95,9 +99,9 @@ The `marine_hourly` table consists of the following columns:
 - `elevation` (FLOAT): Location elevation in meters as reported by the API (typically 0 for marine locations)
 - `timezone` (STRING): Timezone of the location as reported by the API
 
-### marine_daily
+### MARINE_DAILY
 
-The `marine_daily` table consists of the following columns:
+The `MARINE_DAILY` table consists of the following columns:
 - `location_id` (STRING, primary key): Composite location identifier from latitude and longitude
 - `date` (STRING, primary key): The date for this daily aggregation
 - `wave_height_max` (FLOAT): Maximum wave height for the day in meters
