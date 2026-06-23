@@ -12,9 +12,6 @@ and the Best Practices documentation
 (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details
 """
 
-# For reading configuration from a JSON file
-import json
-
 # For time-based operations and rate limiting
 import time
 
@@ -38,11 +35,12 @@ __BASE_URL = "https://marine-api.open-meteo.com/v1/marine"
 __API_TIMEOUT_SECONDS = 30
 __MAX_RETRIES = 3
 __BASE_DELAY_SECONDS = 1
-__RETRYABLE_STATUS_CODES = [429, 500, 502, 503, 504]
+__RETRYABLE_STATUS_CODES = [408, 429, 500, 502, 503, 504]
 __DEFAULT_FORECAST_DAYS = 7
 __MAX_FORECAST_DAYS_CEILING = 16
 __DEFAULT_PAST_DAYS = 7
 __MAX_PAST_DAYS_CEILING = 92
+__CHECKPOINT_INTERVAL = 100
 __HOURLY_VARIABLES = (
     "wave_height,wave_direction,wave_period,"
     "wind_wave_height,wind_wave_direction,wind_wave_period,"
@@ -464,6 +462,8 @@ def update(configuration: dict, state: dict):
             # The second argument is a dictionary containing the record to be upserted.
             op.upsert(table="marine_hourly", data=record)
             hourly_count += 1
+            if hourly_count % __CHECKPOINT_INTERVAL == 0:
+                op.checkpoint(state={"last_synced_date": today.strftime("%Y-%m-%d")})
 
         log.info(f"Successfully processed {hourly_count} hourly records")
 
@@ -485,6 +485,8 @@ def update(configuration: dict, state: dict):
             # The second argument is a dictionary containing the record to be upserted.
             op.upsert(table="marine_daily", data=record)
             daily_count += 1
+            if daily_count % __CHECKPOINT_INTERVAL == 0:
+                op.checkpoint(state={"last_synced_date": today.strftime("%Y-%m-%d")})
 
         log.info(f"Successfully processed {daily_count} daily records")
 
@@ -508,15 +510,12 @@ def update(configuration: dict, state: dict):
 connector = Connector(update=update, schema=schema)
 
 # Check if the script is being run as the main module.
-# This is Python's standard entry method allowing your script to be run directly from the
-# command line or IDE 'run' button.
-# This is useful for debugging while you write your code. Note this method is not called by
-# Fivetran when executing your connector in production.
-# Please test using the Fivetran debug command prior to finalizing and deploying your connector.
+# This is Python's standard entry method allowing your script to be run directly from the command line or IDE 'run' button.
+#
+# IMPORTANT: The recommended way to test your connector is using the Fivetran debug command:
+#   fivetran debug
+#
+# This local testing block is provided as a convenience for quick debugging during development.
 if __name__ == "__main__":
-    # Open the configuration.json file and load its contents
-    with open("configuration.json", "r") as f:
-        configuration = json.load(f)
-
     # Test the connector locally
-    connector.debug(configuration=configuration)
+    connector.debug()

@@ -36,9 +36,9 @@ Create a `configuration.json` file with the following parameters:
 {
     "latitude": "<YOUR_LATITUDE>",
     "longitude": "<YOUR_LONGITUDE>",
-    "timezone": "<TIMEZONE>",
-    "forecast_days": "<FORECAST_DAYS>",
-    "past_days": "<PAST_DAYS>"
+    "timezone": "<OPTIONAL_TIMEZONE_DEFAULT_America/Los_Angeles>",
+    "forecast_days": "<OPTIONAL_FORECAST_DAYS_DEFAULT_7>",
+    "past_days": "<OPTIONAL_PAST_DAYS_DEFAULT_7>"
 }
 ```
 
@@ -66,19 +66,18 @@ The Open-Meteo API does not use pagination. All requested data for the configure
 - Daily data follows the same parallel-array structure, normalized to one row per date.
 - The composite primary key (`location_id` + `timestamp`/`date`) ensures upserts correctly deduplicate records when date ranges overlap between syncs.
 - The `location_id` is derived from the configured latitude and longitude (e.g., `37.75_-122.52`).
+- A checkpoint is written after every 100 records during the hourly loop so that long syncs can resume mid-batch rather than restarting from the beginning.
 
 ## Error handling
 
 - Connection errors and timeouts: retried with exponential backoff up to 3 attempts.
-- Retryable HTTP status codes (429, 500, 502, 503, 504): retried with exponential backoff.
+- Retryable HTTP status codes (408, 429, 500, 502, 503, 504): retried with exponential backoff.
 - Non-retryable HTTP errors (4xx): fail immediately with descriptive error message.
 - Records missing primary key fields are skipped with an informational log message.
 
 Refer to the `fetch_data_with_retry` function in `connector.py`.
 
 ## Tables created
-
-The connector creates the `MARINE_HOURLY` and `MARINE_DAILY` tables.
 
 ### MARINE_HOURLY
 
