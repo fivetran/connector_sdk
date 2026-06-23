@@ -87,4 +87,4 @@ As with other new connectors, SDK connectors have a [14-day trial period](https:
 
 ## Maintenance
 
-The `connector_sdk` repository is actively maintained by Fivetran Developers. Reach out to our [Support team](https://support.fivetran.com/hc/en-us) for any inquiries.
+The `connector_sdk` repository is actively maintained by Fivetran developers. Reach out to our [Support team](https://support.fivetran.com/hc/en-us) for any inquiries.
