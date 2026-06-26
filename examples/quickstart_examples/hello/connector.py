@@ -1,62 +1,59 @@
-# This is a simple example for how to work with the fivetran_connector_sdk module.
-# It defines a simple `update` method, which upserts some data to a table named "hello".
-# This example is the simplest possible as it doesn't define a schema() function, however it does not therefore provide a good template for writing a real connector.
-# See the Technical Reference documentation (https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update)
-# and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details
+"""
+gRPC Benchmark Connector - Baseline (Standard SDK Operations)
 
-# Import required classes from fivetran_connector_sdk
-# For supporting Connector operations like Update() and Schema()
-from fivetran_connector_sdk import Connector
+Uses standard SDK Operations for type inference.
+Start with: python connector.py
+Connect with Java tester on port 50051.
+"""
+import os
+import random
+import string
+from datetime import datetime
 
-# For enabling Logs in your connector code
-from fivetran_connector_sdk import Logging as log
+from fivetran_connector_sdk import Connector, Operations as op, Logging as log
 
-# For supporting Data operations like Upsert(), Update(), Delete() and checkpoint()
-from fivetran_connector_sdk import Operations as op
+NUM_RECORDS = int(os.environ.get("NUM_RECORDS", "10000"))
+NUM_COLUMNS = int(os.environ.get("NUM_COLUMNS", "10"))
+FIELD_SIZE = int(os.environ.get("FIELD_SIZE", "100"))
+
+_CHARSET = string.ascii_letters + string.digits
+_COL_NAMES = [f"col_{i}" for i in range(NUM_COLUMNS)]
+_COL_KEYS_SIZE = sum(len(n) for n in _COL_NAMES)
+_BYTES_PER_RECORD = len("id") + 16 + _COL_KEYS_SIZE + NUM_COLUMNS * FIELD_SIZE
+
+
+def gen_record():
+    record = {"id": ''.join(random.choices(_CHARSET, k=16))}
+    for name in _COL_NAMES:
+        record[name] = ''.join(random.choices(_CHARSET, k=FIELD_SIZE))
+    return record
 
 
 def update(configuration: dict, state: dict):
-    """
-    Define the update function, which is a required function, and is called by Fivetran during each sync.
-    See the technical reference documentation for more details on the update function
-    https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update
-    Args:
-        configuration: A dictionary containing connection details
-        state: A dictionary containing state information from previous runs
-        The state dictionary is empty for the first sync or for any full re-sync
-    """
-    log.warning("Example: QuickStart Examples - Hello")
+    start_time = datetime.now()
+    log.info(f"Sending {NUM_RECORDS} records...")
 
-    # The 'upsert' operation is used to insert or update data in a table.
-    # The op.upsert method is called with two arguments:
-    # - The first argument is the name of the table to upsert the data into, in this case, "hello".
-    # - The second argument is a dictionary containing the data to be upserted,
-    log.debug("upserting to table 'hello'")
-    op.upsert(table="hello", data={"message": "hello, world!"})
+    for _ in range(NUM_RECORDS):
+        op.upsert("benchmark_data", gen_record())
 
-    # Save the progress by checkpointing the state. This is important for ensuring that the sync process can resume
-    # from the correct position in case of next sync or interruptions.
-    # Learn more about how and where to checkpoint by reading our best practices documentation
-    # (https://fivetran.com/docs/connector-sdk/best-practices#optimizingperformancewhenhandlinglargedatasets).
-    op.checkpoint(state)
+    op.checkpoint(state={})
+
+    time_diff_sec = (datetime.now() - start_time).total_seconds()
+    overall_data_sent_mbs = (NUM_RECORDS * _BYTES_PER_RECORD) / (1024 * 1024)
+    throughput = overall_data_sent_mbs / time_diff_sec if time_diff_sec > 0 else 0
+    latency_per_row_ms = time_diff_sec / NUM_RECORDS * 1_000 if NUM_RECORDS > 0 else 0
+
+    log.info(f"Total records upserted: {NUM_RECORDS}")
+    log.info(f"Time taken in seconds: {time_diff_sec}")
+    log.info(f"Overall data sent (in mb): {overall_data_sent_mbs}")
+    log.info(f"Throughput (MB/s): {throughput}")
+    log.info(f"Latency per row (millis): {latency_per_row_ms}")
+    log.info("Benchmark complete.")
 
 
-# This creates the connector object that will use the update function defined in this connector.py file.
-# This example does not use the schema() function. If it did, it would need to be included in the connector object definition.
 connector = Connector(update=update)
 
-# Check if the script is being run as the main module.
-# This is Python's standard entry method allowing your script to be run directly from the command line or IDE 'run' button.
-# This is useful for debugging while you write your code. Note this method is not called by Fivetran when executing your connector in production.
-# Please test using the Fivetran debug command prior to finalizing and deploying your connector.
 if __name__ == "__main__":
-    # Adding this code to your `connector.py` allows you to test your connector by running your file directly from your IDE:
-    connector.debug()
-
-# Resulting table:
-# ┌───────────────┐
-# │    message    │
-# │    varchar    │
-# ├───────────────┤
-# │ hello, world! │
-# └───────────────┘
+    print("Starting gRPC server on port 50051...")
+    print("Connect with Java tester: java -jar sdk-grpc/java_tester/build/libs/java_tester.jar")
+    connector.run(port=50051, configuration={}, state={})
