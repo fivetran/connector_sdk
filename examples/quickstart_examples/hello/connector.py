@@ -6,35 +6,47 @@ Start with: python connector.py
 Connect with Java tester on port 50051.
 """
 import os
-import random
-import string
 from datetime import datetime
 
 from fivetran_connector_sdk import Connector, Operations as op, Logging as log
 
 NUM_RECORDS = int(os.environ.get("NUM_RECORDS", "10000"))
-NUM_COLUMNS = int(os.environ.get("NUM_COLUMNS", "10"))
-FIELD_SIZE = int(os.environ.get("FIELD_SIZE", "100"))
+STR_COL_SIZE = int(os.environ.get("STR_COL_SIZE", "220"))
 
-_CHARSET = string.ascii_letters + string.digits
-_COL_NAMES = [f"col_{i}" for i in range(NUM_COLUMNS)]
-_COL_KEYS_SIZE = sum(len(n) for n in _COL_NAMES)
-_BYTES_PER_RECORD = len("id") + 16 + _COL_KEYS_SIZE + NUM_COLUMNS * FIELD_SIZE
+# Schema: 4 string + 2 int + 2 float + 2 bool = 10 columns, ~1 KB per row
+_STR_COLS = ["str_col_0", "str_col_1", "str_col_2", "str_col_3"]
+_INT_COLS = ["int_col_0", "int_col_1"]
+_FLOAT_COLS = ["float_col_0", "float_col_1"]
+_BOOL_COLS = ["bool_col_0", "bool_col_1"]
 
-
-def gen_record():
-    record = {"id": ''.join(random.choices(_CHARSET, k=16))}
-    for name in _COL_NAMES:
-        record[name] = ''.join(random.choices(_CHARSET, k=FIELD_SIZE))
-    return record
+_BYTES_PER_RECORD = (
+    len("id") + len(str(NUM_RECORDS - 1))
+    + sum(len(c) for c in _STR_COLS) + len(_STR_COLS) * STR_COL_SIZE
+    + sum(len(c) for c in _INT_COLS) + len(_INT_COLS) * 8
+    + sum(len(c) for c in _FLOAT_COLS) + len(_FLOAT_COLS) * 8
+    + sum(len(c) for c in _BOOL_COLS) + len(_BOOL_COLS) * 5
+)
 
 
 def update(configuration: dict, state: dict):
     start_time = datetime.now()
     log.info(f"Sending {NUM_RECORDS} records...")
 
-    for _ in range(NUM_RECORDS):
-        op.upsert("benchmark_data", gen_record())
+    for i in range(NUM_RECORDS):
+        str_val = f"value_{i}".ljust(STR_COL_SIZE, '0')
+        op.upsert("benchmark_data", {
+            "id": i,
+            "str_col_0": str_val,
+            "str_col_1": str_val,
+            "str_col_2": str_val,
+            "str_col_3": str_val,
+            "int_col_0": i * 1000,
+            "int_col_1": i * 7,
+            "float_col_0": i * 3.14,
+            "float_col_1": i * 1.41,
+            "bool_col_0": i % 2 == 0,
+            "bool_col_1": i % 3 == 0,
+        })
 
     op.checkpoint(state={})
 
