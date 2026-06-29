@@ -1,0 +1,40 @@
+connectors/i3_verticals/configuration.json
+  ad0f6cdad06721db 2-4
+connectors/i3_verticals/connector.py
+  ad0f6cdad06721db 25,57-62,96-101,104-108,132,168
+connectors/i3_verticals/README.md
+  ad0f6cdad06721db 48-50,59,72,75-76,78
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.1",
+  "base_commit_sha": "85b45940ec6105c6d845f01ee7de4022a3bd0d55",
+  "prompts": {
+    "8a301cc9dfa56237": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c5972347-cb4a-453a-8c75-02c32099564a",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "fivetran-JenasVimal <jenas.vimal@fivetran.com>",
+      "messages": [],
+      "total_additions": 41,
+      "total_deletions": 152,
+      "accepted_lines": 14,
+      "overriden_lines": 15
+    },
+    "ad0f6cdad06721db": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "rollout-2026-06-29T16-16-48-019f12fd-25db-70b1-9018-eafaf92ca9cb",
+        "model": "unknown"
+      },
+      "human_author": "fivetran-JenasVimal <jenas.vimal@fivetran.com>",
+      "messages": [],
+      "total_additions": 33,
+      "total_deletions": 26,
+      "accepted_lines": 31,
+      "overriden_lines": 0
+    }
+  }
+}
