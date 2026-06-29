@@ -86,14 +86,12 @@ def process_scrape_result(result: Any, url: str, result_index: int) -> Dict[str,
 
     flattened = flatten_dict(result)
 
-      # Remove exact primary key matches from flattened data so API fields named
+    # Remove exact primary key matches from flattened data so API fields named
     for pk_field in ("url", "result_index"):
         flattened.pop(pk_field, None)
 
-  
     final_result = {**flattened, **base_fields}
 
-   
     final_result["result_index"] = int(result_index)
     final_result["position"] = int(result_index + 1)
 

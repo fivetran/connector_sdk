@@ -71,9 +71,7 @@ def update(configuration: dict, state: dict):
     urls = parse_scrape_urls(scrape_url_input)
 
     if not urls:
-        log.severe(
-            "No URLs provided in configuration; scrape_url input: %r", scrape_url_input
-        )
+        log.severe("No URLs provided in configuration; scrape_url input: %r", scrape_url_input)
         raise RuntimeError(
             "No URLs provided in configuration; scrape_url input: %r", scrape_url_input
         )
@@ -196,7 +194,6 @@ def sync_scrape_urls(api_token, dataset_id, urls, state):
     state["last_scrape_urls"] = valid_urls
     state["last_scrape_count"] = len(processed_results)
 
-
     op.checkpoint(state)
 
     log.info(f"Completed scrape sync. Total synced: {len(processed_results)} results")
@@ -213,7 +210,6 @@ def process_scrape_results(scrape_results, urls):
     """
     processed_results = []
 
-   
     if len(urls) == 1 and len(scrape_results) > 1:
         # Single URL with multiple results - process all results
         url = urls[0]
@@ -305,7 +301,6 @@ def process_and_upsert_results(processed_results, all_fields):
             f"Primary key validation issues: {', '.join(unique_errors[:3])}"
             f"{' (and more)' if len(unique_errors) > 3 else ''}"
         )
-
 
 
 connector = Connector(update=update, schema=schema)
