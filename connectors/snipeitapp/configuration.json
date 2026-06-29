@@ -1,0 +1,4 @@
+{
+    "api_token": "<YOUR_SNIPE_IT_BEARER_TOKEN>",
+    "base_url": "<YOUR_SNIPEIT_BASE_URL>"
+}

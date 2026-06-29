@@ -1,17 +1,29 @@
 # Sensor Tower Connector SDK Example
 
+## Connector overview
 This example demonstrates how to build a Fivetran Connector SDK integration for [Sensor Tower](https://sensortower.com), a market intelligence and analytics platform that provides insights into mobile apps, app store trends, and digital advertising. The connector pulls data from the Sensor Tower API for three tables: `SALES_REPORT_ESTIMATES`, `ACTIVE_USERS`, and `RETENTION`. You can configure the connector to track specific iOS and Android app IDs to gather the necessary information for your use case.
 
 ## Requirements
 
-* [Supported Python versions](https://github.com/fivetran/fivetran_connector_sdk/blob/main/README.md#requirements)   
+* [Supported Python versions](https://github.com/fivetran/connector_sdk/blob/main/README.md#requirements)   
 * Operating system:  
   * Windows 10 or later  
   * macOS 13 (Ventura) or later
   * Linux: Distributions such as Ubuntu 20.04 or later, Debian 10 or later, or Amazon Linux 2 or later (arm64 or x86_64)
 
 ## Getting started
-Refer to the [Connector SDK setup guide](https://fivetran.com/docs/connectors/connector-sdk/setup-guide) to get started.
+Refer to the [Connector SDK Setup Guide](https://fivetran.com/docs/connector-sdk/setup-guide) to get started.
+
+To initialize a new Connector SDK project using this connector as a starting point, run:
+
+```bash
+fivetran init <project-path> --template connectors/sensor_tower
+```
+`fivetran init` initializes a new Connector SDK project by setting up the project structure, configuration files, and a connector you can run immediately with `fivetran debug`.
+If you do not specify a project path, Fivetran creates the project in your current directory.
+For more information on `fivetran init`, refer to the [Connector SDK `init` documentation](https://fivetran.com/docs/connector-sdk/setup-guide#createyourcustomconnector).
+
+> Note: Ensure you have updated the `configuration.json` file with the necessary parameters before running `fivetran debug`. See the [Configuration file](#configuration-file) section for details on the required configuration parameters.
 
 ## Features
 

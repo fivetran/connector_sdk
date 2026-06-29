@@ -1,5 +1,5 @@
-# See the Technical Reference documentation (https://fivetran.com/docs/connectors/connector-sdk/technical-reference#update)
-# and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details
+# See the Technical Reference documentation (https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update)
+# and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details
 
 # Import requests to make HTTP calls to API
 import requests as rq
@@ -20,7 +20,7 @@ from fivetran_connector_sdk import Operations as op
 
 # Define the schema function which lets you configure the schema your connector delivers.
 # See the technical reference documentation for more details on the schema function:
-# https://fivetran.com/docs/connectors/connector-sdk/technical-reference#schema
+# https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#schema
 # The schema function takes one parameter:
 # - configuration: a dictionary that holds the configuration settings for the connector.
 def schema(configuration: dict):
@@ -35,8 +35,6 @@ def schema(configuration: dict):
             "columns": {
                 "source": "STRING",
                 "published_at": "UTC_DATETIME",
-                "author": "STRING",
-                "title": "STRING",
             },
         }
     ]
@@ -44,7 +42,7 @@ def schema(configuration: dict):
 
 # Define the update function, which is a required function, and is called by Fivetran during each sync.
 # See the technical reference documentation for more details on the update function
-# https://fivetran.com/docs/connectors/connector-sdk/technical-reference#update
+# https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update
 # The function takes two parameters:
 # - configuration: dictionary contains any secrets or payloads you configure when deploying the connector
 # - state: a dictionary contains whatever state you have chosen to checkpoint during the prior sync
@@ -83,12 +81,12 @@ def update(configuration: dict, state: dict):
 
         # Update the state with the new cursor position, incremented by 1.
         new_state = {"to_ts": to_ts}
-        log.fine(f"state updated, new state: {repr(new_state)}")
+        log.debug(f"state updated, new state: {repr(new_state)}")
 
         # Save the progress by checkpointing the state. This is important for ensuring that the sync process can resume
         # from the correct position in case of next sync or interruptions.
         # Learn more about how and where to checkpoint by reading our best practices documentation
-        # (https://fivetran.com/docs/connectors/connector-sdk/best-practices#largedatasetrecommendation).
+        # (https://fivetran.com/docs/connector-sdk/best-practices#optimizingperformancewhenhandlinglargedatasets).
         op.checkpoint(state=new_state)
 
     except Exception as e:
@@ -122,8 +120,6 @@ def sync_items(base_url, headers, params, state, topic):
         # Iterate over each user in the 'items' list and performs an upsert operation.
         # The 'upsert' operation inserts the data into the destination.
         # Update the state with the 'updatedAt' timestamp of the current item.
-        summary_first_item = {"title": items[0]["title"], "source": items[0]["source"]}
-
         for a in items:
             op.upsert(
                 table="article",
@@ -142,7 +138,7 @@ def sync_items(base_url, headers, params, state, topic):
         # Save the progress by checkpointing the state. This is important for ensuring that the sync process can resume
         # from the correct position in case of next sync or interruptions.
         # Learn more about how and where to checkpoint by reading our best practices documentation
-        # (https://fivetran.com/docs/connectors/connector-sdk/best-practices#largedatasetrecommendation).
+        # (https://fivetran.com/docs/connector-sdk/best-practices#optimizingperformancewhenhandlinglargedatasets).
         op.checkpoint(state)
 
         # Determine if we should continue pagination based on the total items and the current offset.
@@ -194,12 +190,11 @@ def should_continue_pagination(params, response_page):
     total_pages = divmod(int(response_page["totalResults"]), int(params["pageSize"]))[0] + 1
 
     # 100 results is a temporary limit for dev API -- this limit can be removed if you have a paid API key
-    if (
-        current_page
-        and total_pages
-        and current_page < total_pages
-        and current_page * int(params["pageSize"]) < 100
-    ):
+    page_check = current_page and total_pages
+    page_check = page_check and current_page < total_pages
+    page_check = page_check and current_page * int(params["pageSize"]) < 100
+
+    if page_check:
         # Increment the page number for the next request in params
         params["page"] = current_page + 1
     else:

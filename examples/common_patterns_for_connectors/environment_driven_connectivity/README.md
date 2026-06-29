@@ -9,7 +9,7 @@ This example demonstrates how to build a connector that automatically selects AP
 
 
 ## Requirements
-- [Supported Python versions](https://github.com/fivetran/fivetran_connector_sdk/blob/main/README.md#requirements)   
+- [Supported Python versions](https://github.com/fivetran/connector_sdk/blob/main/README.md#requirements)   
 - Operating system:
   - Windows: 10 or later (64-bit only)
   - macOS: 13 (Ventura) or later (Apple Silicon [arm64] or Intel [x86_64])
@@ -17,7 +17,16 @@ This example demonstrates how to build a connector that automatically selects AP
 
 
 ## Getting started
-Refer to the [Connector SDK Setup Guide](https://fivetran.com/docs/connectors/connector-sdk/setup-guide) to get started.
+Refer to the [Connector SDK Setup Guide](https://fivetran.com/docs/connector-sdk/setup-guide) to get started.
+
+To initialize a new Connector SDK project using this connector as a starting point, run:
+
+```bash
+fivetran init <project-path> --template examples/common_patterns_for_connectors/environment_driven_connectivity
+```
+`fivetran init` initializes a new Connector SDK project by setting up the project structure, configuration files, and a connector you can run immediately with `fivetran debug`.
+If you do not specify a project path, Fivetran creates the project in your current directory.
+For more information on `fivetran init`, refer to the [Connector SDK `init` documentation](https://fivetran.com/docs/connector-sdk/setup-guide#createyourcustomconnector).
 
 
 ## Features
@@ -74,7 +83,7 @@ The connector implements comprehensive error handling:
 - Exponential backoff: Doubles wait time between retries (1s, 2s, 4s), capped at 16 seconds
 - Rate limiting: Handles HTTP 429 responses by respecting the Retry-After header
 - Request timeout: 20-second timeout for all API requests to prevent hanging
-- Exception logging: Logs warnings for each retry attempt and severe errors when all retries are exhausted
+- Exception logging: Logs warnings for each retry attempt and errors when all retries are exhausted
 - Graceful degradation: Skips invalid records (missing url field) with warnings rather than failing the entire sync
 
 

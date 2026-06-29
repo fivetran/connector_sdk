@@ -1,0 +1,8 @@
+{
+  "keycloak_url": "<YOUR_KEYCLOAK_SERVER_URL>",
+  "realm": "<YOUR_KEYCLOAK_REALM>",
+  "client_id": "<YOUR_CLIENT_ID>",
+  "client_secret": "<YOUR_CLIENT_SECRET>",
+  "sync_events": "<TRUE_OR_FALSE_DEFAULT_TRUE>",
+  "start_date": "<START_DATE_YYYY_MM_DD_DEFAULT_30_DAYS_AGO>"
+}

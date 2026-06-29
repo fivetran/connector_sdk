@@ -1,8 +1,8 @@
 # This is an example for how to work with the fivetran_connector_sdk module.
 # This example demonstrates how to create a connector that connects to a Neo4j database and syncs data from it.
 # It uses the public twitter database available at neo4j+s://demo.neo4jlabs.com:7687.
-# See the Technical Reference documentation (https://fivetran.com/docs/connectors/connector-sdk/technical-reference#update)
-# and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details
+# See the Technical Reference documentation (https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update)
+# and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details
 
 # Import the required classes from the connector SDK
 from fivetran_connector_sdk import Connector
@@ -10,7 +10,6 @@ from fivetran_connector_sdk import Operations as op
 from fivetran_connector_sdk import Logging as log
 
 # Import necessary libraries
-import datetime
 import json
 from neo4j import GraphDatabase
 from neo4j.exceptions import ServiceUnavailable, AuthError
@@ -20,7 +19,7 @@ def schema(configuration: dict):
     """
     Define the schema function which lets you configure the schema your connector delivers.
     See the technical reference documentation for more details on the schema function:
-    https://fivetran.com/docs/connectors/connector-sdk/technical-reference#schema
+    https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#schema
     Args:
         configuration: a dictionary that holds the configuration settings for the connector.
     """
@@ -32,23 +31,16 @@ def schema(configuration: dict):
 
     return [
         {
-            "table": "users",  # Name of the table
+            "table": "user",  # Name of the table
             "primary_key": ["username"],  # Primary key(s) of the table
             "columns": {
                 "username": "STRING",
-                "followers_count": "INT",
-                "following_count": "INT",
-                "location": "STRING",
-                "name": "STRING",
-                "profile_image_url": "STRING",
-                "url": "STRING",
-                "betweenness": "FLOAT",
             },
         },  # Columns not defined in schema will be inferred
         {
-            "table": "tweet_hashtags",
+            "table": "tweet_hashtag",
             "primary_key": ["tweet_id"],
-            "columns": {"tweet_id": "STRING", "hashtag_name": "STRING"},
+            "columns": {"tweet_id": "STRING"},
         },
     ]
 
@@ -57,7 +49,7 @@ def update(configuration, state):
     """
     Define the update function, which is a required function, and is called by Fivetran during each sync.
     See the technical reference documentation for more details on the update function
-    https://fivetran.com/docs/connectors/connector-sdk/technical-reference#update
+    https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update
     Args:
         configuration: A dictionary containing connection details
         state: A dictionary containing state information from previous runs
@@ -115,9 +107,9 @@ def process_users(session, state):
     # You can modify the query to suit your needs.
     cypher_query = """
     MATCH (u:User)
-    RETURN 
-        u.followers as followers_count, 
-        u.screen_name as username, 
+    RETURN
+        u.followers as followers_count,
+        u.screen_name as username,
         u.following as following_count,
         u.name as name,
         u.location as location,
@@ -133,12 +125,12 @@ def process_users(session, state):
     for record in results:
         # You can preprocess and modify the record to suit your needs.
         # An upsert operation to insert/update the record in the "users" table.
-        op.upsert(table="users", data=record)
+        op.upsert(table="user", data=record)
 
     # Save the progress by checkpointing the state. This is important for ensuring that the sync process can resume
     # from the correct position in case of next sync or interruptions.
     # Learn more about how and where to checkpoint by reading our best practices documentation
-    # (https://fivetran.com/docs/connectors/connector-sdk/best-practices#largedatasetrecommendation).
+    # (https://fivetran.com/docs/connector-sdk/best-practices#optimizingperformancewhenhandlinglargedatasets).
     op.checkpoint(state)
 
 
@@ -163,8 +155,8 @@ def process_tweet_hashtags(session, state, batch_size=100):
         # You can modify the query to suit your needs.
         cypher_query = """
         MATCH (t:Tweet)-[r:TAGS]->(h:Hashtag)
-        RETURN 
-            t.id as tweet_id, 
+        RETURN
+            t.id as tweet_id,
             h.name as hashtag_name
         ORDER BY t.id, h.id
         SKIP $skip LIMIT $limit
@@ -186,7 +178,7 @@ def process_tweet_hashtags(session, state, batch_size=100):
         for record in results:
             record = record.data()
             # An upsert operation
-            op.upsert(table="tweet_hashtags", data=record)
+            op.upsert(table="tweet_hashtag", data=record)
 
         # skip the processed records
         skip += batch_size

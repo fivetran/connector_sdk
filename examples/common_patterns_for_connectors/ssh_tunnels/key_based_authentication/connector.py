@@ -5,8 +5,8 @@
 # THIS EXAMPLE USES DUMMY DATA AND REQUIRES THE FIVETRAN-API-PLAYGROUND PACKAGE (https://pypi.org/project/fivetran-api-playground/).
 # For this example, an EC2 instance is running fivetran-api-playground and is only accessible via an SSH tunnel.
 # See the Technical Reference documentation
-# (https://fivetran.com/docs/connectors/connector-sdk/technical-reference#update)
-# and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details.
+# (https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update)
+# and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details.
 
 # Import requests to make HTTP calls to API.
 import io
@@ -75,7 +75,7 @@ def sync_items(params, state, configuration):
     # Save the progress by checkpointing the state. This is important for ensuring that the sync process can resume
     # from the correct position in case of next sync or interruptions.
     # Learn more about how and where to checkpoint by reading our best practices documentation
-    # (https://fivetran.com/docs/connectors/connector-sdk/best-practices#largedatasetrecommendation).
+    # (https://fivetran.com/docs/connector-sdk/best-practices#optimizingperformancewhenhandlinglargedatasets).
     op.checkpoint(state)
 
 
@@ -123,7 +123,7 @@ def get_api_response(params, headers, configuration):
     try:
         private_key = paramiko.RSAKey.from_private_key(key_stream, password=key_passphrase)
     except Exception as e:
-        log.severe(f"Failed to load SSH private key: {e}")
+        log.error("Failed to load SSH private key", e)
         raise
 
     local_port = int(
@@ -142,7 +142,7 @@ def get_api_response(params, headers, configuration):
             remote_bind_address=("127.0.0.1", remote_port),
             local_bind_address=("127.0.0.1", local_port),
         ) as _:
-            log.severe(f"Tunnel open at http://127.0.0.1:{local_port}")
+            log.error(f"Tunnel open at http://127.0.0.1:{local_port}")
 
             base_url = f"http://127.0.0.1:{local_port}/auth/api_key"
             try:
@@ -150,14 +150,14 @@ def get_api_response(params, headers, configuration):
                 response.raise_for_status()
                 response_page = response.json()
             except rq.exceptions.RequestException as e:
-                log.severe(f"HTTP request failed: {e}")
+                log.error("HTTP request failed", e)
                 raise
             except ValueError as e:
-                log.severe(f"Failed to parse JSON response: {e}")
+                log.error("Failed to parse JSON response", e)
                 raise
             return response_page
     except Exception as e:
-        log.severe(f"SSH tunnel or API call failed: {e}")
+        log.error("SSH tunnel or API call failed", e)
         raise
 
 
@@ -165,7 +165,7 @@ def update(configuration: dict, state: dict):
     """
     Define the update function, which is a required function, and is called by Fivetran during each sync.
     See the technical reference documentation for more details on the update function
-    https://fivetran.com/docs/connectors/connector-sdk/technical-reference#update
+    https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update
     Args:
         configuration: A dictionary containing connection details
         state: A dictionary containing state information from previous runs

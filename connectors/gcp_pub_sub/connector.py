@@ -1,8 +1,8 @@
 # This is an example for how to work with the fivetran_connector_sdk module.
 # It defines a simple 'update' method, which upserts some data to a table from gcp PubSub.
 # It creates a test topic, publishes some test messages, creates a test subscription, pulls messages from the subscription, and upserts them to the destination.
-# See the Technical Reference documentation (https://fivetran.com/docs/connectors/connector-sdk/technical-reference#update)
-# and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details
+# See the Technical Reference documentation (https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update)
+# and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details
 
 # Import required classes from fivetran_connector_sdk
 # For supporting Connector operations like Update() and Schema()
@@ -24,7 +24,7 @@ import time
 
 # Define the schema function which lets you configure the schema your connector delivers.
 # See the technical reference documentation for more details on the schema function:
-# https://fivetran.com/docs/connectors/connector-sdk/technical-reference#schema
+# https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#schema
 # The schema function takes one parameter:
 # - configuration: a dictionary that holds the configuration settings for the connector.
 def schema(configuration: dict):
@@ -40,7 +40,6 @@ def schema(configuration: dict):
             "primary_key": ["key"],  # Primary key column(s) for the table.
             "columns": {  # Define the columns and their data types.
                 "key": "STRING",
-                "data": "STRING",
                 "timestamp": "UTC_DATETIME",
             },  # For any columns whose names are not provided here, their data types will be inferred
         }
@@ -97,7 +96,7 @@ def publish_test_messages(publisher, topic_path: str) -> None:
     for count in range(max_test_messages):
         # Create a message with incremental data and a fixed timestamp
         # Note: In a real connector, you might use dynamic timestamps and actual data
-        message = {"data": f"Message {count+1}", "timestamp": "2021-09-01T00:00:00Z"}
+        message = {"data": f"Message {count + 1}", "timestamp": "2021-09-01T00:00:00Z"}
 
         # Convert the message dictionary to JSON and encode as UTF-8 bytes
         # Pub/Sub requires message data to be in bytes format
@@ -107,7 +106,7 @@ def publish_test_messages(publisher, topic_path: str) -> None:
             # Publish the message to the topic and get a future
             # The future.result() call waits for the publish operation to complete
             future = publisher.publish(topic_path, message_data)
-            log.fine(f"Published message ID: {future.result()}")
+            log.debug(f"Published message ID: {future.result()}")
         except Exception as e:
             # If publishing fails, raise a RuntimeError with details
             raise RuntimeError(f"Error publishing message: {e}")
@@ -262,13 +261,13 @@ def pull_and_upsert_messages(subscriber, subscription_path, max_messages, state)
 
     # checkpoint the state
     # Learn more about how and where to checkpoint by reading our best practices documentation
-    # (https://fivetran.com/docs/connectors/connector-sdk/best-practices#largedatasetrecommendation).
+    # (https://fivetran.com/docs/connector-sdk/best-practices#optimizingperformancewhenhandlinglargedatasets).
     op.checkpoint(state)
 
 
 # Define the update function, which is a required function, and is called by Fivetran during each sync.
 # See the technical reference documentation for more details on the update function
-# https://fivetran.com/docs/connectors/connector-sdk/technical-reference#update
+# https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update
 # The function takes two parameters:
 # - configuration: dictionary contains any secrets or payloads you configure when deploying the connector
 # - state: a dictionary contains whatever state you have chosen to checkpoint during the prior sync

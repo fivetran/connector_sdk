@@ -1,6 +1,6 @@
 """This connector demonstrates how to fetch data from Customer Thermometer API and upsert it into destination using the Fivetran Connector SDK.
-See the Technical Reference documentation (https://fivetran.com/docs/connectors/connector-sdk/technical-reference#update)
-and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details
+See the Technical Reference documentation (https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update)
+and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details
 """
 
 # Import required classes from fivetran_connector_sdk.
@@ -124,8 +124,8 @@ def make_api_request(
             return response
         except requests.RequestException as e:
             if attempt == __MAX_RETRIES:
-                log.severe(
-                    f"API request failed for endpoint {endpoint} after {__MAX_RETRIES} retries: {str(e)}"
+                log.error(
+                    f"API request failed for endpoint {endpoint} after {__MAX_RETRIES} retries", e
                 )
                 raise
 
@@ -184,7 +184,7 @@ def parse_xml_response_and_upsert(
 
         return records_processed
     except et.ParseError as e:
-        log.severe(f"Failed to parse XML response: {str(e)}")
+        log.error("Failed to parse XML response", e)
         raise
 
 
@@ -192,7 +192,7 @@ def schema(configuration: dict):
     """
     Define the schema function which lets you configure the schema your connector delivers.
     See the technical reference documentation for more details on the schema function:
-    https://fivetran.com/docs/connectors/connector-sdk/technical-reference#schema
+    https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#schema
     Args:
         configuration: a dictionary that holds the configuration settings for the connector.
     """
@@ -310,7 +310,7 @@ def process_table_data(
     # Save the progress by checkpointing the state. This is important for ensuring that the sync process can resume
     # from the correct position in case of next sync or interruptions.
     # Learn more about how and where to checkpoint by reading our best practices documentation
-    # (https://fivetran.com/docs/connectors/connector-sdk/best-practices#largedatasetrecommendation).
+    # (https://fivetran.com/docs/connector-sdk/best-practices#optimizingperformancewhenhandlinglargedatasets).
     op.checkpoint(state=state)
 
     log.info(f"Processed and checkpointed {records_count} {table_name} records")
@@ -362,7 +362,7 @@ def process_metrics(api_key: str, state: dict, config_from_date: Optional[str] =
     # Save the progress by checkpointing the state. This is important for ensuring that the sync process can resume
     # from the correct position in case of next sync or interruptions.
     # Learn more about how and where to checkpoint by reading our best practices documentation
-    # (https://fivetran.com/docs/connectors/connector-sdk/best-practices#largedatasetrecommendation).
+    # (https://fivetran.com/docs/connector-sdk/best-practices#optimizingperformancewhenhandlinglargedatasets).
     op.checkpoint(state=state)
 
     log.info(f"Processed and checkpointed {metrics_processed} metric records")
@@ -372,7 +372,7 @@ def update(configuration: dict, state: dict):
     """
     Define the update function, which is a required function, and is called by Fivetran during each sync.
     See the technical reference documentation for more details on the update function
-    https://fivetran.com/docs/connectors/connector-sdk/technical-reference#update
+    https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update
     Args:
         configuration: A dictionary containing connection details
         state: A dictionary containing state information from previous runs
@@ -407,20 +407,20 @@ def update(configuration: dict, state: dict):
 
     except requests.RequestException as e:
         # Handle API request failures
-        log.severe(f"API request failed: {str(e)}")
-        raise RuntimeError(f"Failed to sync data due to API error: {str(e)}")
+        log.error("API request failed", e)
+        raise
     except et.ParseError as e:
         # Handle XML parsing errors
-        log.severe(f"XML parsing failed: {str(e)}")
-        raise RuntimeError(f"Failed to parse API response: {str(e)}")
+        log.error("XML parsing failed", e)
+        raise
     except ValueError as e:
         # Handle validation and data errors
-        log.severe(f"Validation error: {str(e)}")
-        raise RuntimeError(f"Failed due to validation error: {str(e)}")
+        log.error("Validation error", e)
+        raise
     except Exception as e:
         # Catch-all for unexpected errors
-        log.severe(f"Sync failed with unexpected error: {str(e)}")
-        raise RuntimeError(f"Failed to sync data: {str(e)}")
+        log.error("Sync failed with unexpected error", e)
+        raise
 
 
 # Create the connector object using the schema and update functions

@@ -1,6 +1,6 @@
 """This connector demonstrates how to fetch data from Checkly API and upsert it into destination using the Fivetran Connector SDK.
-See the Technical Reference documentation (https://fivetran.com/docs/connectors/connector-sdk/technical-reference#update)
-and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details
+See the Technical Reference documentation (https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update)
+and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details
 """
 
 # Import required classes from fivetran_connector_sdk
@@ -272,7 +272,7 @@ def make_api_request(url: str, headers: dict):
 
         except requests.exceptions.RequestException as e:
             if attempt == __MAX_RETRIES - 1:  # Last attempt
-                log.severe(f"API request failed after {__MAX_RETRIES} attempts: {str(e)}")
+                log.error(f"API request failed after {__MAX_RETRIES} attempts", e)
                 raise RuntimeError(f"API request failed: {str(e)}")
 
             # Wait before retry with exponential backoff
@@ -349,7 +349,7 @@ def get_analytics_data(configuration: dict, check_id: str, check_type: str, stat
                 # Save the progress by checkpointing the state. This is important for ensuring that the sync process can resume
                 # from the correct position in case of next sync or interruptions.
                 # Learn more about how and where to checkpoint by reading our best practices documentation
-                # (https://fivetran.com/docs/connectors/connector-sdk/best-practices#largedatasetrecommendation).
+                # (https://fivetran.com/docs/connector-sdk/best-practices#optimizingperformancewhenhandlinglargedatasets).
                 op.checkpoint(state)
 
         except Exception as e:
@@ -400,7 +400,7 @@ def process_single_check(check_record: dict, configuration: dict, state: dict) -
         try:
             get_analytics_data(configuration, check_id, check_type, state)
         except Exception as e:
-            log.severe(f"Failed to process analytics for check {check_id}: {str(e)}")
+            log.error(f"Failed to process analytics for check {check_id}", e)
             # Continue with other checks for non-critical errors
 
 
@@ -455,7 +455,7 @@ def get_checks_data(configuration: dict, state: dict):
             # Save the progress by checkpointing the state. This is important for ensuring that the sync process can resume
             # from the correct position in case of next sync or interruptions.
             # Learn more about how and where to checkpoint by reading our best practices documentation
-            # (https://fivetran.com/docs/connectors/connector-sdk/best-practices#largedatasetrecommendation).
+            # (https://fivetran.com/docs/connector-sdk/best-practices#optimizingperformancewhenhandlinglargedatasets).
             op.checkpoint(state)
 
             # Check if we have more data to fetch
@@ -465,7 +465,7 @@ def get_checks_data(configuration: dict, state: dict):
             page += 1
 
         except Exception as e:
-            log.severe(f"Error fetching checks data on page {page}: {str(e)}")
+            log.error(f"Error fetching checks data on page {page}", e)
             raise
 
     log.info(f"Successfully processed {total_records} check records")
@@ -475,7 +475,7 @@ def schema(configuration: dict):
     """
     Define the schema function which lets you configure the schema your connector delivers.
     See the technical reference documentation for more details on the schema function:
-    https://fivetran.com/docs/connectors/connector-sdk/technical-reference#schema
+    https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#schema
     Args:
         configuration: a dictionary that holds the configuration settings for the connector.
     """
@@ -499,7 +499,7 @@ def update(configuration: dict, state: dict):
     """
     Define the update function, which is a required function, and is called by Fivetran during each sync.
     See the technical reference documentation for more details on the update function
-    https://fivetran.com/docs/connectors/connector-sdk/technical-reference#update
+    https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update
     Args:
         configuration: A dictionary containing connection details
         state: A dictionary containing state information from previous runs

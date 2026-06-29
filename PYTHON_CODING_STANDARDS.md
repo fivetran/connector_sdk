@@ -147,11 +147,11 @@ Directories must be named in `lowercase_with_underscores`.
 
 ```python
 # Bad: Names
-examples/quickstart_examples/MultipleCode_Files
-examples/quickstart_examples/Multiple_Code_Files
+examples/quickstart_examples/MultipleCode_Files_With_SubDirectory_Structure
+examples/quickstart_examples/Multiple_Code_Files_With_Sub_Directory_Structure
 
 # Good: Names
-examples/quickstart_examples/multiple_code_files
+examples/quickstart_examples/multiple_code_files_with_sub_directory_structure
 ```
 
 ## Classes
@@ -439,7 +439,7 @@ Non-compliant Example:
                     time.sleep(delay)
                     continue
                 else:
-                    log.severe(f"Failed to fetch agreements after 3 attempts. Last status: {response.status_code} - {response.text}")
+                    log.error(f"Failed to fetch agreements after 3 attempts. Last status: {response.status_code} - {response.text}")
                     raise RuntimeError(f"API returned {response.status_code} after 3 attempts: {response.text}")
 
 
@@ -461,13 +461,13 @@ __BASE_DELAY = 1  # Base delay in seconds for API request retries
                     time.sleep(delay)
                     continue
                 else:
-                    log.severe(f"Failed to fetch agreements after {__MAX_RETRIES} attempts. Last status: {response.status_code} - {response.text}")
+                    log.error(f"Failed to fetch agreements after {__MAX_RETRIES} attempts. Last status: {response.status_code} - {response.text}")
                     raise RuntimeError(f"API returned {response.status_code} after {__MAX_RETRIES} attempts: {response.text}")
 
 ```
 
 ## Templates
 
-Refer to our `connector.py` template and `README.md` template in this repo ([https://github.com/fivetran/fivetran_connector_sdk/tree/main/template_example_connector](https://github.com/fivetran/fivetran_connector_sdk/tree/main/template_example_connector)).
+Refer to our `connector.py` template and `README.md` template in this repo ([https://github.com/fivetran/connector_sdk/tree/main/template_connector](https://github.com/fivetran/connector_sdk/tree/main/template_connector)).
 
 It contains some ideas about structuring your code. Review it to get a general understanding of our example format.

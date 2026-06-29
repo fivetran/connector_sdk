@@ -4,8 +4,8 @@
 # The connector uses Postgres credentials to fetch the data over the SSH tunnel.
 # For this example, an EC2 instance is running PostgreSQL database server and is only accessible via a Bastion server over SSH.
 # See the Technical Reference documentation
-# (https://fivetran.com/docs/connectors/connector-sdk/technical-reference#update)
-# and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details.
+# (https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update)
+# and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details.
 
 # For reading configuration from a JSON file
 import json
@@ -25,7 +25,6 @@ import paramiko  # For handling SSH keys and connections
 import psycopg2  # For interacting with PostgreSQL
 import psycopg2.extras  # For using RealDictCursor to get dict-like cursor results
 import base64  # For decoding base64 encoded SSH keys
-
 
 __CHECKPOINT_INTERVAL = 1000  # Number of records to process before checkpointing state
 __LOCAL_BIND_ADDRESS = "127.0.0.1"  # Local address for SSH tunnel
@@ -93,7 +92,7 @@ def upsert_data(database_cursor, state, last_modified):
             # Save the progress by checkpointing the state. This is important for ensuring that the sync process can resume
             # from the correct position in case of next sync or interruptions.
             # Learn more about how and where to checkpoint by reading our best practices documentation
-            # (https://fivetran.com/docs/connectors/connector-sdk/best-practices#largedatasetrecommendation).
+            # (https://fivetran.com/docs/connector-sdk/best-practices#optimizingperformancewhenhandlinglargedatasets).
             op.checkpoint(state)
 
     state["last_modified"] = last_modified
@@ -141,7 +140,7 @@ def upsert_data_from_database(
     try:
         private_key = paramiko.RSAKey.from_private_key(key_stream, password=bastion_passphrase)
     except Exception as e:
-        log.severe(f"Failed to load SSH private key: {e}")
+        log.error("Failed to load SSH private key", e)
         raise
 
     try:
@@ -165,7 +164,7 @@ def upsert_data_from_database(
             # Fetch data and upsert into destination
             fetch_and_upsert_data(database_connection=connection, state=state)
     except Exception as e:
-        log.severe(f"Failed to connect to the database or execute query: {e}")
+        log.error("Failed to connect to the database or execute query", e)
         raise
 
 
@@ -199,7 +198,7 @@ def schema(configuration: dict):
     """
     Define the schema function which lets you configure the schema your connector delivers.
     See the technical reference documentation for more details on the schema function:
-    https://fivetran.com/docs/connectors/connector-sdk/technical-reference#schema
+    https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#schema
     Args:
         configuration: a dictionary that holds the configuration settings for the connector.
     """
@@ -219,7 +218,7 @@ def update(configuration: dict, state: dict):
     """
     Define the update function, which is a required function, and is called by Fivetran during each sync.
     See the technical reference documentation for more details on the update function
-    https://fivetran.com/docs/connectors/connector-sdk/technical-reference#update
+    https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update
     Args:
         configuration: A dictionary containing connection details
         state: A dictionary containing state information from previous runs

@@ -41,7 +41,7 @@ def schema(configuration: dict):
     """
     Define the schema function which lets you configure the schema your connector delivers.
     See the technical reference documentation for more details on the schema function:
-    https://fivetran.com/docs/connectors/connector-sdk/technical-reference#schema
+    https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#schema
 
     Args:
         configuration: a dictionary that holds the configuration settings for the connector.
@@ -79,7 +79,7 @@ def fetch_fda_data(params: dict):
         response.raise_for_status()
         return response.json()
     except requests.RequestException as e:
-        log.severe(f"Failed to fetch data from FDA API: {str(e)}")
+        log.error("Failed to fetch data from FDA API", e)
         raise
 
 
@@ -114,7 +114,7 @@ def process_event_data(event_data: list, state: dict):
                 log.info(f"Processed {processed_count} records")
 
         except Exception as e:
-            log.severe(f"Error processing event record: {str(e)}")
+            log.error("Error processing event record", e)
             # Continue processing other records even if one fails
             continue
 
@@ -133,7 +133,7 @@ def update(configuration: dict, state: dict = None):
     """
     Define the update function, which is a required function, and is called by Fivetran during each sync.
     See the technical reference documentation for more details on the update function:
-    https://fivetran.com/docs/connectors/connector-sdk/technical-reference#update
+    https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update
 
     Args:
         configuration: A dictionary containing connection details
@@ -180,14 +180,14 @@ def update(configuration: dict, state: dict = None):
         # Save the progress by checkpointing the state. This is important for ensuring that the sync process can resume
         # from the correct position in case of next sync or interruptions.
         # Learn more about how and where to checkpoint by reading our best practices documentation
-        # (https://fivetran.com/docs/connectors/connector-sdk/best-practices#largedatasetrecommendation).
+        # (https://fivetran.com/docs/connector-sdk/best-practices#optimizingperformancewhenhandlinglargedatasets).
         op.checkpoint(state=updated_state)
 
         log.info("FDA Veterinary data sync completed successfully")
 
     except Exception as e:
         # In case of an exception, log the error and raise a runtime error
-        log.severe(f"Failed to sync FDA Veterinary data: {str(e)}")
+        log.error("Failed to sync FDA Veterinary data", e)
         raise RuntimeError(f"Failed to sync data: {str(e)}")
 
 

@@ -1,0 +1,9 @@
+{
+    "host": "<YOUR_QUESTDB_HOST>",
+    "port": "<YOUR_QUESTDB_REST_API_PORT>",
+    "username": "<YOUR_QUESTDB_USERNAME>",
+    "password": "<YOUR_QUESTDB_PASSWORD>",
+    "tables": "<COMMA_SEPARATED_TABLE_NAMES_TO_SYNC>",
+    "batch_size": "<BATCH_SIZE_FOR_PAGINATION>",
+    "timestamp_column": "<TIMESTAMP_COLUMN_NAME>"
+}

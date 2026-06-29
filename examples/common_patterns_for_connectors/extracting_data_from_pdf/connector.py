@@ -1,8 +1,8 @@
 """
 This is an example for how to work with the fivetran_connector_sdk module.
 The example demonstrates how to extract data from a PDF file stored in AWS S3 bucket using pdfplumber and regex.
-See the Technical Reference documentation (https://fivetran.com/docs/connectors/connector-sdk/technical-reference#update)
-and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details
+See the Technical Reference documentation (https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update)
+and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details
 """
 
 # Import required classes from fivetran_connector_sdk
@@ -20,7 +20,6 @@ import os  # For file path operations
 import boto3  # For AWS S3 operations
 import tempfile  # For creating temporary files
 from process_pdf import PDFInvoiceExtractor  # For extracting data from PDF files
-
 
 # Define the number of files to process before checkpointing the state
 # This is useful to reduce the risk of losing progress in case of an error or interruption during processing.
@@ -110,7 +109,7 @@ def schema(configuration: dict):
     """
     Define the schema function which lets you configure the schema your connector delivers.
     See the technical reference documentation for more details on the schema function:
-    https://fivetran.com/docs/connectors/connector-sdk/technical-reference#schema
+    https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#schema
     Args:
         configuration: a dictionary that holds the configuration settings for the connector.
     """
@@ -181,7 +180,7 @@ def process_single_pdf(s3_client, bucket_name: str, file_key: dict, state: dict,
             state["last_modified_time"] = file_last_modified
 
     except Exception as e:
-        log.severe(f"Error processing {file_name}: {str(e)}")
+        log.error(f"Error processing {file_name}", e)
     finally:
         # Delete the downloaded invoice file after processing
         if os.path.exists(temp_file_path):
@@ -220,7 +219,7 @@ def process_all_pdfs(s3_client, bucket_name: str, prefix: str, state: dict):
             # Save the progress by checkpointing the state. This is important for ensuring that the sync process can resume
             # from the correct position in case of next sync or interruptions.
             # Learn more about how and where to checkpoint by reading our best practices documentation
-            # (https://fivetran.com/docs/connectors/connector-sdk/best-practices#largedatasetrecommendation).
+            # (https://fivetran.com/docs/connector-sdk/best-practices#optimizingperformancewhenhandlinglargedatasets).
             op.checkpoint(state)
 
     # After processing all files, checkpoint the state to ensure the last processed time is saved
@@ -231,7 +230,7 @@ def update(configuration: dict, state: dict):
     """
      Define the update function, which is a required function, and is called by Fivetran during each sync.
     See the technical reference documentation for more details on the update function
-    https://fivetran.com/docs/connectors/connector-sdk/technical-reference#update
+    https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update
     Args:
         configuration: A dictionary containing connection details
         state: A dictionary containing state information from previous runs

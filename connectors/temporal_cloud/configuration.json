@@ -1,0 +1,5 @@
+{
+  "temporal_namespace": "<YOUR_TEMPORAL_NAMESPACE>",
+  "temporal_api_key": "<YOUR_TEMPORAL_API_KEY>",
+  "temporal_host": "<YOUR_TEMPORAL_HOST>"
+}

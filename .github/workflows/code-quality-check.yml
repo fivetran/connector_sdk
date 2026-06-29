@@ -15,7 +15,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
+          python-version: '3.13'
 
       - name: Install dependencies
         run: |
@@ -48,9 +48,10 @@ jobs:
           PR_NUMBER="${{ github.event.pull_request.number }}"
           REPO="${{ github.repository }}"
 
+          # Fetch PR files and filter out removed files (only keep added, modified, renamed)
           curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
             "https://api.github.com/repos/${REPO}/pulls/${PR_NUMBER}/files" \
-            | jq -r '.[] | .filename' > all_files.txt
+            | jq -r '.[] | select(.status != "removed") | .filename' > all_files.txt
 
           grep '\.py$' all_files.txt > changed_files.txt || true
 

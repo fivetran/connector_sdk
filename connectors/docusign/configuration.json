@@ -1,0 +1,6 @@
+{
+  "access_token": "<YOUR_DOCUSIGN_OAUTH_ACCESS_TOKEN>",
+  "base_url": "<YOUR_DOCUSIGN_API_BASE_URL>",
+  "account_id": "<YOUR_DOCUSIGN_ACCOUNT_ID>"
+}
+

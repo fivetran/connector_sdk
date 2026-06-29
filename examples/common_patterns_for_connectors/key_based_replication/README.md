@@ -11,7 +11,7 @@ This connector uses hardcoded sample data in DuckDB to simulate the behavior of 
 
 
 ## Requirements
-- [Supported Python versions](https://github.com/fivetran/fivetran_connector_sdk/blob/main/README.md#requirements)   
+- [Supported Python versions](https://github.com/fivetran/connector_sdk/blob/main/README.md#requirements)   
 - Operating system:
   - Windows: 10 or later (64-bit only)
   - macOS: 13 (Ventura) or later (Apple Silicon [arm64] or Intel [x86_64])
@@ -19,7 +19,16 @@ This connector uses hardcoded sample data in DuckDB to simulate the behavior of 
 
 
 ## Getting started
-Refer to the [Connector SDK Setup Guide](https://fivetran.com/docs/connectors/connector-sdk/setup-guide) to get started.
+Refer to the [Connector SDK Setup Guide](https://fivetran.com/docs/connector-sdk/setup-guide) to get started.
+
+To initialize a new Connector SDK project using this connector as a starting point, run:
+
+```bash
+fivetran init <project-path> --template examples/common_patterns_for_connectors/key_based_replication
+```
+`fivetran init` initializes a new Connector SDK project by setting up the project structure, configuration files, and a connector you can run immediately with `fivetran debug`.
+If you do not specify a project path, Fivetran creates the project in your current directory.
+For more information on `fivetran init`, refer to the [Connector SDK `init` documentation](https://fivetran.com/docs/connector-sdk/setup-guide#createyourcustomconnector).
 
 
 ## Features
@@ -70,7 +79,7 @@ To handle pagination for large datasets, use a cursor in combination with LIMIT/
 
 ## Error handling
 - If the DuckDB engine or SQL query fails, the connector raises an exception.
-- Use `log.fine()` and `log.warning()` to debug cursor values and row counts.
+- Use `log.debug()` and `log.warning()` to debug cursor values and row counts.
 - The use of `op.checkpoint()` ensures recoverability on restart.
 
 

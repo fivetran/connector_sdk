@@ -1,0 +1,1 @@
+redis # For connecting to DragonflyDB using Redis-compatible protocol

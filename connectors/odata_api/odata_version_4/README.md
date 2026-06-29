@@ -1,3 +1,15 @@
+## Getting started
+Refer to the [Connector SDK Setup Guide](https://fivetran.com/docs/connector-sdk/setup-guide) to get started.
+
+To initialize a new Connector SDK project using this connector as a starting point, run:
+
+```bash
+fivetran init <project-path> --template connectors/odata_api/odata_version_4
+```
+`fivetran init` initializes a new Connector SDK project by setting up the project structure, configuration files, and a connector you can run immediately with `fivetran debug`.
+If you do not specify a project path, Fivetran creates the project in your current directory.
+For more information on `fivetran init`, refer to the [Connector SDK `init` documentation](https://fivetran.com/docs/connector-sdk/setup-guide#createyourcustomconnector).
+
 ## Syncing data from OData version 4
 
 This connector allows you to sync data from OData version 4 services to your Fivetran destination. OData (Open Data Protocol) is a REST-based protocol for querying and updating data, and version 4 is the latest version offering enhanced flexibility and features.

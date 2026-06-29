@@ -1,8 +1,8 @@
 """
 This is an example for how to work with the fivetran_connector_sdk module.
 It demonstrates how to parse a JSON response into a POJO-style class and use it in the update function.
-See the Technical Reference documentation (https://fivetran.com/docs/connectors/connector-sdk/technical-reference#update)
-and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details
+See the Technical Reference documentation (https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update)
+and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details
 """
 
 # Import required classes from fivetran_connector_sdk
@@ -23,7 +23,6 @@ from dataclasses import dataclass
 
 # Import time for implementing exponential backoff
 import time
-
 
 # Constants
 __API_URL = "https://jsonplaceholder.typicode.com/posts"
@@ -48,7 +47,7 @@ def schema(configuration: dict):
     """
     Define the schema function which lets you configure the schema your connector delivers.
     See the technical reference documentation for more details on the schema function:
-    https://fivetran.com/docs/connectors/connector-sdk/technical-reference#schema
+    https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#schema
     :param configuration: a dictionary that holds the configuration settings for the connector.
     :return: a list of tables with primary keys and any datatypes that we want to specify
     """
@@ -65,7 +64,7 @@ def update(configuration: dict, state: dict):
     """
     # Define the update function, which is a required function, and is called by Fivetran during each sync.
     # See the technical reference documentation for more details on the update function
-    # https://fivetran.com/docs/connectors/connector-sdk/technical-reference#update
+    # https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update
     # The state dictionary is empty for the first sync or for any full re-sync
     :param configuration: a dictionary that holds the configuration settings for the connector.
     :param state: a dictionary contains whatever state you have chosen to checkpoint during the prior sync
@@ -87,7 +86,7 @@ def update(configuration: dict, state: dict):
                 log.info(f"Retrying in {delay} seconds...")
                 time.sleep(delay)
             else:
-                log.severe("Maximum retry attempts reached. Request aborted.")
+                log.error("Maximum retry attempts reached. Request aborted.")
                 return
 
     for post_dict in post_list:

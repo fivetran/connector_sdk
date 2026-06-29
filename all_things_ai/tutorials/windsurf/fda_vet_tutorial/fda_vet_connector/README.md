@@ -21,7 +21,7 @@ The FDA Veterinary Adverse Event Reporting System (FAERS) contains reports of ad
 
 ### Prerequisites
 
-- Python 3.9-3.12
+- Python 3.10-3.13
 - Fivetran Connector SDK
 - Access to Fivetran destination
 
@@ -159,7 +159,7 @@ This connector follows Fivetran Connector SDK best practices:
 Look for these log messages:
 - `INFO`: Normal operation progress
 - `WARNING`: Potential issues (rate limits, empty responses)
-- `SEVERE`: Critical errors requiring attention
+- `ERROR`: Critical errors requiring attention
 
 ## API Reference
 
@@ -171,7 +171,7 @@ Look for these log messages:
 
 ### Fivetran Connector SDK
 - **Documentation**: [Fivetran Connector SDK Documentation](https://fivetran.com/docs/connector-sdk)
-- **Examples**: [SDK Examples Repository](https://github.com/fivetran/fivetran_connector_sdk/tree/main/examples)
+- **Examples**: [SDK Examples Repository](https://github.com/fivetran/connector_sdk/tree/main/examples)
 - **Best Practices**: [Best Practices Guide](https://fivetran.com/docs/connector-sdk/best-practices)
 
 ## Limitations and Constraints

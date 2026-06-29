@@ -1,12 +1,14 @@
 # Couchbase Magma Connector Example
+
+## Connector overview
 This connector example demonstrates how to sync data from a self-managed Couchbase Server (local, on-premises, or self-hosted in the cloud) using the Magma storage engine with the Connector SDK. 
 It connects to a Couchbase instance, runs SQL++ (N1QL) queries to retrieve data from a specified Magma bucket, scope, and collection, and streams the results efficiently to a destination table—following best practices for handling large datasets.
 
->For syncing data from a Magma bucket on Couchbase Capella, please refer to the [Couchbase Capella connector example](https://github.com/fivetran/fivetran_connector_sdk/blob/main/examples/source_examples/couchbase_capella).
+>For syncing data from a Magma bucket on Couchbase Capella, please refer to the [Couchbase Capella connector example](https://github.com/fivetran/connector_sdk/blob/main/connectors/couchbase_capella).
 
 ## Requirements
 
-* [Supported Python versions](https://github.com/fivetran/fivetran_connector_sdk/blob/main/README.md#requirements)   
+* [Supported Python versions](https://github.com/fivetran/connector_sdk/blob/main/README.md#requirements)   
 * Operating system:
   * Windows: 10 or later (64-bit only)
   * macOS: 13 (Ventura) or later (Apple Silicon [arm64] or Intel [x86_64])
@@ -14,7 +16,18 @@ It connects to a Couchbase instance, runs SQL++ (N1QL) queries to retrieve data 
 
 ## Getting started
 
-Refer to the [Connector SDK setup guide](https://fivetran.com/docs/connectors/connector-sdk/setup-guide) to get started.
+Refer to the [Connector SDK Setup Guide](https://fivetran.com/docs/connector-sdk/setup-guide) to get started.
+
+To initialize a new Connector SDK project using this connector as a starting point, run:
+
+```bash
+fivetran init <project-path> --template connectors/couchbase_magma
+```
+`fivetran init` initializes a new Connector SDK project by setting up the project structure, configuration files, and a connector you can run immediately with `fivetran debug`.
+If you do not specify a project path, Fivetran creates the project in your current directory.
+For more information on `fivetran init`, refer to the [Connector SDK `init` documentation](https://fivetran.com/docs/connector-sdk/setup-guide#createyourcustomconnector).
+
+> Note: Ensure you have updated the `configuration.json` file with the necessary parameters before running `fivetran debug`. See the [Configuration file](#configuration-file) section for details on the required configuration parameters.
 
 ## Features
 
@@ -81,12 +94,6 @@ The `schema()` function defines the structure of the destination table:
     "primary_key": ["id"],
     "columns": {
         "id": "INT",
-        "name": "STRING",
-        "country": "STRING",
-        "type": "STRING",
-        "callsign": "STRING",
-        "iata": "STRING",
-        "icao": "STRING",
         "created_at": "UTC_DATETIME",
     },
 }

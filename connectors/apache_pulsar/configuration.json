@@ -1,0 +1,7 @@
+{
+  "service_url": "<YOUR_APACHE_PULSAR_SERVICE_URL>",
+  "tenant": "<YOUR_APACHE_PULSAR_TENANT>",
+  "namespace": "<YOUR_APACHE_PULSAR_NAMESPACE>",
+  "topics": "<YOUR_TOPICS_COMMA_SEPARATED>",
+  "auth_token": "<YOUR_OPTIONAL_APACHE_PULSAR_AUTH_TOKEN>"
+}

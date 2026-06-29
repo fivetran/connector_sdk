@@ -1,8 +1,8 @@
 # This connector demonstrates how to fetch and sync data from the Common Paper API.
 # This connector fetches agreement data from the Common Paper API and syncs it to the destination.
 # It handles pagination and maintains sync state using checkpoints.
-# See the Technical Reference documentation (https://fivetran.com/docs/connectors/connector-sdk/technical-reference#update)
-# and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details
+# See the Technical Reference documentation (https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update)
+# and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details
 
 # Import required classes from fivetran_connector_sdk.
 # For supporting Connector operations like Update() and Schema()
@@ -19,7 +19,6 @@ import requests  # For making HTTP requests to the Common Paper API
 import json  # For JSON data handling and serialization
 import datetime  # For timestamp handling and UTC time operations
 import time  # For implementing exponential backoff delays
-
 
 # Base URL for the Common Paper API
 __API_URL = "https://api.commonpaper.com/v1/agreements"
@@ -52,7 +51,7 @@ def fetch_agreements(api_key, updated_at):
     """
     # Format the URL with the filter parameter
     url = f"{__API_URL}?filter[updated_at_gt]={updated_at}"
-    log.fine(f"Fetching agreements from URL: {url}")
+    log.debug(f"Fetching agreements from URL: {url}")
 
     for attempt in range(__MAX_RETRIES):
         try:
@@ -69,7 +68,7 @@ def fetch_agreements(api_key, updated_at):
                     time.sleep(delay)
                     continue
                 else:
-                    log.severe(
+                    log.error(
                         f"Failed to fetch agreements after {__MAX_RETRIES} attempts. Last status: {response.status_code} - {response.text}"
                     )
                     raise RuntimeError(
@@ -77,7 +76,7 @@ def fetch_agreements(api_key, updated_at):
                     )
             else:
                 # Non-retryable status codes (4xx errors except 429)
-                log.severe(f"Failed to fetch agreements: {response.status_code} - {response.text}")
+                log.error(f"Failed to fetch agreements: {response.status_code} - {response.text}")
                 raise RuntimeError(f"API returned {response.status_code}: {response.text}")
 
         except requests.exceptions.RequestException as e:
@@ -89,8 +88,9 @@ def fetch_agreements(api_key, updated_at):
                 time.sleep(delay)
                 continue
             else:
-                log.severe(
-                    f"Failed to fetch agreements after {__MAX_RETRIES} attempts due to network error: {str(e)}"
+                log.error(
+                    f"Failed to fetch agreements after {__MAX_RETRIES} attempts due to network error",
+                    e,
                 )
                 raise RuntimeError(f"Network error after {__MAX_RETRIES} attempts: {str(e)}")
     return None
@@ -116,7 +116,7 @@ def schema(configuration: dict):
     """
     Define the schema function which lets you configure the schema your connector delivers.
     See the technical reference documentation for more details on the schema function:
-    https://fivetran.com/docs/connectors/connector-sdk/technical-reference#schema
+    https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#schema
     Args:
         configuration: a dictionary that holds the configuration settings for the connector.
     """
@@ -132,7 +132,7 @@ def update(configuration, state):
     """
     Define the update function, which is a required function, and is called by Fivetran during each sync.
     See the technical reference documentation for more details on the update function
-    https://fivetran.com/docs/connectors/connector-sdk/technical-reference#update
+    https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update
     Args:
         configuration: A dictionary containing connection details
         state: A dictionary containing state information from previous runs
@@ -170,7 +170,7 @@ def update(configuration, state):
     # Save the progress by checkpointing the state. This is important for ensuring that the sync process can resume
     # from the correct position in case of next sync or interruptions.
     # Learn more about how and where to checkpoint by reading our best practices documentation
-    # (https://fivetran.com/docs/connectors/connector-sdk/best-practices#largedatasetrecommendation).
+    # (https://fivetran.com/docs/connector-sdk/best-practices#optimizingperformancewhenhandlinglargedatasets).
     op.checkpoint({"sync_cursor": next_cursor})
 
 

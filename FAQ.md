@@ -22,7 +22,7 @@ pip install fivetran-connector-sdk
 For more detailed installation instructions, refer to the [installation guide](https://fivetran.com/docs/connector-sdk/setup-guide).
 
 ### What are the system requirements for Connector SDK?
-You need a supported Python runtime and a 64-bit version of Windows, or either `macOS` or `Linux` on `arm64` or `x86_64` architectures. Refer to the [Requirements section](https://github.com/fivetran/fivetran_connector_sdk?tab=readme-ov-file#requirements) of the [README](https://github.com/fivetran/fivetran_connector_sdk/blob/main/README.md) for exact version bounds and supported distributions.
+You need a supported Python runtime and a 64-bit version of Windows, or either `macOS` or `Linux` on `arm64` or `x86_64` architectures. Refer to the [Requirements section](https://github.com/fivetran/connector_sdk?tab=readme-ov-file#requirements) of the [README](https://github.com/fivetran/connector_sdk/blob/main/README.md) for exact version bounds and supported distributions.
 
 ### How are Python version upgrades and dependencies handled for my connector?
 The responsibility for managing dependencies and version upgrades is shared between Fivetran and you, the customer.
@@ -36,7 +36,7 @@ The Connector SDK documentation is available at https://fivetran.com/docs/connec
 ### I'm new to the Connector SDK. Is there a tutorial or a guide to help me get started?
 Absolutely. The best place to start is with our [Beginner Tutorial](https://fivetran.com/docs/connector-sdk/tutorials/beginners-tutorial) for the Connector SDK. This step-by-step guide is an excellent resource designed to walk you through the process of building your first connector.
 
-We encourage you to try the tutorial, and if you have any questions or run into issues, feel free to reach out to our [support team](https://support.fivetran.com/hc/en-us). We also welcome any feedback you may have on the tutorial or the SDK to help us improve. If you have feedback, feature requests, or run into issues, please [open an Issue on our GitHub repository](https://github.com/fivetran/fivetran_connector_sdk/issues/new/choose).
+We encourage you to try the tutorial, and if you have any questions or run into issues, feel free to reach out to our [support team](https://support.fivetran.com/hc/en-us). We also welcome any feedback you may have on the tutorial or the SDK to help us improve. If you have feedback, feature requests, or run into issues, please [open an Issue on our GitHub repository](https://github.com/fivetran/connector_sdk/issues/new/choose).
 
 
 ## Development
@@ -61,7 +61,7 @@ Refer to the [Connection Options documentation page](https://fivetran.com/docs/c
 
 ### Can I use the Connector SDK with an SSH tunnel to connect to a data source on a private network?
 Yes, you can. If your data source is on a private network that is not directly accessible from the internet, you can use an SSH tunnel to establish a secure connection. This is a common pattern where you connect to an intermediate server that has both internet access and access to the private data source.
-You can refer to the [SSH tunnel example](https://github.com/fivetran/fivetran_connector_sdk/blob/main/examples/common_patterns_for_connectors/ssh_tunnels/key_based_authentication/README.md) for this scenario.
+You can refer to the [SSH tunnel example](https://github.com/fivetran/connector_sdk/blob/main/examples/common_patterns_for_connectors/ssh_tunnels/key_based_authentication/README.md) for this scenario.
 
 ### Will Fivetran automatically create a column in the destination if an API returns all NULL values for it?
 No, Fivetran will not create the column automatically. To sync a column that contains only empty or NULL values from your source, you must explicitly define that column in the schema. If the column is not defined in the schema, Fivetran will ignore it during the sync, and it will not be created in your destination.
@@ -91,4 +91,4 @@ You can access general [Fivetran logs](https://fivetran.com/docs/logs) for your 
 
 
 ## Maintenance
-The `fivetran_connector_sdk` repository is actively maintained by Fivetran Developers. If you have any feedback, feature requests, or run into issues, please [open an Issue on our GitHub repository](https://github.com/fivetran/fivetran_connector_sdk/issues/new/choose).
+The `connector_sdk` repository is actively maintained by Fivetran Developers. If you have any feedback, feature requests, or run into issues, please [open an Issue on our GitHub repository](https://github.com/fivetran/connector_sdk/issues/new/choose).

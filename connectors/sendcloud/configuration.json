@@ -1,0 +1,6 @@
+{
+    "username": "<YOUR_SENDCLOUD_API_USERNAME>",
+    "password": "<YOUR_SENDCLOUD_API_PASSWORD>",
+    "start_date": "<YYYY-MM-DD_FORMAT_EXAMPLE_2023-01-01>",
+    "use_mock_server": "<TRUE_OR_FALSE_DEFAULT_FALSE>"
+}

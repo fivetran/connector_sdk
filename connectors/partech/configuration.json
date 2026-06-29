@@ -1,0 +1,5 @@
+{
+  "base_url": "<YOUR_PUNCHH_SERVER_URL>",
+  "location_key": "<YOUR_LOCATION_API_KEY>",
+  "business_key": "<YOUR_BUSINESS_KEY>"
+}

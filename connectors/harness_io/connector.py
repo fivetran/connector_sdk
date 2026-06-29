@@ -1,8 +1,8 @@
 """
 This is a simple example for how to work with the fivetran_connector_sdk module.
 The example demonstrates how to fetch data from Harness.io API and load it into a destination using Fivetran's Connector SDK.
-See the Technical Reference documentation (https://fivetran.com/docs/connectors/connector-sdk/technical-reference#update)
-and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details
+See the Technical Reference documentation (https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update)
+and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details
 """
 
 # For reading configuration from a JSON file
@@ -43,7 +43,7 @@ def schema(configuration: dict):
     """
     Define the schema function which lets you configure the schema your connector delivers.
     See the technical reference documentation for more details on the schema function:
-    https://fivetran.com/docs/connectors/connector-sdk/technical-reference#schema
+    https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#schema
     Args:
         configuration: a dictionary that holds the configuration settings for the connector.
     """
@@ -54,10 +54,6 @@ def schema(configuration: dict):
             "primary_key": ["identifier"],  # Primary key column(s) for the table, optional.
             "columns": {  # Definition of columns and their types, optional.
                 "identifier": "STRING",  # Contains a dictionary of column names and data types
-                "orgIdentifier": "STRING",
-                "name": "STRING",
-                "description": "STRING",
-                "isFavorite": "BOOLEAN",
                 "modules": "JSON",
                 "tags": "JSON",
             },  # For any columns whose names are not provided here, e.g. id, their data types will be inferred
@@ -75,20 +71,13 @@ def schema(configuration: dict):
             "primary_key": ["uuid"],
             "columns": {
                 "uuid": "STRING",
-                "name": "STRING",
-                "accountId": "STRING",
                 "scope": "JSON",
-                "type": "STRING",
-                "budgetAmount": "DOUBLE",
             },  # For any columns whose names are not provided here, e.g. id, their data types will be inferred
         },
         {
             "table": "mean_time_to_resolution",
             "columns": {
-                "mean_time": "DOUBLE",
                 "unit": "STRING",
-                "band": "STRING",
-                "total_incidents": "INT",
             },
         },
     ]
@@ -131,7 +120,7 @@ def upsert_all_projects_for_user(api_handler, state):
         # Save the progress by checkpointing the state. This is important for ensuring that the sync process can resume
         # from the correct position in case of next sync or interruptions.
         # Learn more about how and where to checkpoint by reading our best practices documentation
-        # (https://fivetran.com/docs/connectors/connector-sdk/best-practices#largedatasetrecommendation).
+        # (https://fivetran.com/docs/connector-sdk/best-practices#optimizingperformancewhenhandlinglargedatasets).
         op.checkpoint(state)
 
         # Check if there is a next page
@@ -171,7 +160,7 @@ def upsert_all_connectors(api_handler, state):
     # Save the progress by checkpointing the state. This is important for ensuring that the sync process can resume
     # from the correct position in case of next sync or interruptions.
     # Learn more about how and where to checkpoint by reading our best practices documentation
-    # (https://fivetran.com/docs/connectors/connector-sdk/best-practices#largedatasetrecommendation).
+    # (https://fivetran.com/docs/connector-sdk/best-practices#optimizingperformancewhenhandlinglargedatasets).
     op.checkpoint(state)
 
 
@@ -202,7 +191,7 @@ def upsert_all_budgets(api_handler, state):
     # Save the progress by checkpointing the state. This is important for ensuring that the sync process can resume
     # from the correct position in case of next sync or interruptions.
     # Learn more about how and where to checkpoint by reading our best practices documentation
-    # (https://fivetran.com/docs/connectors/connector-sdk/best-practices#largedatasetrecommendation).
+    # (https://fivetran.com/docs/connector-sdk/best-practices#optimizingperformancewhenhandlinglargedatasets).
     op.checkpoint(state)
 
 
@@ -240,7 +229,7 @@ def upsert_mean_time_to_resolution(api_handler, state):
     # Save the progress by checkpointing the state. This is important for ensuring that the sync process can resume
     # from the correct position in case of next sync or interruptions.
     # Learn more about how and where to checkpoint by reading our best practices documentation
-    # (https://fivetran.com/docs/connectors/connector-sdk/best-practices#largedatasetrecommendation).
+    # (https://fivetran.com/docs/connector-sdk/best-practices#optimizingperformancewhenhandlinglargedatasets).
     op.checkpoint(state)
 
 
@@ -248,7 +237,7 @@ def update(configuration: dict, state: dict):
     """
      Define the update function, which is a required function, and is called by Fivetran during each sync.
     See the technical reference documentation for more details on the update function
-    https://fivetran.com/docs/connectors/connector-sdk/technical-reference#update
+    https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update
     Args:
         configuration: A dictionary containing connection details
         state: A dictionary containing state information from previous runs
@@ -269,25 +258,25 @@ def update(configuration: dict, state: dict):
         # Fetch and upsert all projects for the user
         upsert_all_projects_for_user(api_handler=api_handler, state=state)
     except Exception as e:
-        log.severe(f"Error fetching user projects data: {e}")
+        log.error("Error fetching user projects data", e)
 
     try:
         # Fetch and upsert all connectors
         upsert_all_connectors(api_handler=api_handler, state=state)
     except Exception as e:
-        log.severe(f"Error fetching connectors data: {e}")
+        log.error("Error fetching connectors data", e)
 
     try:
         # Fetch and upsert all budgets
         upsert_all_budgets(api_handler=api_handler, state=state)
     except Exception as e:
-        log.severe(f"Error fetching budgets data: {e}")
+        log.error("Error fetching budgets data", e)
 
     try:
         # Fetch and upsert mean time to resolution data
         upsert_mean_time_to_resolution(api_handler=api_handler, state=state)
     except Exception as e:
-        log.severe(f"Error fetching mean time to resolution data: {e}")
+        log.error("Error fetching mean time to resolution data", e)
 
 
 # Create the connector object using the schema and update functions

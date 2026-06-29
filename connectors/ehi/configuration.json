@@ -1,0 +1,7 @@
+{
+  "mssql_server": "<YOUR_CABOODLE_MSSQL_SERVER>",
+  "mssql_database": "<YOUR_CABOODLE_MSSQL_DATABASE>",
+  "mssql_user": "<YOUR_CABOODLE_MSSQL_USER>",
+  "mssql_password": "<YOUR_CABOODLE_MSSQL_PASSWORD>",
+  "mssql_port": "<YOUR_CABOODLE_MSSQL_PORT>"
+}

@@ -16,7 +16,7 @@ This tutorial walks you through building a **Fivetran Connector** that automatic
 ## Prerequisites
 
 ### Technical Requirements
-- **Python 3.9 - 3.12+** installed on your machine
+- **Python 3.10 - 3.13+** installed on your machine
 - **Basic Python knowledge** (functions, dictionaries, loops)
 - **Fivetran Connector SDK** (we'll install this)
 - **Git** (optional, for version control)

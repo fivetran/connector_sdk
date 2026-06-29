@@ -1,0 +1,9 @@
+{
+  "prometheus_url": "<YOUR_PROMETHEUS_SERVER_URL>",
+  "auth_type": "<AUTH_TYPE_NONE_BASIC_OR_BEARER>",
+  "username": "<YOUR_USERNAME_FOR_BASIC_AUTH>",
+  "password": "<YOUR_PASSWORD_FOR_BASIC_AUTH>",
+  "bearer_token": "<YOUR_BEARER_TOKEN_FOR_BEARER_AUTH>",
+  "lookback_hours": "<HOURS_TO_LOOKBACK_DEFAULT_24>",
+  "metrics_filter": "<OPTIONAL_LIST_OF_METRIC_NAMES_TO_SYNC>"
+}

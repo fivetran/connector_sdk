@@ -1,0 +1,9 @@
+{
+  "host": "<YOUR_YUGABYTEDB_HOST>",
+  "port": "<YOUR_YUGABYTEDB_PORT>",
+  "database": "<YOUR_YUGABYTEDB_DATABASE_NAME>",
+  "user": "<YOUR_YUGABYTEDB_USERNAME>",
+  "password": "<YOUR_YUGABYTEDB_PASSWORD>",
+  "schema": "<YOUR_SCHEMA_NAME>",
+  "sslmode": "<YOUR_SSL_MODE>"
+}

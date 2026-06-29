@@ -2,8 +2,8 @@
 # This connector fetches weather forecast data for specified US ZIP codes using:
 # 1. Zippopotam.us API to get coordinates from ZIP codes
 # 2. National Weather Service (NWS) API to get weather forecasts
-# See the Technical Reference documentation (https://fivetran.com/docs/connectors/connector-sdk/technical-reference#update)
-# and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details
+# See the Technical Reference documentation (https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update)
+# and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details
 
 
 import json  # Import the json module to handle JSON data.
@@ -26,7 +26,7 @@ def schema(configuration: dict):
     """
     Define the schema function which lets you configure the schema your connector delivers.
     See the technical reference documentation for more details on the schema function:
-    https://fivetran.com/docs/connectors/connector-sdk/technical-reference#schema
+    https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#schema
     Args:
         configuration: a dictionary that holds the configuration settings for the connector.
     """
@@ -75,7 +75,7 @@ def get_coordinates_from_zip(zip_code: str) -> tuple:
     response.raise_for_status()
     data = response.json()
 
-    log.fine(f"API Response: {json.dumps(data, indent=2)}")
+    log.debug(f"API Response: {json.dumps(data, indent=2)}")
 
     # Extract coordinates from the response
     zip_info = data["places"][0]  # Get the first place in the zip code
@@ -115,7 +115,7 @@ def update(configuration: dict, state: dict):
     """
     Define the update function, which is a required function, and is called by Fivetran during each sync.
     See the technical reference documentation for more details on the update function
-    https://fivetran.com/docs/connectors/connector-sdk/technical-reference#update
+    https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update
     Args:
         configuration: A dictionary containing connection details
         state: A dictionary containing state information from previous runs
@@ -168,13 +168,13 @@ def update(configuration: dict, state: dict):
                 # Add zip code to the period data
                 forecast["zip_code"] = zip_code
                 # This log message will only show while debugging.
-                log.fine(f"forecast_period={forecast['name']} for zip code {zip_code}")
+                log.debug(f"forecast_period={forecast['name']} for zip code {zip_code}")
 
                 # Upsert operation to insert/update the row in the "forecast" table.
                 op.upsert(table="forecast", data=forecast)
 
         except Exception as e:
-            log.severe(f"Unexpected error occurred while processing ZIP code {zip_code}: {str(e)}")
+            log.error(f"Unexpected error occurred while processing ZIP code {zip_code}", e)
             raise
 
     # Update the cursor to the end time of the current period.

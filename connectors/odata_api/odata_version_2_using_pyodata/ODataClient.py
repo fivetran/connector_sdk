@@ -20,7 +20,7 @@ class ODataClient:
             self.client = pyodata.Client(service_url, session)
             log.info("OData Version 2 client initialized")
         except Exception as e:
-            log.severe(f"Failed to initialize OData client: {str(e)}")
+            log.error("Failed to initialize OData client", e)
             raise ConnectionError(f"OData client initialization failed: {str(e)}")
         self.batch_requests = []
 
@@ -56,6 +56,9 @@ class ODataClient:
         This method handles various data types and structures that can be returned by
         the OData service, converting them to Python native types for easier processing.
         """
+        dict_val = hasattr(value, "__dict__")
+        extr_val = not isinstance(value, (str, int, float, bool))
+        none_val = value is not None
         # Handle EntityProxy objects
         if hasattr(value, "_cache") and value._cache:
             return self._extract_entity_data(value=value._cache)
@@ -69,11 +72,7 @@ class ODataClient:
             return {k: self._extract_entity_data(value=v) for k, v in value.items()}
 
         # Check for other entity-like objects with special attributes
-        elif (
-            hasattr(value, "__dict__")
-            and not isinstance(value, (str, int, float, bool))
-            and value is not None
-        ):
+        elif dict_val and extr_val and none_val:
             extracted = self._extract_special_attributes(value=value)
             if extracted:
                 return extracted
@@ -94,6 +93,13 @@ class ODataClient:
                     self._process_expanded_entities(
                         entity=entity, record=record, expand_options=query_options["expand"]
                     )
+                    # Upsert expanded entities to separate tables
+                    self._upsert_expanded_data(
+                        record=record,
+                        expand_options=query_options["expand"],
+                        parent_table=table,
+                        parent_data=record,
+                    )
 
                 record = self.clean_odata_fields(data=record)
                 op.upsert(table=table, data=record)
@@ -107,6 +113,81 @@ class ODataClient:
                 break
 
             entities = entity_set_obj.get_entities().next_url(entities.next_url).execute()
+
+    def _upsert_expanded_data(
+        self, record: Dict, expand_options: Dict, parent_table: str, parent_data: Dict
+    ):
+        """
+        Upsert expanded entities to separate tables.
+        This method extracts expanded navigation properties from the record
+        and upserts them to separate tables named {parent_table}.{nav_prop}.
+        It also handles nested expansions recursively and includes parent keys in child records.
+        """
+        # Extract parent key fields (scalar values that are likely identifiers)
+        parent_keys = self._extract_parent_keys(
+            parent_data=parent_data, expand_options=expand_options
+        )
+
+        for nav_prop, options in expand_options.items():
+            if nav_prop not in record or record[nav_prop] is None:
+                continue
+
+            # Extract expanded data and immediately remove from parent record
+            expanded_data = record.pop(nav_prop)
+            child_table = f"{parent_table}.{nav_prop}"
+
+            # Handle collections (one-to-many relationships)
+            if isinstance(expanded_data, list):
+                for item in expanded_data:
+                    if isinstance(item, dict):
+                        # Add parent keys to child record
+                        item.update(parent_keys)
+                        # Process nested expansions recursively
+                        if isinstance(options, dict) and "expand" in options:
+                            self._upsert_expanded_data(
+                                record=item,
+                                expand_options=options["expand"],
+                                parent_table=child_table,
+                                parent_data=item,
+                            )
+                        # Clean and upsert to child table
+                        cleaned_item = self.clean_odata_fields(data=item)
+                        op.upsert(table=child_table, data=cleaned_item)
+
+            # Handle single entity (one-to-one relationships)
+            elif isinstance(expanded_data, dict):
+                # Add parent keys to child record
+                expanded_data.update(parent_keys)
+                # Process nested expansions recursively
+                if isinstance(options, dict) and "expand" in options:
+                    self._upsert_expanded_data(
+                        record=expanded_data,
+                        expand_options=options["expand"],
+                        parent_table=child_table,
+                        parent_data=expanded_data,
+                    )
+                # Clean and upsert to child table
+                cleaned_data = self.clean_odata_fields(data=expanded_data)
+                op.upsert(table=child_table, data=cleaned_data)
+
+    def _extract_parent_keys(self, parent_data: Dict, expand_options: Dict) -> Dict:
+        """
+        Extract key fields from parent data to be included in child records.
+        This method identifies likely primary key fields (fields containing 'Id' or 'id')
+        and scalar values (excluding expanded navigation properties).
+        """
+        parent_keys = {}
+        expand_props = set(expand_options.keys())
+
+        for key, value in parent_data.items():
+            # Skip navigation properties (they are being expanded)
+            if key in expand_props:
+                continue
+            # Include scalar values that are likely keys or important identifiers
+            if isinstance(value, (str, int, float, bool)) or value is None:
+                parent_keys[key] = value
+
+        return parent_keys
 
     def upsert_entity(self, entity, state: Dict = None):
         """
@@ -141,7 +222,7 @@ class ODataClient:
             return self.state
 
         except Exception as e:
-            log.severe(f"Error fetching entity set {entity_set}: {str(e)}")
+            log.error(f"Error fetching entity set {entity_set}", e)
             raise ConnectionError(f"Error fetching entity set: {str(e)}")
 
     def upsert_multiple_entity(self, entity_list: List[Dict], state: Dict = None):
@@ -279,7 +360,7 @@ class ODataClient:
                     if state_var not in self.state or current_value > self.state[state_var]:
                         self.state[state_var] = current_value
             except KeyError:
-                log.severe(f"{column} not found in the fetched data while updating state")
+                log.error(f"{column} not found in the fetched data while updating state")
 
     def _process_expanded_entities(self, entity, record: Dict, expand_options: Dict):
         """
@@ -329,7 +410,7 @@ class ODataClient:
                 )
 
         except Exception as e:
-            log.severe(f"Error processing expanded entity {nav_prop}: {str(e)}")
+            log.error(f"Error processing expanded entity {nav_prop}", e)
             record[nav_prop] = None
 
     def _process_expanded_collection(self, collection, options: Dict) -> List:

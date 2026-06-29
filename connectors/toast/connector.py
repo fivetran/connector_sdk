@@ -2,8 +2,8 @@
 This is an example to extract data from Toast, technology platform primarily designed for the restaurant industry.
 It provides an all-in-one point-of-sale (POS) and management system tailored to meet the unique needs
 of restaurants, cafes, and similar businesses.
-See the Technical Reference documentation (https://fivetran.com/docs/connectors/connector-sdk/technical-reference#update)
-and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details
+See the Technical Reference documentation (https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update)
+and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details
 """
 
 import requests as rq
@@ -12,7 +12,7 @@ from datetime import datetime, timezone, timedelta
 import time
 import json
 import copy
-import uuid
+import hashlib
 from cryptography.fernet import Fernet
 
 # Import required classes from fivetran_connector_sdk.
@@ -30,7 +30,7 @@ def update(configuration: dict, state: dict):
     """
     # Define the update function, which is a required function, and is called by Fivetran during each sync.
     # See the technical reference documentation for more details on the update function
-    # https://fivetran.com/docs/connectors/connector-sdk/technical-reference#update
+    # https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update
     # The state dictionary is empty for the first sync or for any full re-sync
     :param configuration: a dictionary that holds the configuration settings for the connector.
     :param state: a dictionary contains whatever state you have chosen to checkpoint during the prior sync
@@ -93,7 +93,7 @@ def sync_items(base_url, headers, ts_from, ts_to, start_timestamp, state):
         modified_params = {"modifiedStartDate": ts_from, "modifiedEndDate": ts_to}
         config_params = {"lastModified": ts_from}
         state["to_ts"] = ts_to
-        log.fine(f"state updated, new state: {repr(state)}")
+        log.debug(f"state updated, new state: {repr(state)}")
 
         # Get response from API call.
         response_page, next_token = get_api_response(
@@ -208,7 +208,7 @@ def process_config(base_url, headers, endpoint, table_name, rst_id, timerange):
             response_page, next_token = get_api_response(
                 base_url + endpoint + "?" + param_string, headers, params=pagination
             )
-            log.fine(
+            log.debug(
                 f"restaurant {rst_id}: response_page has {len(response_page)} items for {endpoint}"
             )
             for o in response_page:
@@ -267,7 +267,7 @@ def process_labor(base_url, headers, endpoint, table_name, rst_id, params=None):
 
     try:
         response_page, next_token = get_api_response(base_url + endpoint, headers, params=params)
-        log.fine(
+        log.debug(
             f"restaurant {rst_id}: response_page has {len(response_page)} items for {endpoint}"
         )
 
@@ -342,7 +342,7 @@ def process_cash(base_url, headers, endpoint, table_name, rst_id, params):
             response_page, next_token = get_api_response(
                 base_url + endpoint + "?businessDate=" + d, headers
             )
-            # log.fine(f"restaurant {rst_id}: response_page has {len(response_page)} items for {endpoint}")
+            # log.debug(f"restaurant {rst_id}: response_page has {len(response_page)} items for {endpoint}")
             for o in response_page:
                 o = flatten_fields(fields_to_flatten[table_name], o)
                 o["restaurant_id"] = rst_id
@@ -386,7 +386,7 @@ def process_orders(base_url, headers, endpoint, table_name, rst_id, params):
             response_page, next_token = get_api_response(
                 base_url + endpoint, headers, params=params
             )
-            log.fine(
+            log.debug(
                 f"restaurant {rst_id}: response_page has {len(response_page)} items for {endpoint}"
             )
 
@@ -553,7 +553,7 @@ def process_child(parent, table_name, id_field_name, id_field):
     }
 
     for p in parent:
-        # log.fine(f"processing {table_name}")
+        # log.debug(f"processing {table_name}")
         p[id_field_name] = id_field
         if table_name in relationships:
             for child_key, child_table_name in relationships[table_name]:
@@ -561,11 +561,17 @@ def process_child(parent, table_name, id_field_name, id_field):
                     process_child(p[child_key], child_table_name, table_name + "_id", p["guid"])
                 p.pop(child_key, None)
         if table_name in fields_to_flatten:
-            # log.fine(f"flattening fields in {table_name}")
+            # log.debug(f"flattening fields in {table_name}")
             p = flatten_fields(fields_to_flatten[table_name], p)
         # check for null guids in appliedTaxes[]
+        # Use deterministic ID based on parent selection + tax rate to ensure consistent identification across syncs
         if table_name == "orders_check_selection_applied_tax" and p.get("guid") is None:
-            p["guid"] = "gen-" + str(uuid.uuid4())
+            parent_id = p.get("orders_check_selection_id") or ""
+            tax_rate_id = p.get("taxRate_id") or ""
+            tax_name = p.get("name") or ""
+            tax_rate = str(p.get("rate") or "")
+            unique_string = f"{parent_id}_{tax_rate_id}_{tax_name}_{tax_rate}"
+            p["guid"] = "gen-" + hashlib.md5(unique_string.encode()).hexdigest()
         if table_name == "orders_check":
             p.pop("payments", None)
         p = stringify_lists(p)
@@ -612,11 +618,8 @@ def make_headers(conf, base_url, state, key):
     current_time = time.time()
 
     # Check if a valid token exists and is not expiring in the next hour
-    if (
-        "encrypted_token" in state
-        and "token_ttl" in state
-        and state["token_ttl"] > current_time + 3600
-    ):
+    fut_time = current_time + 3600
+    if "encrypted_token" in state and "token_ttl" in state and state["token_ttl"] > fut_time:
         try:
             auth_token = fernet.decrypt(state["encrypted_token"].encode()).decode()
             log.info("encrypted_token found with at least an hour left, reusing")
@@ -751,7 +754,7 @@ def get_api_response(endpoint_path, headers, **kwargs):
         # Handle 401 Unauthorized (retry up to max retries)
         if response.status_code == 401:
             if retry_count_401 >= max_retries_401:  # Fail after max retries
-                log.severe(f"401 Unauthorized - Max retries reached for {endpoint_path}")
+                log.error(f"401 Unauthorized - Max retries reached for {endpoint_path}")
                 return None, None
 
             retry_count_401 += 1
@@ -904,7 +907,7 @@ def schema(configuration: dict):
     """
     Define the schema function which lets you configure the schema your connector delivers.
     See the technical reference documentation for more details on the schema function:
-    https://fivetran.com/docs/connectors/connector-sdk/technical-reference#schema
+    https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#schema
     :param configuration: a dictionary that holds the configuration settings for the connector.
     :return: a list of tables with primary keys and any datatypes that we want to specify
     """

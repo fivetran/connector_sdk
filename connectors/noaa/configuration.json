@@ -1,0 +1,7 @@
+{
+  "user_agent": "<YOUR_APPLICATION_NAME_AND_CONTACT_EMAIL>",
+  "state_code": "<OPTIONAL_US_STATE_CODE_FOR_OBSERVATIONS>",
+  "station_ids": "<OPTIONAL_COMMA_SEPARATED_STATION_IDS>",
+  "alert_area": "<OPTIONAL_US_STATE_CODE_FOR_ALERTS>",
+  "start_date": "<OPTIONAL_YYYY-MM-DD_START_DATE>"
+}

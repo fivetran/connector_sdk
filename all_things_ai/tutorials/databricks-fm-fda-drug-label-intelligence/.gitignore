@@ -1,0 +1,13 @@
+# Exclude development-only files from the connector package created by
+# the Fivetran Connector SDK during connection creation.
+# See https://fivetran.com/docs/connector-sdk/connector-development-and-configuration/connector-sdk-project-structure
+tests/
+requirements-test.txt
+scripts/
+__pycache__/
+.pytest_cache/
+files/
+*.pyc
+*.db
+configuration_local.json
+.env

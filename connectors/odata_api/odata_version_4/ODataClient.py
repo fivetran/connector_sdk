@@ -9,7 +9,7 @@ from fivetran_connector_sdk import Operations as op
 
 from uuid import uuid4  # for generating batch boundaries
 import json
-from requests_toolbelt.multipart import decoder, encoder  # for batch request processing
+from requests_toolbelt.multipart import decoder  # for batch request processing
 import datetime
 
 
@@ -138,20 +138,120 @@ class ODataClient:
                 current_value = item[column]
                 if state_var not in self.state or current_value > self.state[state_var]:
                     self.state[state_var] = current_value
-            except KeyError:
-                log.severe(f"{column} not found in the fetched data")
+            except KeyError as e:
+                log.error(f"{column} not found in the fetched data", e)
 
-    def _upsert_formatted_data(self, formatted_data, table, update_state):
+    def _upsert_formatted_data(self, formatted_data, table, update_state, query_options=None):
         """Upsert the formatted data and update the state tracker."""
         if formatted_data["success"]:
-            for item in formatted_data["data"]:
-                op.upsert(table=table, data=item)
-                self._update_state_tracker(item=item, update_state=update_state)
+            for record in formatted_data["data"]:
+                # Handle expanded entities if expand option is present
+                if query_options and "expand" in query_options:
+                    self._upsert_expanded_data(
+                        record=record,
+                        expand_options=query_options["expand"],
+                        parent_table=table,
+                        parent_data=record,
+                    )
+
+                op.upsert(table=table, data=record)
+                self._update_state_tracker(item=record, update_state=update_state)
 
             log.info(f"upserted {formatted_data['count']} records into {table}")
             op.checkpoint(self.state)
         else:
             raise RuntimeError(f"Error fetching entity set for table {table}")
+
+    def _upsert_expanded_data(
+        self, record: Dict, expand_options: Dict, parent_table: str, parent_data: Dict
+    ):
+        """
+        Upsert expanded entities to separate tables.
+        This method extracts expanded navigation properties from the record
+        and upserts them to separate tables named {parent_table}.{nav_prop}.
+        It also handles nested expansions recursively and includes parent keys in child records.
+        """
+        # Extract parent key fields (scalar values that are likely identifiers)
+        parent_keys = self._extract_parent_keys(
+            parent_data=parent_data, expand_options=expand_options
+        )
+
+        # Handle both dict and list expand options formats
+        if isinstance(expand_options, dict):
+            nav_props = expand_options
+        elif isinstance(expand_options, list):
+            # Convert list format to dict format for processing
+            nav_props = {prop: {} for prop in expand_options}
+        else:
+            return
+
+        for nav_prop, options in nav_props.items():
+            if nav_prop not in record or record[nav_prop] is None:
+                continue
+
+            # Extract expanded data and immediately remove from parent record
+            expanded_data = record.pop(nav_prop)
+            child_table = f"{parent_table}.{nav_prop}"
+
+            # Handle collections (one-to-many relationships)
+            if isinstance(expanded_data, list):
+                for item in expanded_data:
+                    if isinstance(item, dict):
+                        # Add parent keys to child record
+                        item.update(parent_keys)
+                        # Process nested expansions recursively
+                        if isinstance(options, dict) and "expand" in options:
+                            self._upsert_expanded_data(
+                                record=item,
+                                expand_options=options["expand"],
+                                parent_table=child_table,
+                                parent_data=item,
+                            )
+                        # Clean and upsert to child table
+                        cleaned_item = self.clean_odata_fields(data=item)
+                        op.upsert(table=child_table, data=cleaned_item)
+
+            # Handle single entity (one-to-one relationships)
+            elif isinstance(expanded_data, dict):
+                # Add parent keys to child record
+                expanded_data.update(parent_keys)
+                # Process nested expansions recursively
+                if isinstance(options, dict) and "expand" in options:
+                    self._upsert_expanded_data(
+                        record=expanded_data,
+                        expand_options=options["expand"],
+                        parent_table=child_table,
+                        parent_data=expanded_data,
+                    )
+                # Clean and upsert to child table
+                cleaned_data = self.clean_odata_fields(data=expanded_data)
+                op.upsert(table=child_table, data=cleaned_data)
+
+    def _extract_parent_keys(self, parent_data: Dict, expand_options: Dict) -> Dict:
+        """
+        Extract key fields from parent data to be included in child records.
+        This method identifies likely primary key fields and scalar values
+        (excluding expanded navigation properties).
+        """
+        parent_keys = {}
+
+        # Handle both dict and list expand options formats
+        if isinstance(expand_options, dict):
+            expand_props = set(expand_options.keys())
+        elif isinstance(expand_options, list):
+            expand_props = set(expand_options)
+        else:
+            expand_props = set()
+
+        for key, value in parent_data.items():
+            # Skip navigation properties (they are being expanded)
+            if key in expand_props:
+                continue
+            # Include scalar values that are likely keys or important identifiers
+            if isinstance(value, (str, int, float, bool)) or value is None:
+                parent_keys[key] = value
+
+        return parent_keys
 
     def upsert_entity(
         self,
@@ -179,12 +279,20 @@ class ODataClient:
 
         try:
             if handle_pagination:
-                self._handle_pagination(initial_url=url, table=table, update_state=update_state)
+                self._handle_pagination(
+                    initial_url=url,
+                    table=table,
+                    update_state=update_state,
+                    query_options=query_options,
+                )
             else:
                 response_data = self._make_request(url=url)
                 formatted_data = self._standardize_output(response=response_data)
                 self._upsert_formatted_data(
-                    formatted_data=formatted_data, table=table, update_state=update_state
+                    formatted_data=formatted_data,
+                    table=table,
+                    update_state=update_state,
+                    query_options=query_options,
                 )
 
             return self.state
@@ -203,7 +311,13 @@ class ODataClient:
             self.upsert_entity(entity=entity)
         return self.state
 
-    def _handle_pagination(self, initial_url: str, table: str = None, update_state: Dict = None):
+    def _handle_pagination(
+        self,
+        initial_url: str,
+        table: str = None,
+        update_state: Dict = None,
+        query_options: Dict = None,
+    ):
         """
         Handles pagination by following @odata.nextLink until all pages are fetched.
         You can modify this method to handle service-specific pagination formats
@@ -214,7 +328,10 @@ class ODataClient:
             current_page = self._make_request(url=next_link)
             formatted_data = self._standardize_output(response=current_page)
             self._upsert_formatted_data(
-                formatted_data=formatted_data, table=table, update_state=update_state
+                formatted_data=formatted_data,
+                table=table,
+                update_state=update_state,
+                query_options=query_options,
             )
             next_link = current_page.get("@odata.nextLink") or current_page.get("odata.nextLink")
             if next_link and "http" not in next_link:
@@ -268,7 +385,9 @@ class ODataClient:
 
         return result
 
-    def _paginate_with_batch(self, table, update_state=None, initial_response=None):
+    def _paginate_with_batch(
+        self, table, update_state=None, initial_response=None, query_options=None
+    ):
         """
         Paginate using $skip and $top parameters.
         Helper method for handling pagination in batch responses.
@@ -277,7 +396,10 @@ class ODataClient:
         if initial_response:
             formatted_data = self._standardize_output(response=initial_response)
             self._upsert_formatted_data(
-                formatted_data=formatted_data, table=table, update_state=update_state
+                formatted_data=formatted_data,
+                table=table,
+                update_state=update_state,
+                query_options=query_options,
             )
             next_link = initial_response.get("@odata.nextLink") or initial_response.get(
                 "odata.nextLink"
@@ -286,7 +408,10 @@ class ODataClient:
             if next_link:
                 next_url = f"{self.base_url}{next_link}"
                 self._handle_pagination(
-                    initial_url=next_url, table=table, update_state=update_state
+                    initial_url=next_url,
+                    table=table,
+                    update_state=update_state,
+                    query_options=query_options,
                 )
         else:
             raise RuntimeError(f"Error fetching entity set for table {table}")
@@ -328,7 +453,7 @@ class ODataClient:
         content_type = response.headers.get("Content-Type", "")
 
         if "multipart/mixed" not in content_type:
-            log.severe(f"Invalid content type: {content_type}")
+            log.error(f"Invalid content type: {content_type}")
             raise ValueError(f"Expected multipart/mixed response, got: {content_type}")
 
         try:
@@ -344,7 +469,7 @@ class ODataClient:
                 self._process_batch_part(part=part, part_index=i)
 
         except Exception as e:
-            log.severe(f"Failed to process batch response: {str(e)}")
+            log.error("Failed to process batch response.", e)
             raise
 
     def _process_batch_part(self, part, part_index: int):
@@ -353,11 +478,12 @@ class ODataClient:
         entity_set = request_config["entity_set"]
         table = request_config.get("table", entity_set)
         update_state = request_config.get("update_state")
+        query_options = request_config.get("query_options", {})
 
         log.info(f"Processing part {part_index + 1} for entity: {entity_set}")
 
         if not part.content:
-            log.severe(f"Empty content in part {part_index}")
+            log.error(f"Empty content in part {part_index}")
             return
 
         try:
@@ -373,7 +499,10 @@ class ODataClient:
 
             # Process with pagination
             self._paginate_with_batch(
-                table=table, update_state=update_state, initial_response=response_data
+                table=table,
+                update_state=update_state,
+                initial_response=response_data,
+                query_options=query_options,
             )
 
         except Exception as e:
@@ -397,7 +526,7 @@ class ODataClient:
                 return http_body.strip()
 
         except UnicodeDecodeError:
-            log.severe(f"Unicode decode error in part {part_index}")
+            log.error(f"Unicode decode error in part {part_index}")
             raise
 
     @staticmethod

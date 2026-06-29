@@ -106,7 +106,7 @@ class FDADrugConnector:
             return response.json()
 
         except requests.exceptions.RequestException as e:
-            log.severe(f"API request failed: {str(e)}")
+            log.error("API request failed", e)
             return None
 
     def discover_endpoints(self) -> List[str]:
@@ -330,7 +330,7 @@ class FDADrugConnector:
                 # Save the progress by checkpointing the state. This is important for ensuring that the sync process can resume
                 # from the correct position in case of next sync or interruptions.
                 # Learn more about how and where to checkpoint by reading our best practices documentation
-                # (https://fivetran.com/docs/connectors/connector-sdk/best-practices#largedatasetrecommendation).
+                # (https://fivetran.com/docs/connector-sdk/best-practices#optimizingperformancewhenhandlinglargedatasets).
                 op.checkpoint(state=state)
                 checkpoint_counter = 0
                 log.info(
@@ -386,7 +386,7 @@ def schema(configuration: dict) -> List[Dict[str, Any]]:
     """
     Define the schema function which lets you configure the schema your connector delivers.
     See the technical reference documentation for more details on the schema function:
-    https://fivetran.com/docs/connectors/connector-sdk/technical-reference#schema
+    https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#schema
     Args:
         configuration: a dictionary that holds the configuration settings for the connector.
     """
@@ -424,7 +424,7 @@ def update(configuration: dict, state: dict):
     """
     Define the update function, which is a required function, and is called by Fivetran during each sync.
     See the technical reference documentation for more details on the update function
-    https://fivetran.com/docs/connectors/connector-sdk/technical-reference#update
+    https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update
     Args:
         configuration: A dictionary containing connection details
         state: A dictionary containing state information from previous runs
@@ -439,7 +439,7 @@ def update(configuration: dict, state: dict):
     endpoints = connector.discover_endpoints()
 
     if not endpoints:
-        log.severe("No available endpoints discovered")
+        log.error("No available endpoints discovered")
         return
 
     total_api_calls = 0
@@ -465,7 +465,7 @@ def update(configuration: dict, state: dict):
                 log.info(f"Completed {endpoint}: {endpoint_calls} API calls used")
 
             except Exception as e:
-                log.severe(f"Error syncing endpoint {endpoint}: {str(e)}")
+                log.error(f"Error syncing endpoint {endpoint}", e)
                 continue
 
         log.info(f"FDA Drug API sync completed - Total API calls used: {total_api_calls}")

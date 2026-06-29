@@ -4,8 +4,8 @@
 # The list of tables to sync is thereafter stored in the state object.
 # This example is the simplest possible as it doesn't define a schema() function,
 # it does not therefore provide a good template for writing a real connector.
-# See the Technical Reference documentation (https://fivetran.com/docs/connectors/connector-sdk/technical-reference#update)
-# and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details
+# See the Technical Reference documentation (https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update)
+# and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details
 
 # To observe how adding a new table would work:
 # 1. Run fivetran debug --configuration configuration.json (configuration.json provides initialSyncStart)
@@ -52,7 +52,7 @@ def update(configuration: dict, state: dict):
     """
     Define the update function, which is a required function, and is called by Fivetran during each sync.
     See the technical reference documentation for more details on the update function
-    https://fivetran.com/docs/connectors/connector-sdk/technical-reference#update
+    https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update
     Args:
         configuration: A dictionary containing connection details
         state: A dictionary containing state information from previous runs
@@ -75,25 +75,25 @@ def update(configuration: dict, state: dict):
     # implementing this with connectors that don't yet track which tables are synced.
     if state.get("synced_tables"):
         tables_previously_synced = state["synced_tables"]
-        log.fine(f"tables synced from state: {tables_previously_synced}")
+        log.debug(f"tables synced from state: {tables_previously_synced}")
     elif configuration.get("synced_tables"):
         tables_previously_synced = configuration["synced_tables"].split(",")
-        log.fine(f"tables synced from config: {tables_previously_synced}")
+        log.debug(f"tables synced from config: {tables_previously_synced}")
     else:
         tables_previously_synced = []
 
     new_state = {"to_timestamp": to_timestamp}
-    log.fine(f"tables to sync: {TABLES_TO_SYNC}")
-    log.fine(f"tables previously synced: {tables_previously_synced}")
+    log.debug(f"tables to sync: {TABLES_TO_SYNC}")
+    log.debug(f"tables previously synced: {tables_previously_synced}")
 
     sync_tables(tables_previously_synced, from_timestamp, initial_timestamp)
 
     # Save the progress by checkpointing the state. This stores the list of tables that are up-to-date.
     # Learn more about how and where to checkpoint by reading our best practices documentation
-    # (https://fivetran.com/docs/connectors/connector-sdk/best-practices#largedatasetrecommendation).
+    # (https://fivetran.com/docs/connector-sdk/best-practices#optimizingperformancewhenhandlinglargedatasets).
     tables_synced_this_sync.sort()
     new_state["synced_tables"] = tables_synced_this_sync
-    log.fine(new_state)
+    log.debug(new_state)
     op.checkpoint(new_state)
 
 
@@ -107,10 +107,10 @@ def sync_tables(tables_previously_synced: list, from_timestamp, initial_timestam
     """
     for table in TABLES_TO_SYNC:
         if table in tables_previously_synced:
-            log.fine(f"{table} was synced before, go back to {from_timestamp}")
+            log.debug(f"{table} was synced before, go back to {from_timestamp}")
             data = {"message": f"syncing {table} since {from_timestamp}"}
         else:
-            log.fine(f"{table} is new, needs history from {initial_timestamp}")
+            log.debug(f"{table} is new, needs history from {initial_timestamp}")
             data = {"message": f"syncing {table} since {initial_timestamp}"}
         op.upsert(table=table, data=data)
 

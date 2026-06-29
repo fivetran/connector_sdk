@@ -1,5 +1,17 @@
 # OData API Connector using python_odata
 
+## Getting started
+Refer to the [Connector SDK Setup Guide](https://fivetran.com/docs/connector-sdk/setup-guide) to get started.
+
+To initialize a new Connector SDK project using this connector as a starting point, run:
+
+```bash
+fivetran init <project-path> --template connectors/odata_api/odata_version_4_using_python_odata
+```
+`fivetran init` initializes a new Connector SDK project by setting up the project structure, configuration files, and a connector you can run immediately with `fivetran debug`.
+If you do not specify a project path, Fivetran creates the project in your current directory.
+For more information on `fivetran init`, refer to the [Connector SDK `init` documentation](https://fivetran.com/docs/connector-sdk/setup-guide#createyourcustomconnector).
+
 This connector demonstrates how to fetch data from an OData v4 API and sync it to the destination using the python_odata library.
 
 ### Overview
@@ -18,7 +30,7 @@ The connector defines three tables:
 - `Filtered_Customers`: Customers whose contact name starts with 'S'
 - `Orders`: Order data with incremental sync support
 
-You can customize the schema to match your OData service and destination tables. For more reference about the schema method, see the [Fivetran Connector SDK documentation](https://fivetran.com/docs/connectors/connector-sdk/technical-reference#schema).
+You can customize the schema to match your OData service and destination tables. For more reference about the schema method, see the [Fivetran Connector SDK documentation](https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#schema).
 
 
 ### Key Functions
@@ -89,5 +101,5 @@ To adapt this connector for your own OData service:
 
 - [Python OData Documentation](https://tuomur-python-odata.readthedocs.io/en/latest/)
 - [OData Protocol Documentation](https://www.odata.org/documentation/)
-- [Fivetran Connector SDK Technical Reference](https://fivetran.com/docs/connectors/connector-sdk/technical-reference)
-- [Fivetran Connector SDK Best Practices](https://fivetran.com/docs/connectors/connector-sdk/best-practices)
+- [Fivetran Connector SDK Technical Reference](https://fivetran.com/docs/connector-sdk/technical-reference)
+- [Fivetran Connector SDK Best Practices](https://fivetran.com/docs/connector-sdk/best-practices)

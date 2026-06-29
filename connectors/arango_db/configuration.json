@@ -1,0 +1,6 @@
+{
+  "host": "<YOUR_ARANGODB_HOST>",
+  "database": "<YOUR_ARANGODB_DATABASE_NAME>",
+  "username": "<YOUR_ARANGODB_USERNAME>",
+  "password": "<YOUR_ARANGODB_PASSWORD>"
+}

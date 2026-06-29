@@ -1,6 +1,6 @@
 """This connector fetches course catalog data from DataCamp's LMS Catalog API including courses, projects, assessments, practices, tracks, and custom tracks. It flattens nested objects and creates breakout tables for array relationships following Fivetran best practices.
-See the Technical Reference documentation (https://fivetran.com/docs/connectors/connector-sdk/technical-reference#update)
-and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details
+See the Technical Reference documentation (https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update)
+and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details
 """
 
 # Import required classes from fivetran_connector_sdk.
@@ -169,7 +169,7 @@ def handle_request_error(e: Exception, endpoint: str, attempt: int) -> bool:
         time.sleep(delay)
         return True
 
-    log.severe(f"Failed to fetch {endpoint} after {__MAX_RETRIES} attempts: {e}")
+    log.error(f"Failed to fetch {endpoint} after {__MAX_RETRIES} attempts: {e}")
     return False
 
 
@@ -186,7 +186,7 @@ def fetch_endpoint(base_url: str, endpoint: str, bearer_token: str) -> List[Any]
         List[Any]: List of records from the API endpoint
 
     Raises:
-        Exception: Logs severe errors but returns empty list on failure after all retries
+        Exception: Logs errors but returns empty list on failure after all retries
     """
     url = base_url.rstrip("/") + endpoint
     headers = {"Accept": "application/json", "Authorization": f"Bearer {bearer_token}"}
@@ -257,7 +257,7 @@ def process_endpoint(
             op.upsert(table=main_table, data=flattened_item_data)
             main_upserted += 1
         except Exception as e:
-            log.severe(f"Failed to upsert record in {main_table}: {e}")
+            log.error(f"Failed to upsert record in {main_table}", e)
 
         # Process breakout table if configured
         if breakout_config:
@@ -273,8 +273,9 @@ def process_endpoint(
                     op.upsert(table=breakout_config["table_name"], data=breakout_row)
                     breakout_upserted += 1
                 except Exception as e:
-                    log.severe(
-                        f"Failed to upsert {breakout_config['source_key']} for {main_table} {item.get('id')}: {e}"
+                    log.error(
+                        f"Failed to upsert {breakout_config['source_key']} for {main_table} {item.get('id')}",
+                        e,
                     )
 
     log.info(f"Upserted {main_upserted} records into {main_table}")
@@ -287,7 +288,7 @@ def process_endpoint(
     # Save the progress by checkpointing the state. This is important for ensuring that the sync process can resume
     # from the correct position in case of next sync or interruptions.
     # Learn more about how and where to checkpoint by reading our best practices documentation
-    # (https://fivetran.com/docs/connectors/connector-sdk/best-practices#largedatasetrecommendation).
+    # (https://fivetran.com/docs/connector-sdk/best-practices#optimizingperformancewhenhandlinglargedatasets).
     op.checkpoint(state={"last_synced_endpoint": checkpoint_key})
 
 
@@ -295,7 +296,7 @@ def schema(configuration: dict):
     """
     Define the schema function which lets you configure the schema your connector delivers.
     See the technical reference documentation for more details on the schema function:
-    https://fivetran.com/docs/connectors/connector-sdk/technical-reference#schema
+    https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#schema
     Args:
         configuration: a dictionary that holds the configuration settings for the connector.
     """
@@ -326,7 +327,7 @@ def update(configuration: dict, state: dict):
     """
      Define the update function, which is a required function, and is called by Fivetran during each sync.
     See the technical reference documentation for more details on the update function
-    https://fivetran.com/docs/connectors/connector-sdk/technical-reference#update
+    https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update
     Args:
         configuration: A dictionary containing connection details
         state: A dictionary containing state information from previous runs

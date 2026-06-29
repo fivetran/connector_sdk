@@ -1,0 +1,5 @@
+{
+  "ravendb_urls": "<YOUR_RAVENDB_CLOUD_URL>",
+  "database_name": "<YOUR_DATABASE_NAME>",
+  "certificate_base64": "<YOUR_BASE64_ENCODED_CERTIFICATE>"
+}

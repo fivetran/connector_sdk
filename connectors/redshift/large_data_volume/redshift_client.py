@@ -21,10 +21,31 @@ from table_specs import (
     PREFERRED_TS_COLUMN_NAMES,
     TIMESTAMP_TYPE_NAMES,
     CHECKPOINT_EVERY_ROWS,
+    CHUNK_SIZE,
 )  # Table specifications and constants
 
 # Global variable to hold the list of table plans used during the sync
 __TABLE_PLAN_LIST = None
+
+# Fivetran semantic type constants
+__FIVETRAN_TYPE_NAIVE_DATE = "NAIVE_DATE"
+__FIVETRAN_TYPE_NAIVE_DATETIME = "NAIVE_DATETIME"
+__FIVETRAN_TYPE_UTC_DATETIME = "UTC_DATETIME"
+__FIVETRAN_TYPE_JSON = "JSON"
+
+# Mapping from Redshift data types to Fivetran semantic types
+__REDSHIFT_TO_FIVETRAN_TYPE = {
+    "date": __FIVETRAN_TYPE_NAIVE_DATE,
+    "timestamp": __FIVETRAN_TYPE_NAIVE_DATETIME,
+    "timestamp without time zone": __FIVETRAN_TYPE_NAIVE_DATETIME,
+    "timestamp with time zone": __FIVETRAN_TYPE_UTC_DATETIME,
+    "timestamptz": __FIVETRAN_TYPE_UTC_DATETIME,
+    "super": __FIVETRAN_TYPE_JSON,
+}
+
+# Replication strategy constants
+__STRATEGY_FULL = "FULL"
+__STRATEGY_INCREMENTAL = "INCREMENTAL"
 
 
 @dataclass
@@ -40,6 +61,7 @@ class TablePlan:
         explicit_columns: Dict[str, str] - Mapping of column names to explicit Fivetran semantic types
         strategy: str - Replication strategy ('FULL' or 'INCREMENTAL')
         replication_key: Optional[str] - Name of the replication key column, or None
+        use_chunking: bool - Whether to use chunked cursor processing for this table (true) or not (false)
     """
 
     stream: str
@@ -50,6 +72,7 @@ class TablePlan:
     explicit_columns: Dict[str, str]
     strategy: str
     replication_key: Optional[str]
+    use_chunking: bool
 
 
 class _ConnectionPool:
@@ -97,7 +120,7 @@ class _ConnectionPool:
             try:
                 connection.close()
             except Exception as e:
-                log.severe(f"Error closing connection: {e}")
+                log.error("Error closing connection", e)
 
 
 def get_table_plans(configuration):
@@ -159,6 +182,20 @@ def _split_table(name, default_schema):
         schema_name, table_name = name.split(".", 1)
         return schema_name, table_name
     return (default_schema or "public"), name
+
+
+def _get_config_bool(configuration, key):
+    """
+    Parse a boolean configuration value from the configuration dictionary.
+    Configuration values are typically stored as strings, so this function
+    handles the conversion to boolean.
+    Args:
+        configuration: dict with connector configuration
+        key: the configuration key to look up
+    Returns:
+        Boolean value of the configuration setting
+    """
+    return configuration.get(key, "").lower() == "true"
 
 
 def apply_projection(cols_with_types, include, exclude):
@@ -230,12 +267,7 @@ def detect_typed_columns(selected_cols_with_types):
     This function looks for columns with specific data types (date, timestamp, timestamptz, super)
     and assigns them Fivetran semantic types for proper handling.
     Only columns that are in the selected list are considered.
-    1. date -> NAIVE_DATE
-    2. timestamp, timestamp without time zone -> NAIVE_DATETIME
-    3. timestamp with time zone, timestamptz -> UTC_DATETIME
-    4. super -> JSON
-    5. Other types are not explicitly typed and are left to default handling.
-    You can explicitly type columns here if needed.
+    Uses __REDSHIFT_TO_FIVETRAN_TYPE mapping for type conversion.
     Args:
         selected_cols_with_types: list of (column_name, data_type) tuples for selected columns
     Returns:
@@ -243,20 +275,13 @@ def detect_typed_columns(selected_cols_with_types):
     """
     explicit = {}
     for column, datatype in selected_cols_with_types:
-        # map the redshift time types to fivetran data types
         data_type = (datatype or "").lower()
-        if data_type == "date":
-            explicit[column] = "NAIVE_DATE"
-        elif data_type in ("timestamp", "timestamp without time zone"):
-            explicit[column] = "NAIVE_DATETIME"
-        elif data_type in ("timestamp with time zone", "timestamptz"):
-            explicit[column] = "UTC_DATETIME"
-        elif data_type == "super":
-            explicit[column] = "JSON"
+        if data_type in __REDSHIFT_TO_FIVETRAN_TYPE:
+            explicit[column] = __REDSHIFT_TO_FIVETRAN_TYPE[data_type]
     return explicit
 
 
-def build_select(redshift_schema, table, columns, replication_key, bookmark):
+def build_select(redshift_schema, table, columns, replication_key, bookmark, upper_bound=None):
     """
     Build a parameterized SELECT SQL query for the given table and columns.
     If a replication_key and bookmark are provided, add a WHERE clause to filter rows.
@@ -268,6 +293,7 @@ def build_select(redshift_schema, table, columns, replication_key, bookmark):
         columns: list of column names to select
         replication_key: name of the replication key column, or None
         bookmark: last synced value of the replication key, or None
+        upper_bound: optional upper bound for the replication_key (for chunking)
     Returns:
         A tuple of (sql_query, params) where sql_query is the parameterized SQL string
         and params is a list of parameters to bind to the query.
@@ -280,14 +306,71 @@ def build_select(redshift_schema, table, columns, replication_key, bookmark):
     sql = f'SELECT {cols_sql} FROM "{redshift_schema}"."{table}"'
 
     params = []
+    where_conditions = []
     if replication_key and bookmark is not None:
         # If a bookmark is provided, add a WHERE clause to filter rows greater than the bookmark
-        sql += f' WHERE "{replication_key}" > %s'
+        where_conditions.append(f'"{replication_key}" > %s')
         params.append(bookmark)
+    if replication_key and upper_bound is not None:
+        # If an upper bound is provided, add it to the WHERE clause for chunking
+        where_conditions.append(f'"{replication_key}" <= %s')
+        params.append(upper_bound)
+
+    if where_conditions:
+        sql += " WHERE " + " AND ".join(where_conditions)
+
     if replication_key:
         # Always order by the replication key to ensure consistent ordering and data integrity
         sql += f' ORDER BY "{replication_key}"'
     return sql, params
+
+
+def _declare_cursor(cursor, table_cursor, sql_query, params):
+    """
+    Declare a server-side cursor for the given SQL query.
+    This helper centralizes cursor declaration logic and ensures consistent logging.
+    Args:
+        cursor: database cursor object
+        table_cursor: name for the cursor to be declared
+        sql_query: SQL query string for the cursor
+        params: query parameters to bind
+    """
+    cursor.execute("BEGIN")
+    cursor.execute(f"DECLARE {table_cursor} NO SCROLL CURSOR FOR {sql_query}", params)
+    log.info(f"Successfully declared cursor {table_cursor}")
+
+
+def _find_chunk_upper_bound(connection, plan, replication_key, bookmark, chunk_size):
+    """
+    Find the replication_key value at approximately row chunk_size from the current bookmark.
+    This provides a safe boundary to end the chunk, ensuring all rows with the boundary
+    value are included in the same chunk (no data loss at boundaries).
+
+    Args:
+        connection: Redshift connection object
+        plan: TablePlan dataclass instance with sync details
+        replication_key: name of the replication key column
+        bookmark: current bookmark value (last synced replication_key value)
+        chunk_size: target number of rows per chunk
+
+    Returns:
+        The replication_key value at the chunk boundary, or None if no more rows exist.
+    """
+    # Build WHERE clause conditionally based on bookmark presence
+    where_clause = f'WHERE "{replication_key}" > %s' if bookmark is not None else ""
+    sql = f"""
+        SELECT "{replication_key}"
+        FROM "{plan.schema}"."{plan.table}"
+        {where_clause}
+        ORDER BY "{replication_key}"
+        OFFSET %s LIMIT 1
+    """
+    params = [bookmark, chunk_size - 1] if bookmark is not None else [chunk_size - 1]
+
+    with connection.cursor() as cursor:
+        cursor.execute(sql, params)
+        row = cursor.fetchone()
+        return row[0] if row else None
 
 
 def fetch_metadata(connection, table_tuples):
@@ -437,23 +520,6 @@ def _prepare_table_identity(spec, redshift_schema):
     return table_schema, table, stream
 
 
-def _select_columns_for_spec(spec, cols_with_types):
-    """
-    Apply the include/exclude projections to determine selected columns for a table spec.
-    Args:
-        spec: dict with optional 'include' and 'exclude' lists
-        cols_with_types: list of (column_name, data_type) tuples
-    Returns:
-        List of selected column names after applying projections
-    """
-    # List of columns to include
-    include = spec.get("include") or None
-    # List of columns to exclude
-    exclude = spec.get("exclude") or None
-    # Apply projection logic and return selected columns
-    return apply_projection(cols_with_types=cols_with_types, include=include, exclude=exclude)
-
-
 def _determine_strategy_and_replication_key(spec, cols_with_types, enable_complete_resync):
     """
     Determine the replication strategy and replication key for a table spec.
@@ -473,22 +539,22 @@ def _determine_strategy_and_replication_key(spec, cols_with_types, enable_comple
     table_name = spec.get("name")
 
     # Explicit FULL: never infer, ignore any provided replication key
-    if strategy == "FULL" or enable_complete_resync:
-        return "FULL", None
+    if strategy == __STRATEGY_FULL or enable_complete_resync:
+        return __STRATEGY_FULL, None
 
     # Explicit INCREMENTAL: require a replication key (provided or inferred)
-    if strategy == "INCREMENTAL":
+    if strategy == __STRATEGY_INCREMENTAL:
         replication_key = provided_replication_key or infer_replication_key(cols_with_types)
         if not replication_key:
             log.warning(f"{table_name}: no replication key found; falling back to FULL resync.")
-            return "FULL", None
-        return "INCREMENTAL", replication_key
+            return __STRATEGY_FULL, None
+        return __STRATEGY_INCREMENTAL, replication_key
 
     # Strategy not specified: infer behavior based on key presence/inference
     replication_key = provided_replication_key or infer_replication_key(cols_with_types)
     if replication_key:
-        return "INCREMENTAL", replication_key
-    return "FULL", None
+        return __STRATEGY_INCREMENTAL, replication_key
+    return __STRATEGY_FULL, None
 
 
 def _build_plan(
@@ -499,6 +565,7 @@ def _build_plan(
     table_metadata,
     selected_cols_with_types,
     enable_complete_resync,
+    auto_schema_detection,
 ):
     """
     Build a TablePlan dataclass instance for a given table specification.
@@ -510,6 +577,7 @@ def _build_plan(
         table_metadata: dict with metadata including primary keys
         selected_cols_with_types: list of (column_name, data_type) tuples for selected columns
         enable_complete_resync: bool, if True, forces FULL resync for all tables
+        auto_schema_detection: bool, if True, auto schema detection is enabled
     Returns:
         A TablePlan dataclass instance with all relevant details for syncing the table.
     """
@@ -526,6 +594,14 @@ def _build_plan(
     # List of selected column names required for building the SQL query
     selected_columns = [column for column, _ in selected_cols_with_types]
 
+    # Determine if chunking should be enabled for this table
+    if auto_schema_detection:
+        # For auto schema detection, use the global enable_chunking flag
+        use_chunking = False
+    else:
+        # For manual schema, If the table spec has use_chunking defined, use that value
+        use_chunking = spec.get("use_chunking", False)
+
     # Construct and return the TablePlan dataclass instance with all relevant details
     plan = TablePlan(
         stream=stream,
@@ -536,6 +612,7 @@ def _build_plan(
         explicit_columns=explicit_cols,
         strategy=strategy,
         replication_key=replication_key,
+        use_chunking=use_chunking,
     )
     return plan
 
@@ -554,11 +631,11 @@ def build_table_plans(connection, configuration):
     """
     # Extract configuration parameters
     redshift_schema = configuration["redshift_schema"]
-    auto_schema_detection = configuration.get("auto_schema_detection", "").lower() == "true"
+    auto_schema_detection = _get_config_bool(configuration, "auto_schema_detection")
     log.info(f"Auto schema detection is {'enabled' if auto_schema_detection else 'disabled'}.")
 
     # If enabled, there will be no incremental sync for any table. All the tables will be fully synced everytime.
-    enable_complete_resync = configuration.get("enable_complete_resync", "").lower() == "true"
+    enable_complete_resync = _get_config_bool(configuration, "enable_complete_resync")
     log.info(f"Complete resync is {'enabled' if enable_complete_resync else 'disabled'}.")
 
     # Load base table specifications and fetch metadata from Redshift
@@ -586,8 +663,11 @@ def build_table_plans(connection, configuration):
             log.warning(f"{stream}: no columns discovered; skipping.")
             continue
 
-        selected_cols_with_types = _select_columns_for_spec(
-            spec=spec, cols_with_types=cols_with_types
+        # Apply include/exclude projections to select columns
+        selected_cols_with_types = apply_projection(
+            cols_with_types=cols_with_types,
+            include=spec.get("include") or None,
+            exclude=spec.get("exclude") or None,
         )
         if not selected_cols_with_types:
             log.warning(f"{stream}: no columns selected after projection; skipping.")
@@ -602,6 +682,7 @@ def build_table_plans(connection, configuration):
             table_metadata=table_metadata,
             selected_cols_with_types=selected_cols_with_types,
             enable_complete_resync=enable_complete_resync,
+            auto_schema_detection=auto_schema_detection,
         )
         plans.append(plan)
 
@@ -629,13 +710,121 @@ def _checkpoint(state, stream, replication_key, bookmark):
     # Save the progress by checkpointing the state. This is important for ensuring that the sync process can resume
     # from the correct position in case of next sync or interruptions.
     # Learn more about how and where to checkpoint by reading our best practices documentation
-    # (https://fivetran.com/docs/connectors/connector-sdk/best-practices#largedatasetrecommendation).
+    # (https://fivetran.com/docs/connector-sdk/best-practices#optimizingperformancewhenhandlinglargedatasets).
     op.checkpoint(state=state)
+
+
+def sync_table_chunked_cursors(connection, plan, state, bookmark, batch_size):
+    """
+    Sync a table using chunked cursors to avoid server side cursor memory limits.
+    This function processes data in chunks by creating smaller cursors based on replication_key ranges.
+    Each chunk is bounded by finding the replication_key value at approximately CHUNK_SIZE rows,
+    ensuring all rows with the boundary value are included in the same chunk (no data loss).
+
+    Args:
+        connection: Redshift connection object
+        plan: TablePlan dataclass instance with sync details
+        state: current state dictionary
+        bookmark: last synced value of the replication key
+        batch_size: number of rows to fetch per batch
+    """
+    replication_key = plan.replication_key
+    current_bookmark = bookmark
+    total_seen = 0
+    chunk_number = 0
+
+    log.info(f"{plan.stream}: Using chunked cursors with target chunk size of {CHUNK_SIZE} rows")
+
+    # Process data in chunks until all rows are synced
+    while True:
+        # Find the upper bound for this chunk (replication_key value at ~CHUNK_SIZE rows)
+        upper_bound = _find_chunk_upper_bound(
+            connection=connection,
+            plan=plan,
+            replication_key=replication_key,
+            bookmark=current_bookmark,
+            chunk_size=CHUNK_SIZE,
+        )
+
+        chunk_number += 1
+
+        # Build query for this chunk
+        # If upper_bound exists, use it to bound the chunk (inclusive)
+        if upper_bound is not None:
+            log.info(
+                f"{plan.stream}: Processing chunk {chunk_number} "
+                f"(bookmark: {current_bookmark}, upper_bound: {upper_bound})"
+            )
+            chunk_query, chunk_params = build_select(
+                redshift_schema=plan.schema,
+                table=plan.table,
+                columns=plan.selected_columns,
+                replication_key=replication_key,
+                bookmark=current_bookmark,
+                upper_bound=upper_bound,
+            )
+        else:
+            # If upper_bound is None, there are fewer than CHUNK_SIZE rows remaining - process all of them
+            log.info(
+                f"{plan.stream}: Processing final chunk {chunk_number} "
+                f"(bookmark: {current_bookmark}, no upper_bound - fetching all remaining rows)"
+            )
+            chunk_query, chunk_params = build_select(
+                redshift_schema=plan.schema,
+                table=plan.table,
+                columns=plan.selected_columns,
+                replication_key=replication_key,
+                bookmark=current_bookmark,
+            )
+
+        with connection.cursor() as cursor:
+            table_cursor = f"{plan.table}_chunk_{chunk_number}_cursor"
+            _declare_cursor(cursor, table_cursor, chunk_query, chunk_params)
+
+            # Upsert records in batches and update state with bookmarks
+            # Column names are extracted from cursor.description after first FETCH
+            state, chunk_last_bookmark, chunk_seen = upsert_record(
+                cursor=cursor,
+                plan=plan,
+                state=state,
+                replication_key=replication_key,
+                last_bookmark=current_bookmark,
+                batch_size=batch_size,
+                seen=0,
+                table_cursor=table_cursor,
+            )
+            cursor.execute("COMMIT")
+
+            total_seen += chunk_seen
+
+            # Update bookmark based on what was processed
+            if upper_bound is not None:
+                # Use upper_bound as bookmark (safe boundary - all rows with this value processed)
+                current_bookmark = upper_bound
+            else:
+                # Final chunk - use the last bookmark from actual data processed
+                current_bookmark = chunk_last_bookmark
+
+            # Checkpoint after each chunk
+            _checkpoint(state, plan.stream, replication_key, current_bookmark)
+
+            log.info(
+                f"{plan.stream}: Chunk {chunk_number} complete, {chunk_seen} row(s) processed"
+            )
+
+            # Exit conditions:
+            # 1. This was the final chunk (no upper_bound) - we've processed all remaining rows
+            # 2. No rows were processed in this chunk - no more data
+            if upper_bound is None or chunk_seen == 0:
+                break
+
+    log.info(
+        f"{plan.stream}: Chunked cursor sync complete, {total_seen} row(s) processed in {chunk_number} chunk(s)."
+    )
 
 
 def upsert_record(
     cursor,
-    column_names,
     plan,
     state,
     replication_key,
@@ -648,9 +837,10 @@ def upsert_record(
     Upsert records from the cursor into the destination table based on the provided TablePlan.
     This function fetches rows in batches, forms record dictionaries, and performs upsert operations.
     It also updates the state with the latest bookmark for incremental syncs.
+    Column names are extracted from cursor.description after the first FETCH, eliminating the need
+    for a separate metadata query.
     Args:
         cursor: database cursor with executed query
-        column_names: list of column names corresponding to cursor results
         plan: TablePlan dataclass instance with sync details
         state: current state dictionary
         replication_key: name of the replication key column, or None
@@ -661,6 +851,8 @@ def upsert_record(
     Returns:
         Updated state dictionary, last bookmark value, and total rows seen
     """
+    column_names = None
+
     while True:
         # Fetch rows in batches to handle large datasets efficiently
         cursor.execute(f"FETCH {batch_size} FROM {table_cursor}")
@@ -669,6 +861,10 @@ def upsert_record(
         if not rows:
             # No more rows to fetch; exit the loop
             break
+
+        # Extract column names from cursor.description after first FETCH
+        if column_names is None:
+            column_names = [desc[0] for desc in cursor.description]
 
         for row in rows:
             # Form a record dictionary mapping column names to their corresponding values
@@ -694,21 +890,19 @@ def upsert_record(
     return state, last_bookmark, seen
 
 
-def sync_table(connection, configuration, plan, state):
+def sync_table_server_side_cursor(connection, replication_key, plan, state, bookmark, batch_size):
     """
-    Sync a single table based on the provided TablePlan.
+    Sync a single table using server-side cursors.
     This function handles both full and incremental syncs, applying the appropriate logic based on the plan.
     It fetches data in batches, upserts records into the destination, and updates the state with bookmarks.
     Args:
         connection: Redshift connection object
-        configuration: dict with connector configuration
+        replication_key: name of the replication key column, or None
         plan: TablePlan dataclass instance with sync details
         state: current state dictionary
+        bookmark: last synced value of the replication key
+        batch_size: number of rows to fetch per batch
     """
-    replication_key = plan.replication_key
-    prev_state = state.get(plan.stream) or {}
-    bookmark = prev_state.get("bookmark") if replication_key else None
-
     # Build the SQL query and parameters for the SELECT statement
     sql_query, params = build_select(
         redshift_schema=plan.schema,
@@ -718,29 +912,19 @@ def sync_table(connection, configuration, plan, state):
         bookmark=bookmark,
     )
 
-    # Extract batch size from configuration
-    # The batch size determines how many rows to fetch and process in each iteration
-    batch_size = int(configuration["batch_size"])
     # Initialize counter to track number of rows processed
     seen = 0
     # Initialize last_bookmark to the current bookmark value
     last_bookmark = bookmark
 
     with connection.cursor() as cursor:
-
+        # Declare the server-side cursor
         table_cursor = f"{plan.table}_cursor"
-        cursor.execute("BEGIN")
-        cursor.execute(f"DECLARE {table_cursor} NO SCROLL CURSOR FOR {sql_query}", params)
-        log.warning(f"Successfully declared cursor {table_cursor}")
-
-        # Extract column names from cursor description
-        cursor.execute(sql_query + " LIMIT 0")
-        column_names = [data[0] for data in cursor.description]
+        _declare_cursor(cursor, table_cursor, sql_query, params)
 
         # Upsert records in batches and update state with bookmarks
         state, last_bookmark, seen = upsert_record(
             cursor=cursor,
-            column_names=column_names,
             plan=plan,
             state=state,
             replication_key=replication_key,
@@ -750,9 +934,51 @@ def sync_table(connection, configuration, plan, state):
             table_cursor=table_cursor,
         )
 
+        # Commit the transaction
+        cursor.execute("COMMIT")
+
     # Final checkpoint after completing the sync for the table
     _checkpoint(state, plan.stream, replication_key, last_bookmark)
     log.info(f"{plan.stream}: sync complete, {seen} row(s) processed.")
+
+
+def sync_table(connection, configuration, plan, state):
+    """
+    Sync a single table based on the provided TablePlan.
+    This function handles both full and incremental syncs, applying the appropriate logic based on the plan.
+    It fetches data in batches, upserts records into the destination, and updates the state with bookmarks.
+    Supports both standard and chunked cursor processing based on the plan configuration.
+    Args:
+        connection: Redshift connection object
+        configuration: dict with connector configuration
+        plan: TablePlan dataclass instance with sync details
+        state: current state dictionary
+    """
+    replication_key = plan.replication_key
+    prev_state = state.get(plan.stream) or {}
+    bookmark = prev_state.get("bookmark") if replication_key else None
+    batch_size = int(configuration["batch_size"])
+
+    # Use the appropriate sync method based on whether chunking is enabled for the table
+    if plan.use_chunking and replication_key:
+        log.info(f"{plan.stream}: Using chunked cursor processing")
+        sync_table_chunked_cursors(
+            connection=connection,
+            plan=plan,
+            state=state,
+            bookmark=bookmark,
+            batch_size=batch_size,
+        )
+    else:
+        log.info(f"{plan.stream}: Using server-side cursor processing")
+        sync_table_server_side_cursor(
+            connection=connection,
+            replication_key=replication_key,
+            plan=plan,
+            state=state,
+            bookmark=bookmark,
+            batch_size=batch_size,
+        )
 
 
 def _run_plan_with_pool(plan, pool, configuration, state):

@@ -59,7 +59,7 @@ jobs:
           FIVETRAN_API_KEY: ${{ secrets.FIVETRAN_API_KEY }}
           FIVETRAN_DESTINATION: ${{ vars.FIVETRAN_DEV_DESTINATION }}
           FIVETRAN_CONNECTION: ${{ vars.HELLO_DEV }}
-        # Specify a supported Python version for the deploy command; defaults to 3.12 if not set.
+        # Specify a supported Python version for the deploy command; defaults to 3.13 if not set.
         run: |
           echo "Deploying connector"
           fivetran deploy --api-key $FIVETRAN_API_KEY --destination $FIVETRAN_DESTINATION --connection $FIVETRAN_CONNECTION --configuration configuration.json --python-version 3.11 --force

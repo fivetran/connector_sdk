@@ -5,6 +5,18 @@ This example demonstrates how to use certificates to authenticate with APIs usin
 - retrieving certificates from cloud storage.
 
 
+## Getting started
+Refer to the [Connector SDK Setup Guide](https://fivetran.com/docs/connector-sdk/setup-guide) to get started.
+
+To initialize a new Connector SDK project using this connector as a starting point, run:
+
+```bash
+fivetran init <project-path> --template examples/common_patterns_for_connectors/authentication/certificate
+```
+`fivetran init` initializes a new Connector SDK project by setting up the project structure, configuration files, and a connector you can run immediately with `fivetran debug`.
+If you do not specify a project path, Fivetran creates the project in your current directory.
+For more information on `fivetran init`, refer to the [Connector SDK `init` documentation](https://fivetran.com/docs/connector-sdk/setup-guide#createyourcustomconnector).
+
 ### Using Base64 Encoded Strings
 
 The [`connector.py`](./using_base64_encoded_certificate/connector.py) script demonstrates how to use base64 encoded strings for certificate-based authentication. The script includes functions to decode the certificate and key and use them to authenticate API requests.

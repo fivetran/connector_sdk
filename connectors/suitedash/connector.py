@@ -1,6 +1,6 @@
 """This is an example to show how to sync CRM data from SuiteDash's API by using Connector SDK. You need to provide your SuiteDash Public ID and Secret Key for this example to work.
-See the Technical Reference documentation (https://fivetran.com/docs/connectors/connector-sdk/technical-reference#update)
-and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details
+See the Technical Reference documentation (https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update)
+and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details
 """
 
 # Import required classes from fivetran_connector_sdk
@@ -216,7 +216,7 @@ def schema(configuration: dict):
     """
     Define the schema function which lets you configure the schema your connector delivers.
     See the technical reference documentation for more details on the schema function:
-    https://fivetran.com/docs/connectors/connector-sdk/technical-reference#schema
+    https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#schema
     Args:
         configuration: a dictionary that holds the configuration settings for the connector.
     """
@@ -274,7 +274,7 @@ def make_api_request(url: str, headers: dict, params=None) -> Any:
 
         except requests.exceptions.RequestException as e:
             if attempt == __MAX_RETRIES - 1:  # Last attempt
-                log.severe(f"API request failed after {__MAX_RETRIES} attempts: {str(e)}")
+                log.error(f"API request failed after {__MAX_RETRIES} attempts", e)
                 raise RuntimeError(f"Failed to fetch data from SuiteDash API: {str(e)}")
 
             # Calculate delay with exponential backoff
@@ -367,7 +367,7 @@ def sync_endpoint_with_pagination(
         response_data = make_api_request(url, headers, params)
 
         if not response_data.get("success", False):
-            log.severe(f"API returned error: {response_data.get('message', 'Unknown error')}")
+            log.error(f"API returned error: {response_data.get('message', 'Unknown error')}")
             break
 
         records = response_data.get("data", [])
@@ -407,7 +407,7 @@ def sync_endpoint_with_pagination(
     # Save the progress by checkpointing the state. This is important for ensuring that the sync process can resume
     # from the correct position in case of next sync or interruptions.
     # Learn more about how and where to checkpoint by reading our best practices documentation
-    # (https://fivetran.com/docs/connectors/connector-sdk/best-practices#largedatasetrecommendation).
+    # (https://fivetran.com/docs/connector-sdk/best-practices#optimizingperformancewhenhandlinglargedatasets).
     op.checkpoint(state)
 
     # Build and write final summary log
@@ -428,7 +428,7 @@ def update(configuration: dict, state: dict):
     """
     Define the update function, which is a required function, and is called by Fivetran during each sync.
     See the technical reference documentation for more details on the update function
-    https://fivetran.com/docs/connectors/connector-sdk/technical-reference#update
+    https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update
     Args:
         configuration: A dictionary containing connection details
         state: A dictionary containing state information from previous runs

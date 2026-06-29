@@ -49,7 +49,7 @@ This guide provides a structured approach to developing Fivetran connectors usin
 #### Step 2: Set Up Your Development Environment
 ```bash
 # Ensure you have the required tools
-python --version  # Should be 3.9-3.12
+python --version  # Should be 3.10-3.13
 pip install fivetran-connector-sdk
 ```
 
@@ -78,7 +78,7 @@ Follow the prompt templates provided in the Claude AI Prompt Templates section b
 
 #### **Learning Resources**
 - **Claude Documentation**: [help.anthropic.com](https://help.anthropic.com)
-- **Fivetran SDK Examples**: [GitHub Repository](https://github.com/fivetran/fivetran_connector_sdk/tree/main/examples)
+- **Fivetran SDK Examples**: [GitHub Repository](https://github.com/fivetran/connector_sdk/tree/main/examples)
 - **Community Support**: [Fivetran Community Forum](https://community.fivetran.com)
 
 ### Security and Privacy
@@ -98,7 +98,7 @@ Follow the prompt templates provided in the Claude AI Prompt Templates section b
 ## Prerequisites
 
 ### System Requirements
-- **Python**: 3.9-3.12 (as specified in [Fivetran SDK Requirements](https://github.com/fivetran/fivetran_connector_sdk/blob/main/README.md#requirements))
+- **Python**: 3.10-3.13 (as specified in [Fivetran SDK Requirements](https://github.com/fivetran/connector_sdk/blob/main/README.md#requirements))
 - **Operating System**: 
   - Windows 10 or later
   - macOS 13 (Ventura) or later
@@ -218,8 +218,8 @@ log.info(f'Processing batch {batch_number}, cursor: {current_cursor}')
 # WARNING - Potential issues, rate limits
 log.warning(f'Rate limit approaching: {remaining_calls} calls left')
 
-# SEVERE - Errors, failures, critical issues
-log.severe(f"API request failed: {error_details}")
+# ERROR - Errors, failures, critical issues
+log.error(f"API request failed: {error_details}")
 ```
 
 ## Configuration Management
@@ -318,7 +318,7 @@ try:
     response = requests.get(url, headers=headers)
     response.raise_for_status()
 except requests.exceptions.RequestException as e:
-    log.severe(f"API request failed: {e}")
+    log.error(f"API request failed: {e}")
     raise
 
 # Data Validation
@@ -360,7 +360,7 @@ def retry_on_failure(max_retries=3, delay=1):
 Task: Create a Fivetran connector for [API_NAME] that fetches [DATA_TYPE]
 
 Technical Details:
-- Language: Python 3.9+
+- Language: Python 3.10+
 - Framework: Fivetran Connector SDK
 - API: [API_ENDPOINT]
 - Data Target: [TABLE_NAME] table
@@ -464,12 +464,12 @@ if remaining_calls < 10:
 
 ### Official Documentation
 - [Fivetran Connector SDK Documentation](https://fivetran.com/docs/connector-sdk)
-- [SDK Examples Repository](https://github.com/fivetran/fivetran_connector_sdk/tree/main/examples)
+- [SDK Examples Repository](https://github.com/fivetran/connector_sdk/tree/main/examples)
 - [Technical Reference](https://fivetran.com/docs/connector-sdk/technical-reference)
 - [Best Practices Guide](https://fivetran.com/docs/connector-sdk/best-practices)
 
 ### Community Resources
-- [GitHub Issues](https://github.com/fivetran/fivetran_connector_sdk/issues)
+- [GitHub Issues](https://github.com/fivetran/connector_sdk/issues)
 
 ## Important Notes
 
@@ -493,4 +493,4 @@ if remaining_calls < 10:
 
 **Last Updated**: June 2025
 **SDK Version**: Latest
-**Python Compatibility**: 3.9-3.12 
+**Python Compatibility**: 3.10-3.13 

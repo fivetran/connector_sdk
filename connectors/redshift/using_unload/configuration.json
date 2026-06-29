@@ -1,0 +1,17 @@
+{
+  "redshift_host": "<YOUR_REDSHIFT_HOST>",
+  "redshift_port": "<YOUR_REDSHIFT_PORT>",
+  "redshift_database": "<YOUR_REDSHIFT_DATABASE>",
+  "redshift_user": "<YOUR_REDSHIFT_USER>",
+  "redshift_password": "<YOUR_REDSHIFT_PASSWORD>",
+  "redshift_schema": "<YOUR_REDSHIFT_SCHEMA>",
+  "s3_bucket": "<YOUR_S3_BUCKET_NAME>",
+  "s3_region": "<YOUR_S3_BUCKET_REGION>",
+  "s3_prefix": "<YOUR_S3_BUCKET_PREFIX>",
+  "iam_role": "<YOUR_REDSHIFT_IAM_ROLE_ARN>",
+  "aws_access_key_id": "<YOUR_AWS_ACCESS_KEY>",
+  "aws_secret_access_key": "<YOUR_AWS_SECRET_KEY>",
+  "auto_schema_detection": "<ENABLE_OR_DISABLE_AUTO_SCHEMA_DETECTION>",
+  "enable_complete_resync": "<ENABLE_OR_DISABLE_FULL_RESYNC_DURING_EACH_SYNC>",
+  "max_parallel_workers": "<YOUR_MAX_PARALLEL_WORKERS>"
+}

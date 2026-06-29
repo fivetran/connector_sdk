@@ -1,2 +1,0 @@
-library-required==version
-# Please do not add this file if there are no dependencies required by your connector.

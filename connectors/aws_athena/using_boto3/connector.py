@@ -1,8 +1,8 @@
 # This is a simple example for how to work with the fivetran_connector_sdk module.
 # This is an example to show how we can sync records from AWS Athena via Connector SDK using boto3.
 # You need to provide your credentials for this example to work.
-# See the Technical Reference documentation (https://fivetran.com/docs/connectors/connector-sdk/technical-reference#update)
-# and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details
+# See the Technical Reference documentation (https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update)
+# and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details
 import boto3
 import json  # Import the json module to handle JSON data.
 
@@ -20,7 +20,7 @@ NEXT_TOKEN = "NextToken"
 
 # Define the schema function, which lets you configure the schema your connector delivers.
 # See the technical reference documentation for more details on the schema function:
-# https://fivetran.com/docs/connectors/connector-sdk/technical-reference#schema
+# https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#schema
 # The schema function takes one parameter:
 # - configuration: a dictionary that holds the configuration settings for the connector.
 def schema(configuration: dict):
@@ -29,10 +29,7 @@ def schema(configuration: dict):
             "table": "customers",  # Name of the table in the destination.
             "primary_key": ["customer_id"],  # Primary key column(s) for the table.
             "columns": {  # Define the columns and their data types.
-                "customer_id": "STRING",  # Integer column for the customer_id.
-                "first_name": "STRING",  # String column for the first name.
-                "last_name": "STRING",  # String column for the last name.
-                "email": "STRING",  # String column for the email.
+                "customer_id": "STRING",  # String column for the first name.
             },
         }
     ]
@@ -92,7 +89,7 @@ def get_query_results(athena_client, query_execution_id):
 
 # Define the update function, which is a required function, and is called by Fivetran during each sync.
 # See the technical reference documentation for more details on the update function
-# https://fivetran.com/docs/connectors/connector-sdk/technical-reference#update
+# https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update
 # The function takes two parameters:
 # - configuration: a dictionary that contains any secrets or payloads you configure when deploying the connector
 # - state: a dictionary that contains whatever state you have chosen to checkpoint during the prior sync.
@@ -124,7 +121,7 @@ def update(configuration: dict, state: dict):
         # Save the progress by checkpointing the state. This is important for ensuring that the sync process can resume
         # from the correct position in case of next sync or interruptions.
         # Learn more about how and where to checkpoint by reading our best practices documentation
-        # (https://fivetran.com/docs/connectors/connector-sdk/best-practices#largedatasetrecommendation).
+        # (https://fivetran.com/docs/connector-sdk/best-practices#optimizingperformancewhenhandlinglargedatasets).
         op.checkpoint(state)
     else:
         print(f"Query failed with status: {status}")

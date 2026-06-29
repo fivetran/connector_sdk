@@ -12,7 +12,7 @@ The connector is designed to handle large datasets efficiently through streaming
 
 ## Requirements
 
-- [Supported Python versions](https://github.com/fivetran/fivetran_connector_sdk/blob/main/README.md#requirements)   
+- [Supported Python versions](https://github.com/fivetran/connector_sdk/blob/main/README.md#requirements)   
 - Operating system:
   - Windows: 10 or later (64-bit only)
   - macOS: 13 (Ventura) or later (Apple Silicon [arm64] or Intel [x86_64])
@@ -20,7 +20,18 @@ The connector is designed to handle large datasets efficiently through streaming
 
 ## Getting started
 
-Refer to the [Setup Guide](https://fivetran.com/docs/connectors/connector-sdk/setup-guide) to get started.
+Refer to the [Connector SDK Setup Guide](https://fivetran.com/docs/connector-sdk/setup-guide) to get started.
+
+To initialize a new Connector SDK project using this connector as a starting point, run:
+
+```bash
+fivetran init <project-path> --template connectors/documentdb
+```
+`fivetran init` initializes a new Connector SDK project by setting up the project structure, configuration files, and a connector you can run immediately with `fivetran debug`.
+If you do not specify a project path, Fivetran creates the project in your current directory.
+For more information on `fivetran init`, refer to the [Connector SDK `init` documentation](https://fivetran.com/docs/connector-sdk/setup-guide#createyourcustomconnector).
+
+> Note: Ensure you have updated the `configuration.json` file with the necessary parameters before running `fivetran debug`. See the [Configuration file](#configuration-file) section for details on the required configuration parameters.
 
 ## Features
 
@@ -119,9 +130,6 @@ This connector creates the following tables in your destination:
 - Primary Key: `_id`
 - Columns: 
   - `_id` (STRING): Document unique identifier
-  - `name` (STRING): User name
-  - `email` (STRING): User email address
-  - `status` (STRING): User status (e.g., active, inactive)
   - `created_at` (UTC_DATETIME): Document creation timestamp
   - `updated_at` (UTC_DATETIME): Document last update timestamp
   - `metadata` (JSON): Additional user metadata as JSON object
@@ -130,10 +138,6 @@ This connector creates the following tables in your destination:
 - Primary Key: `_id`
 - Columns:
   - `_id` (STRING): Document unique identifier
-  - `user_id` (STRING): Reference to user who placed the order
-  - `order_number` (STRING): Order identifier/number
-  - `total_amount` (FLOAT): Order total amount
-  - `status` (STRING): Order status (e.g., pending, completed, cancelled)
   - `created_at` (UTC_DATETIME): Order creation timestamp
   - `updated_at` (UTC_DATETIME): Order last update timestamp
   - `items` (JSON): Order items as JSON array
@@ -153,9 +157,6 @@ Example document structure:
 ```json
 {
   "_id": ObjectId("..."),
-  "name": "John Doe",
-  "email": "john@example.com",
-  "status": "active",
   "created_at": ISODate("2023-01-01T00:00:00Z"),
   "updated_at": ISODate("2023-01-01T00:00:00Z"),
   "metadata": {"source": "web"}

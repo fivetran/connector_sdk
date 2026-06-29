@@ -1,0 +1,4 @@
+{
+  "dgraph_url": "<YOUR_DGRAPH_GRAPHQL_ENDPOINT_URL>",
+  "api_key": "<YOUR_DGRAPH_API_KEY_OR_AUTH_TOKEN>"
+}

@@ -1,12 +1,12 @@
 # **SSH Tunnel with Password-Based Authentication**
 
-**Connector Overview**
+## **Connector Overview**
 
 This example demonstrates how to connect to an SSH server using password-based authentication with the Fivetran Connector SDK. The connector securely establishes an SSH session to a remote EC2 instance running the fivetran-api-playground server and facilitates data interaction over the SSH channel. This setup uses passwords for authentication.
 
 ## **Requirements**
 
-* [Supported Python versions](https://github.com/fivetran/fivetran_connector_sdk/blob/main/README.md#requirements)   
+* [Supported Python versions](https://github.com/fivetran/connector_sdk/blob/main/README.md#requirements)   
 * Operating system:
   * Windows: 10 or later (64-bit only)
   * macOS: 13 (Ventura) or later (Apple Silicon [arm64] or Intel [x86_64])
@@ -14,7 +14,18 @@ This example demonstrates how to connect to an SSH server using password-based a
 
 ## **Getting Started**
 
-Refer to the [Setup Guide](https://fivetran.com/docs/connectors/connector-sdk/setup-guide) to get started.
+Refer to the [Connector SDK Setup Guide](https://fivetran.com/docs/connector-sdk/setup-guide) to get started.
+
+To initialize a new Connector SDK project using this connector as a starting point, run:
+
+```bash
+fivetran init <project-path> --template examples/common_patterns_for_connectors/ssh_tunnels/password_based_authentication
+```
+`fivetran init` initializes a new Connector SDK project by setting up the project structure, configuration files, and a connector you can run immediately with `fivetran debug`.
+If you do not specify a project path, Fivetran creates the project in your current directory.
+For more information on `fivetran init`, refer to the [Connector SDK `init` documentation](https://fivetran.com/docs/connector-sdk/setup-guide#createyourcustomconnector).
+
+> Note: Ensure you have updated the `configuration.json` file with the necessary parameters before running `fivetran debug`. See the [Configuration file](#configuration-file) section for details on the required configuration parameters.
 
 ## **Features**
 

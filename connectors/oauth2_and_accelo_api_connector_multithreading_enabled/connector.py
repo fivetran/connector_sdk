@@ -7,8 +7,8 @@ Multithreading helps to make api calls in parallel to pull data faster.
 It is also an example of using OAuth 2.0 client credentials flow.
 Requires Accelo OAuth credentials to be passed in to work.
 Refer to the Multithreading Guidelines in api_threading_utils.py
-See the Technical Reference documentation (https://fivetran.com/docs/connectors/connector-sdk/technical-reference#update)
-and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details
+See the Technical Reference documentation (https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update)
+and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details
 """
 
 import json
@@ -68,7 +68,7 @@ def get_access_token(client_id, client_secret, deployment):
         log.info("Access token obtained successfully")
         return response.json()["access_token"]
     else:
-        log.severe(f"Failed to obtain access token: {response.text}")
+        log.error(f"Failed to obtain access token: {response.text}")
         raise Exception("Failed to obtain access token")
 
 
@@ -93,7 +93,7 @@ def update(configuration: dict, state: dict):
     deployment = configuration.get("deployment")
 
     if not all([client_id, client_secret, deployment]):
-        log.severe("Missing required configuration parameters")
+        log.error("Missing required configuration parameters")
         return
 
     try:
@@ -115,7 +115,7 @@ def update(configuration: dict, state: dict):
         # Save the progress by checkpointing the state. This is important for ensuring that the sync process can resume
         # from the correct position in case of next sync or interruptions.
         # Learn more about how and where to checkpoint by reading our best practices documentation
-        # (https://fivetran.com/docs/connectors/connector-sdk/best-practices#largedatasetrecommendation).
+        # (https://fivetran.com/docs/connector-sdk/best-practices#optimizingperformancewhenhandlinglargedatasets).
         op.checkpoint(thread_local_state.state)
 
         update_duration = time.time() - update_start_time
@@ -123,7 +123,7 @@ def update(configuration: dict, state: dict):
             f"Update process completed. Total time: {update_duration:.2f} seconds. Final state: {thread_local_state.state}"
         )
     except Exception as e:
-        log.severe(f"Update process failed: {str(e)}")
+        log.error("Update process failed", e)
 
 
 def sync_entity(
@@ -189,7 +189,7 @@ def sync_entity(
                 )
                 return entities
             except Exception as e:
-                log.severe(f"Error fetching {entity_name} data for page {page}: {str(e)}")
+                log.error(f"Error fetching {entity_name} data for page {page}", e)
                 return []
 
         page = 0
@@ -243,11 +243,10 @@ def sync_entity(
         )
 
     except Exception as e:
-        log.severe(f"Unhandled exception during sync of {entity_name}: {str(e)}")
-        log.severe(f"Exception details: {type(e).__name__}: {str(e)}")
+        log.error(f"Unhandled exception during sync of {entity_name}", e)
         import traceback
 
-        log.severe(f"Traceback: {traceback.format_exc()}")
+        log.error(f"Traceback: {traceback.format_exc()}")
 
     sync_duration = time.time() - start_time
     log.info(

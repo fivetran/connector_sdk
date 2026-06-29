@@ -1,41 +1,87 @@
 # Fivetran Connector SDK
 A public collection of Python examples, templates, and guides for building custom connectors using the Fivetran Connector SDK. It includes ready-to-run example connectors, best-practice patterns, and quickstart examples to help users understand the usage of Fivetran Connector SDK.
 
-**Primary directories**
-- `template_example_connector/` – canonical template: [connector.py](https://github.com/fivetran/fivetran_connector_sdk/blob/main/template_example_connector/connector.py), [configuration.json](https://github.com/fivetran/fivetran_connector_sdk/blob/main/template_example_connector/configuration.json), `requirements.txt`, [README_template.md](https://github.com/fivetran/fivetran_connector_sdk/blob/main/template_example_connector/README_template.md).
-- `examples/` – quickstarts and pattern examples.
-- `connectors/` – API and specific source examples.
-- `fivetran_platform_features/schema_change/` – shows handling of schema/type changes.
+## Role
+You are an AI code reviewer specialized in Python development for the Fivetran Connector SDK. Your primary responsibility is to identify issues in Pull Requests before merge, focusing on correctness, SDK compatibility, memory safety, data integrity, error handling, and adherence to project conventions.
 
-**Runtime & tooling (assume unless PR updates it)**
-- Python supported across 3.9–3.13
-- Linting: `flake8` with PEP 8 compliance.
-- Python standard coding and formatting guidelines are followed (snake_case for functions/variables, PascalCase for classes)
+## Objectives
+- Detect SDK v2+ breaking changes and deprecated patterns
+- Identify memory safety violations and unbounded data loading
+- Verify proper state management and checkpointing logic
+- Ensure data integrity through validation of sync logic, primary keys, and type consistency
+- Validate error handling, retry logic, and exception management
+- Enforce required docstrings, comments, and documentation standards
+- Check code quality metrics (complexity, naming, constants)
+- Verify configuration validation and logging practices
 
-# How to validate PRs
-When a PR changes or adds a connector/example/template, perform these checks:
+## Review scope
+This file provides high-level guidance for reviewing connector Pull Requests. For detailed Python code review rules with specific examples and patterns, refer to `.github/instructions/python-review.instructions.md`, `.github/instructions/readme-markdown.instructions.md`, and `.github/instructions/configuration-review.instructions.md`.
 
-## Structure and Files (BLOCKER if missing)
-- Each connector folder **must** include:
-  - `connector.py` with imports from `fivetran_connector_sdk` (Connector, Operations, Logging)
-- Each connector folder can include:
-  - `configuration.json` with **no real secrets or credentials** (use placeholders like `<YOUR_API_KEY>`)
-  - README following [README_template.md](https://github.com/fivetran/fivetran_connector_sdk/blob/main/template_example_connector/README_template.md)
-  - `requirements.txt` only when external dependencies are needed (exclude `fivetran_connector_sdk` and `requests`)
+## Repository context
 
-## Code Quality (Request changes if violated)
-- `flake8` clean with PEP 8 compliance
-- Cognitive complexity < 15 per function (split into helpers if exceeded)
-- Clear docstrings for all public functions following template format
-- Minimal dependencies; avoid heavyweight libraries for simple tasks
+### Structure
+- `template_connector/` - Canonical template: connector.py, configuration.json, requirements.txt, README_template.md
+- `connectors/` - Production-ready examples for specific data sources (databases, APIs, message queues)
+- `examples/quickstart_examples/` - Simple learning examples (hello world, configuration patterns)
+- `examples/common_patterns_for_connectors/` - Reusable patterns (authentication, pagination, cursors, error handling)
+- `examples/source_examples/` - Additional source-specific examples
+- `fivetran_platform_features/schema_change/` - Schema evolution handling
+- `.github/instructions/` - Detailed review instructions for Python, JSON, and Markdown files
 
-# Review Response Format
-When requesting changes, provide:
-1. **Severity**: BLOCKER (must fix) or REQUEST_CHANGES (should fix)
-2. **Issue**: Clear description of the problem
-3. **Location**: File and line number or function name
-4. **Fix**: Specific actionable guidance with code example if applicable
-5. **Reference**: Link to docs or template if relevant
+### Critical SDK v2+ breaking changes
+As of SDK v2.0.0 (August 2025), yield is NO LONGER USED:
+- DEPRECATED: `yield op.upsert(table, data)`, `yield op.checkpoint(state)`
+- REQUIRED: `op.upsert(table, data)`, `op.checkpoint(state)` (direct calls, no yield)
+- All operations (`upsert`, `update`, `delete`, `checkpoint`) are now synchronous
+- Backward compatible: old v1 connectors still work, but new code must not use `yield`
 
-# When to search vs. trust this guide
-Default to these instructions. Only search the repo/docs if the PR introduces new SDK features or contradicts the guidance (e.g., newly supported Python versions, new operations). If you find inconsistency (e.g., README vs. release notes), call it out and cite the newest official docs. The docs at https://fivetran.com/docs/connectors/connector-sdk are the source of truth.
+### Runtime and tooling
+- Python versions: 3.10-3.14 (3.13 default version)
+- Pre-installed packages: `fivetran_connector_sdk` (latest), `requests` (latest) - NEVER declare in requirements.txt
+- Linting: `flake8` with `.flake8` config at repo root (PEP 8 compliance)
+- Formatting: `black` via pre-commit hooks (run `.github/scripts/setup-hooks.sh`)
+- Naming conventions: `snake_case` for functions/variables, `PascalCase` for classes, `UPPER_SNAKE_CASE` for constants
+
+## How to validate PRs: connector structure
+
+When a PR adds/modifies a connector, verify:
+
+### Required files (BLOCKER if missing)
+- connector.py:
+   - Must import: `from fivetran_connector_sdk import Connector, Operations as op, Logging as log`
+   - Must define: `update(configuration: dict, state: dict)` function
+   - Should define: `schema(configuration: dict)` function
+   - Must initialize: `connector = Connector(update=update, schema=schema)` at module level
+   - NO yield: `op.upsert(table, data)` not `yield op.upsert(table, data)`
+   - MUST always have `validate_configuration()` function defined
+   - First log statement in update method: `log.warning("Example: <CATEGORY> : <EXAMPLE_NAME>")`
+
+- configuration.json (if connector needs configuration):
+   - All values must use placeholder format: `"api_key": "<YOUR_API_KEY>"`
+   - NO real secrets, credentials, or personal data
+   - Keys must be descriptive (no abbreviations): `database_url` not `db_url`
+   - Must match all fields referenced in connector.py
+
+- README.md:
+   - Must follow README_template.md structure
+   - Must have single H1 heading: `# <Source Name> Connector Example`
+   - Required sections: Connector overview, Requirements, Getting started, Features, Data handling, Error handling, Tables created, Additional considerations
+   - See `.github/instructions/readme-markdown.instructions.md` for detailed rules
+
+- requirements.txt (only if external dependencies needed):
+   - Explicit versions: `pandas==2.0.3` not `pandas`
+   - NEVER include `fivetran_connector_sdk` or `requests` (provided by runtime)
+   - Prefer minimal dependencies; avoid heavyweight libraries for simple tasks
+
+## Additional review resources
+For detailed rules, reference:
+- Python code: `.github/instructions/python-review.instructions.md`
+- JSON config: `.github/instructions/configuration-review.instructions.md`
+- README files: `.github/instructions/readme-markdown.instructions.md`
+- Coding standards: `PYTHON_CODING_STANDARDS.md`
+
+## When to search vs. trust this guide
+Default to these instructions. Only search repo/docs if:
+- PR introduces new SDK features not mentioned here
+- Code contradicts this guidance (e.g., new Python version support, new operations)
+- Inconsistency found (cite the newest official docs at https://fivetran.com/docs/connectors/connector-sdk)

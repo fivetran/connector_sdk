@@ -2,8 +2,8 @@
 This is a connector for fetching events from Solace using the Fivetran Connector SDK.
 It supports incremental sync by tracking the last processed event timestamp.
 The connector can work with Solace messaging APIs to fetch events.
-See the Technical Reference documentation (https://fivetran.com/docs/connectors/connector-sdk/technical-reference#update)
-and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details
+See the Technical Reference documentation (https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update)
+and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details
 """
 
 # Import required classes from fivetran_connector_sdk.
@@ -49,7 +49,7 @@ def schema(configuration: dict):
     """
     Define the schema function which lets you configure the schema your connector delivers.
     See the technical reference documentation for more details on the schema function:
-    https://fivetran.com/docs/connectors/connector-sdk/technical-reference#schema
+    https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#schema
     Args:
         configuration: a dictionary that holds the configuration settings for the connector.
     """
@@ -100,7 +100,7 @@ class SolaceAuth:
                 log.info(f"Successfully connected to Solace at {self.host}")
 
             except Exception as e:
-                log.severe(f"Failed to connect to Solace: {e}")
+                log.error("Failed to connect to Solace", e)
                 raise RuntimeError(f"Solace connection failed: {e}")
 
         return self.messaging_service
@@ -174,7 +174,7 @@ def fetch_events_messaging(
         log.info(f"{method_name}: Fetched {len(events)} events from messaging API")
 
     except Exception as e:
-        log.severe(f"{method_name}: Error fetching events via messaging API: {e}")
+        log.error(f"{method_name}: Error fetching events via messaging API", e)
     finally:
         if receiver is not None:
             receiver.terminate()
@@ -231,7 +231,7 @@ def process_message(message: InboundMessage, last_sync_time: datetime) -> Option
         return event_record
 
     except Exception as e:
-        log.severe(f"Error processing message: {e}")
+        log.error("Error processing message", e)
         return None
 
 
@@ -300,7 +300,7 @@ def sync_events(config: dict, state: dict) -> Generator:
             try:
                 op.upsert(table="solace_events", data=event)
             except Exception as e:
-                log.severe(f"{method_name}: Error upserting event {event.get('event_id')}: {e}")
+                log.error(f"{method_name}: Error upserting event {event.get('event_id')}", e)
 
         # Update state with latest timestamp
         latest_timestamp = max(event["timestamp"] for event in events)
@@ -309,7 +309,7 @@ def sync_events(config: dict, state: dict) -> Generator:
         log.info(f"{method_name}: Successfully processed {len(events)} events")
 
     except Exception as e:
-        log.severe(f"{method_name}: Error during sync: {e}")
+        log.error(f"{method_name}: Error during sync", e)
         raise
 
     # Checkpoint state
@@ -342,7 +342,7 @@ def validate_configuration(configuration: dict, method_name: str):
     required_keys = ["solace_host", "solace_username", "solace_password", "solace_queue"]
     for key in required_keys:
         if key not in configuration:
-            log.severe(f"{method_name}: Missing required configuration key: {key}")
+            log.error(f"{method_name}: Missing required configuration key: {key}")
             raise ValueError(f"Missing configuration key: {key}")
 
 
@@ -350,7 +350,7 @@ def update(configuration: dict, state: dict):
     """
     Define the update function, which is a required function, and is called by Fivetran during each sync.
     See the technical reference documentation for more details on the update function
-    https://fivetran.com/docs/connectors/connector-sdk/technical-reference#update
+    https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update
     Args:
         configuration: A dictionary containing connection details
         state: A dictionary containing state information from previous runs

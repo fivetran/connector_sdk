@@ -1,6 +1,0 @@
-{
-  "regions": "us-east-1,us-east-4,us-central-1",
-  "api_quota": "12345",
-  "use_bulk_api": "true",
-  "currencies": "[{\"From\": \"USD\",\"To\": \"EUR\"},{\"From\": \"USD\",\"To\": \"GBP\"}]"
-}

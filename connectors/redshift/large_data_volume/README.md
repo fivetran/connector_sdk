@@ -5,20 +5,33 @@ This example connector demonstrates how to sync large tables from Amazon Redshif
 
 
 ## Requirements
-- [Supported Python versions](https://github.com/fivetran/fivetran_connector_sdk/blob/main/README.md#requirements)   
+- [Supported Python versions](https://github.com/fivetran/connector_sdk/blob/main/README.md#requirements)   
 - Operating system:
   - Windows: 10 or later (64-bit only)
   - macOS: 13 (Ventura) or later (Apple Silicon [arm64] or Intel [x86_64])
   - Linux: Distributions such as Ubuntu 20.04 or later, Debian 10 or later, or Amazon Linux 2 or later (arm64 or x86_64)
 
 ## Getting started
-Refer to the [Connector SDK Setup Guide](https://fivetran.com/docs/connectors/connector-sdk/setup-guide) to get started.
+Refer to the [Connector SDK Setup Guide](https://fivetran.com/docs/connector-sdk/setup-guide) to get started.
+
+To initialize a new Connector SDK project using this connector as a starting point, run:
+
+```bash
+fivetran init <project-path> --template connectors/redshift/large_data_volume
+```
+`fivetran init` initializes a new Connector SDK project by setting up the project structure, configuration files, and a connector you can run immediately with `fivetran debug`.
+If you do not specify a project path, Fivetran creates the project in your current directory.
+For more information on `fivetran init`, refer to the [Connector SDK `init` documentation](https://fivetran.com/docs/connector-sdk/setup-guide#createyourcustomconnector).
+
+> Note: Ensure you have updated the `configuration.json` file with the necessary parameters before running `fivetran debug`. See the [Configuration file](#configuration-file) section for details on the required configuration parameters.
 
 
 ## Features
 - Incremental sync via `replication_key` with ordered SQL queries.
 - Automatic schema detection from the source schema.
 - Automatic replication key inference based on column semantic types.
+- Supports both full and incremental syncs, with an option for complete resyncs.
+- Large tables with incremental syncs support chunking of the data to optimize memory usage on the server and client sides.
 - Periodic checkpointing every `CHECKPOINT_EVERY_ROWS`
 - Parallel execution governed by `max_parallel_workers`
 - Connection pooling to reduce overhead during parallel query execution
@@ -83,8 +96,9 @@ The steps involved in data handling include:
 2. Retrieving the list of tables from the specified schema.
 3. For each table, determining the appropriate `replication_key` for incremental loading.
 4. Fetching data in batches based on the `batch_size` parameter.
-5. Processing each batch and sending it for ingestion.
-6. Periodically checkpointing the state to ensure data integrity and support resumption in case of failures.
+5. For tables with a `replication_key` and incremental sync strategy, fetching the data in chunks is also supported to optimize memory usage.
+6. Processing each batch and sending it for ingestion.
+7. Periodically checkpointing the state to ensure data integrity and support resumption in case of failures.
 
 The connector also implements parallel processing to speed up data extraction. The `max_parallel_workers` parameter controls the number of concurrent workers used for fetching data from multiple tables simultaneously.
 

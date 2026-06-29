@@ -1,5 +1,5 @@
 ---
-applyTo: "examples/source_examples/**/*README*.md,connectors/**/*README*.md"
+applyTo: "examples/source_examples/**/*README*.md,connectors/**/*README*.md,all_things_ai/ai_agents/**/*AGENTS*.md"
 ---
 
 # Copilot Review Instructions for Fivetran Documentation
@@ -14,13 +14,16 @@ Example of wrong format and style:
 
 "- **API example**
    - This example shows how to sync data using an API key and secret."
+
 The correct format and style would be as follows:
+
 "- API example - This example shows how to sync data using an API key and secret."
 
 ## Headings:
 
 - There should be only one H1 heading in the file, and it should use Title Case, for example: # Connector SDK Somecompany API Connector Example
 - All other headings should use Sentence case, for example: ## Requirements file
+- Do not use numbers in headings: WRONG: "## 4. Best practices", CORRECT: "## Best practices"
 
 ## Lists:
 
@@ -42,6 +45,8 @@ The comments and suggestion you make should be deduplicated, for example - if yo
 
 
 ---
+
+The structure and rules below must only be honored during review for 'README.md' files, and they should be ignored for 'AGENTS*.md' and 'ft-csdk*.md' files. 
 
 # Copilot Review Instructions: Connector SDK Example README.md
 
@@ -79,7 +84,7 @@ If a section is irrelevant (e.g., no error handling), the empty stub should be n
 * **Requirements** → Must list OS and Python versions. Use provided bullet format. It is a fixed content, verbatim (no edits or omissions), as provided below:
   ```markdown
   ## Requirements
-  - [Supported Python versions](https://github.com/fivetran/fivetran_connector_sdk/blob/main/README.md#requirements)   
+  - [Supported Python versions](https://github.com/fivetran/connector_sdk/blob/main/README.md#requirements)   
   - Operating system:
     - Windows: 10 or later (64-bit only)
     - macOS: 13 (Ventura) or later (Apple Silicon [arm64] or Intel [x86_64])

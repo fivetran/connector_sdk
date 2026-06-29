@@ -1,7 +1,0 @@
-{
-  "server": "<YOUR_SYBASE_ASE_SERVER>",
-  "port": "<YOUR_SYBASE_ASE_PORT>",
-  "database": "<YOUR_SYBASE_ASE_DATABASE>",
-  "user_id": "<YOUR_SYBASE_ASE_USER_ID>",
-  "password": "<YOUR_SYBASE_ASE_PASSWORD>"
-}

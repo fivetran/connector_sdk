@@ -1,0 +1,8 @@
+{
+    "host": "<YOUR_RETHINKDB_HOST>",
+    "port": "<YOUR_RETHINKDB_PORT>",
+    "database": "<YOUR_RETHINKDB_DATABASE>",
+    "username": "<YOUR_RETHINKDB_USERNAME>",
+    "password": "<YOUR_RETHINKDB_PASSWORD>",
+    "use_ssl": "<TRUE_OR_FALSE_DEFAULT_FALSE>"
+}

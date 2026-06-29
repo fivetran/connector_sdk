@@ -2,6 +2,20 @@
 
 This example demonstrates how to fetch data from multiple files in an AWS S3 bucket in parallel using ThreadPoolExecutor, and stream the data efficiently without loading entire files into memory at once.
 
+## Getting started
+Refer to the [Connector SDK Setup Guide](https://fivetran.com/docs/connector-sdk/setup-guide) to get started.
+
+To initialize a new Connector SDK project using this connector as a starting point, run:
+
+```bash
+fivetran init <project-path> --template examples/common_patterns_for_connectors/parallel_fetching_from_source
+```
+`fivetran init` initializes a new Connector SDK project by setting up the project structure, configuration files, and a connector you can run immediately with `fivetran debug`.
+If you do not specify a project path, Fivetran creates the project in your current directory.
+For more information on `fivetran init`, refer to the [Connector SDK `init` documentation](https://fivetran.com/docs/connector-sdk/setup-guide#createyourcustomconnector).
+
+> Note: Ensure you have updated the `configuration.json` file with the necessary parameters before running `fivetran debug`. See the [Configuration file](#configuration-file) section for details on the required configuration parameters.
+
 ### Configuration
 
 The connector requires the following configuration parameters in `configuration.json`:

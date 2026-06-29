@@ -57,20 +57,20 @@ Checkpoints   | 1
 - **File Structure**: All required files exist with valid syntax
 - **Configuration**: String values only, proper authentication fields
 - **Code Quality**: Python syntax, proper imports, required methods
-- **Execution**: Connector runs without severe errors or crashes
+- **Execution**: Connector runs without errors or crashes
 - **Data Quality**: Schema matches, data successfully synced
 - **Primary Keys**: No violations, proper deduplication
 
 # Success Criteria
 - ✅ All required files exist with valid syntax and format
-- ✅ Connector executes without severe errors or crashes
+- ✅ Connector executes without errors or crashes
 - ✅ Database schema matches declared schema definition
 - ✅ Data is successfully synced with reasonable quality metrics
 - ✅ No critical authentication, connection, or primary key violations
 
 # Runtime Environment
 - 1 GB RAM, 0.5 vCPUs
-- Python versions 3.9.21 through 3.12.8
+- Python versions 3.10.18 through 3.13.7
 - Pre-installed packages: requests, fivetran_connector_sdk
 - Output: DuckDB warehouse.db file for validation
 
@@ -90,7 +90,7 @@ Checkpoints   | 1
 
 3. **Dependencies Check**:
    - Parse requirements.txt for valid format
-   - Check for compatible Python versions (3.9-3.12)
+   - Check for compatible Python versions (3.10-3.13)
    - Ensure no conflicting dependencies
 
 ## PHASE 2: Connector Execution Test
@@ -107,7 +107,7 @@ Checkpoints   | 1
    - **CRITICAL FAILURE DETECTION**: Use your AI judgment to identify ANY signs of failure in the output
      - Examples of failure indicators (but NOT limited to):
        - "SYNC FAILED" anywhere in output
-       - "SEVERE" log messages (e.g., "SEVERE Fivetran-Tester-Process")  
+       - "ERROR" log messages (e.g., "ERROR Fivetran-Tester-Process")  
        - "Error:" messages with stack traces
        - "ValueError", "Exception", "ConnectionError" in logs
        - Zero operations with no data synced (all counts = 0)
@@ -115,7 +115,7 @@ Checkpoints   | 1
    - Analyze operation counts in summary:
      - Upserts, Updates, Deletes, Truncates
      - SchemaChanges, Checkpoints
-   - Verify no severe errors or warnings in logs
+   - Verify no errors or warnings in logs
    - Check for proper authentication success
 
 ## PHASE 3: Data Validation
@@ -158,7 +158,7 @@ Checkpoints   | 1
 A connector passes testing if:
 - ✅ All files exist and have valid syntax
 - ✅ Configuration is properly formatted
-- ✅ Connector executes without severe errors
+- ✅ Connector executes without errors
 - ✅ Warehouse.db is created with expected schema
 - ✅ Data is successfully synced with reasonable quality
 - ✅ No primary key violations or critical data issues
@@ -170,11 +170,11 @@ A connector **MUST FAIL** testing if ANY of these occur:
 - ❌ Configuration format errors  
 - ❌ Connector crashes or fails to execute
 - ❌ No data synced or warehouse.db not created
-- ❌ Severe authentication or connection errors
+- ❌ Authentication or connection errors
 - ❌ Critical data quality issues or schema mismatches
 
 **USE AI JUDGMENT**: Apply intelligent analysis to detect ANY failure indicators in the output including (but not limited to):
-- "SYNC FAILED", "SEVERE" error messages, stack traces, exceptions, crashes, timeouts, authentication failures, connection errors, or any other signs that the connector is not working properly
+- "SYNC FAILED", "ERROR" messages, stack traces, exceptions, crashes, timeouts, authentication failures, connection errors, or any other signs that the connector is not working properly
 
 **CRITICAL**: Trust your AI analysis - if the output shows ANY indication of failure, errors, or problems, report TEST STATUS: FAIL
 

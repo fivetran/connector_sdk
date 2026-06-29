@@ -74,7 +74,7 @@ To adhere to Fivetran engineering standards, follow this process:
 ### 4.1 Template connector
 
 A reference implementation is available here:  
-[Fivetran Connector SDK Template Example](https://github.com/fivetran/fivetran_connector_sdk/tree/main/template_example_connector)
+[Fivetran Connector SDK Template Example](https://github.com/fivetran/connector_sdk/tree/main/template_connector)
 
 This includes:
 - A `connector.py` template.
@@ -99,7 +99,7 @@ This is a great place to start to learn our coding practices through templated e
 - Avoid loading all data into memory — use pagination or streaming.
 - Document pagination, upsert/update/delete, and checkpointing with clear comments.
 - Checkpoint state regularly to resume from the last successful sync and cleanly send data to your warehouse.
-- Refer to the [Connector SDK Best Practices](https://fivetran.com/docs/connectors/connector-sdk/best-practices).
+- Refer to the [Connector SDK Best Practices](https://fivetran.com/docs/connector-sdk/best-practices).
 
 ---
 

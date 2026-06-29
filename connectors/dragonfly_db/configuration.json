@@ -1,0 +1,11 @@
+{
+    "host": "<YOUR_DRAGONFLY_HOST>",
+    "port": "<YOUR_DRAGONFLY_PORT>",
+    "username": "<YOUR_DRAGONFLY_USERNAME>",
+    "password": "<YOUR_DRAGONFLY_PASSWORD>",
+    "database": "<YOUR_DRAGONFLY_DATABASE_NUMBER>",
+    "ssl": "<TRUE_OR_FALSE>",
+    "table_name": "<YOUR_DESTINATION_TABLE_NAME>",
+    "key_pattern": "<YOUR_KEY_PATTERN>",
+    "batch_size": "<YOUR_BATCH_SIZE>"
+}

@@ -1,0 +1,4 @@
+{
+  "api_url": "<YOUR_MEILISEARCH_API_URL>",
+  "api_key": "<YOUR_MEILISEARCH_API_KEY>"
+}

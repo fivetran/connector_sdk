@@ -1,6 +1,6 @@
 """RabbitMQ Connector - syncs messages from RabbitMQ queues to Fivetran using the pika library.
-See the Technical Reference documentation (https://fivetran.com/docs/connectors/connector-sdk/technical-reference#update)
-and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details
+See the Technical Reference documentation (https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update)
+and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details
 """
 
 # For reading configuration from a JSON file
@@ -57,7 +57,7 @@ def schema(configuration: dict):
     Define the schema function which lets you configure the schema your connector delivers.
     Each RabbitMQ queue will be synced to a separate table.
     See the technical reference documentation for more details on the schema function:
-    https://fivetran.com/docs/connectors/connector-sdk/technical-reference#schema
+    https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#schema
     Args:
         configuration: a dictionary that holds the configuration settings for the connector.
     """
@@ -103,10 +103,10 @@ def create_rabbitmq_connection(configuration: dict):
         return connection
 
     except AMQPConnectionError as e:
-        log.severe(f"Failed to connect to RabbitMQ: {e}")
+        log.error("Failed to connect to RabbitMQ", e)
         raise RuntimeError(f"Failed to connect to RabbitMQ: {str(e)}")
     except Exception as e:
-        log.severe(f"Unexpected error creating RabbitMQ connection: {e}")
+        log.error("Unexpected error creating RabbitMQ connection", e)
         raise RuntimeError(f"Unexpected error creating RabbitMQ connection: {str(e)}")
 
 
@@ -364,10 +364,10 @@ def fetch_and_upsert_messages_batch(
         return fetched_count, has_more_data, highest_delivery_tag
 
     except AMQPChannelError as e:
-        log.severe(f"Channel error while fetching from queue {queue_name}: {e}")
+        log.error(f"Channel error while fetching from queue {queue_name}", e)
         raise RuntimeError(f"Channel error while fetching from queue {queue_name}: {str(e)}")
     except Exception as e:
-        log.severe(f"Failed to fetch batch from queue {queue_name}: {e}")
+        log.error(f"Failed to fetch batch from queue {queue_name}", e)
         raise RuntimeError(f"Failed to fetch batch from queue {queue_name}: {str(e)}")
 
 
@@ -452,7 +452,7 @@ def update(configuration: dict, state: dict):
     """
     Define the update function, which is a required function, and is called by Fivetran during each sync.
     See the technical reference documentation for more details on the update function
-    https://fivetran.com/docs/connectors/connector-sdk/technical-reference#update
+    https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update
     Args:
         configuration: A dictionary containing connection details
         state: A dictionary containing state information from previous runs
@@ -517,7 +517,7 @@ def save_state(current_state: dict, queue_name: str, new_delivery_tag: int):
     # Save the progress by checkpointing the state. This is important for ensuring that the sync process can resume
     # from the correct position in case of next sync or interruptions.
     # Learn more about how and where to checkpoint by reading our best practices documentation
-    # (https://fivetran.com/docs/connectors/connector-sdk/best-practices#largedatasetrecommendation).
+    # (https://fivetran.com/docs/connector-sdk/best-practices#optimizingperformancewhenhandlinglargedatasets).
     op.checkpoint(current_state)
 
 

@@ -1,0 +1,15 @@
+# Add your connector's dependencies here, one per line with explicit versions.
+# Keep packages in alphabetical order for easier maintenance.
+#
+# Example:
+# pandas==2.0.3
+#
+# Note: fivetran_connector_sdk and requests are pre-installed in the base environment
+# and should not be included in this file.
+#
+# Best practices:
+# - Use explicit versions (==) for reproducibility
+# - Only include packages actually used by your connector
+# - Add comments to explain why a package is needed if it's not obvious
+#
+# This file can be safely removed if your connector has no external dependencies.

@@ -6,7 +6,7 @@ This connector extracts data from a SAP HANA database using the `hdbcli`. The co
 
 ## Requirements
 
-- [Supported Python versions](https://github.com/fivetran/fivetran_connector_sdk/blob/main/README.md#requirements)   
+- [Supported Python versions](https://github.com/fivetran/connector_sdk/blob/main/README.md#requirements)   
 - Operating system:
   - Windows: 10 or later (64-bit only)
   - macOS: 13 (Ventura) or later (Apple Silicon [arm64] or Intel [x86_64])
@@ -14,7 +14,18 @@ This connector extracts data from a SAP HANA database using the `hdbcli`. The co
 
 ## Getting started
 
-Refer to the [Setup Guide](https://fivetran.com/docs/connectors/connector-sdk/setup-guide) to get started.
+Refer to the [Connector SDK Setup Guide](https://fivetran.com/docs/connector-sdk/setup-guide) to get started.
+
+To initialize a new Connector SDK project using this connector as a starting point, run:
+
+```bash
+fivetran init <project-path> --template connectors/sap_hana_sql
+```
+`fivetran init` initializes a new Connector SDK project by setting up the project structure, configuration files, and a connector you can run immediately with `fivetran debug`.
+If you do not specify a project path, Fivetran creates the project in your current directory.
+For more information on `fivetran init`, refer to the [Connector SDK `init` documentation](https://fivetran.com/docs/connector-sdk/setup-guide#createyourcustomconnector).
+
+> Note: Ensure you have updated the `configuration.json` file with the necessary parameters before running `fivetran debug`. See the [Configuration file](#configuration-file) section for details on the required configuration parameters.
 
 ## Features
 
@@ -97,8 +108,6 @@ The connector implements error handling in several key areas:
 This connector replicates the `sales` table which contains sales information with the following schema:
 
 - `transaction_id` (STRING) - Primary key
-- `transaction_amount` (DOUBLE) - Transaction amount
-- `status` (STRING) - Status of transaction
 - `created_at` (NAIVE_DATE) - The creation date of transaction
 
 ## Additional considerations

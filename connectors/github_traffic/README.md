@@ -6,6 +6,21 @@ This connector syncs GitHub repository traffic data using the GitHub REST API. I
 - Top referral sources
 - Top popular content paths
 
+## Getting started
+
+Refer to the [Connector SDK Setup Guide](https://fivetran.com/docs/connector-sdk/setup-guide) to get started.
+
+To initialize a new Connector SDK project using this connector as a starting point, run:
+
+```bash
+fivetran init <project-path> --template connectors/github_traffic
+```
+`fivetran init` initializes a new Connector SDK project by setting up the project structure, configuration files, and a connector you can run immediately with `fivetran debug`.
+If you do not specify a project path, Fivetran creates the project in your current directory.
+For more information on `fivetran init`, refer to the [Connector SDK `init` documentation](https://fivetran.com/docs/connector-sdk/setup-guide#createyourcustomconnector).
+
+> Note: Ensure you have updated the `configuration.json` file with the necessary parameters before running `fivetran debug`. See the [Configuration](#configuration) section for details on the required configuration parameters.
+
 ## Prerequisites
 1. [GitHub Personal Access Token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens) with the Read access to administration and metadata.
 2. Repositories you want to monitor (in the format `owner/repo1, owner/repo2`)

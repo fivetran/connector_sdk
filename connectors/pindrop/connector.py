@@ -2,8 +2,8 @@
 This connector fetches nightly reports from Pindrop API and syncs them to the destination.
 It supports multiple report types: blacklist, calls, audit, cases, account_risk, enrollment, removal_list.
 On initial sync, it fetches the last month's worth of data. On incremental syncs, it looks back based on the configured days.
-See the Technical Reference documentation (https://fivetran.com/docs/connectors/connector-sdk/technical-reference#update)
-and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details
+See the Technical Reference documentation (https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update)
+and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details
 """
 
 # Import required classes from fivetran_connector_sdk
@@ -33,7 +33,6 @@ import csv
 
 # io: For handling CSV data as file-like objects
 import io
-
 
 # Configuration constants needed for the connector
 __LOOKBACK_DAYS = 1  # Number of days to look back for reports (set to 1 for most recent day only)
@@ -135,7 +134,7 @@ class OAuth2TokenManager:
                         time.sleep(wait_time)
                         continue
                     else:
-                        log.severe(
+                        log.error(
                             f"OAuth2 token request failed after {max_retries} attempts: {error_msg}"
                         )
                         raise RuntimeError(
@@ -153,7 +152,7 @@ class OAuth2TokenManager:
                     time.sleep(wait_time)
                     continue
                 else:
-                    log.severe(
+                    log.error(
                         f"OAuth2 token request failed after {max_retries} attempts: {error_msg}"
                     )
                     raise RuntimeError(
@@ -278,7 +277,7 @@ def parse_csv_data(csv_data: str, report_type: str, report_date: str):
         return records
 
     except Exception as e:
-        log.severe(f"Failed to parse CSV data for {report_type} on {report_date}: {str(e)}")
+        log.error(f"Failed to parse CSV data for {report_type} on {report_date}", e)
         return []
 
 
@@ -332,15 +331,16 @@ def fetch_report_data(token_manager: OAuth2TokenManager, report_type: str, repor
                 return records
 
             except Exception as retry_error:
-                log.severe(
-                    f"Failed to fetch {report_type} report for {report_date} even after token refresh: {str(retry_error)}"
+                log.error(
+                    f"Failed to fetch {report_type} report for {report_date} even after token refresh",
+                    retry_error,
                 )
                 return []
         else:
-            log.severe(f"Failed to fetch {report_type} report for {report_date}: {str(e)}")
+            log.error(f"Failed to fetch {report_type} report for {report_date}", e)
             return []
     except Exception as e:
-        log.severe(f"Failed to fetch {report_type} report for {report_date}: {str(e)}")
+        log.error(f"Failed to fetch {report_type} report for {report_date}", e)
         return []
 
 
@@ -365,9 +365,10 @@ def generate_reports_to_process(state: dict, is_initial_sync: bool):
         try:
             start_date = datetime.strptime(__INITIAL_SYNC_START_DATE, "%Y-%m-%d").date()
             log.info(f"Initial sync: generating reports from {start_date} to {today}")
-        except ValueError:
-            log.severe(
-                f"Invalid INITIAL_SYNC_START_DATE format: {__INITIAL_SYNC_START_DATE}. Expected YYYY-MM-DD"
+        except ValueError as e:
+            log.error(
+                f"Invalid INITIAL_SYNC_START_DATE format: {__INITIAL_SYNC_START_DATE}. Expected YYYY-MM-DD",
+                e,
             )
             return []
     else:
@@ -412,7 +413,7 @@ def schema(configuration: dict):
     """
     Define the schema function which lets you configure the schema your connector delivers.
     See the technical reference documentation for more details on the schema function:
-    https://fivetran.com/docs/connectors/connector-sdk/technical-reference#schema
+    https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#schema
     Args:
         configuration: a dictionary that holds the configuration settings for the connector.
     """
@@ -479,7 +480,7 @@ def _process_report(
         return len(records)
 
     except Exception as e:
-        log.severe(f"Error processing {report_type} for {report_date}: {str(e)}")
+        log.error(f"Error processing {report_type} for {report_date}", e)
         return 0
 
 
@@ -487,7 +488,7 @@ def update(configuration: dict, state: dict):
     """
     Define the update function, which is a required function, and is called by Fivetran during each sync.
     See the technical reference documentation for more details on the update function
-    https://fivetran.com/docs/connectors/connector-sdk/technical-reference#update
+    https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update
     Args:
         configuration: A dictionary containing connection details
         state: A dictionary containing state information from previous runs
@@ -552,14 +553,14 @@ def update(configuration: dict, state: dict):
         # Save the progress by checkpointing the state. This is important for ensuring that the sync process can resume
         # from the correct position in case of next sync or interruptions.
         # Learn more about how and where to checkpoint by reading our best practices documentation
-        # (https://fivetran.com/docs/connectors/connector-sdk/best-practices#largedatasetrecommendation).
+        # (https://fivetran.com/docs/connector-sdk/best-practices#optimizingperformancewhenhandlinglargedatasets).
         op.checkpoint(state=new_state)
 
         log.info(f"Sync completed successfully. Total records synced: {total_records}")
 
     except Exception as e:
         # In case of an exception, raise a runtime error
-        log.severe(f"Sync failed with error: {str(e)}")
+        log.error("Sync failed with error", e)
         raise RuntimeError(f"Failed to sync Pindrop data: {str(e)}")
 
 

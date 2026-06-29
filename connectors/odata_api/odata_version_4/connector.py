@@ -1,7 +1,7 @@
 # This is an example for how to work with the fivetran_connector_sdk module.
 # This example demonstrates how to fetch data from an OData API version 2 and sync it to a destination.
-# See the Technical Reference documentation (https://fivetran.com/docs/connectors/connector-sdk/technical-reference#update)
-# and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details
+# See the Technical Reference documentation (https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update)
+# and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details
 
 # Import required classes from fivetran_connector_sdk.
 # For supporting Connector operations like Update() and Schema()
@@ -19,7 +19,7 @@ from ODataClient import ODataClient
 
 # Define the schema function which lets you configure the schema your connector delivers.
 # See the technical reference documentation for more details on the schema function
-# https://fivetran.com/docs/connectors/connector-sdk/technical-reference#schema
+# https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#schema
 # The schema function takes one parameter:
 # - configuration: a dictionary that holds the configuration settings for the connector.
 def schema(configuration: dict):
@@ -30,16 +30,11 @@ def schema(configuration: dict):
             "columns": {  # Definition of columns and their types, optional.
                 "UserName": "STRING",
                 "Emails": "JSON",
-                "Trips": "JSON",
-                "Friends": "JSON",
             },  # For any columns whose names are not provided here, e.g. id, their data types will be inferred
         },
         {
             "table": "Orders",
             "primary_key": ["OrderID"],
-            "columns": {
-                "Order_Details": "JSON",
-            },
         },
         {
             "table": "Products",
@@ -57,9 +52,6 @@ def schema(configuration: dict):
         {
             "table": "Products_Multiple",
             "primary_key": ["ProductID"],
-            "columns": {
-                "Category": "JSON",
-            },
         },
         {
             "table": "Orders_batch",
@@ -283,7 +275,7 @@ def example_using_batch_operations(northwind_client, state):
 
 # Define the update function, which is a required function, and is called by Fivetran during each sync.
 # See the technical reference documentation for more details on the update function
-# https://fivetran.com/docs/connectors/connector-sdk/technical-reference#update
+# https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update
 # The function takes two parameters:
 # - configuration: dictionary contains any secrets or payloads you configure when deploying the connector
 # - state: a dictionary contains whatever state you have chosen to checkpoint during the prior sync

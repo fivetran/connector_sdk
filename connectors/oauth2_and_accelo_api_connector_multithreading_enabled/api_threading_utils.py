@@ -58,6 +58,6 @@ def fetch_data(
                 f"Error fetching data from {endpoint} (attempt {attempt + 1}/{retries}): {str(e)}"
             )
             if attempt == retries - 1:
-                log.severe(f"Failed to fetch data from {endpoint} after {retries} retries")
+                log.error(f"Failed to fetch data from {endpoint} after {retries} retries")
                 return None
             time.sleep(2**attempt)  # Exponential backoff

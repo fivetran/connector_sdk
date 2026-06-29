@@ -1,0 +1,5 @@
+{
+  "api_key": "<YOUR_PREFECT_API_KEY>",
+  "account_id": "<YOUR_PREFECT_ACCOUNT_ID>",
+  "workspace_id": "<YOUR_PREFECT_WORKSPACE_ID>"
+}

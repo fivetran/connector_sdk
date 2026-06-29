@@ -1,8 +1,8 @@
 """
 This connector fetches export metadata from Oktopost BI Export API and downloads
 the associated CSV files for data synchronization.
-See the Technical Reference documentation (https://fivetran.com/docs/connectors/connector-sdk/technical-reference#update)
-and the Best Practices documentation (https://fivetran.com/docs/connectors/connector-sdk/best-practices) for details
+See the Technical Reference documentation (https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update)
+and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details
 """
 
 # For reading CSV files
@@ -178,7 +178,7 @@ def extract_csv_from_zip(zip_content: bytes) -> List[Dict[str, Any]]:
                 if file_info.filename.lower().endswith(".csv") and not file_info.is_dir()
             ]
     except Exception as e:
-        log.severe(f"Error extracting ZIP file: {str(e)}")
+        log.error("Error extracting ZIP file", e)
         raise
 
 
@@ -224,7 +224,7 @@ def process_csv_data(csv_content: str, filename: str, export_id: str) -> List[Di
             for row in csv.DictReader(io.StringIO(csv_content))
         ]
     except Exception as e:
-        log.severe(f"Error processing CSV content from {filename}: {str(e)}")
+        log.error(f"Error processing CSV content from {filename}", e)
         raise
 
 
@@ -366,14 +366,14 @@ def _process_export_file(export_info: Dict[str, Any]) -> None:
             _process_csv_file(file_response, export_id)
 
     except Exception as e:
-        log.severe(f"Error processing file for export {export_id}: {str(e)}")
+        log.error(f"Error processing file for export {export_id}", e)
 
 
 def update(configuration: Dict[str, str], state: Dict[str, Any]):
     """
      Define the update function, which is a required function, and is called by Fivetran during each sync.
     See the technical reference documentation for more details on the update function
-    https://fivetran.com/docs/connectors/connector-sdk/technical-reference#update
+    https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update
     Args:
         configuration: A dictionary containing connection details
         state: A dictionary containing state information from previous runs
@@ -413,12 +413,12 @@ def update(configuration: Dict[str, str], state: Dict[str, Any]):
         # Save the progress by checkpointing the state. This is important for ensuring that the sync process can resume
         # from the correct position in case of next sync or interruptions.
         # Learn more about how and where to checkpoint by reading our best practices documentation
-        # (https://fivetran.com/docs/connectors/connector-sdk/best-practices#largedatasetrecommendation).
+        # (https://fivetran.com/docs/connector-sdk/best-practices#optimizingperformancewhenhandlinglargedatasets).
         op.checkpoint(state={"last_sync_timestamp": current_sync})
         log.info("Sync completed successfully")
 
     except Exception as e:
-        log.severe(f"Error in update function: {str(e)}")
+        log.error("Error in update function", e)
         raise
 
 
@@ -426,7 +426,7 @@ def schema(configuration: Dict[str, str]) -> List[Dict[str, Any]]:
     """
     Define the schema function which lets you configure the schema your connector delivers.
     See the technical reference documentation for more details on the schema function:
-    https://fivetran.com/docs/connectors/connector-sdk/technical-reference#schema
+    https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#schema
     Args:
         configuration: a dictionary that holds the configuration settings for the connector.
     """

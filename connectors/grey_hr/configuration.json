@@ -1,0 +1,6 @@
+{
+  "api_username": "<YOUR_GREYTHR_API_USERNAME>",
+  "api_password": "<YOUR_GREYTHR_API_PASSWORD>",
+  "greythr_domain": "<YOUR_GREYTHR_DOMAIN>",
+  "sync_start_date": "<SYNC_START_DATE_YYYY-MM-DD>"
+}

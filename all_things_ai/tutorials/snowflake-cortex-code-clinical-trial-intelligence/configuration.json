@@ -1,0 +1,15 @@
+{
+    "condition": "<THERAPEUTIC_AREA>",
+    "status_filter": "<OVERALL_STATUS>",
+    "intervention_filter": "<INTERVENTION_SEARCH>",
+    "sponsor_filter": "<SPONSOR_SEARCH>",
+    "max_seed_trials": "<MAX_SEED_TRIALS>",
+    "max_discoveries": "<MAX_DISCOVERIES>",
+    "max_debates": "<MAX_DEBATES>",
+    "page_size": "<PAGE_SIZE>",
+    "enable_cortex": "<TRUE_OR_FALSE>",
+    "snowflake_account": "<SNOWFLAKE_ACCOUNT_HOSTNAME>",
+    "snowflake_pat_token": "<SNOWFLAKE_PAT_TOKEN>",
+    "cortex_model": "<CORTEX_MODEL>",
+    "cortex_timeout": "<CORTEX_TIMEOUT_SECONDS>"
+}

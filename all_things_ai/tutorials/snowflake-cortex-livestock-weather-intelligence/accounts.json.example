@@ -1,0 +1,14 @@
+{
+  "default_python_version": "3.12",
+  "accounts": {
+    "FIVETRAN_ACCOUNT": {
+      "api_key": "your_fivetran_api_key",
+      "destinations": [
+        "fivetran_destination_1",
+        "fivetran_destination_2",
+        "fivetran_destination_3"
+      ],
+      "python_version": "3.12"
+    }
+  }
+}

@@ -1,18 +1,30 @@
 # Microsoft Intune Connector SDK Example
 
+## Connector overview
 This example demonstrates how to build a connector for [Microsoft Intune](https://www.microsoft.com/en-us/security/business/microsoft-intune) with Fivetran Connector SDK, using the [Microsoft Graph API](https://learn.microsoft.com/en-us/graph/use-the-api) to retrieve managed device data. The connector pulls data from the Intune managed devices endpoint and delivers it to your Fivetran destination in a single table called `MANAGED_DEVICES`.
 
 ## Requirements
 
 * Microsoft Intune credentials: `tenant_id`, `client_id`, and `client_secret`
-* [Supported Python versions](https://github.com/fivetran/fivetran_connector_sdk/blob/main/README.md#requirements)   
+* [Supported Python versions](https://github.com/fivetran/connector_sdk/blob/main/README.md#requirements)   
 * Operating System:  
   * Windows 10 or later  
   * macOS 13 (Ventura) or later
 
 ## Getting started
 
-Refer to the [Connector SDK setup guide](https://fivetran.com/docs/connectors/connector-sdk/setup-guide) to get started.
+Refer to the [Connector SDK Setup Guide](https://fivetran.com/docs/connector-sdk/setup-guide) to get started.
+
+To initialize a new Connector SDK project using this connector as a starting point, run:
+
+```bash
+fivetran init <project-path> --template connectors/microsoft_intune
+```
+`fivetran init` initializes a new Connector SDK project by setting up the project structure, configuration files, and a connector you can run immediately with `fivetran debug`.
+If you do not specify a project path, Fivetran creates the project in your current directory.
+For more information on `fivetran init`, refer to the [Connector SDK `init` documentation](https://fivetran.com/docs/connector-sdk/setup-guide#createyourcustomconnector).
+
+> Note: Ensure you have updated the `configuration.json` file with the necessary parameters before running `fivetran debug`. See the [Configuration file](#configuration-file) section for details on the required configuration parameters.
 
 ## Features
 
@@ -53,7 +65,7 @@ The connector handles pagination using the `@odata.nextLink` field returned by t
 
 ## Error handling
 
-* Uses Fivetran Connector SDK logging for info and severe error messages (see `log` usage throughout)
+* Uses Fivetran Connector SDK logging for info and error messages (see `log` usage throughout)
 * Raises exceptions for failed authentication or API errors (see `get_access_token` and `update` functions)
 
 ## Tables created

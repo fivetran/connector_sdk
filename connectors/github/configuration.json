@@ -1,0 +1,6 @@
+{
+  "app_id": "<YOUR_GITHUB_APP_ID>",
+  "private_key": "<YOUR_GITHUB_APP_PRIVATE_KEY>",
+  "organization": "<YOUR_ORGANIZATION_NAME>",
+  "installation_id": "<YOUR_INSTALLATION_ID>"
+}

@@ -11,14 +11,25 @@ It's designed to efficiently handle Excel files of various sizes, providing flex
 
 ## Requirements
 
-* [Supported Python versions](https://github.com/fivetran/fivetran_connector_sdk/blob/main/README.md#requirements)   
+* [Supported Python versions](https://github.com/fivetran/connector_sdk/blob/main/README.md#requirements)   
 * Operating System:  
   * Windows 10 or later  
   * macOS 13 (Ventura) or later
 
 ## Getting started
 
-Refer to the [Setup Guide](https://fivetran.com/docs/connectors/connector-sdk/setup-guide) to get started.
+Refer to the [Connector SDK Setup Guide](https://fivetran.com/docs/connector-sdk/setup-guide) to get started.
+
+To initialize a new Connector SDK project using this connector as a starting point, run:
+
+```bash
+fivetran init <project-path> --template connectors/microsoft_excel
+```
+`fivetran init` initializes a new Connector SDK project by setting up the project structure, configuration files, and a connector you can run immediately with `fivetran debug`.
+If you do not specify a project path, Fivetran creates the project in your current directory.
+For more information on `fivetran init`, refer to the [Connector SDK `init` documentation](https://fivetran.com/docs/connector-sdk/setup-guide#createyourcustomconnector).
+
+> Note: Ensure you have updated the `configuration.json` file with the necessary parameters before running `fivetran debug`. See the [Configuration file](#configuration-file) section for details on the required configuration parameters.
 
 ## Features
 
@@ -92,12 +103,8 @@ The connector creates three tables in your destination:
 - `excel_data_calamine`: Contains data upserted using the `calamine` engine with `pandas`.
 - `excel_data_openpyxl`: Contains data upserted using the `openpyxl` library.
 
-The schema for all three tables is identical, with the following columns:
+The schema for all three tables is identical, with the following defined columns:
 - `id`: Unique identifier for each row.
-- `name`: Name of the person.
-- `age`: Age of the person.
-- `country`: Country of residence.
-- `email`: Email address of the person.
 - `timestamp`: Record timestamp.
 
 ## Additional considerations

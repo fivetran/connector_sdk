@@ -17,7 +17,7 @@ This tutorial is intended to be read in tandem with our [Building a Fivetran Con
 ## Prerequisites
 
 ### Technical Requirements
-- **Python 3.9 - 3.12+** installed on your machine
+- **Python 3.10 - 3.13+** installed on your machine
 - **Basic Python knowledge** (functions, dictionaries, loops)
 - **Fivetran Connector SDK** (we'll install this)
 
@@ -58,7 +58,7 @@ No additional dependencies are needed for this API, so this file was correctly s
 ## Context and The Prompt
 
 In this case, we provided context by copying and pasting the [Fivetran Connector SDK technical reference](https://fivetran.com/docs/connector-sdk/technical-reference).
-We also generated this [Claude.md](https://github.com/fivetran/fivetran_connector_sdk/tree/main/all_things_api/tutorials/claude/CLAUDE.md) file.
+We also generated this [Claude.md](https://github.com/fivetran/connector_sdk/tree/main/all_things_ai/tutorials/claude/CLAUDE.md) file.
 
 Here's the original prompt that created this connector:
 

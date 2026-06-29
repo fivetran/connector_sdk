@@ -1,0 +1,7 @@
+{
+    "host": "<YOUR_AWS_RDS_ORACLE_HOST>",
+    "port": "<YOUR_AWS_RDS_ORACLE_PORT_DEFAULT_1521>",
+    "service_name": "<YOUR_AWS_RDS_ORACLE_SERVICE_NAME>",
+    "user": "<YOUR_AWS_RDS_ORACLE_USER>",
+    "password": "<YOUR_AWS_RDS_ORACLE_PASSWORD>"
+}

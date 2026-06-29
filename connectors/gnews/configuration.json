@@ -1,0 +1,5 @@
+{
+    "api_key": "<YOUR_GNEWS_API_KEY>",
+    "search_term": "<YOUR_SEARCH_TERM>",
+    "from_date": "<YYYY-MM-DD_START_DATE>"
+}

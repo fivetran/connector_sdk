@@ -6,6 +6,7 @@ src/fivetran_custom_sdk.egg-info/
 examples/**/files/
 examples/**/build/
 examples/**/dist/
+.venv*
 
 .DS_Store
 **/*_pb2.py

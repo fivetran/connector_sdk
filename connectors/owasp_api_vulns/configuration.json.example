@@ -1,0 +1,7 @@
+{
+  "api_key": "<YOUR_NVD_API_KEY>",
+  "force_full_sync": "<ENABLE_FORCE_FULL_SYNC>",
+  "write_temp_files": "<ENABLE_TEMP_FILE_WRITE>",
+  "logging_level": "<YOUR_LOGGING_LEVEL>",
+  "cwe_ids": "<YOUR_CWE_ID_SEPARATED_BY_COMMA>"
+}

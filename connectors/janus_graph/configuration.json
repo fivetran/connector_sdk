@@ -1,0 +1,6 @@
+{
+  "gremlin_server_url": "<YOUR_GREMLIN_SERVER_URL>",
+  "traversal_source": "<YOUR_TRAVERSAL_SOURCE_NAME>",
+  "username": "<YOUR_USERNAME>",
+  "password": "<YOUR_PASSWORD>"
+}

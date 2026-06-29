@@ -1,0 +1,2 @@
+pyjwt==2.11.0
+cryptography==36.0.1  # Required by PyJWT for RS256 algorithm (RSA signature) supportExpand comment

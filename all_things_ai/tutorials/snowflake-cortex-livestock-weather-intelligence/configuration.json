@@ -1,0 +1,10 @@
+{
+  "zip_codes": "77429,77856,81611",
+  "user_agent": "<YOUR_USER_AGENT_NAME>",
+  "farm_zip_mapping": "77429:FARM_000000,FARM_000001|77856:FARM_000002,FARM_000003|81611:FARM_000004",
+  "enable_cortex_enrichment": "true",
+  "snowflake_account": "<YOUR_SNOWFLAKE_ACCOUNT.snowflakecomputing.com>",
+  "snowflake_pat_token": "<YOUR_SNOWFLAKE_PAT>",
+  "cortex_timeout": "60",
+  "max_enrichments": "5"
+}
