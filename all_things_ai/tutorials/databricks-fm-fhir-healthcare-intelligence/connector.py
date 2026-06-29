@@ -19,16 +19,16 @@ for details
 # For reading configuration from a JSON file
 import json
 
-# For time-based operations and rate limiting
+# For retry delays and rate limiting
 import time
 
-# For timestamp generation on final checkpoint
+# For generating checkpoint timestamps
 from datetime import datetime, timezone
 
-# For generating unique IDs for Genie Space config elements
+# For generating unique IDs for Genie Space configuration
 import uuid
 
-# For making HTTP requests to external APIs
+# For making HTTP requests to FHIR and Databricks APIs
 import requests
 
 # Import required classes from fivetran_connector_sdk
@@ -193,13 +193,12 @@ def _optional_str(configuration, key, default=None):
 
 def validate_configuration(configuration: dict):
     """
-    Validate the configuration dictionary to ensure all required parameters are present and valid.
-
+    Validate the configuration dictionary to ensure it contains all required parameters.
+    This function is called at the start of the update method to ensure that the connector has all necessary configuration values.
     Args:
         configuration: a dictionary that holds the configuration settings for the connector.
-
     Raises:
-        ValueError: if any required configuration parameter is missing or invalid.
+        ValueError: if any required configuration parameter is missing.
     """
     # Validate numeric parameters
     for param in ["max_patients", "max_enrichments"]:
@@ -260,7 +259,7 @@ def schema(configuration: dict):
     """
     Define the schema function which lets you configure the schema your connector delivers.
     See the technical reference documentation for more details on the schema function:
-    https://fivetran.com/docs/connectors/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#schema
+    https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#schema
     Args:
         configuration: a dictionary that holds the configuration settings for the connector.
     """
@@ -340,7 +339,7 @@ def fetch_data_with_retry(session, url, params=None):
 
             if status_code in (401, 403):
                 msg = f"HTTP {status_code}: Check your FHIR server credentials. URL: {url}"
-                log.severe(msg)
+                log.error(msg)
                 raise RuntimeError(msg) from e
 
             should_retry = status_code in __RETRYABLE_STATUS_CODES
@@ -425,7 +424,7 @@ def call_ai_query(session, configuration, prompt):
         # Poll for PENDING/RUNNING states
         statement_id = result.get("statement_id")
         if sql_state in ("PENDING", "RUNNING") and not statement_id:
-            log.warning("ai_query() returned PENDING/RUNNING with no statement_id — cannot poll")
+            log.warning("ai_query() returned PENDING/RUNNING with no statement_id - cannot poll")
             return None
         poll_count = 0
         max_polls = 12
@@ -463,7 +462,7 @@ def call_ai_query(session, configuration, prompt):
                 body = e.response.json().get("message", "")[:200]
             except (json.JSONDecodeError, AttributeError):
                 body = e.response.text[:200]
-        log.warning(f"ai_query() HTTP error: {str(e)} — {body}")
+        log.warning(f"ai_query() HTTP error: {str(e)} - {body}")
         return None
     except requests.exceptions.ConnectionError as e:
         log.warning(f"ai_query() connection error: {str(e)}")
@@ -1253,7 +1252,7 @@ def run_discovery_phase(
     # You should checkpoint even if you are not using incremental sync, as it tells Fivetran it is safe to write to destination.
     # For large datasets, checkpoint regularly (e.g., every N records) not only at the end.
     # Learn more about how and where to checkpoint by reading our best practices documentation
-    # (https://fivetran.com/docs/connectors/connector-sdk/best-practices#optimizingperformancewhenhandlinglargedatasets).
+    # (https://fivetran.com/docs/connector-sdk/best-practices#optimizingperformancewhenhandlinglargedatasets).
     op.checkpoint(state=state)
 
 
@@ -1362,7 +1361,7 @@ def run_debate_phase(
         # You should checkpoint even if you are not using incremental sync, as it tells Fivetran it is safe to write to destination.
         # For large datasets, checkpoint regularly (e.g., every N records) not only at the end.
         # Learn more about how and where to checkpoint by reading our best practices documentation
-        # (https://fivetran.com/docs/connectors/connector-sdk/best-practices#optimizingperformancewhenhandlinglargedatasets).
+        # (https://fivetran.com/docs/connector-sdk/best-practices#optimizingperformancewhenhandlinglargedatasets).
         op.checkpoint(state=state)
 
     return enrichment_count, disagreement_count
@@ -1452,7 +1451,7 @@ def update(configuration: dict, state: dict):
     """
     Define the update function, which is a required function, and is called by Fivetran during each sync.
     See the technical reference documentation for more details on the update function
-    https://fivetran.com/docs/connectors/connector-sdk/technical-reference#update
+    https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update
     Args:
         configuration: A dictionary containing connection details
         state: A dictionary containing state information from previous runs
@@ -1495,13 +1494,13 @@ def update(configuration: dict, state: dict):
         log.info(f"Phase 1 complete: {len(patient_records)} patients fetched")
 
         if not patient_records:
-            log.info("No patients found — nothing to enrich")
+            log.info("No patients found - nothing to enrich")
             # Save the progress by checkpointing the state. This is important for ensuring that the sync process can resume
             # from the correct position in case of next sync or interruptions.
             # You should checkpoint even if you are not using incremental sync, as it tells Fivetran it is safe to write to destination.
             # For large datasets, checkpoint regularly (e.g., every N records) not only at the end.
             # Learn more about how and where to checkpoint by reading our best practices documentation
-            # (https://fivetran.com/docs/connectors/connector-sdk/best-practices#optimizingperformancewhenhandlinglargedatasets).
+            # (https://fivetran.com/docs/connector-sdk/best-practices#optimizingperformancewhenhandlinglargedatasets).
             op.checkpoint(state=state)
             return
 
@@ -1510,7 +1509,7 @@ def update(configuration: dict, state: dict):
         # You should checkpoint even if you are not using incremental sync, as it tells Fivetran it is safe to write to destination.
         # For large datasets, checkpoint regularly (e.g., every N records) not only at the end.
         # Learn more about how and where to checkpoint by reading our best practices documentation
-        # (https://fivetran.com/docs/connectors/connector-sdk/best-practices#optimizingperformancewhenhandlinglargedatasets).
+        # (https://fivetran.com/docs/connector-sdk/best-practices#optimizingperformancewhenhandlinglargedatasets).
         op.checkpoint(state=state)
 
         # --- Phase 2: DISCOVERY ---
@@ -1557,7 +1556,7 @@ def update(configuration: dict, state: dict):
                 # You should checkpoint even if you are not using incremental sync, as it tells Fivetran it is safe to write to destination.
                 # For large datasets, checkpoint regularly (e.g., every N records) not only at the end.
                 # Learn more about how and where to checkpoint by reading our best practices documentation
-                # (https://fivetran.com/docs/connectors/connector-sdk/best-practices#optimizingperformancewhenhandlinglargedatasets).
+                # (https://fivetran.com/docs/connector-sdk/best-practices#optimizingperformancewhenhandlinglargedatasets).
                 op.checkpoint(state=state)
 
         # Final checkpoint
@@ -1568,13 +1567,13 @@ def update(configuration: dict, state: dict):
         # You should checkpoint even if you are not using incremental sync, as it tells Fivetran it is safe to write to destination.
         # For large datasets, checkpoint regularly (e.g., every N records) not only at the end.
         # Learn more about how and where to checkpoint by reading our best practices documentation
-        # (https://fivetran.com/docs/connectors/connector-sdk/best-practices#optimizingperformancewhenhandlinglargedatasets).
+        # (https://fivetran.com/docs/connector-sdk/best-practices#optimizingperformancewhenhandlinglargedatasets).
         op.checkpoint(state=state)
 
         log.info(f"Sync complete: {len(patient_records)} patients, all clinical phases done")
 
     except (requests.exceptions.RequestException, ValueError, RuntimeError) as e:
-        log.severe(f"Unexpected error during sync: {str(e)}")
+        log.error(f"Unexpected error during sync: {str(e)}")
         raise
 
     finally:
