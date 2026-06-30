@@ -42,11 +42,6 @@ __TOKEN_CACHE: Dict[str, Tuple[str, float]] = {}
 __CSV_SHEET_KEY = ""
 
 
-# ---------------------------------------------------------------------------
-# Authentication
-# ---------------------------------------------------------------------------
-
-
 def _token_cache_key(configuration: dict) -> str:
     """Return the cache key for the given tenant/client pair."""
     return f"{configuration['tenant_id']}:{configuration['client_id']}"
@@ -88,11 +83,6 @@ def get_access_token(configuration: dict) -> str:
     )
     log.info("Access token obtained/refreshed")
     return __TOKEN_CACHE[cache_key][0]
-
-
-# ---------------------------------------------------------------------------
-# HTTP helpers
-# ---------------------------------------------------------------------------
 
 
 def make_graph_request(
@@ -170,11 +160,6 @@ def paginate(configuration: dict, url: str, params: dict = None) -> Iterator[dic
         params = None
         yield from payload.get("value", [])
         url = payload.get("@odata.nextLink")
-
-
-# ---------------------------------------------------------------------------
-# Configuration and site helpers
-# ---------------------------------------------------------------------------
 
 
 def validate_configuration(configuration: dict) -> None:
@@ -310,11 +295,6 @@ def list_files_in_folder(
     return files
 
 
-# ---------------------------------------------------------------------------
-# Parsing helpers
-# ---------------------------------------------------------------------------
-
-
 def parse_csv_rows(
     content_bytes: bytes,
     delimiter: Optional[str],
@@ -416,11 +396,6 @@ def parse_file_rows(
         yield from parse_csv_rows(content_bytes, delimiter)
     elif ext in {".xlsx", ".xlsm"}:
         yield from parse_excel_rows(content_bytes, skip_rows)
-
-
-# ---------------------------------------------------------------------------
-# Row sync helpers
-# ---------------------------------------------------------------------------
 
 
 def build_row_id(file_id: str, sheet_name: Optional[str], source_row_number: int) -> str:
@@ -597,11 +572,6 @@ def handle_deleted_files_for_site(
         )
 
 
-# ---------------------------------------------------------------------------
-# Schema
-# ---------------------------------------------------------------------------
-
-
 def schema(configuration: dict):
     """
     Define the schema function which lets you configure the schema your connector delivers.
@@ -647,11 +617,6 @@ def schema(configuration: dict):
             },
         },
     ]
-
-
-# ---------------------------------------------------------------------------
-# Main update
-# ---------------------------------------------------------------------------
 
 
 def update(configuration: dict, state: dict):
