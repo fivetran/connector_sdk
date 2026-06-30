@@ -16,7 +16,7 @@ fivetran debug --configuration configuration.json
 fivetran reset
 
 # Deploy connector to Fivetran
-fivetran deploy --api-key <API-KEY> --destination <DEST> --connection <CONN> --configuration configuration.json [--force] [--python-version X.Y]
+fivetran deploy --api-key <API-KEY> --destination <DEST> --connection <CONN> --configuration configuration.json [--python-version X.Y]
 
 # Check SDK version
 fivetran version
