@@ -50,6 +50,8 @@ Explore working code examples for common Connector SDK use cases. These [example
 
 Explore ready-to-use full connectors to get started. These connectors are useful when you want a stronger starting point or want to adapt an existing implementation for your source. For the full list, see the [Community Connectors Catalog](https://github.com/fivetran/community_connectors/blob/main/README.md).
 
+Some examples available in this repository:
+- [sharepoint_multi_site_connector](https://github.com/fivetran/connector_sdk/tree/main/connectors/sharepoint_multi_site_connector) - Syncs CSV and Excel file data from multiple SharePoint Online sites using the Microsoft Graph API. Supports multi-sheet Excel workbooks, recursive folder traversal, incremental sync, and deletion handling.
 
 ## AI and Connector SDK
 - [Readme](https://github.com/fivetran/connector_sdk/blob/main/all_things_ai/tutorials/README.md) - This is an introduction to using AI tools to leverage Connector SDK.

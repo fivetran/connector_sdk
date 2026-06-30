@@ -1,0 +1,12 @@
+{
+    "tenant_id": "<YOUR_TENANT_ID>",
+    "client_id": "<YOUR_CLIENT_ID>",
+    "client_secret": "<YOUR_CLIENT_SECRET>",
+    "site_urls": "<YOUR_SITE_URLS_COMMA_SEPARATED>",
+    "site_ids": "<YOUR_SITE_IDS_OPTIONAL_COMMA_SEPARATED>",
+    "folder_path": "<OPTIONAL_FOLDER_PATH_E.G._Documents/Reports>",
+    "sync_subfolders": "true",
+    "file_pattern": "<OPTIONAL_FILENAME_SUBSTRING_FILTER>",
+    "delimiter": "<OPTIONAL_CSV_DELIMITER_E.G._COMMA_OR_SEMICOLON>",
+    "skip_rows": "0"
+}
