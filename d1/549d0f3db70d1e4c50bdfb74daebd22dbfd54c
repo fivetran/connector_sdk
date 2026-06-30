@@ -1,0 +1,73 @@
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.1",
+  "base_commit_sha": "d1549d0f3db70d1e4c50bdfb74daebd22dbfd54c",
+  "prompts": {
+    "3862076570b982df": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2f241296-bf05-4976-9ba8-90c5275eab43",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Sahil Khirwal <sahil.khirwal@fivetran.com>",
+      "messages": [],
+      "total_additions": 609,
+      "total_deletions": 283,
+      "accepted_lines": 323,
+      "overriden_lines": 2
+    },
+    "52b1fca3bf5edabc": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8633156b-17f3-4efa-94f2-b5331c106aac",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Sahil Khirwal <sahil.khirwal@fivetran.com>",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 79,
+      "overriden_lines": 0
+    },
+    "5a8796dfd3d13a2b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f3c1de49-2a66-495f-8cea-4d992653cad4",
+        "model": "<synthetic>"
+      },
+      "human_author": "Sahil Khirwal <sahil.khirwal@fivetran.com>",
+      "messages": [],
+      "total_additions": 33,
+      "total_deletions": 0,
+      "accepted_lines": 33,
+      "overriden_lines": 0
+    },
+    "5ef7fe2acb911e60": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "835b9b4d-1f95-41ef-97aa-6fb4d55b0865",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Sahil Khirwal <sahil.khirwal@fivetran.com>",
+      "messages": [],
+      "total_additions": 49,
+      "total_deletions": 0,
+      "accepted_lines": 49,
+      "overriden_lines": 0
+    },
+    "eb263eb161d19930": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "9ac66340-f607-40f9-a9ac-07f8fac559f5",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Sahil Khirwal <sahil.khirwal@fivetran.com>",
+      "messages": [],
+      "total_additions": 7,
+      "total_deletions": 0,
+      "accepted_lines": 2,
+      "overriden_lines": 0
+    }
+  }
+}
