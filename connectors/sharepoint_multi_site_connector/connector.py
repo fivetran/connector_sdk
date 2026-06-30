@@ -46,6 +46,7 @@ __CSV_SHEET_KEY = ""
 # Authentication
 # ---------------------------------------------------------------------------
 
+
 def _token_cache_key(configuration: dict) -> str:
     """Return the cache key for the given tenant/client pair."""
     return f"{configuration['tenant_id']}:{configuration['client_id']}"
@@ -66,8 +67,7 @@ def get_access_token(configuration: dict) -> str:
         return token
 
     token_url = (
-        f"https://login.microsoftonline.com/{configuration['tenant_id']}"
-        "/oauth2/v2.0/token"
+        f"https://login.microsoftonline.com/{configuration['tenant_id']}" "/oauth2/v2.0/token"
     )
     response = requests.post(
         token_url,
@@ -93,6 +93,7 @@ def get_access_token(configuration: dict) -> str:
 # ---------------------------------------------------------------------------
 # HTTP helpers
 # ---------------------------------------------------------------------------
+
 
 def make_graph_request(
     configuration: dict,
@@ -140,9 +141,7 @@ def make_graph_request(
             continue
 
         if response.status_code in (503, 504):
-            log.warning(
-                f"Service unavailable ({response.status_code}); retrying in {backoff}s"
-            )
+            log.warning(f"Service unavailable ({response.status_code}); retrying in {backoff}s")
             time.sleep(backoff)
             backoff = min(backoff * 2, 120)
             continue
@@ -177,6 +176,7 @@ def paginate(configuration: dict, url: str, params: dict = None) -> Iterator[dic
 # Configuration and site helpers
 # ---------------------------------------------------------------------------
 
+
 def validate_configuration(configuration: dict) -> None:
     """
     Validate that all required configuration keys are present and non-empty.
@@ -188,10 +188,10 @@ def validate_configuration(configuration: dict) -> None:
     required = ["tenant_id", "client_id", "client_secret"]
     missing = [k for k in required if not configuration.get(k, "").strip()]
     if missing:
-        raise ValueError(
-            f"Missing required configuration key(s): {', '.join(missing)}"
-        )
-    has_sites = configuration.get("site_ids", "").strip() or configuration.get("site_urls", "").strip()
+        raise ValueError(f"Missing required configuration key(s): {', '.join(missing)}")
+    has_sites = (
+        configuration.get("site_ids", "").strip() or configuration.get("site_urls", "").strip()
+    )
     if not has_sites:
         raise ValueError("Provide at least one of: site_ids or site_urls")
 
@@ -213,7 +213,10 @@ def resolve_sites(configuration: dict) -> List[Tuple[str, str]]:
         for site_id in [x.strip() for x in site_ids_raw.split(",") if x.strip()]:
             payload = graph_get(configuration, f"{__GRAPH_BASE}/sites/{site_id}")
             sites.append(
-                (payload["id"], payload.get("displayName") or payload.get("name") or site_id)
+                (
+                    payload["id"],
+                    payload.get("displayName") or payload.get("name") or site_id,
+                )
             )
         return sites
 
@@ -224,7 +227,10 @@ def resolve_sites(configuration: dict) -> List[Tuple[str, str]]:
         path = parsed.path.rstrip("/")
         payload = graph_get(configuration, f"{__GRAPH_BASE}/sites/{hostname}:{path}")
         sites.append(
-            (payload["id"], payload.get("displayName") or payload.get("name") or raw_url)
+            (
+                payload["id"],
+                payload.get("displayName") or payload.get("name") or raw_url,
+            )
         )
     return sites
 
@@ -296,9 +302,7 @@ def list_files_in_folder(
         for item in paginate(configuration, url):
             if "folder" in item:
                 if recurse:
-                    child_url = (
-                        f"{__GRAPH_BASE}/drives/{drive_id}/items/{item['id']}/children"
-                    )
+                    child_url = f"{__GRAPH_BASE}/drives/{drive_id}/items/{item['id']}/children"
                     pending_urls.append(child_url)
             elif file_matches(item, file_pattern):
                 files.append(item)
@@ -309,6 +313,7 @@ def list_files_in_folder(
 # ---------------------------------------------------------------------------
 # Parsing helpers
 # ---------------------------------------------------------------------------
+
 
 def parse_csv_rows(
     content_bytes: bytes,
@@ -416,6 +421,7 @@ def parse_file_rows(
 # ---------------------------------------------------------------------------
 # Row sync helpers
 # ---------------------------------------------------------------------------
+
 
 def build_row_id(file_id: str, sheet_name: Optional[str], source_row_number: int) -> str:
     """Build a unique, stable row identifier combining file ID, sheet name, and row position."""
@@ -565,10 +571,14 @@ def handle_deleted_files_for_site(
         state: mutable sync state dict; entries for deleted files are removed in place.
     """
     file_states = state.setdefault("file_states", {})
-    delete_keys = [
-        state_key for state_key, _ in file_states.items()
-        if state_key.startswith(f"{site_id}:") and state_key.split(":", 1)[1] not in current_file_ids
-    ]
+    site_prefix = f"{site_id}:"
+    delete_keys = []
+    for state_key in file_states:
+        if not state_key.startswith(site_prefix):
+            continue
+        if state_key.split(":", 1)[1] in current_file_ids:
+            continue
+        delete_keys.append(state_key)
 
     for state_key in delete_keys:
         file_state = file_states.pop(state_key)
@@ -590,6 +600,7 @@ def handle_deleted_files_for_site(
 # ---------------------------------------------------------------------------
 # Schema
 # ---------------------------------------------------------------------------
+
 
 def schema(configuration: dict):
     """
@@ -641,6 +652,7 @@ def schema(configuration: dict):
 # ---------------------------------------------------------------------------
 # Main update
 # ---------------------------------------------------------------------------
+
 
 def update(configuration: dict, state: dict):
     """
