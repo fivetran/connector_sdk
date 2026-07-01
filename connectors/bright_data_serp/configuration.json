@@ -1,9 +1,8 @@
 {
-  "api_token": "8d6e4d1c20c89d26cd89a4a4e32bda872dbc1c0c39582c6a9c14ab978aa312cd",
-  "search_query": "Ghana, Togo,Netflix",
+  "api_token": "<YOUR_BRIGHT_DATA_API_TOKEN>",
+  "search_query": "<YOUR_SEARCH_QUERY>",
   "country": "us",
   "search_engine": "google",
   "search_zone": "serp_api1",
   "format": "json"
 }
-

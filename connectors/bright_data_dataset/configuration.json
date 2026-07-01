@@ -1,8 +1,0 @@
-{
-  "api_token": "8d6e4d1c20c89d26cd89a4a4e32bda872dbc1c0c39582c6a9c14ab978aa312cd",
-  "dataset_id": "gd_l1viktl72bvl7bjuj0",
-  "records_limit": "1000",
-  "filter_name": "name",
-  "filter_operator": "=",
-  "filter_value": "John"
-}

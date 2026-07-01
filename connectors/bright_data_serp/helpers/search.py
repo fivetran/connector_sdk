@@ -1,36 +1,55 @@
 """Bright Data SERP (search) helper functions."""
 
 import time
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Union
 from urllib.parse import quote_plus
 
 import requests
-from requests import RequestException
+from requests import RequestException, Response
 
 from fivetran_connector_sdk import Logging as log
 
-from .common import (
-    BRIGHT_DATA_BASE_URL,
-    DEFAULT_SERP_ZONE,
-    DEFAULT_TIMEOUT_SECONDS,
-    RETRY_STATUS_CODES,
-    DEFAULT_FORMAT,
-    extract_error_detail,
-    parse_response_payload,
-)
+__BRIGHT_DATA_BASE_URL = "https://api.brightdata.com"
+__DEFAULT_SERP_ZONE = "serp_api1"
+__DEFAULT_TIMEOUT_SECONDS = 120
+__DEFAULT_RESPONSE_FORMAT = "json"
+__RETRY_STATUS_CODES = {408, 429, 500, 502, 503, 504}
+__VALID_SEARCH_ENGINES = {"google", "bing", "yandex"}
+
+
+def _parse_response_payload(response: Response) -> Any:
+    """Return JSON payload when available, otherwise raw text."""
+    try:
+        return response.json()
+    except ValueError:
+        return response.text
+
+
+def _extract_error_detail(response: Response) -> str:
+    """Extract a concise error description from a failed Bright Data response."""
+    try:
+        payload = response.json()
+        if isinstance(payload, dict):
+            for key in ("error", "message", "detail", "details"):
+                if key in payload:
+                    return str(payload[key])
+            return str(payload)
+        return str(payload)
+    except ValueError:
+        return response.text
 
 
 def perform_search(
     api_token: str,
-    query: Union[str, List[str]],
-    search_engine: Optional[str] = "google",
-    country: Optional[str] = "us",
-    format: Optional[str] = DEFAULT_FORMAT,
-    zone: Optional[str] = DEFAULT_SERP_ZONE,
-    timeout: int = DEFAULT_TIMEOUT_SECONDS,
+    query: Union[str, list],
+    search_engine: str | None = "google",
+    country: str | None = "us",
+    response_format: str | None = __DEFAULT_RESPONSE_FORMAT,
+    zone: str | None = __DEFAULT_SERP_ZONE,
+    timeout: int = __DEFAULT_TIMEOUT_SECONDS,
     retries: int = 3,
     backoff_factor: float = 1.5,
-) -> Union[Dict[str, Any], List[Union[Dict[str, Any], List[Dict[str, Any]]]]]:
+) -> Union[dict, list]:
     """Perform a search using Bright Data's SERP REST endpoint."""
     if not api_token or not isinstance(api_token, str):
         raise ValueError("A valid Bright Data API token is required")
@@ -41,7 +60,6 @@ def perform_search(
     if not isinstance(query, (str, list)):
         raise TypeError("Query must be a string or list of strings")
 
-    queries: List[str]
     if isinstance(query, list):
         if not all(isinstance(item, str) for item in query):
             raise TypeError("All queries must be strings")
@@ -52,103 +70,110 @@ def perform_search(
     if not queries:
         raise ValueError("At least one non-empty query must be provided")
 
-    valid_search_engines = {"google", "bing", "yandex"}
-    if search_engine and search_engine.lower() not in valid_search_engines:
-        log.info(
-            f"Warning: Invalid search engine '{search_engine}'. Using default 'google'"
-        )
-        search_engine = "google"
-
     selected_engine = (search_engine or "google").lower()
+    if selected_engine not in __VALID_SEARCH_ENGINES:
+        log.warning(f"Invalid search engine '{search_engine}'. Using default 'google'")
+        selected_engine = "google"
+
     headers = {
         "Authorization": f"Bearer {api_token}",
         "Content-Type": "application/json",
     }
 
-    zone_identifier = zone or DEFAULT_SERP_ZONE
+    zone_identifier = zone or __DEFAULT_SERP_ZONE
 
     log.info(
         f"Executing Bright Data REST search for {len(queries)} query"
         f"{'ies' if len(queries) != 1 else ''} using zone '{zone_identifier}'"
     )
 
-    results: List[Any] = []
+    results: list = []
 
     for single_query in queries:
         search_url = _build_search_url(single_query, selected_engine)
-        payload: Dict[str, Any] = {
+        payload: dict = {
             "zone": zone_identifier,
             "url": search_url,
-            "format": format or DEFAULT_FORMAT,
+            "format": response_format or __DEFAULT_RESPONSE_FORMAT,
             "method": "GET",
         }
 
         if country:
             payload["country"] = country.lower()
 
-        attempt = 0
-        backoff = backoff_factor
-        response_payload: Any = None
-
-        while attempt <= retries:
-            try:
-                response = requests.post(
-                    f"{BRIGHT_DATA_BASE_URL}/request?async=true",
-                    headers=headers,
-                    json=payload,
-                    timeout=timeout,
-                )
-
-                if response.status_code == 200:
-                    response_payload = parse_response_payload(response)
-                    break
-
-                if response.status_code in RETRY_STATUS_CODES and attempt < retries:
-                    log.info(
-                        f"Bright Data SERP request retry "
-                        f"{attempt + 1}/{retries} for query '{single_query}' "
-                        f"(status code: {response.status_code})"
-                    )
-                    time.sleep(backoff)
-                    backoff *= backoff_factor
-                    attempt += 1
-                    continue
-
-                error_detail = extract_error_detail(response)
-                log.info(
-                    f"Bright Data SERP request failed for query '{single_query}': "
-                    f"{error_detail}"
-                )
-                response.raise_for_status()
-
-            except RequestException as exc:
-                if attempt < retries:
-                    log.info(
-                        f"Error contacting Bright Data SERP API for query '{single_query}': "
-                        f"{str(exc)}. Retrying ({attempt + 1}/{retries})"
-                    )
-                    time.sleep(backoff)
-                    backoff *= backoff_factor
-                    attempt += 1
-                    continue
-                raise RuntimeError(
-                    f"Failed to execute Bright Data SERP request for query "
-                    f"'{single_query}' after {retries} retries: {str(exc)}"
-                ) from exc
-
-        if response_payload is None:
-            raise RuntimeError(
-                f"Bright Data SERP request did not return a response for query "
-                f"'{single_query}'"
-            )
-
-        normalized_results = _normalize_search_results(response_payload)
-        results.append(normalized_results)
+        response_payload = _execute_search_request(
+            headers=headers,
+            payload=payload,
+            single_query=single_query,
+            timeout=timeout,
+            retries=retries,
+            backoff_factor=backoff_factor,
+        )
+        results.append(_normalize_search_results(response_payload))
 
     if len(queries) == 1:
         return results[0]
 
     return results
+
+
+def _execute_search_request(
+    headers: dict,
+    payload: dict,
+    single_query: str,
+    timeout: int,
+    retries: int,
+    backoff_factor: float,
+) -> Any:
+    """Execute a single SERP API request with retry logic."""
+    attempt = 0
+    backoff = backoff_factor
+
+    while attempt <= retries:
+        try:
+            response = requests.post(
+                f"{__BRIGHT_DATA_BASE_URL}/request?async=true",
+                headers=headers,
+                json=payload,
+                timeout=timeout,
+            )
+
+            if response.status_code == 200:
+                return _parse_response_payload(response)
+
+            if response.status_code in __RETRY_STATUS_CODES and attempt < retries:
+                attempt += 1
+                log.warning(
+                    f"Bright Data SERP request retry {attempt}/{retries} for query "
+                    f"'{single_query}' (status code: {response.status_code})"
+                )
+                time.sleep(backoff)
+                backoff *= backoff_factor
+                continue
+
+            error_detail = _extract_error_detail(response)
+            raise RuntimeError(
+                f"Bright Data SERP request failed for query '{single_query}': {error_detail}"
+            )
+
+        except RequestException as exc:
+            if attempt < retries:
+                attempt += 1
+                log.warning(
+                    f"Error contacting Bright Data SERP API for query '{single_query}': "
+                    f"{str(exc)}. Retrying ({attempt}/{retries})"
+                )
+                time.sleep(backoff)
+                backoff *= backoff_factor
+                continue
+            raise RuntimeError(
+                f"Failed to execute Bright Data SERP request for query "
+                f"'{single_query}' after {retries} retries: {str(exc)}"
+            ) from exc
+
+    raise RuntimeError(
+        f"Bright Data SERP request did not return a response for query '{single_query}'"
+    )
 
 
 def _build_search_url(query: str, search_engine: str) -> str:
@@ -166,12 +191,11 @@ def _build_search_url(query: str, search_engine: str) -> str:
     return template.format(query=encoded_query)
 
 
-def _normalize_search_results(payload: Any) -> List[Dict[str, Any]]:
+def _normalize_search_results(payload: Any) -> list:
     """Normalize the variety of SERP response structures into a list of dictionaries."""
     if isinstance(payload, list):
         return [
-            item if isinstance(item, dict) else {"raw_response": str(item)}
-            for item in payload
+            item if isinstance(item, dict) else {"raw_response": str(item)} for item in payload
         ]
 
     if isinstance(payload, dict):
