@@ -1,5 +1,0 @@
-{
-  "api_token": "<YOUR_LEAVE_DATES_API_TOKEN>",
-  "company_id": "<YOUR_LEAVE_DATES_COMPANY_ID>",
-  "start_date": "<OPTIONAL_START_DATE>"
-}

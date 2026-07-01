@@ -1,6 +1,0 @@
-{
-  "clientId": "<YOUR_CLIENT_ID>",
-  "clientSecret": "<YOUR_CLIENT_SECRET>",
-  "keyFile": "-----BEGIN PRIVATE KEY-----\nfull string including \n newline characters\n-----END PRIVATE KEY-----",
-  "crtFile": "-----BEGIN CERTIFICATE-----\nfull string including \n newline characters\n-----END CERTIFICATE-----"
-}

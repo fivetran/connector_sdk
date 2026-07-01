@@ -1,4 +1,0 @@
-google-cloud-pubsub
-google-auth
-google-api-core
-protobuf==6.30.1

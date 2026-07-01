@@ -1,9 +1,0 @@
-{
-    "hostname" : "<YOUR_Db2_HOSTNAME>",
-    "port" : "<YOUR_Db2_PORT>",
-    "database" : "<YOUR_Db2_DATABASE_NAME>",
-    "user_id" : "<YOUR_Db2_USER_ID>",
-    "password" : "<YOUR_Db2_PASSWORD>",
-    "schema_name" : "<YOUR_Db2_SCHEMA>",
-    "table_name" : "<YOUR_Db2_TABLE_NAME>"
-}

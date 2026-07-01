@@ -1,7 +1,0 @@
-{
-  "hostname": "<YOUR_DOCUMENTDB_HOSTNAME>",
-  "username": "<YOUR_DOCUMENTDB_USERNAME>",
-  "password": "<YOUR_DOCUMENTDB_PASSWORD>",
-  "database": "<YOUR_DOCUMENTDB_DATABASE>",
-  "port": "<YOUR_DOCUMENTDB_PORT>"
-}
