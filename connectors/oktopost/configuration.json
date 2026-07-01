@@ -1,6 +1,0 @@
-{
-    "account_id": "<YOUR_OKTOPOST_ACCOUNT_ID>",
-    "api_key": "<YOUR_OKTOPOST_API_KEY>",
-    "base_url": "<YOUR_OPTIONAL_BASE_URL_OR_LEAVE_DEFAULT>",
-    "test_export_id": "<YOUR_OPTIONAL_TEST_EXPORT_ID>"
-}

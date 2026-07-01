@@ -21,7 +21,6 @@ This file provides high-level guidance for reviewing connector Pull Requests. Fo
 
 ### Structure
 - `template_connector/` - Canonical template: connector.py, configuration.json, requirements.txt, README_template.md
-- `connectors/` - Production-ready examples for specific data sources (databases, APIs, message queues)
 - `examples/quickstart_examples/` - Simple learning examples (hello world, configuration patterns)
 - `examples/common_patterns_for_connectors/` - Reusable patterns (authentication, pagination, cursors, error handling)
 - `examples/source_examples/` - Additional source-specific examples

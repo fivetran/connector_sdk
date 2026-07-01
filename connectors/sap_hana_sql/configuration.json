@@ -1,6 +1,0 @@
-{
-  "host": "<YOUR_SAP_HANA_SERVER>",
-  "port": "<YOUR_SAP_HANA_PORT>",
-  "username": "<YOUR_SAP_HANA_USER_ID>",
-  "password": "<YOUR_SAP_HANA_PASSWORD>"
-}

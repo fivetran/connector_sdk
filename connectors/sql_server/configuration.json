@@ -1,7 +1,0 @@
-{
-  "driver": "YOUR_ODBC_DRIVER_LIKE='{ODBC Driver 18 for SQL Server}'",
-  "server": "YOUR_SERVER_ADDRESS_LIKE='tcp:sql_test.database.windows.net,1433'",
-  "database": "YOUR_DATABASE_NAME",
-  "user": "YOUR_USERNAME",
-  "password": "YOUR_PASSWORD"
-}
