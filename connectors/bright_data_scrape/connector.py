@@ -71,9 +71,11 @@ def update(configuration: dict, state: dict):
     urls = parse_scrape_urls(scrape_url_input)
 
     if not urls:
-        log.severe("No URLs provided in configuration; scrape_url input: %r", scrape_url_input)
+        log.severe(
+            f"No URLs provided in configuration; scrape_url input: {scrape_url_input}"
+        )
         raise RuntimeError(
-            "No URLs provided in configuration; scrape_url input: %r", scrape_url_input
+            f"No URLs provided in configuration; scrape_url input: {scrape_url_input}",
         )
 
     sync_scrape_urls(api_token, dataset_id, urls, state)
@@ -143,7 +145,7 @@ def sync_scrape_urls(api_token, dataset_id, urls, state):
         if _is_valid_url(url):
             valid_urls.append(url.strip())
         else:
-            log.warning("Skipping invalid URL: %r", url)
+            log.warning(f"Skipping invalid URL: {url}")
 
     if not valid_urls:
         log.warning("No valid URLs to sync after filtering invalid entries")
