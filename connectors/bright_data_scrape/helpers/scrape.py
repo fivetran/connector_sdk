@@ -656,11 +656,14 @@ def _extract_data_from_dict(data: Dict[str, Any]) -> List[Dict[str, Any]]:
     """
     Extract snapshot data from response dictionary.
     """
-    # Try common data keys
-    snapshot_data = data.get("data") or data.get("records") or data.get("results") or data
+    snapshot_data = None
+    for key in ("data", "records", "results"):
+        if key in data:
+            snapshot_data = data[key]
+            break
 
-    # If no specific data key, remove metadata fields
-    if snapshot_data is data:
+    # If no specific data key, remove metadata fields from the response itself
+    if snapshot_data is None:
         metadata_keys = (
             "status",
             "id",
