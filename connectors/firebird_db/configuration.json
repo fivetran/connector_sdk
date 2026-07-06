@@ -1,6 +1,0 @@
-{
-    "host": "<database_host_ip>",
-    "database": "<path_to_.fdb_file>",
-    "user": "<db_user>",  
-    "password": "<db_password>" 
-}

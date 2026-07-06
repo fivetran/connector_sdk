@@ -1,6 +1,0 @@
-{
-  "api_key": "<YOUR_CHECKLY_API_KEY>",
-  "account_id": "<YOUR_CHECKLY_ACCOUNT_ID>",
-  "aggregation_interval": "<YOUR_AGGREGATION_INTERVAL_IN_MINUTES>",
-  "quick_range": "<YOUR_QUICK_RANGE_OPTION>"
-}

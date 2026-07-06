@@ -1,7 +1,0 @@
-{
-    "solace_host": "YOUR_SOLACE_HOST",
-    "solace_username": "YOUR_SOLACE_USERNAME",
-    "solace_password": "YOUR_SOLACE_PASSWORD",
-    "solace_vpn": "YOUR_SOLACE_VPN",
-    "solace_queue": "YOUR_SOLACE_QUEUE"
-}

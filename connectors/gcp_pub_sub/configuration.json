@@ -1,6 +1,0 @@
-{
-    "service_key": "<GOOGLE_SERVICE_KEY_JSON_STRING>",
-    "max_messages": "<MAX_MESSAGE_COUNT>",
-    "subscription_name": "<SUBSCRIPTION_NAME>",
-    "topic_name": "<TOPIC_NAME>"
-}
