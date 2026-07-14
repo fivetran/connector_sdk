@@ -58,7 +58,7 @@ No additional dependencies are needed for this API, so this file was correctly s
 ## Context and The Prompt
 
 In this case, we provided context by copying and pasting the [Fivetran Connector SDK technical reference](https://fivetran.com/docs/connector-sdk/technical-reference).
-We also generated this [Claude.md](https://github.com/fivetran/connector_sdk/tree/main/all_things_ai/tutorials/claude/CLAUDE.md) file.
+We also generated this [Claude.md](https://github.com/fivetran/connector_sdk/tree/main/ai/claude/CLAUDE.md) file.
 
 Here's the original prompt that created this connector:
 
