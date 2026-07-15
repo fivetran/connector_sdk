@@ -66,7 +66,7 @@ This example does not use any authentication. It connects to a mock API (`mock_a
 
 ## Pagination
 
-This example does not implement pagination. The mock API returns all records in a single response. When building your own connector, add pagination if your source returns results across multiple pages. Refer to the [pagination examples](https://github.com/fivetran/connector_sdk/tree/main/examples/common_patterns_for_connectors/pagination) for common patterns such as offset-based, page-number, keyset, and next-page-URL pagination.
+This example does not implement pagination. The mock API returns all records in a single response. When building your own connector, add pagination if your source returns results across multiple pages. Refer to the [pagination examples](https://github.com/fivetran/connector_sdk/tree/main/examples/common_patterns/pagination) for common patterns such as offset-based, page-number, keyset, and next-page-URL pagination.
 
 
 ## Data handling

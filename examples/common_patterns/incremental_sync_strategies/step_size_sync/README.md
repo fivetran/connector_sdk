@@ -1,6 +1,6 @@
 # Step-size Incremental Sync Strategy Connector Example
 
-**Complete Example Link:** [examples/common_patterns_for_connectors/incremental_sync_strategies/step_size_sync/](https://github.com/fivetran/connector_sdk/tree/main/examples/common_patterns_for_connectors/incremental_sync_strategies/step_size_sync/)
+**Complete Example Link:** [examples/common_patterns/incremental_sync_strategies/step_size_sync/](https://github.com/fivetran/connector_sdk/tree/main/examples/common_patterns/incremental_sync_strategies/step_size_sync/)
 
 ## Connector overview
 

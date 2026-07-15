@@ -1,6 +1,6 @@
 # Offset-based Pagination Incremental Sync Strategy Connector Example
 
-**Complete Example Link:** [examples/common_patterns_for_connectors/incremental_sync_strategies/offset_pagination/](https://github.com/fivetran/connector_sdk/tree/main/examples/common_patterns_for_connectors/incremental_sync_strategies/offset_pagination/)
+**Complete Example Link:** [examples/common_patterns/incremental_sync_strategies/offset_pagination/](https://github.com/fivetran/connector_sdk/tree/main/examples/common_patterns/incremental_sync_strategies/offset_pagination/)
 
 ## Connector overview
 

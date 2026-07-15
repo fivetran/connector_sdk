@@ -172,7 +172,7 @@ When analyzing code, reference these standards:
 
 When analyzing code, community connectors and common patterns are useful reference points for comparison:
 - Community connectors (source-specific examples): https://github.com/fivetran/connector_sdk/tree/main/connectors/
-- Common patterns (auth, pagination, sync, etc.): https://github.com/fivetran/connector_sdk/tree/main/examples/common_patterns_for_connectors/
+- Common patterns (auth, pagination, sync, etc.): https://github.com/fivetran/connector_sdk/tree/main/examples/common_patterns/
 
 If a question reveals the user may benefit from a different starting point entirely, recommend `ft-csdk-discover` before any code changes.
 

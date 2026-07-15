@@ -112,7 +112,7 @@ Before revising, check whether a community connector for this source exists — 
 - Browse a specific connector's directory first — structure varies (some have subdirectories or multiple approaches): `https://github.com/fivetran/connector_sdk/tree/main/connectors/<name>/`
 
 Common patterns are useful references when adding new capabilities:
-- Browse: https://github.com/fivetran/connector_sdk/tree/main/examples/common_patterns_for_connectors/
+- Browse: https://github.com/fivetran/connector_sdk/tree/main/examples/common_patterns/
 
 If the user seems to be starting over or the current connector has fundamental issues, recommend `ft-csdk-discover` first.
 
@@ -137,11 +137,11 @@ This agent emphasizes:
 
 2. **Pattern Research Phase** (Use WebFetch for examples):
    - Revision pattern detection - Use WebFetch to fetch the relevant pattern:
-     - Adding authentication: Browse [authentication patterns](https://github.com/fivetran/connector_sdk/tree/main/examples/common_patterns_for_connectors/authentication/) and fetch the specific pattern.
-     - Adding pagination:  Browse [pagination patterns](https://github.com/fivetran/connector_sdk/tree/main/examples/common_patterns_for_connectors/pagination/) and fetch the specific pattern needed.
-     - Adding incremental sync: Browse [incremental sync strategies](https://github.com/fivetran/connector_sdk/tree/main/examples/common_patterns_for_connectors/incremental_sync_strategies/) and fetch the specific pattern needed.
-     - Performance improvements:  Fetch [parallel fetching from source](https://raw.githubusercontent.com/fivetran/connector_sdk/main/examples/common_patterns_for_connectors/parallel_fetching_from_source/connector.py).
-   - Foundation: Always fetch the [hello world connector](https://raw.githubusercontent.com/fivetran/connector_sdk/main/examples/quickstart_examples/hello/connector.py) for basic structure.
+     - Adding authentication: Browse [authentication patterns](https://github.com/fivetran/connector_sdk/tree/main/examples/common_patterns/authentication/) and fetch the specific pattern.
+     - Adding pagination:  Browse [pagination patterns](https://github.com/fivetran/connector_sdk/tree/main/examples/common_patterns/pagination/) and fetch the specific pattern needed.
+     - Adding incremental sync: Browse [incremental sync strategies](https://github.com/fivetran/connector_sdk/tree/main/examples/common_patterns/incremental_sync_strategies/) and fetch the specific pattern needed.
+     - Performance improvements:  Fetch [parallel fetching from source](https://raw.githubusercontent.com/fivetran/connector_sdk/main/examples/common_patterns/parallel_fetching_from_source/connector.py).
+   - Foundation: Always fetch the [hello world connector](https://raw.githubusercontent.com/fivetran/connector_sdk/main/examples/quickstart/hello/connector.py) for basic structure.
    - Community connectors: Check connectors that use the same auth method, pagination style, or sync strategy — not just the same source. A different connector using the same pattern may show the best implementation approach:
      - [Browse the full list](https://github.com/fivetran/connector_sdk/tree/main/connectors/)
      - [Browse a specific connector's directory](https://github.com/fivetran/connector_sdk/tree/main/connectors/<name>/) - structure varies (some have subdirectories or multiple approaches).
@@ -201,7 +201,7 @@ IMPLEMENTATION DETAILS: <specific technical explanations of how changes work>
 ## REVISION PATTERNS & EXAMPLE REFERENCES
 
 ### **Adding Authentication**
-- Browse: https://github.com/fivetran/connector_sdk/tree/main/examples/common_patterns_for_connectors/authentication/
+- Browse: https://github.com/fivetran/connector_sdk/tree/main/examples/common_patterns/authentication/
   - `api_key/` — API key in header or query param
   - `oauth2_with_token_refresh/` — OAuth 2.0 with token refresh
   - `http_basic/` — Username + password (Basic Auth)
@@ -209,7 +209,7 @@ IMPLEMENTATION DETAILS: <specific technical explanations of how changes work>
 - **Pattern**: Follow example structure for credential handling and request authentication
 
 ### **Adding Pagination**
-- Browse: https://github.com/fivetran/connector_sdk/tree/main/examples/common_patterns_for_connectors/pagination/
+- Browse: https://github.com/fivetran/connector_sdk/tree/main/examples/common_patterns/pagination/
   - `offset_based/` — API uses offset + limit params
   - `keyset/` — API uses keyset/cursor-based pagination
   - `page_number/` — API uses page number param
@@ -217,13 +217,13 @@ IMPLEMENTATION DETAILS: <specific technical explanations of how changes work>
 - **Pattern**: Study pagination loop structures and state management
 
 ### **Adding Incremental Sync**
-- Browse: https://github.com/fivetran/connector_sdk/tree/main/examples/common_patterns_for_connectors/incremental_sync_strategies/
+- Browse: https://github.com/fivetran/connector_sdk/tree/main/examples/common_patterns/incremental_sync_strategies/
   - `timestamp_sync/` — Timestamp-based incremental sync
   - `keyset_pagination/` — Keyset-based incremental approach
 - **Pattern**: Follow checkpoint and cursor management patterns
 
 ### **Performance Improvements**
-- Browse: https://github.com/fivetran/connector_sdk/tree/main/examples/common_patterns_for_connectors/parallel_fetching_from_source/
+- Browse: https://github.com/fivetran/connector_sdk/tree/main/examples/common_patterns/parallel_fetching_from_source/
 - **Pattern**: Study parallel processing and rate limiting implementations
 
 Use tools extensively:

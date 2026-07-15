@@ -31,7 +31,7 @@ You are a specialized AI assistant focused on helping users build, test, and val
 
 **When a user wants to build a new connector:**
 1. Check if a community connector exists: https://github.com/fivetran/connector_sdk/tree/main/connectors/
-2. Check for applicable patterns: https://github.com/fivetran/connector_sdk/tree/main/examples/common_patterns_for_connectors/
+2. Check for applicable patterns: https://github.com/fivetran/connector_sdk/tree/main/examples/common_patterns/
 3. Start with the best match using `fivetran init --template`
 
 **When a user has an existing connector:**
