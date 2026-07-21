@@ -207,10 +207,10 @@ op.checkpoint(state=state)
 ## 7. Examples Reference
 
 Use WebFetch to access Connector SDK examples from GitHub:
-- **quickstart_examples/**: Basic patterns such as hello world, configuration, and large datasets
-  - `https://raw.githubusercontent.com/fivetran/connector_sdk/main/examples/quickstart_examples/`
-- **common_patterns_for_connectors/**: Auth, pagination, cursors, error handling
-  - `https://raw.githubusercontent.com/fivetran/connector_sdk/main/examples/common_patterns_for_connectors/`
+- **quickstart/**: Basic patterns such as hello world, configuration, and large datasets
+  - `https://raw.githubusercontent.com/fivetran/connector_sdk/main/examples/quickstart/`
+- **common_patterns/**: Auth, pagination, cursors, error handling
+  - `https://raw.githubusercontent.com/fivetran/connector_sdk/main/examples/common_patterns/`
 - **Community connectors** (`connectors/`): Real-world, source-specific connectors
   - `https://raw.githubusercontent.com/fivetran/connector_sdk/main/connectors/`
 
@@ -268,17 +268,17 @@ This agent emphasizes:
 2. **MANDATORY: Study Relevant Examples First** (Use Glob and Read tools for local examples):
    - Use `Glob pattern="examples/**/*.py"` to find all connector examples
    - **Authentication Pattern Detection**:
-     - If task involves API keys → Read `examples/common_patterns_for_connectors/authentication/api_key/connector.py`
-     - If task involves OAuth → Read `examples/common_patterns_for_connectors/authentication/oauth2_with_token_refresh/connector.py`
-     - If task involves Basic Auth → Read `examples/common_patterns_for_connectors/authentication/http_basic/connector.py`
-     - If task involves Bearer tokens → Read `examples/common_patterns_for_connectors/authentication/http_bearer/connector.py`
+     - If task involves API keys → Read `examples/common_patterns/authentication/api_key/connector.py`
+     - If task involves OAuth → Read `examples/common_patterns/authentication/oauth2_with_token_refresh/connector.py`
+     - If task involves Basic Auth → Read `examples/common_patterns/authentication/http_basic/connector.py`
+     - If task involves Bearer tokens → Read `examples/common_patterns/authentication/http_bearer/connector.py`
    - **Data Pattern Detection**:
-     - If task involves pagination → Read `examples/common_patterns_for_connectors/pagination/*/connector.py`
-     - If task involves cursors → Read `examples/common_patterns_for_connectors/cursors/*/connector.py`
-     - If task involves incremental sync → Read `examples/common_patterns_for_connectors/incremental_sync_strategies/*/connector.py`
-     - If task involves large datasets → Read `examples/quickstart_examples/large_data_set/*/connector.py`
+     - If task involves pagination → Read `examples/common_patterns/pagination/*/connector.py`
+     - If task involves cursors → Read `examples/common_patterns/cursors/*/connector.py`
+     - If task involves incremental sync → Read `examples/common_patterns/incremental_sync_strategies/*/connector.py`
+     - If task involves large datasets → Read `examples/quickstart/large_data_set/*/connector.py`
    - **Community Connectors**: Use WebFetch or `Glob pattern="connectors/*/connector.py"` to study real-world connectors for specific APIs and databases
-   - **Basic Patterns**: Always read `examples/quickstart_examples/hello/connector.py` and `examples/quickstart_examples/configuration/connector.py` for foundation
+   - **Basic Patterns**: Always read `examples/quickstart/hello/connector.py` and `examples/quickstart/configuration/connector.py` for foundation
 
    **Alternative: WebFetch from GitHub** (if local examples unavailable):
    - Base URL: `https://raw.githubusercontent.com/fivetran/connector_sdk/main/examples/`
@@ -313,31 +313,31 @@ This agent emphasizes:
 
 ## Authentication Examples:
 - **API Key**:
-  - Local: `examples/common_patterns_for_connectors/authentication/api_key/connector.py`
-  - WebFetch: `https://raw.githubusercontent.com/fivetran/connector_sdk/main/examples/common_patterns_for_connectors/authentication/api_key/connector.py`
+  - Local: `examples/common_patterns/authentication/api_key/connector.py`
+  - WebFetch: `https://raw.githubusercontent.com/fivetran/connector_sdk/main/examples/common_patterns/authentication/api_key/connector.py`
 - **OAuth 2.0**:
-  - Local: `examples/common_patterns_for_connectors/authentication/oauth2_with_token_refresh/connector.py`
-  - WebFetch: `https://raw.githubusercontent.com/fivetran/connector_sdk/main/examples/common_patterns_for_connectors/authentication/oauth2_with_token_refresh/connector.py`
+  - Local: `examples/common_patterns/authentication/oauth2_with_token_refresh/connector.py`
+  - WebFetch: `https://raw.githubusercontent.com/fivetran/connector_sdk/main/examples/common_patterns/authentication/oauth2_with_token_refresh/connector.py`
 - **HTTP Basic**:
-  - Local: `examples/common_patterns_for_connectors/authentication/http_basic/connector.py`
-  - WebFetch: `https://raw.githubusercontent.com/fivetran/connector_sdk/main/examples/common_patterns_for_connectors/authentication/http_basic/connector.py`
+  - Local: `examples/common_patterns/authentication/http_basic/connector.py`
+  - WebFetch: `https://raw.githubusercontent.com/fivetran/connector_sdk/main/examples/common_patterns/authentication/http_basic/connector.py`
 - **HTTP Bearer**:
-  - Local: `examples/common_patterns_for_connectors/authentication/http_bearer/connector.py`
-  - WebFetch: `https://raw.githubusercontent.com/fivetran/connector_sdk/main/examples/common_patterns_for_connectors/authentication/http_bearer/connector.py`
+  - Local: `examples/common_patterns/authentication/http_bearer/connector.py`
+  - WebFetch: `https://raw.githubusercontent.com/fivetran/connector_sdk/main/examples/common_patterns/authentication/http_bearer/connector.py`
 
 ## Data Handling Examples:
 - **Pagination**:
-  - Local: `examples/common_patterns_for_connectors/pagination/` (keyset, offset, page_number, next_page_url)
-  - WebFetch: Browse https://github.com/fivetran/connector_sdk/tree/main/examples/common_patterns_for_connectors/pagination/ then fetch specific pattern
+  - Local: `examples/common_patterns/pagination/` (keyset, offset, page_number, next_page_url)
+  - WebFetch: Browse https://github.com/fivetran/connector_sdk/tree/main/examples/common_patterns/pagination/ then fetch specific pattern
 - **Cursors**:
-  - Local: `examples/common_patterns_for_connectors/cursors/` (time_window, multiple_tables)
-  - WebFetch: Browse https://github.com/fivetran/connector_sdk/tree/main/examples/common_patterns_for_connectors/cursors/ then fetch specific pattern
+  - Local: `examples/common_patterns/cursors/` (time_window, multiple_tables)
+  - WebFetch: Browse https://github.com/fivetran/connector_sdk/tree/main/examples/common_patterns/cursors/ then fetch specific pattern
 - **Incremental Sync**:
-  - Local: `examples/common_patterns_for_connectors/incremental_sync_strategies/`
-  - WebFetch: Browse https://github.com/fivetran/connector_sdk/tree/main/examples/common_patterns_for_connectors/incremental_sync_strategies/ then fetch specific strategy
+  - Local: `examples/common_patterns/incremental_sync_strategies/`
+  - WebFetch: Browse https://github.com/fivetran/connector_sdk/tree/main/examples/common_patterns/incremental_sync_strategies/ then fetch specific strategy
 - **Large Datasets**:
-  - Local: `examples/quickstart_examples/large_data_set/connector.py`
-  - WebFetch: `https://raw.githubusercontent.com/fivetran/connector_sdk/main/examples/quickstart_examples/large_data_set/connector.py`
+  - Local: `examples/quickstart/large_data_set/connector.py`
+  - WebFetch: `https://raw.githubusercontent.com/fivetran/connector_sdk/main/examples/quickstart/large_data_set/connector.py`
 
 ## Community Connectors (Source-specific examples):
 - Databases/APIs: Browse https://github.com/fivetran/connector_sdk/tree/main/connectors/ and use WebFetch for real-world connector examples
@@ -345,11 +345,11 @@ This agent emphasizes:
 
 ## Foundation Examples (ALWAYS study these):
 - **Basic Structure**:
-  - Local: `examples/quickstart_examples/hello/connector.py`
-  - WebFetch: `https://raw.githubusercontent.com/fivetran/connector_sdk/main/examples/quickstart_examples/hello/connector.py`
+  - Local: `examples/quickstart/hello/connector.py`
+  - WebFetch: `https://raw.githubusercontent.com/fivetran/connector_sdk/main/examples/quickstart/hello/connector.py`
 - **Configuration**:
-  - Local: `examples/quickstart_examples/configuration/connector.py`
-  - WebFetch: `https://raw.githubusercontent.com/fivetran/connector_sdk/main/examples/quickstart_examples/configuration/connector.py`
+  - Local: `examples/quickstart/configuration/connector.py`
+  - WebFetch: `https://raw.githubusercontent.com/fivetran/connector_sdk/main/examples/quickstart/configuration/connector.py`
 
 **MANDATORY EXAMPLE ANALYSIS WORKFLOW:**
 1. **Requirement Analysis**: Based on the description, determine:

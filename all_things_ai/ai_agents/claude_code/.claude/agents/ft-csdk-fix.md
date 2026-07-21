@@ -181,7 +181,7 @@ Community connectors are useful references during debugging — not just for the
 - Browse a specific connector's directory first — structure varies (some have subdirectories or multiple approaches): `https://github.com/fivetran/connector_sdk/tree/main/connectors/<name>/`
 
 Common patterns are useful references when the bug involves auth, pagination, or sync behavior:
-- Browse: https://github.com/fivetran/connector_sdk/tree/main/examples/common_patterns_for_connectors/
+- Browse: https://github.com/fivetran/connector_sdk/tree/main/examples/common_patterns/
 
 If the bug reveals a fundamental design issue rather than a code error, such as using the wrong authentication approach, pagination strategy, or sync pattern, recommend using `ft-csdk-discover` to find a better starting point rather than patching symptoms.
 
@@ -198,11 +198,11 @@ If the bug reveals a fundamental design issue rather than a code error, such as 
 2. **PATTERN RESEARCH PHASE** (Use Glob and Read tools extensively):
    - Use `Glob pattern="examples/**/*.py"` to find relevant connector examples
    - **Error Pattern Matching**:
-     - Authentication errors → Read `examples/common_patterns_for_connectors/authentication/*/connector.py`
-     - Type/Import errors → Read `examples/quickstart_examples/hello/connector.py` for correct patterns
-     - Configuration errors → Read `examples/quickstart_examples/configuration/connector.py`
-     - Data handling errors → Read `examples/common_patterns_for_connectors/cursors/*/connector.py`
-   - **Always study**: `examples/quickstart_examples/hello/connector.py` for basic structure
+     - Authentication errors → Read `examples/common_patterns/authentication/*/connector.py`
+     - Type/Import errors → Read `examples/quickstart/hello/connector.py` for correct patterns
+     - Configuration errors → Read `examples/quickstart/configuration/connector.py`
+     - Data handling errors → Read `examples/common_patterns/cursors/*/connector.py`
+   - **Always study**: `examples/quickstart/hello/connector.py` for basic structure
    - **Community Connectors**: Check community connectors that use the same auth method, pagination style, or sync strategy — not just connectors for the same source. A different connector using the same pattern may show the correct implementation:
      - Browse the full list: https://github.com/fivetran/connector_sdk/tree/main/connectors/
      - Browse a specific connector's directory first — structure varies (some have subdirectories or multiple approaches): `https://github.com/fivetran/connector_sdk/tree/main/connectors/<name>/`
@@ -248,22 +248,22 @@ After completing the fix, provide a comprehensive explanation:
 
 ## **Type Annotation Errors**
 - **Pattern**: `Generator[op.Operation, None, None]`, `Dict[str, Any]`
-- **Solution**: Study `examples/quickstart_examples/hello/connector.py` for correct `def update(configuration: dict, state: dict):`
+- **Solution**: Study `examples/quickstart/hello/connector.py` for correct `def update(configuration: dict, state: dict):`
 - **Fix**: Replace with simple built-in types
 
 ## **Authentication Errors** 
 - **Pattern**: Invalid credentials, connection failures
-- **Solution**: Study `examples/common_patterns_for_connectors/authentication/` for proper auth patterns
+- **Solution**: Study `examples/common_patterns/authentication/` for proper auth patterns
 - **Fix**: Follow example authentication implementation
 
 ## **Configuration Errors**
 - **Pattern**: Non-string values, missing fields
-- **Solution**: Study `examples/quickstart_examples/configuration/` for proper config structure
+- **Solution**: Study `examples/quickstart/configuration/` for proper config structure
 - **Fix**: Ensure all values are strings, required fields present
 
 ## **Import/Syntax Errors**
 - **Pattern**: Missing imports, incorrect Connector SDK usage
-- **Solution**: Study `examples/quickstart_examples/hello/connector.py` for basic structure
+- **Solution**: Study `examples/quickstart/hello/connector.py` for basic structure
 - **Fix**: Use correct imports: `from fivetran_connector_sdk import Connector, Operations as op, Logging as log`
 
 ## **Logging Method Errors** 

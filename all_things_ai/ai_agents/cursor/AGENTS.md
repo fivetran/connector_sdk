@@ -31,7 +31,7 @@ Before building a new connector, always check for existing starting points. The 
 
 When a user wants to build a new connector:
 1. Check if a [community connector](https://github.com/fivetran/connector_sdk/tree/main/connectors/) exists. 
-2. Check for [applicable patterns](https://github.com/fivetran/connector_sdk/tree/main/examples/common_patterns_for_connectors/). 
+2. Check for [applicable patterns](https://github.com/fivetran/connector_sdk/tree/main/examples/common_patterns/). 
 3. Start with the best match using `fivetran init --template`
 
 When a user has an existing connector, skip discovery and help with fixes, revisions, or testing directly.

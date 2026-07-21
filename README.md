@@ -65,7 +65,7 @@ Found an issue? Submit the [issue](https://github.com/fivetran/connector_sdk/iss
 
 ## Fivetran platform features
 
-- [schema_change](https://github.com/fivetran/connector_sdk/blob/main/examples/common_patterns_for_connectors/schema_change/README.md) - This is an example that illustrates how a deployed Connector SDK connection uses Fivetran's native [data type changes](https://fivetran.com/docs/core-concepts#changingdatatype) to change data types in the destination if they are changed in the source data.
+- [schema_change](https://github.com/fivetran/connector_sdk/blob/main/examples/common_patterns/schema_change/README.md) - This is an example that illustrates how a deployed Connector SDK connection uses Fivetran's native [data type changes](https://fivetran.com/docs/core-concepts#changingdatatype) to change data types in the destination if they are changed in the source data.
 
 
 ## Support

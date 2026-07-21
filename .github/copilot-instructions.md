@@ -21,9 +21,8 @@ This file provides high-level guidance for reviewing connector Pull Requests. Fo
 
 ### Structure
 - `template_connector/` - Canonical template: connector.py, configuration.json, requirements.txt, README_template.md
-- `examples/quickstart_examples/` - Simple learning examples (hello world, configuration patterns)
-- `examples/common_patterns_for_connectors/` - Reusable patterns (authentication, pagination, cursors, error handling)
-- `examples/source_examples/` - Additional source-specific examples
+- `examples/quickstart/` - Simple learning examples (hello world, configuration patterns)
+- `examples/common_patterns/` - Reusable patterns (authentication, pagination, cursors, error handling)
 - `fivetran_platform_features/schema_change/` - Schema evolution handling
 - `.github/instructions/` - Detailed review instructions for Python, JSON, and Markdown files
 
