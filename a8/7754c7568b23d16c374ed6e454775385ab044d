@@ -1,0 +1,21 @@
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.3",
+  "base_commit_sha": "a87754c7568b23d16c374ed6e454775385ab044d",
+  "prompts": {
+    "a8cd79b70768aac9": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "bccdd8ef-f405-45de-840b-56b29872b243",
+        "model": "claude-haiku-4-5-20251001"
+      },
+      "human_author": "unknown",
+      "messages": [],
+      "total_additions": 118,
+      "total_deletions": 118,
+      "accepted_lines": 3,
+      "overriden_lines": 0
+    }
+  }
+}
