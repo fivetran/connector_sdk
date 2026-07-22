@@ -20,7 +20,7 @@
 
 Explore practical examples and helpful resources for building custom data connectors with the Fivetran [Connector SDK](https://fivetran.com/docs/connectors/connector-sdk). Learn how to develop and deploy [custom data connectors](https://fivetran.com/docs/connectors/connector-sdk/setup-guide) in Python, and extend Fivetran’s capabilities to fit your data integration needs.
 
-You’ll also find tips on [using AI to help you code a custom connector](https://github.com/fivetran/connector_sdk/tree/main/ai/README.md) quickly.
+You’ll also find tips on [using AI to help you code a custom connector](https://github.com/fivetran/connector_sdk/tree/main/examples/ai/README.md) quickly.
 
 ## Why Connector SDK?
 
