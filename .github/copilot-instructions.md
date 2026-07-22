@@ -21,10 +21,8 @@ This file provides high-level guidance for reviewing connector Pull Requests. Fo
 
 ### Structure
 - `template_connector/` - Canonical template: connector.py, configuration.json, requirements.txt, README_template.md
-- `connectors/` - Production-ready examples for specific data sources (databases, APIs, message queues)
-- `examples/quickstart_examples/` - Simple learning examples (hello world, configuration patterns)
-- `examples/common_patterns_for_connectors/` - Reusable patterns (authentication, pagination, cursors, error handling)
-- `examples/source_examples/` - Additional source-specific examples
+- `examples/quickstart/` - Simple learning examples (hello world, configuration patterns)
+- `examples/common_patterns/` - Reusable patterns (authentication, pagination, cursors, error handling)
 - `fivetran_platform_features/schema_change/` - Schema evolution handling
 - `.github/instructions/` - Detailed review instructions for Python, JSON, and Markdown files
 
@@ -36,7 +34,7 @@ As of SDK v2.0.0 (August 2025), yield is NO LONGER USED:
 - Backward compatible: old v1 connectors still work, but new code must not use `yield`
 
 ### Runtime and tooling
-- Python versions: 3.10-3.12 (3.13 experimental support)
+- Python versions: 3.10-3.14 (3.13 default version)
 - Pre-installed packages: `fivetran_connector_sdk` (latest), `requests` (latest) - NEVER declare in requirements.txt
 - Linting: `flake8` with `.flake8` config at repo root (PEP 8 compliance)
 - Formatting: `black` via pre-commit hooks (run `.github/scripts/setup-hooks.sh`)

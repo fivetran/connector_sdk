@@ -1,4 +1,0 @@
-boto3==1.38.14
-pandas==2.2.3
-openpyxl
-python-calamine

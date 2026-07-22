@@ -1,6 +1,0 @@
-{
-  "neo4j_uri": "<YOUR_NEO4J_URI>",
-  "username": "<YOUR_NEO4J_USERNAME>",
-  "password": "<YOUR_NEO4J_PASSWORD>",
-  "database": "<YOUR_NEO4J_DATABASE>"
-}

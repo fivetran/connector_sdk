@@ -42,8 +42,8 @@ The `connector_sdk` repository contains three layers of reusable starting points
 | Layer | Location | What it is |
 |---|---|---|
 | Community connectors | `connectors/` | Source-specific, real working connectors — check if one already covers your source |
-| Common patterns | `examples/common_patterns_for_connectors/` | Reusable building blocks for auth, pagination, sync strategy, error handling — relevant to almost every connector regardless of source |
-| Quickstart examples | `examples/quickstart_examples/` | Foundational structure examples useful for any connector |
+| Common patterns | `examples/common_patterns/` | Reusable building blocks for auth, pagination, sync strategy, error handling — relevant to almost every connector regardless of source |
+| Quickstart examples | `examples/quickstart/` | Foundational structure examples useful for any connector |
 
 Community connectors answer, "Does a connector for my specific source already exist?"
 Common patterns answer, "What is the right way to handle the auth/pagination/sync behaviour my source uses?" - they apply based on how a source behaves, not which source it is. A paginated REST API with OAuth should use the OAuth and pagination patterns, whether or not a community connector for that source exists.
@@ -117,7 +117,7 @@ Fuzzy matching guidance:
 
 ## Common patterns reference
 
-Browse full list: https://github.com/fivetran/connector_sdk/tree/main/examples/common_patterns_for_connectors/
+Browse full list: https://github.com/fivetran/connector_sdk/tree/main/examples/common_patterns/
 
 ### Authentication
 | Pattern folder | Use when |
@@ -184,7 +184,7 @@ Browse full list: https://github.com/fivetran/connector_sdk/tree/main/examples/c
 
 ## Quickstart examples reference
 
-Browse: https://github.com/fivetran/connector_sdk/tree/main/examples/quickstart_examples/
+Browse: https://github.com/fivetran/connector_sdk/tree/main/examples/quickstart/
 
 | Example | Use as reference when |
 |---|---|
@@ -254,13 +254,13 @@ DATA SOURCE: [what the user wants to connect]
   No community connector covers this source. Your template connector is the right
   foundation — ft-csdk-generate will build it out using these patterns:
 
-  Auth:         examples/common_patterns_for_connectors/<auth_pattern>
-  Pagination:   examples/common_patterns_for_connectors/<pagination_pattern>
-  Sync:         examples/common_patterns_for_connectors/<sync_pattern>     [if applicable]
-  Other:        examples/common_patterns_for_connectors/<other_pattern>    [if applicable]
+  Auth:         examples/common_patterns/<auth_pattern>
+  Pagination:   examples/common_patterns/<pagination_pattern>
+  Sync:         examples/common_patterns/<sync_pattern>     [if applicable]
+  Other:        examples/common_patterns/<other_pattern>    [if applicable]
 
   GitHub references:
-    https://raw.githubusercontent.com/fivetran/connector_sdk/main/examples/common_patterns_for_connectors/<pattern>/connector.py
+    https://raw.githubusercontent.com/fivetran/connector_sdk/main/examples/common_patterns/<pattern>/connector.py
 
 ─── NEXT STEP ───────────────────────────────────────────────────
 [EXACT MATCH]

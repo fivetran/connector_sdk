@@ -1,7 +1,0 @@
-{
-  "aws_access_key_id": "<YOUR_AWS_ACCESS_KEY_ID>",
-  "aws_secret_access_key": "<YOUR_AWS_SECRETS_ACCESS_KEY>",
-  "region_name": "<YOUR_REGION_NAME>",
-  "database_name": "<YOUR_DATABASE_NAME>",
-  "s3_staging_dir": "<YOUR_S3_STAGING_DIRECTORY>"
-}

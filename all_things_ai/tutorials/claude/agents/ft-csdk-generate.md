@@ -146,8 +146,8 @@ log.error(f"Error details: {error_details}")
   - **ALWAYS** use simple `dict` and `list` built-in types like the SDK examples
 5. **Docstrings**: Include detailed docstrings for all functions
 6. **Examples**: Use the extensive examples in the ../../../examples/ directory as reference patterns:
-  - **quickstart_examples/**: Basic patterns like hello world, configuration, large datasets
-  - **common_patterns_for_connectors/**: Authentication methods, pagination, cursors, error handling
+  - **quickstart/**: Basic patterns like hello world, configuration, large datasets
+  - **common_patterns/**: Authentication methods, pagination, cursors, error handling
   - **source_examples/**: Real-world connectors for various data sources (databases, APIs)
   - **workflows/**: CI/CD and deployment examples
   - ALWAYS examine relevant examples before generating code to follow established patterns
@@ -180,17 +180,17 @@ log.error(f"Error details: {error_details}")
 2. **🔍 MANDATORY: Study Relevant Examples First** (Use Glob and Read tools extensively):
    - Use `Glob pattern="examples/**/*.py"` to find all connector examples
    - **Authentication Pattern Detection**: 
-     - If task involves API keys → Read `examples/common_patterns_for_connectors/authentication/api_key/connector.py`
-     - If task involves OAuth → Read `examples/common_patterns_for_connectors/authentication/oauth2_with_token_refresh/connector.py`  
-     - If task involves Basic Auth → Read `examples/common_patterns_for_connectors/authentication/http_basic/connector.py`
-     - If task involves Bearer tokens → Read `examples/common_patterns_for_connectors/authentication/http_bearer/connector.py`
+     - If task involves API keys → Read `examples/common_patterns/authentication/api_key/connector.py`
+     - If task involves OAuth → Read `examples/common_patterns/authentication/oauth2_with_token_refresh/connector.py`  
+     - If task involves Basic Auth → Read `examples/common_patterns/authentication/http_basic/connector.py`
+     - If task involves Bearer tokens → Read `examples/common_patterns/authentication/http_bearer/connector.py`
    - **Data Pattern Detection**:
-     - If task involves pagination → Read `examples/common_patterns_for_connectors/pagination/*/connector.py`
-     - If task involves cursors → Read `examples/common_patterns_for_connectors/cursors/*/connector.py`  
-     - If task involves incremental sync → Read `examples/common_patterns_for_connectors/incremental_sync_strategies/*/connector.py`
-     - If task involves large datasets → Read `examples/quickstart_examples/large_data_set/*/connector.py`
+     - If task involves pagination → Read `examples/common_patterns/pagination/*/connector.py`
+     - If task involves cursors → Read `examples/common_patterns/cursors/*/connector.py`  
+     - If task involves incremental sync → Read `examples/common_patterns/incremental_sync_strategies/*/connector.py`
+     - If task involves large datasets → Read `examples/quickstart/large_data_set/*/connector.py`
    - **Source-Specific Examples**: Use `Glob pattern="examples/source_examples/*/connector.py"` for database/API-specific patterns
-   - **Basic Patterns**: Always read `examples/quickstart_examples/hello/connector.py` and `examples/quickstart_examples/configuration/connector.py` for foundation
+   - **Basic Patterns**: Always read `examples/quickstart/hello/connector.py` and `examples/quickstart/configuration/connector.py` for foundation
 
 3. **📋 Document Pattern Analysis**: Before coding, explicitly state:
    - "Based on examples studied: [list relevant example paths]"  
@@ -217,19 +217,19 @@ log.error(f"Error details: {error_details}")
 # 📋 EXAMPLE CATEGORIZATION GUIDE
 
 ## Authentication Examples:
-- **API Key**: `examples/common_patterns_for_connectors/authentication/api_key/`
-- **OAuth 2.0**: `examples/common_patterns_for_connectors/authentication/oauth2_with_token_refresh/`
-- **HTTP Basic**: `examples/common_patterns_for_connectors/authentication/http_basic/`  
-- **HTTP Bearer**: `examples/common_patterns_for_connectors/authentication/http_bearer/`
-- **Session Token**: `examples/common_patterns_for_connectors/authentication/session_token/`
-- **Certificate Auth**: `examples/common_patterns_for_connectors/authentication/certificate/`
+- **API Key**: `examples/common_patterns/authentication/api_key/`
+- **OAuth 2.0**: `examples/common_patterns/authentication/oauth2_with_token_refresh/`
+- **HTTP Basic**: `examples/common_patterns/authentication/http_basic/`  
+- **HTTP Bearer**: `examples/common_patterns/authentication/http_bearer/`
+- **Session Token**: `examples/common_patterns/authentication/session_token/`
+- **Certificate Auth**: `examples/common_patterns/authentication/certificate/`
 
 ## Data Handling Examples:
-- **Pagination**: `examples/common_patterns_for_connectors/pagination/` (keyset, offset, page_number, next_page_url)
-- **Cursors**: `examples/common_patterns_for_connectors/cursors/` (time_window, multiple_tables, marketstack)
-- **Incremental Sync**: `examples/common_patterns_for_connectors/incremental_sync_strategies/` (timestamp, keyset, offset, step_size, replay)
-- **Large Datasets**: `examples/quickstart_examples/large_data_set/` (with/without pagination)
-- **Update/Delete**: `examples/common_patterns_for_connectors/update_and_delete/`
+- **Pagination**: `examples/common_patterns/pagination/` (keyset, offset, page_number, next_page_url)
+- **Cursors**: `examples/common_patterns/cursors/` (time_window, multiple_tables, marketstack)
+- **Incremental Sync**: `examples/common_patterns/incremental_sync_strategies/` (timestamp, keyset, offset, step_size, replay)
+- **Large Datasets**: `examples/quickstart/large_data_set/` (with/without pagination)
+- **Update/Delete**: `examples/common_patterns/update_and_delete/`
 
 ## Source-Specific Examples:
 - **Databases**: `examples/source_examples/` (clickhouse, neo4j, redshift, sql_server, etc.)
@@ -237,9 +237,9 @@ log.error(f"Error details: {error_details}")
 - **Cloud Services**: `examples/source_examples/` (aws_athena, gcp_pub_sub, etc.)
 
 ## Foundation Examples (ALWAYS study these):
-- **Basic Structure**: `examples/quickstart_examples/hello/connector.py`
-- **Configuration**: `examples/quickstart_examples/configuration/connector.py`
-- **Multiple Files**: `examples/quickstart_examples/multiple_code_files_with_sub_directory_structure/connector.py`
+- **Basic Structure**: `examples/quickstart/hello/connector.py`
+- **Configuration**: `examples/quickstart/configuration/connector.py`
+- **Multiple Files**: `examples/quickstart/multiple_code_files_with_sub_directory_structure/connector.py`
 
 **MANDATORY EXAMPLE ANALYSIS WORKFLOW:**
 1. **Requirement Analysis**: Based on the description, determine:

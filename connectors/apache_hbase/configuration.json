@@ -1,6 +1,0 @@
-{
-  "hostname": "<YOUR_HBASE_HOSTNAME>",
-  "port": "<YOUR_HBASE_PORT>",
-  "table_name": "<YOUR_HBASE_TABLE_NAME>",
-  "column_family": "<YOUR_HBASE_COLUMN_FAMILY>"
-}

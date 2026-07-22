@@ -30,7 +30,7 @@ Connector SDK provides native support for many Fivetran features and relies on e
 
 ## Requirements
 
-- Python version ≥3.10 and ≤3.13
+- Python version ≥3.10 and ≤3.14
 - Operating system:
   - Windows: 10 or later (64-bit only)
   - macOS: 13 (Ventura) or later (Apple Silicon [arm64] or Intel [x86_64])
@@ -58,8 +58,6 @@ Explore ready-to-use full connectors to get started. These connectors are useful
 - [claude_fda_drug tutorial](https://github.com/fivetran/connector_sdk/tree/main/all_things_ai/tutorials/claude/fda_drug_tutorial) - This example demonstrates how to use Claude to create a CSDK connector to get data from the FDA drug API.
 - [cursor_fda_food tutorial](https://github.com/fivetran/connector_sdk/tree/main/all_things_ai/tutorials/cursor/fda_food_tutorial/fda_food_connector) - This example demonstrates how to use Cursor to create a CSDK connector to get data from the FDA food API.
 - [vscode_fda_tobacco tutorial](https://github.com/fivetran/connector_sdk/tree/main/all_things_ai/tutorials/vscode/fda_tobacco_tutorial/fda_tobacco_connector) - This example demonstrates how to use VSCode to create a CSDK connector to get data from the FDA tobacco API.
-- [snowflake-cortex-livestock-weather-intelligence](https://github.com/fivetran/connector_sdk/tree/main/all_things_ai/tutorials/snowflake-cortex-livestock-weather-intelligence) - This example demonstrates real-time AI enrichment via Snowflake Cortex Agent REST API during Fivetran data ingestion. It syncs weather forecasts and enriches them with livestock health risk assessments using Snowflake's llama3.3-70b model with Cortex Analyst. It shows how to integrate Snowflake Intelligence into Fivetran pipelines for any industry vertical.
-- [databricks-fm-tvmaze-programming-intelligence](https://github.com/fivetran/connector_sdk/tree/main/all_things_ai/tutorials/databricks-fm-tvmaze-programming-intelligence) - Syncs TV show metadata from the TVMaze API and enriches each show with AI-powered multi-agent debate using Databricks ai_query(). A Programming Optimist and Programming Skeptic debate each show's renewal probability; a Consensus agent synthesizes a renewal rating and sets a disagreement_flag for shows that warrant human programming team review.
 
 ## Issue
 
@@ -67,7 +65,7 @@ Found an issue? Submit the [issue](https://github.com/fivetran/connector_sdk/iss
 
 ## Fivetran platform features
 
-- [schema_change](https://github.com/fivetran/connector_sdk/blob/main/examples/common_patterns_for_connectors/schema_change/README.md) - This is an example that illustrates how a deployed Connector SDK connection uses Fivetran's native [data type changes](https://fivetran.com/docs/core-concepts#changingdatatype) to change data types in the destination if they are changed in the source data.
+- [schema_change](https://github.com/fivetran/connector_sdk/blob/main/examples/common_patterns/schema_change/README.md) - This is an example that illustrates how a deployed Connector SDK connection uses Fivetran's native [data type changes](https://fivetran.com/docs/core-concepts#changingdatatype) to change data types in the destination if they are changed in the source data.
 
 
 ## Support
@@ -87,4 +85,4 @@ As with other new connectors, SDK connectors have a [14-day trial period](https:
 
 ## Maintenance
 
-The `connector_sdk` repository is actively maintained by Fivetran Developers. Reach out to our [Support team](https://support.fivetran.com/hc/en-us) for any inquiries.
+The `connector_sdk` repository is actively maintained by Fivetran developers. Reach out to our [Support team](https://support.fivetran.com/hc/en-us) for any inquiries.

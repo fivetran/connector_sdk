@@ -44,8 +44,8 @@ fivetran version
 - **Docstrings**: Include detailed docstrings for all functions
 - **NO BACKWARDS COMPATIBILITY**: Do NOT implement backwards compatibility or fallback logic unless explicitly requested by the user. Focus on implementing the current, correct solution.
 - **Examples**: Use the extensive examples in the ../../../examples/ directory as reference patterns:
-  - **quickstart_examples/**: Basic patterns like hello world, configuration, large datasets
-  - **common_patterns_for_connectors/**: Authentication methods, pagination, cursors, error handling
+  - **quickstart/**: Basic patterns like hello world, configuration, large datasets
+  - **common_patterns/**: Authentication methods, pagination, cursors, error handling
   - **source_examples/**: Real-world connectors for various data sources (databases, APIs)
   - **workflows/**: CI/CD and deployment examples
   - ALWAYS examine relevant examples when fixing code to follow established patterns
@@ -81,11 +81,11 @@ fivetran version
 2. **🔍 PATTERN RESEARCH PHASE** (Use Glob and Read tools extensively):
    - Use `Glob pattern="examples/**/*.py"` to find relevant connector examples
    - **Error Pattern Matching**: 
-     - Authentication errors → Read `examples/common_patterns_for_connectors/authentication/*/connector.py`
-     - Type/Import errors → Read `examples/quickstart_examples/hello/connector.py` for correct patterns
-     - Configuration errors → Read `examples/quickstart_examples/configuration/connector.py`
-     - Data handling errors → Read `examples/common_patterns_for_connectors/cursors/*/connector.py`
-   - **Always study**: `examples/quickstart_examples/hello/connector.py` for basic structure
+     - Authentication errors → Read `examples/common_patterns/authentication/*/connector.py`
+     - Type/Import errors → Read `examples/quickstart/hello/connector.py` for correct patterns
+     - Configuration errors → Read `examples/quickstart/configuration/connector.py`
+     - Data handling errors → Read `examples/common_patterns/cursors/*/connector.py`
+   - **Always study**: `examples/quickstart/hello/connector.py` for basic structure
    - **Document findings**: "Based on examples studied: [list paths and key patterns learned]"
 
 3. **🎯 ROOT CAUSE IDENTIFICATION**:
@@ -151,22 +151,22 @@ After completing the fix, provide a comprehensive explanation:
 
 ## **Type Annotation Errors**
 - **Pattern**: `Generator[op.Operation, None, None]`, `Dict[str, Any]`
-- **Solution**: Study `examples/quickstart_examples/hello/connector.py` for correct `def update(configuration: dict, state: dict):`
+- **Solution**: Study `examples/quickstart/hello/connector.py` for correct `def update(configuration: dict, state: dict):`
 - **Fix**: Replace with simple built-in types
 
 ## **Authentication Errors** 
 - **Pattern**: Invalid credentials, connection failures
-- **Solution**: Study `examples/common_patterns_for_connectors/authentication/` for proper auth patterns
+- **Solution**: Study `examples/common_patterns/authentication/` for proper auth patterns
 - **Fix**: Follow example authentication implementation
 
 ## **Configuration Errors**
 - **Pattern**: Non-string values, missing fields
-- **Solution**: Study `examples/quickstart_examples/configuration/` for proper config structure
+- **Solution**: Study `examples/quickstart/configuration/` for proper config structure
 - **Fix**: Ensure all values are strings, required fields present
 
 ## **Import/Syntax Errors**
 - **Pattern**: Missing imports, incorrect SDK usage
-- **Solution**: Study `examples/quickstart_examples/hello/connector.py` for basic structure
+- **Solution**: Study `examples/quickstart/hello/connector.py` for basic structure
 - **Fix**: Use correct imports: `from fivetran_connector_sdk import Connector, Operations as op, Logging as log`
 
 ## **Logging Method Errors** 

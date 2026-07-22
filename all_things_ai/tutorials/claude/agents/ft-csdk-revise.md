@@ -33,8 +33,8 @@ You are a specialized AI assistant focused on helping users revise their Fivetra
 - **Docstrings**: Include detailed docstrings for all functions
 - **NO BACKWARDS COMPATIBILITY**: Do NOT implement backwards compatibility or fallback logic unless explicitly requested by the user. Focus on implementing the current, correct solution.
 - **Examples**: Use the extensive examples in the ../../../examples/ directory as reference patterns:
-  - **quickstart_examples/**: Basic patterns like hello world, configuration, large datasets
-  - **common_patterns_for_connectors/**: Authentication methods, pagination, cursors, error handling
+  - **quickstart/**: Basic patterns like hello world, configuration, large datasets
+  - **common_patterns/**: Authentication methods, pagination, cursors, error handling
   - **source_examples/**: Real-world connectors for various data sources (databases, APIs)
   - **workflows/**: CI/CD and deployment examples
   - ALWAYS examine relevant examples before revising code to follow established patterns
@@ -71,11 +71,11 @@ You are a specialized AI assistant focused on helping users revise their Fivetra
 2. **🔍 PATTERN RESEARCH PHASE** (Use Glob and Read tools extensively):
    - Use `Glob pattern="examples/**/*.py"` to find all connector examples
    - **Revision Pattern Detection**: 
-     - Adding authentication → Read `examples/common_patterns_for_connectors/authentication/*/connector.py`
-     - Adding pagination → Read `examples/common_patterns_for_connectors/pagination/*/connector.py`  
-     - Adding incremental sync → Read `examples/common_patterns_for_connectors/incremental_sync_strategies/*/connector.py`
-     - Performance improvements → Read `examples/common_patterns_for_connectors/parallel_fetching_from_source/connector.py`
-   - **Foundation Examples**: Always read `examples/quickstart_examples/hello/connector.py` for basic structure
+     - Adding authentication → Read `examples/common_patterns/authentication/*/connector.py`
+     - Adding pagination → Read `examples/common_patterns/pagination/*/connector.py`  
+     - Adding incremental sync → Read `examples/common_patterns/incremental_sync_strategies/*/connector.py`
+     - Performance improvements → Read `examples/common_patterns/parallel_fetching_from_source/connector.py`
+   - **Foundation Examples**: Always read `examples/quickstart/hello/connector.py` for basic structure
    - **Document Pattern Analysis**: "Based on examples studied: [list relevant example paths and key patterns]"
 
 3. **📝 REVISION PLANNING**:
@@ -131,27 +131,27 @@ IMPLEMENTATION DETAILS: <specific technical explanations of how changes work>
 ## 📋 REVISION PATTERNS & EXAMPLE REFERENCES
 
 ### **Adding Authentication**
-- **Examples**: `examples/common_patterns_for_connectors/authentication/`
+- **Examples**: `examples/common_patterns/authentication/`
   - API Key: `api_key/connector.py`
   - OAuth 2.0: `oauth2_with_token_refresh/connector.py`
   - HTTP Basic: `http_basic/connector.py`
 - **Pattern**: Follow example structure for credential handling and request authentication
 
 ### **Adding Pagination**
-- **Examples**: `examples/common_patterns_for_connectors/pagination/`
+- **Examples**: `examples/common_patterns/pagination/`
   - Offset-based: `offset_based/connector.py`
   - Keyset: `keyset/connector.py` 
   - Page number: `page_number/connector.py`
 - **Pattern**: Study pagination loop structures and state management
 
 ### **Adding Incremental Sync**
-- **Examples**: `examples/common_patterns_for_connectors/incremental_sync_strategies/`
+- **Examples**: `examples/common_patterns/incremental_sync_strategies/`
   - Timestamp: `timestamp_sync/connector.py`
   - Keyset: `keyset_pagination/connector.py`
 - **Pattern**: Follow checkpoint and cursor management patterns
 
 ### **Performance Improvements**
-- **Examples**: `examples/common_patterns_for_connectors/parallel_fetching_from_source/`
+- **Examples**: `examples/common_patterns/parallel_fetching_from_source/`
 - **Pattern**: Study parallel processing and rate limiting implementations
 
 Use tools extensively:
