@@ -119,9 +119,9 @@ These examples demonstrate common patterns and best practices for building conne
 </details>
 
 ## AI and Connector SDK
-- [Readme](https://github.com/fivetran/connector_sdk/blob/main/ai/README.md) - This is an introduction to using AI tools to leverage Connector SDK.
+- [Readme](https://github.com/fivetran/connector_sdk/blob/main/examples/ai/README.md) - This is an introduction to using AI tools to leverage Connector SDK.
 - [agents.md](https://github.com/fivetran/connector_sdk/blob/main/all_things_ai/ai_agents/AGENTS.md) - This is a system instruction file that can be used in any IDE, API call or conversation with AI to rapidly develop Connector SDK solutions while following best practice.
-- [claude_pokeapi tutorial](https://github.com/fivetran/connector_sdk/tree/main/ai/claude/pokeapi_tutorial) - This example contains the code produced by Claude AI to build a custom connector using our Connector SDK. See our [blog article](https://www.fivetran.com/blog/building-a-fivetran-connector-in-1-hour-with-anthropics-claude-ai) for more details.
-- [claude_fda_drug tutorial](https://github.com/fivetran/connector_sdk/tree/main/ai/claude/fda_drug_tutorial) - This example demonstrates how to use Claude to create a CSDK connector to get data from the FDA drug API.
-- [cursor_fda_food tutorial](https://github.com/fivetran/connector_sdk/tree/main/ai/cursor/fda_food_tutorial/fda_food_connector) - This example demonstrates how to use Cursor to create a CSDK connector to get data from the FDA food API.
-- [vscode_fda_tobacco tutorial](https://github.com/fivetran/connector_sdk/tree/main/ai/vscode/fda_tobacco_tutorial/fda_tobacco_connector) - This example demonstrates how to use VSCode to create a CSDK connector to get data from the FDA tobacco API.
+- [claude_pokeapi tutorial](https://github.com/fivetran/connector_sdk/tree/main/examples/ai/claude/pokeapi_tutorial) - This example contains the code produced by Claude AI to build a custom connector using our Connector SDK. See our [blog article](https://www.fivetran.com/blog/building-a-fivetran-connector-in-1-hour-with-anthropics-claude-ai) for more details.
+- [claude_fda_drug tutorial](https://github.com/fivetran/connector_sdk/tree/main/examples/ai/claude/fda_drug_tutorial) - This example demonstrates how to use Claude to create a CSDK connector to get data from the FDA drug API.
+- [cursor_fda_food tutorial](https://github.com/fivetran/connector_sdk/tree/main/examples/ai/cursor/fda_food_tutorial/fda_food_connector) - This example demonstrates how to use Cursor to create a CSDK connector to get data from the FDA food API.
+- [vscode_fda_tobacco tutorial](https://github.com/fivetran/connector_sdk/tree/main/examples/ai/vscode/fda_tobacco_tutorial/fda_tobacco_connector) - This example demonstrates how to use VSCode to create a CSDK connector to get data from the FDA tobacco API.
