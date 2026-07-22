@@ -6,13 +6,49 @@
 
 # Import required classes from fivetran_connector_sdk
 # For supporting Connector operations like Update() and Schema()
-from fivetran_connector_sdk import Connector
+from fivetran_connector_sdk import Connector, Logging
 
 # For enabling Logs in your connector code
 from fivetran_connector_sdk import Logging as log
 
 # For supporting Data operations like Upsert(), Update(), Delete() and checkpoint()
 from fivetran_connector_sdk import Operations as op
+
+
+def schema(configuration: dict):
+    """
+    Define the schema function which lets you configure the schema your connector delivers.
+    See the technical reference documentation for more details on the schema function:
+    https://fivetran.com/docs/connector-sdk/technical-reference#schema
+    Args:
+        configuration: a dictionary that holds the configuration settings for the connector.
+    """
+
+    return [
+        {
+            "table": "hello",
+            "primary_key": ["message"],
+            "columns": {"message": "STRING"},
+        },
+        {
+            "table": "hello_2",
+            "columns": {
+                "id": "STRING",
+                "message": "STRING",
+                "_fivetran_deleted": "BOOLEAN",
+                "_fivetran_synced": "UTC_DATETIME",
+                "_fivetran_id": "STRING",
+            },
+        },
+        {
+            "table": "hello_3",
+            "primary_key": ["_fivetran_id"],
+            "columns": {
+                "id": "STRING",
+                "message": "STRING",
+            },
+        },
+    ]
 
 
 def update(configuration: dict, state: dict):
@@ -34,6 +70,32 @@ def update(configuration: dict, state: dict):
     log.debug("upserting to table 'hello'")
     op.upsert(table="hello", data={"message": "hello, world!"})
 
+    for i in range(5):
+        log.debug(f"upserting to table 'hello2' with id {i}")
+        op.upsert(
+            table="hello_2",
+            data={
+                "id": str(i),
+                "message": f"hello, world! {i}",
+                "_fivetran_deleted": True,
+                "_fivetran_synced": "2024-01-01T00:00:00Z",
+                "_fivetran_id": "Awertyui",
+            },
+        )
+
+    for i in range(2):
+        log.debug(f"upserting to table 'hello3' with id {i}")
+        op.upsert(
+            table="hello_3",
+            data={
+                "id": str(i),
+                "message": f"hello, world! {i}",
+                "_fivetran_deleted": True,
+                "_fivetran_synced": "2024-01-01T00:00:00Z",
+                "_fivetran_id": "Awertyui",
+            },
+        )
+
     # Save the progress by checkpointing the state. This is important for ensuring that the sync process can resume
     # from the correct position in case of next sync or interruptions.
     # Learn more about how and where to checkpoint by reading our best practices documentation
@@ -43,7 +105,7 @@ def update(configuration: dict, state: dict):
 
 # This creates the connector object that will use the update function defined in this connector.py file.
 # This example does not use the schema() function. If it did, it would need to be included in the connector object definition.
-connector = Connector(update=update)
+connector = Connector(update=update, schema=schema)
 
 # Check if the script is being run as the main module.
 # This is Python's standard entry method allowing your script to be run directly from the command line or IDE 'run' button.
