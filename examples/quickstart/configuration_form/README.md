@@ -12,11 +12,11 @@ Refer to `def configuration_form()` and `def connection_test()` in `connector.py
 
 ### Configuration form
 
-![Configuration form UI](./images/configuration_form.png)
+![Configuration form UI](images/configuration_form.png)
 
 ### Setup tests
 
-![Setup tests UI](./images/setup_tests.png)
+![Setup tests UI](images/setup_tests.png)
 
 ## Requirements
 
