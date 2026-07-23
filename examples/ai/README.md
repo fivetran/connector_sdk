@@ -18,6 +18,8 @@ Learn about using various IDEs and AI assistants with the Fivetran Connector SDK
 - [Visual Studio Code](https://github.com/fivetran/connector_sdk/tree/main/all_things_ai/ai_agents/vscode_with_github_copilot)
 - [Claude](https://github.com/fivetran/connector_sdk/tree/main/all_things_ai/ai_agents/claude_code)
 
+> You can simplify AI agent setup using the official [Fivetran Connector SDK Tools](https://github.com/fivetran/connector_sdk_tools) plugin. It adds skills to Claude Code and other supported AI agents for creating, testing, and deploying custom connectors.
+
 ---
 
 ## Cursor
@@ -78,5 +80,6 @@ Contents:
 - [CLAUDE.md File](https://github.com/fivetran/connector_sdk/tree/main/all_things_ai/ai_agents/claude_code/CLAUDE.md)
 - [Getting Started with Claude](https://docs.anthropic.com/en/docs/get-started)
 - [Blog Post: Building a Fivetran Connector in 1 Hour with Claude AI](https://www.fivetran.com/blog/building-a-fivetran-connector-in-1-hour-with-anthropics-claude-ai)
+- [Fivetran Connector SDK plugin for Claude Code](https://github.com/fivetran/connector_sdk_tools/tree/main/claude-code)
   
 ---
