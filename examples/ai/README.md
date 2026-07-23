@@ -18,6 +18,8 @@ Learn about using various IDEs and AI assistants with the Fivetran Connector SDK
 - [Visual Studio Code](https://github.com/fivetran/connector_sdk/tree/main/all_things_ai/ai_agents/vscode_with_github_copilot)
 - [Claude](https://github.com/fivetran/connector_sdk/tree/main/all_things_ai/ai_agents/claude_code)
 
+> You can simplify AI coding agent setup with our [Connector SDK AI plugins](https://github.com/fivetran/connector_sdk_tools). They integrate with Claude Code, Codex CLI, GitHub Copilot CLI, and Gemini CLI, and provide skills for building, testing, deploying, and evaluating connectors.
+
 ---
 
 ## Cursor
