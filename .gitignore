@@ -6,6 +6,8 @@ src/fivetran_custom_sdk.egg-info/
 examples/**/files/
 examples/**/build/
 examples/**/dist/
+custom_connectors/**/files/
+custom_connectors/netsuite/configuration.json
 .venv*
 .env
 

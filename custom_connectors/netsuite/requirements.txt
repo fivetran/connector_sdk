@@ -1,0 +1,8 @@
+# Add your connector's dependencies here, one per line with explicit versions.
+#
+# Note: fivetran_connector_sdk and requests are pre-installed in the base environment
+# and should not be included in this file.
+
+# Used to sign NetSuite Token-Based Authentication requests with OAuth 1.0a (HMAC-SHA256).
+# Pulls in oauthlib as a transitive dependency.
+requests_oauthlib==2.0.0
