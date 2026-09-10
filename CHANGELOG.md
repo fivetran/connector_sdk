@@ -1,6 +1,6 @@
 # Changelog
 
-This changelog lists PyPI package releases for the `fivetran-connector-sdk` and `fivetran-api-playground` packages, as published in the official [Fivetran Connector SDK release notes](https://fivetran.com/docs/connector-sdk/changelog).
+This changelog lists PyPI package releases for the `fivetran-connector-sdk` package, as published in the official [Fivetran Connector SDK release notes](https://fivetran.com/docs/connector-sdk/changelog).
 
 ## August 2026
 
@@ -13,10 +13,6 @@ This changelog lists PyPI package releases for the `fivetran-connector-sdk` and 
 - Updated `fivetran init` and AI plugin setup behavior for existing projects.
 - Minor enhancements and improvements.
 - Updated testers.
-
-### fivetran-api-playground `1.1.9`
-
-- Upgrades the faker library dependency to 40.36.0.
 
 ## July 2026
 
@@ -54,11 +50,6 @@ This changelog lists PyPI package releases for the `fivetran-connector-sdk` and 
 - Improved logging for agent plugins.
 - Minor enhancements and improvements.
 - Updated testers.
-
-### fivetran-api-playground `1.1.8`
-
-- Upgrades the requests library dependency to 2.34.2.
-- Upgrades the faker library dependency to 40.23.0.
 
 ## June 2026
 
@@ -100,17 +91,6 @@ This changelog lists PyPI package releases for the `fivetran-connector-sdk` and 
 - Existing connectors using Java-style levels continue to work without any modification.
 - Minor enhancements and improvements.
 - For more information, see our Connector SDK Logging Reference.
-
-### fivetran-api-playground `1.1.6`
-
-- Adds rate limiting support via the `--rate-limit` flag to simulate real-world HTTP 429 Too Many Requests responses.
-- Adds `--capacity` flag to configure the maximum burst size of the token bucket.
-- Adds `X-RateLimit-Limit`, `X-RateLimit-Remaining`, and `X-RateLimit-Reset` headers to all responses when rate limiting is enabled.
-- Adds a `Retry-After` header to HTTP 429 responses indicating when the next request can be made.
-
-### fivetran-api-playground `1.1.7`
-
-- Upgrades the faker library dependency to 40.15.0.
 
 ## April 2026
 
@@ -158,16 +138,6 @@ This changelog lists PyPI package releases for the `fivetran-connector-sdk` and 
 - Better handling of conflicting packages.
 - Minor enhancements and improvements.
 
-### fivetran-api-playground `1.1.4`
-
-- Upgrades the flask library dependency to 3.1.3.
-- Upgrades the faker library dependency to 40.4.0.
-- Upgrades the colorama library dependency to 0.4.6.
-
-### fivetran-api-playground `1.1.5`
-
-- Adds support for session token expirations. Session tokens now expire after 1 hour, and the login endpoint returns an expires_in field indicating the token's validity period.
-
 ## February 2026
 
 ### fivetran-connector-sdk `2.6.1`
@@ -209,16 +179,6 @@ This changelog lists PyPI package releases for the `fivetran-connector-sdk` and 
 ### fivetran-connector-sdk `2.4.0`
 
 - Minor enhancements and improvements.
-
-### fivetran-api-playground `1.1.2`
-
-- Minor improvements and bug fixes.
-- Updated dependencies.
-
-### fivetran-api-playground `1.1.3`
-
-- Upgrades the flask library dependency to 3.1.2.
-- Upgrades the faker library dependency to 38.2.0.
 
 ## November 2025
 
@@ -318,18 +278,6 @@ This changelog lists PyPI package releases for the `fivetran-connector-sdk` and 
 - Internal design and performance improvements.
 - Updated tester.
 
-### fivetran-api-playground `1.1.1`
-
-- Added two new cursor endpoints for retrieving user data for multiple sync strategies:
-  - `/incremental/timestamp` - Get a list of user data that was updated since the timestamp in params.
-  - `/incremental/step` - Get a list of users within the start and end parameters.
-
-### fivetran-api-playground `1.1.0`
-
-- Added two new cursor endpoints for retrieving company and department data:
-  - `/cursors/companies` - Get a list of companies with filtering options.
-  - `/cursors/<company_id>/departments` - Get department details for a specific company with filtering options.
-
 ## July 2025
 
 ### fivetran-connector-sdk `1.7.5`
@@ -380,11 +328,6 @@ This changelog lists PyPI package releases for the `fivetran-connector-sdk` and 
 - Usage of latest versions for dependent libraries.
 - Improved logging.
 - Minor improvements and bug fixes.
-
-### fivetran-api-playground `1.0.0`
-
-- Minor improvements and bug fixes.
-- Updated dependencies.
 
 ## May 2025
 
@@ -526,15 +469,6 @@ This changelog lists PyPI package releases for the `fivetran-connector-sdk` and 
 - An error message when attempting to deploy a connector with more than 100 configuration fields.
 - Automatic handling of port conflicts on your local machine.
 
-### fivetran-api-playground `0.12.12.1`
-
-- Export CSV endpoint for testing export APIs.
-- Authentication endpoints for testing the following types of authentication:
-  - HTTP basic
-  - HTTP bearer
-  - API key
-  - Session token
-
 ## November 2024
 
 ### fivetran-connector-sdk `0.11.21.1`
@@ -545,14 +479,6 @@ This changelog lists PyPI package releases for the `fivetran-connector-sdk` and 
 
 - Support for Python version 3.12.
 - Adds a `--force` flag to the `fivetran deploy` command, which bypasses the connector existence check.
-
-### fivetran-api-playground `0.11.21.1`
-
-- Adds changelog section to our PyPI package.
-
-### fivetran-api-playground `0.11.14.1`
-
-- Adds support for Python version 3.12.
 
 ## October 2024
 
