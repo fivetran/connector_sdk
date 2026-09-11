@@ -80,7 +80,7 @@ inputs:
     description: >-
       Fivetran API key (base64-encoded key:secret), with permission to manage
       connections and read destinations. Pass it explicitly from the caller's
-      own secret, e.g. ${{ secrets.FIVETRAN_API_KEY }}.
+      own secret, e.g. secrets.FIVETRAN_API_KEY.
     required: true
 
 outputs:

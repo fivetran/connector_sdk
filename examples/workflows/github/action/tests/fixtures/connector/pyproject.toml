@@ -1,0 +1,8 @@
+[project]
+name = "fixture-connector"
+version = "0.0.0"
+requires-python = ">=3.10"
+dependencies = ["fake-fivetran-cli"]
+
+[tool.uv.sources]
+fake-fivetran-cli = { path = "../fake_fivetran_cli" }

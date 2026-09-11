@@ -1,0 +1,113 @@
+name: Smoke test deploy action
+
+on:
+  pull_request:
+    paths:
+      - "examples/workflows/github/action/**"
+      - ".github/workflows/test-deploy-action.yml"
+  workflow_dispatch:
+
+jobs:
+  smoke-test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: clean create, code-only deploy
+            fivetran_output: |
+              connection created
+              connection id: fake-created-1
+            fivetran_exit: "0"
+            configuration_json: ""
+            expect_outcome: success
+            expect_status: created
+            expect_connection_id: fake-created-1
+
+          - name: redeploy of an existing connection
+            fivetran_output: |
+              connection updated
+              connection id: fake-updated-1
+            fivetran_exit: "0"
+            configuration_json: ""
+            expect_outcome: success
+            expect_status: updated
+            expect_connection_id: fake-updated-1
+
+          - name: configuration_json pushed, creates connection
+            fivetran_output_with_config: |
+              connection created
+              connection id: fake-config-1
+            fivetran_exit_with_config: "0"
+            configuration_json: '{"api_key": "test"}'
+            expect_outcome: success
+            expect_status: created
+            expect_connection_id: fake-config-1
+
+          - name: first deploy rejected, retried with placeholder config, setup tests fail as expected
+            fivetran_output: "configuration is required"
+            fivetran_exit: "1"
+            fivetran_output_with_config: |
+              connection created
+              connection id: fake-needs-setup-1
+              setup tests failed
+            fivetran_exit_with_config: "1"
+            configuration_json: ""
+            expect_outcome: success
+            expect_status: created_needs_setup
+            expect_connection_id: fake-needs-setup-1
+
+          - name: unrelated CLI failure fails the action
+            fivetran_output: "boom, something unrelated broke"
+            fivetran_exit: "1"
+            configuration_json: ""
+            expect_outcome: failure
+
+    env:
+      FAKE_FIVETRAN_OUTPUT: ${{ matrix.fivetran_output }}
+      FAKE_FIVETRAN_EXIT: ${{ matrix.fivetran_exit }}
+      FAKE_FIVETRAN_OUTPUT_WITH_CONFIG: ${{ matrix.fivetran_output_with_config }}
+      FAKE_FIVETRAN_EXIT_WITH_CONFIG: ${{ matrix.fivetran_exit_with_config }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Deploy (against fixtures/fake_fivetran_cli, not the real Fivetran CLI)
+        id: deploy
+        continue-on-error: true
+        uses: ./examples/workflows/github/action
+        with:
+          connector_dir: examples/workflows/github/action/tests/fixtures/connector
+          configuration_json: ${{ matrix.configuration_json }}
+          # Dummy value -- see fixtures/README.md for why no real key is needed.
+          fivetran_api_key: ZmFrZTpmYWtl
+
+      - name: Verify outcome and outputs
+        run: |
+          actual_outcome="${{ steps.deploy.outcome }}"
+          expected_outcome="${{ matrix.expect_outcome }}"
+          if [ "$actual_outcome" != "$expected_outcome" ]; then
+            echo "::error::expected outcome '$expected_outcome', got '$actual_outcome'"
+            exit 1
+          fi
+
+          if [ "$expected_outcome" != "success" ]; then
+            echo "OK: failed as expected"
+            exit 0
+          fi
+
+          check() {
+            local label="$1" actual="$2" expected="$3"
+            if [ "$actual" != "$expected" ]; then
+              echo "::error::expected $label '$expected', got '$actual'"
+              exit 1
+            fi
+          }
+
+          check "status" "${{ steps.deploy.outputs.status }}" "${{ matrix.expect_status }}"
+          check "connection_id" "${{ steps.deploy.outputs.connection_id }}" "${{ matrix.expect_connection_id }}"
+          check "dashboard_url" "${{ steps.deploy.outputs.dashboard_url }}" \
+            "https://fivetran.com/dashboard/connections/${{ matrix.expect_connection_id }}/status"
+
+          echo "OK: outputs matched expectations"

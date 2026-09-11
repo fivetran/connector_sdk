@@ -1,7 +1,9 @@
 """Run with: uv run --with pytest --with requests pytest . (from this directory)
 
 Mocks subprocess.Popen so these exercise the retry/decision logic in
-deploy_connector.py without ever calling the real `fivetran` CLI.
+deploy_connector.py without ever calling the real `fivetran` CLI. See
+conftest.py for how `deploy_connector` (which lives in ../scripts, not here)
+gets onto sys.path.
 """
 
 import io

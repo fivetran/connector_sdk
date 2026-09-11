@@ -106,22 +106,33 @@ A single caller workflow (`deploy-single-connector.yml`) owns:
 
 ## Tests
 
-`scripts/test_deploy_connector.py` covers the create/retry/redeploy decision
+`tests/test_deploy_connector.py` covers the create/retry/redeploy decision
 logic by mocking the `fivetran` subprocess call -- no real Fivetran account
 needed. Run with:
 
 ```
-uv run --with pytest --with requests pytest examples/workflows/github/action/scripts
+uv run --with pytest --with requests pytest examples/workflows/github/action/tests
 ```
+
+[`.github/workflows/test-deploy-action.yml`](../../../../.github/workflows/test-deploy-action.yml)
+is a smoke test that runs this composite action for real (`uses: ./...`) on
+every PR touching it, across every create/retry/redeploy/failure branch, and
+asserts on its actual outputs. It catches the class of bugs the unit tests
+above can't -- `action.yml`'s own env-var wiring, `$GITHUB_OUTPUT` writes,
+the install step's shell logic -- by swapping in a fake `fivetran` CLI (see
+[`tests/fixtures/README.md`](tests/fixtures/README.md)) instead of the real
+one, so it needs no Fivetran account or credentials either.
 
 ## Known limitations
 
 - The `requirements.txt`-only dependency-install fallback (for a connector
-  without `pyproject.toml`) hasn't been exercised against a real connector.
-  It now accepts an optional `fivetran_sdk_version` pin (see Inputs), but
-  that only protects a single deploy from drifting mid-flight -- it doesn't
-  catch a *future* SDK version's breaking changes on the next deliberate
-  bump, since nothing here runs the real CLI against a real destination.
+  without `pyproject.toml`) isn't covered by the smoke test above (its
+  fixture uses `pyproject.toml`) and hasn't been exercised against a real
+  connector. It now accepts an optional `fivetran_sdk_version` pin (see
+  Inputs), but that only protects a single deploy from drifting mid-flight --
+  it doesn't catch a *future* SDK version's breaking changes on the next
+  deliberate bump, since nothing here runs the real CLI against a real
+  destination.
 - Detecting "this is a first deploy" and "placeholder setup tests failed as
   expected" both rely on matching substrings in the CLI's log output, since
   the SDK doesn't expose distinct exit codes for either case. If a future SDK
