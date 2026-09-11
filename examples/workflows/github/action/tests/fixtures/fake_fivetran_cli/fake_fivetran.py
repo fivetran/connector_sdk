@@ -29,7 +29,9 @@ def main() -> int:
             "FAKE_FIVETRAN_OUTPUT_WITH_CONFIG", os.environ.get("FAKE_FIVETRAN_OUTPUT", "")
         )
         exit_code = int(
-            os.environ.get("FAKE_FIVETRAN_EXIT_WITH_CONFIG", os.environ.get("FAKE_FIVETRAN_EXIT", "0"))
+            os.environ.get(
+                "FAKE_FIVETRAN_EXIT_WITH_CONFIG", os.environ.get("FAKE_FIVETRAN_EXIT", "0")
+            )
         )
     else:
         output = os.environ.get("FAKE_FIVETRAN_OUTPUT", "")
