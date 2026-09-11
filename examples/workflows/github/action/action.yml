@@ -1,0 +1,156 @@
+name: Deploy Fivetran CSDK Connector
+description: >-
+  Deploys a Fivetran Connector SDK (CSDK) connector directory to Fivetran.
+  Pushes configuration_json if given; otherwise a code-only deploy, unless
+  that's rejected because the connection doesn't exist yet, in which case it
+  retries once with a placeholder configuration so it still ships, paused,
+  ready for real values to be entered in the Fivetran dashboard. See
+  README.md for the full design and a sample caller workflow.
+
+inputs:
+  connector_dir:
+    description: Path to the connector project (contains connector.py), relative to the repo root.
+    required: true
+  destination:
+    description: >-
+      Fivetran destination (group) name. Leave empty to auto-select when the
+      account has exactly one destination.
+    required: false
+    default: ""
+  connection_name:
+    description: >-
+      Fivetran connection name. Leave empty to derive it from connector_dir's
+      folder name (sanitized to Fivetran's naming rules).
+    required: false
+    default: ""
+  configuration_json:
+    description: >-
+      The connector's full configuration.json content, as a JSON string, assembled
+      by the calling workflow from whatever secrets/secrets-manager it uses. Its
+      presence is the only signal this action uses: if set, it's pushed to the
+      connection (creating or overwriting it) whether the connection is new or
+      already exists -- don't compute/pass this unless you actually mean to push
+      it right now. Leave unset for a code-only redeploy of an existing
+      connection. SENSITIVE: this typically contains real credentials. GitHub
+      only auto-masks values that still exactly match a registered secret in
+      logs -- once secrets are merged into JSON (escaped, reformatted, etc.)
+      that match can silently stop working, so treat this value as unmasked
+      and avoid printing it.
+    required: false
+    default: ""
+  empty_config_path:
+    description: >-
+      Path (relative to connector_dir) to the placeholder configuration file used
+      for a first deploy when configuration_json is empty.
+    required: false
+    default: "configuration.example.json"
+  python_version:
+    description: Optional Fivetran runtime Python version override (--python-version).
+    required: false
+    default: ""
+  fivetran_sdk_version:
+    description: >-
+      Pin fivetran-connector-sdk to this version (e.g. "2.11.0") for
+      connectors that only have a requirements.txt (no pyproject.toml).
+      Left empty, that install is unpinned and always grabs the latest
+      release -- a future breaking change in the CLI's output would take
+      effect on the next deploy with no warning. Has no effect on connectors
+      with a pyproject.toml: those are already pinned via their own
+      committed uv.lock, and `uv sync` uses that.
+    required: false
+    default: ""
+  activate_on_create:
+    description: >-
+      One-time switch, not an ongoing desired state: whether to activate
+      (unpause) the connection immediately after THIS run creates it for the
+      first time. The `fivetran deploy` CLI always creates new connections
+      paused and has no flag to change that, so when this is "true" and this
+      run's status comes back "created", the action makes a follow-up call to
+      the Fivetran API to unpause it. Defaults to "false" so new connections
+      stay paused until someone has verified them. Has no effect on any other
+      run: a redeploy of an already-existing connection (status "updated")
+      never touches its current paused/active state -- whatever was set here
+      on creation, or changed since in the dashboard, persists -- and a
+      connection created with placeholder configuration (status
+      "created_needs_setup") is always left paused, since it has no real
+      credentials yet regardless of this input.
+    required: false
+    default: "false"
+  fivetran_api_key:
+    description: >-
+      Fivetran API key (base64-encoded key:secret), with permission to manage
+      connections and read destinations. Pass it explicitly from the caller's
+      own secret, e.g. secrets.FIVETRAN_API_KEY.
+    required: true
+
+outputs:
+  connection_id:
+    description: The Fivetran connection ID that was created or updated.
+    value: ${{ steps.deploy.outputs.connection_id }}
+  dashboard_url:
+    description: Link to the connection's status page in the Fivetran dashboard.
+    value: ${{ steps.deploy.outputs.dashboard_url }}
+  status:
+    description: One of "created", "created_needs_setup", or "updated".
+    value: ${{ steps.deploy.outputs.status }}
+  active:
+    description: >-
+      "true"/"false": whether the connection is currently active (not
+      paused), read fresh from the Fivetran API after the deploy. Reflects
+      the connection's actual state regardless of what this run did -- e.g.
+      on a redeploy (status "updated") this just reports whatever
+      paused/active state was already set, in the dashboard or by a past
+      run. Unset if the connection ID couldn't be determined.
+    value: ${{ steps.deploy.outputs.active }}
+
+runs:
+  using: composite
+  steps:
+    - name: Install uv
+      uses: astral-sh/setup-uv@d4b2f3b6ecc6e67c4457f6d3e41ec42d3d0fcb86 # astral-sh/setup-uv@v5.4.2
+      with:
+        enable-cache: true
+
+    - name: Install connector dependencies
+      shell: bash
+      working-directory: ${{ inputs.connector_dir }}
+      env:
+        FIVETRAN_SDK_VERSION: ${{ inputs.fivetran_sdk_version }}
+      run: |
+        sdk="fivetran-connector-sdk"
+        [ -n "$FIVETRAN_SDK_VERSION" ] && sdk="fivetran-connector-sdk==$FIVETRAN_SDK_VERSION"
+        if [ -f pyproject.toml ]; then
+          uv sync
+          # uv sync only installs what the connector's own pyproject.toml/uv.lock
+          # declares -- not every connector lists fivetran-connector-sdk there
+          # (e.g. it's fine to omit it entirely and rely on Fivetran's runtime
+          # pre-installing it). Without it, .venv has no `fivetran` CLI to deploy
+          # with. Only fall back to installing it if uv sync didn't already
+          # provide one, so a connector that DOES pin it via its own uv.lock
+          # keeps that pin untouched.
+          [ -x .venv/bin/fivetran ] || uv pip install --python .venv/bin/python "$sdk"
+        else
+          uv venv .venv
+          if [ -f requirements.txt ]; then
+            uv pip install --python .venv/bin/python -r requirements.txt "$sdk"
+          else
+            # No pyproject.toml and no requirements.txt is valid -- a connector
+            # can have zero dependencies beyond the SDK itself.
+            uv pip install --python .venv/bin/python "$sdk"
+          fi
+        fi
+
+    - name: Deploy
+      id: deploy
+      shell: bash
+      env:
+        CONNECTOR_DIR: ${{ inputs.connector_dir }}
+        DESTINATION: ${{ inputs.destination }}
+        CONNECTION_NAME: ${{ inputs.connection_name }}
+        CONFIGURATION_JSON: ${{ inputs.configuration_json }}
+        EMPTY_CONFIG_PATH: ${{ inputs.empty_config_path }}
+        PYTHON_VERSION: ${{ inputs.python_version }}
+        ACTIVATE_ON_CREATE: ${{ inputs.activate_on_create }}
+        FIVETRAN_API_KEY: ${{ inputs.fivetran_api_key }}
+      run: |
+        "${{ inputs.connector_dir }}/.venv/bin/python" "${{ github.action_path }}/scripts/deploy_connector.py"

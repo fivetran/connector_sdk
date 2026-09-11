@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "fake-fivetran-cli"
+version = "0.0.0"
+requires-python = ">=3.10"
+# deploy_connector.py imports `requests` itself, and normally gets it
+# transitively from the real fivetran-connector-sdk. This fixture stands in
+# for that package (see fake_fivetran.py), so it has to bring `requests`
+# along too.
+dependencies = ["requests"]
+
+[project.scripts]
+fivetran = "fake_fivetran:main"
+
+[tool.setuptools]
+py-modules = ["fake_fivetran"]

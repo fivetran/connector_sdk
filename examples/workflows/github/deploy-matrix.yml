@@ -1,0 +1,196 @@
+# Example caller workflow for deploying MANY connectors from one repo with a
+# single matrix job, instead of one caller workflow per connector (contrast
+# with deploy-single-connector.yml). Useful once you have a handful of
+# connectors sharing the same composite action.
+#
+# Design notes, for anyone comparing this to a hand-rolled matrix workflow:
+#
+# - Trigger is still `push` + `paths`, same as deploy-single-connector.yml, not
+#   `pull_request` `closed`+`merged`. GitHub's native `paths:` filter on a
+#   push already gives you "only run if something under connector paths
+#   changed" for free -- you don't need a merge-commit diff to reconstruct
+#   that. A `pull_request: closed` trigger only buys you one extra thing:
+#   access to `github.event.pull_request.labels` for a "deploy everything"
+#   override. Below, `workflow_dispatch`'s `deploy_all` boolean covers that
+#   same need without adding a second trigger philosophy to this file.
+# - The matrix is built dynamically by the `plan` job below, from the actual
+#   changed paths, rather than declaring all connectors and skipping the ones
+#   that didn't change. Skipping unaffected entries still spins up a runner,
+#   checks out the repo, and shows a "skipped" job for every connector on
+#   every run -- for a handful of connectors that's mostly noise; a
+#   dynamically-filtered matrix only ever runs the jobs that matter.
+# - `cancel-in-progress: false` in the concurrency group: don't cancel a
+#   deploy that's already talking to the Fivetran API mid-flight just because
+#   a newer commit landed -- that can leave a connection half-updated. Queue
+#   behind it instead.
+# - Config assembly builds `configuration.json` from a small declarative
+#   `config: [{key, secret|value}, ...]` list per connector (borrowed from a
+#   sibling repo's matrix-based deploy workflow) instead of a bespoke jq
+#   incantation per connector -- adding a connector is a data change, not a
+#   new script. The one thing added on top: the assembled JSON is explicitly
+#   re-masked (`::add-mask::`) before it's exposed as a step output, same as
+#   deploy-single-connector.yml. That step-output boundary is exactly the place a
+#   multi-line secret's escaped bytes can stop matching GitHub's automatic
+#   per-secret masking -- see the action's README.md, Security section.
+# - `regional_usage` below is one connector deployed to three destinations
+#   from a single `connector_dir` -- e.g. the same connector code ingesting
+#   into a US, EU, and APAC destination separately for data-residency
+#   reasons. That's the case that actually exercises this action's
+#   `destination` input (deploy-single-connector.yml only ever has one
+#   destination, so it never exhausts that input).
+
+name: Deploy connector_sdk connectors
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - connector_sdk/** # keep in sync with the `path` values below
+  workflow_dispatch:
+    inputs:
+      deploy_all:
+        description: Deploy every connector, ignoring which paths changed.
+        type: boolean
+        default: false
+
+concurrency:
+  group: deploy-connector-sdk-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.plan.outputs.matrix }}
+    env:
+      # One declarative entry per connection. `path` is a connector_dir under
+      # connector_sdk/; multiple entries can share a `path` (see
+      # regional_usage_*, below) to deploy the same connector code to several
+      # destinations. `config` lists the configuration.json fields this
+      # connector needs: `secret` names an env var (mapped from a GitHub
+      # secret in the deploy job below); `value` is a plain literal for
+      # non-sensitive fields.
+      CONNECTORS_JSON: |
+        [
+          {
+            "name": "billing_api",
+            "path": "connector_sdk/billing_api",
+            "destination": "Production",
+            "config": [{"key": "api_token", "secret": "BILLING_API_TOKEN"}]
+          },
+          {
+            "name": "regional_usage_us",
+            "path": "connector_sdk/regional_usage",
+            "destination": "US_Production",
+            "config": [
+              {"key": "service_account_json", "secret": "REGIONAL_USAGE_SA_JSON"},
+              {"key": "region", "value": "us"}
+            ]
+          },
+          {
+            "name": "regional_usage_eu",
+            "path": "connector_sdk/regional_usage",
+            "destination": "EU_Production",
+            "config": [
+              {"key": "service_account_json", "secret": "REGIONAL_USAGE_SA_JSON"},
+              {"key": "region", "value": "eu"}
+            ]
+          },
+          {
+            "name": "regional_usage_apac",
+            "path": "connector_sdk/regional_usage",
+            "destination": "APAC_Production",
+            "config": [
+              {"key": "service_account_json", "secret": "REGIONAL_USAGE_SA_JSON"},
+              {"key": "region", "value": "apac"}
+            ]
+          }
+        ]
+    steps:
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # actions/checkout@v6
+        with:
+          fetch-depth: 0 # need history to diff against the pre-push SHA below
+
+      - name: Work out which connectors changed
+        id: plan
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          DEPLOY_ALL: ${{ inputs.deploy_all }}
+          BEFORE: ${{ github.event.before }}
+        run: |
+          if [ "$EVENT_NAME" = "workflow_dispatch" ] && [ "$DEPLOY_ALL" != "true" ]; then
+            echo "workflow_dispatch without deploy_all -- nothing to do" >&2
+            matrix='{"include":[]}'
+          elif [ "$EVENT_NAME" = "workflow_dispatch" ] || [ -z "$BEFORE" ] || [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then
+            # deploy_all requested, or no usable before-SHA (e.g. a new branch's first push)
+            matrix=$(echo "$CONNECTORS_JSON" | jq -c '{include: .}')
+          else
+            changed_paths=$(git diff --name-only "$BEFORE" "${{ github.sha }}")
+            matrix=$(jq -cn --slurpfile connectors <(echo "$CONNECTORS_JSON") --arg changed "$changed_paths" '
+              ($changed | split("\n")) as $files
+              | {include: [$connectors[0][] | select(. as $c | $files | any(startswith($c.path + "/")))]}
+            ')
+          fi
+          echo "Planned matrix: $matrix"
+          echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
+
+  deploy:
+    needs: plan
+    if: needs.plan.outputs.matrix != '{"include":[]}'
+    runs-on: ubuntu-latest
+    strategy:
+      matrix: ${{ fromJson(needs.plan.outputs.matrix) }}
+      fail-fast: false
+    concurrency:
+      group: deploy-connection-${{ matrix.name }}
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # actions/checkout@v6
+
+      - name: Assemble configuration.json
+        id: config
+        env:
+          CONNECTOR_CONFIG: ${{ toJson(matrix.config) }}
+          # Map every secret any matrix entry might reference; each entry's
+          # `config` list picks the ones it actually needs by name.
+          BILLING_API_TOKEN: ${{ secrets.BILLING_API_TOKEN }}
+          REGIONAL_USAGE_SA_JSON: ${{ secrets.REGIONAL_USAGE_SA_JSON }}
+        run: |
+          # A configured-but-empty GitHub secret ("${{ secrets.X }}" evaluates to ""
+          # when X isn't set) would otherwise deploy silently with a blank credential,
+          # overwriting a live connection's real config -- fail fast instead.
+          missing=$(echo "$CONNECTOR_CONFIG" | jq -r '
+            [.[] | select(has("secret")) | select((env[.secret] // "") == "") | .secret] | join(", ")
+          ')
+          if [ -n "$missing" ]; then
+            echo "::error::${{ matrix.name }}: missing or empty required secret(s): $missing"
+            exit 1
+          fi
+
+          json=$(echo "$CONNECTOR_CONFIG" | jq -c '
+            map(if has("secret") then {(.key): env[.secret]} else {(.key): .value} end)
+            | add // {}
+          ')
+          echo "::add-mask::$json" # re-mask: jq's JSON-escaping can dodge GitHub's per-secret masking
+          {
+            echo "json<<CONFIG_EOF"
+            echo "$json"
+            echo "CONFIG_EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Deploy
+        id: deploy
+        uses: fivetran/connector_sdk/examples/workflows/github/action@main
+        with:
+          connector_dir: ${{ matrix.path }}
+          destination: ${{ matrix.destination }}
+          configuration_json: ${{ steps.config.outputs.json }}
+          fivetran_api_key: ${{ secrets.FIVETRAN_API_KEY }}
+
+      - name: Summary
+        run: |
+          echo "### ${{ matrix.name }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "Status: ${{ steps.deploy.outputs.status }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "Active: ${{ steps.deploy.outputs.active }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "Connection: ${{ steps.deploy.outputs.connection_id }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "Dashboard: ${{ steps.deploy.outputs.dashboard_url }}" >> "$GITHUB_STEP_SUMMARY"

@@ -1,0 +1,73 @@
+# Example caller workflow for a single connector -- the "bespoke" piece that
+# maps this connector's own secrets to its configuration.json fields. Copy
+# this file into your own repo's .github/workflows/ (one per connector) and
+# adapt the placeholders below (CONNECTOR_DIR, secret names, config field
+# names). The shared deploy logic lives in the composite action referenced
+# below -- you don't need to copy that, just reference it. For deploying
+# several connectors from one workflow instead, see deploy-matrix.yml.
+#
+# Secrets: <YOUR_CONNECTOR>_API_TOKEN (placeholder below), plus the
+# repo-level FIVETRAN_API_KEY.
+
+name: Deploy connector
+
+env:
+  CONNECTOR_DIR: path/to/your/connector # e.g. csdk/my_connector
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - path/to/your/connector/** # keep in sync with env.CONNECTOR_DIR -- trigger filters can't use expressions
+  workflow_dispatch:
+    inputs:
+      activate_on_create:
+        description: >-
+          Activate (unpause) the connection if this run is the one that
+          creates it. Ignored if the connection already exists. Leave off
+          (false) for a routine push-triggered deploy so a newly created
+          connection stays paused until someone verifies it in the dashboard.
+        type: boolean
+        default: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # actions/checkout@v6
+
+      - name: Assemble configuration.json
+        id: config
+        env:
+          api_token: ${{ secrets.YOUR_CONNECTOR_API_TOKEN }}
+          # To source a field from a secrets manager instead (Vault, 1Password, ...),
+          # add a step before this one and reference its output here instead of a
+          # GitHub secret. Mask it yourself (echo "::add-mask::$VALUE") unless that
+          # provider's action already does it.
+        run: |
+          # non_sensitive_setting isn't sensitive, so it's a plain literal here.
+          json=$(jq -n \
+            --arg non_sensitive_setting "some-value" \
+            '$ENV | {api_token} + {non_sensitive_setting: $non_sensitive_setting}')
+          echo "::add-mask::$json" # jq's JSON-escaping can dodge GitHub's usual per-secret masking
+          {
+            echo "json<<CONFIG_EOF"
+            echo "$json"
+            echo "CONFIG_EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Deploy
+        id: deploy
+        uses: fivetran/connector_sdk/examples/workflows/github/action@main
+        with:
+          connector_dir: ${{ env.CONNECTOR_DIR }}
+          configuration_json: ${{ steps.config.outputs.json }}
+          activate_on_create: ${{ inputs.activate_on_create || false }}
+          fivetran_api_key: ${{ secrets.FIVETRAN_API_KEY }}
+
+      - name: Summary
+        run: |
+          echo "Status: ${{ steps.deploy.outputs.status }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "Active: ${{ steps.deploy.outputs.active }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "Connection: ${{ steps.deploy.outputs.connection_id }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "Dashboard: ${{ steps.deploy.outputs.dashboard_url }}" >> "$GITHUB_STEP_SUMMARY"
