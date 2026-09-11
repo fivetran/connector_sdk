@@ -2,6 +2,23 @@
 
 This changelog lists PyPI package releases for the `fivetran-connector-sdk` package, as published in the official [Fivetran Connector SDK release notes](https://fivetran.com/docs/connector-sdk/changelog).
 
+## September 2026
+
+### fivetran-connector-sdk `2.12.1`
+
+- Updates the `grpcio` and `grpcio-tools` dependency versions to 1.80.0.
+
+### fivetran-connector-sdk `2.12.0`
+
+- `fivetran debug` now generates a crash report when your connector code fails, capturing the exception, handler, configuration, and SDK version to help diagnose the failure.
+- Memory usage logging now reports the memory consumed by your connector code.
+- Improved CLI log output. `fivetran debug` now aligns log levels and sources and drops the date, while other CLI commands print concise messages.
+- The local connector tester binary downloaded by `fivetran debug` is now cached in `.fivetran/connector_sdk/tester` in your home directory, replacing the previous `.ft_sdk_connector_tester` folder.
+- Dependency validation is now added to non-interactive flows, previously it was skipped.
+- `fivetran init --template` now supports nested prefix search under `examples/`.
+- Minor enhancements and improvements.
+- Updated testers.
+
 ## August 2026
 
 ### fivetran-connector-sdk `2.11.0`
