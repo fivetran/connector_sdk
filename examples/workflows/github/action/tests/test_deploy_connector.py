@@ -164,22 +164,31 @@ def test_activate_on_create_does_not_touch_an_existing_connection(monkeypatch, c
     patch_request.assert_not_called()
 
 
-def test_activate_on_create_skipped_for_placeholder_creation(monkeypatch, connector_dir):
-    # Placeholder-config creation (setup tests fail as expected) must stay paused
-    # even when activation was requested -- there are no real credentials yet.
+@pytest.mark.parametrize("setup_exit_code", [0, 1])
+def test_activate_on_create_skipped_for_placeholder_creation(
+    monkeypatch, connector_dir, setup_exit_code
+):
+    # Placeholder creation must stay paused even if setup tests pass.
     set_env(monkeypatch, connector_dir, ACTIVATE_ON_CREATE="true")
+    output_file = connector_dir / "outputs"
+    monkeypatch.setenv("GITHUB_OUTPUT", str(output_file))
 
-    with patch("subprocess.Popen") as popen, patch("requests.patch") as patch_request:
+    with (
+        patch("subprocess.Popen") as popen,
+        patch("requests.patch") as patch_request,
+        patch.object(dc, "report_active_state"),
+    ):
+        output = "connection created\nconnection id: abc123\n"
+        if setup_exit_code:
+            output += f"{dc.SETUP_TESTS_FAILED}\n"
         popen.side_effect = [
             fake_popen([f"{dc.FIRST_DEPLOY_ERROR}\n"], returncode=1),
-            fake_popen(
-                [f"connection created but {dc.SETUP_TESTS_FAILED}\n", "connection id: abc123\n"],
-                returncode=1,
-            ),
+            fake_popen([output], returncode=setup_exit_code),
         ]
         assert dc.main() == 0
 
     patch_request.assert_not_called()
+    assert "status=created_needs_setup\n" in output_file.read_text()
 
 
 def test_reports_active_state_on_redeploy_of_existing_connection(monkeypatch, connector_dir):

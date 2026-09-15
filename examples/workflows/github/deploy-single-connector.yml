@@ -46,10 +46,14 @@ jobs:
           # provider's action already does it.
         run: |
           # non_sensitive_setting isn't sensitive, so it's a plain literal here.
-          json=$(jq -n \
+          json=$(jq -cn \
             --arg non_sensitive_setting "some-value" \
             '$ENV | {api_token} + {non_sensitive_setting: $non_sensitive_setting}')
-          echo "::add-mask::$json" # jq's JSON-escaping can dodge GitHub's usual per-secret masking
+          # Escape workflow-command data so the runner masks the exact JSON bytes.
+          mask=${json//'%'/'%25'}
+          mask=${mask//$'\r'/'%0D'}
+          mask=${mask//$'\n'/'%0A'}
+          printf '::add-mask::%s\n' "$mask"
           {
             echo "json<<CONFIG_EOF"
             echo "$json"

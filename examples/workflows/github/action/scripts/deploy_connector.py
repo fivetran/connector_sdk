@@ -250,7 +250,11 @@ def main() -> int:
             gha_notice(f"fivetran deploy failed (exit {returncode})", level="error")
             return returncode
 
-        status = "created" if "connection created" in output else "updated"
+        if retried_as_first_deploy:
+            status = "created_needs_setup"
+            gha_notice("Connection created with placeholder configuration -- leaving it paused.")
+        else:
+            status = "created" if "connection created" in output else "updated"
         write_output("status", status)
 
         if activate_on_create and status == "created" and connection_id:

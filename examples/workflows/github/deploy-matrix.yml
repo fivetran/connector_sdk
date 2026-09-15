@@ -175,7 +175,11 @@ jobs:
             map(if has("secret") then {(.key): env[.secret]} else {(.key): .value} end)
             | add // {}
           ')
-          echo "::add-mask::$json" # re-mask: jq's JSON-escaping can dodge GitHub's per-secret masking
+          # Escape workflow-command data so the runner masks the exact JSON bytes.
+          mask=${json//'%'/'%25'}
+          mask=${mask//$'\r'/'%0D'}
+          mask=${mask//$'\n'/'%0A'}
+          printf '::add-mask::%s\n' "$mask"
           {
             echo "json<<CONFIG_EOF"
             echo "$json"
