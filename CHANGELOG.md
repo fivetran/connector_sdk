@@ -165,7 +165,7 @@ This changelog lists PyPI package releases for the `fivetran-connector-sdk` pack
 
 ### fivetran-connector-sdk [`2.6.0`](https://pypi.org/project/fivetran-connector-sdk/2.6.0/)
 
-- Security fixes for vulnerabilities in grpcio and pipreqs-fivetran
+- Security fixes for vulnerabilities in `grpcio` and `pipreqs-fivetran`
 - Improved PyPI package logging
 - Enhanced package management.
 - Minor enhancements and improvements.
