@@ -1,29 +1,28 @@
-# GitHub Actions workflows for deploying Connector SDK connectors
+# GitHub Actions Workflows for Deploying Connector SDK Connectors
 
 This directory has two ways to deploy a Connector SDK connector to Fivetran
 from GitHub Actions:
 
-1. **[`deploy_hello_connector.yml`](#deploy-hello-connector-github-workflow)**
-   -- a single, self-contained workflow file with every step inlined. No
+- [`deploy_hello_connector.yml`](#deploy-hello-connector-github-workflow):
+   A single, self-contained workflow file with every step inlined. No
    dependencies beyond what's built into GitHub Actions. Best starting point
    if you have one connector and want to see exactly what's happening,
    step by step.
-2. **A reusable composite action, plus two example caller workflows** -- for
-   when you have more than one connector, or want deploy logic (create vs.
-   update, a placeholder-config retry on first deploy, optional
-   activate-on-create) that the single-file example above doesn't have.
-   - **[`action/`](action)** -- the composite action itself. See
-     [`action/README.md`](action/README.md) for what it does, its inputs,
-     and its security notes.
-   - **[`deploy-single-connector.yml`](deploy-single-connector.yml)** -- copy
+- A reusable composite action, plus two example caller workflows: Use this
+   when you have more than one connector, or need deploy logic that the
+   single-file example doesn't include, such as create vs. update handling, a
+   placeholder-config retry on first deploy, and optional `activate-on-create`.
+   - [`action/`](action): The composite action itself. For what it does,
+     its inputs, and its security notes, see [`action/README.md`](action/README.md).
+   - [`deploy-single-connector.yml`](deploy-single-connector.yml): Copy
      this into `.github/workflows/` per connector.
-   - **[`deploy-matrix.yml`](deploy-matrix.yml)** -- one workflow deploying
-     several connectors (including one connector to multiple destinations)
-     from a matrix built dynamically off changed paths.
+   - [`deploy-matrix.yml`](deploy-matrix.yml): One workflow that deploys
+     several connectors, including one connector to multiple destinations,
+     from a matrix built dynamically from changed paths.
 
-Both approaches call the same underlying `fivetran deploy` CLI; pick based on
-how many connectors you're deploying and how much of the create/update/retry
-logic you want handled for you.
+Both approaches call the same underlying `fivetran deploy` CLI. Pick based on
+how many connectors you're deploying and how much of the create, update, and
+retry logic you want handled for you.
 
 ---
 
