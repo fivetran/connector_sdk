@@ -118,6 +118,8 @@ jobs:
           DEPLOY_ALL: ${{ inputs.deploy_all }}
           BEFORE: ${{ github.event.before }}
         run: |
+          set -euo pipefail
+
           if [ "$EVENT_NAME" = "workflow_dispatch" ] && [ "$DEPLOY_ALL" != "true" ]; then
             echo "workflow_dispatch without deploy_all -- nothing to do" >&2
             matrix='{"include":[]}'
@@ -156,6 +158,8 @@ jobs:
           BILLING_API_TOKEN: ${{ secrets.BILLING_API_TOKEN }}
           REGIONAL_USAGE_SA_JSON: ${{ secrets.REGIONAL_USAGE_SA_JSON }}
         run: |
+          set -euo pipefail
+
           # A configured-but-empty GitHub secret ("${{ secrets.X }}" evaluates to ""
           # when X isn't set) would otherwise deploy silently with a blank credential,
           # overwriting a live connection's real config -- fail fast instead.
@@ -189,6 +193,8 @@ jobs:
 
       - name: Summary
         run: |
+          set -euo pipefail
+
           echo "### ${{ matrix.name }}" >> "$GITHUB_STEP_SUMMARY"
           echo "Status: ${{ steps.deploy.outputs.status }}" >> "$GITHUB_STEP_SUMMARY"
           echo "Active: ${{ steps.deploy.outputs.active }}" >> "$GITHUB_STEP_SUMMARY"
