@@ -54,11 +54,13 @@ def build_debug_crash_report(
     exception_chain = _exception_chain(exception)
     for index, (current_exception, relationship_to_inner) in enumerate(exception_chain):
         if index > 0:
-            lines.extend([
-                "",
-                relationship_to_inner,
-                "",
-            ])
+            lines.extend(
+                [
+                    "",
+                    relationship_to_inner,
+                    "",
+                ]
+            )
         lines.extend(_format_exception(current_exception, project_path, renderer))
 
     lines.append("=" * 64)
@@ -177,7 +179,10 @@ def _exception_chain(exception):
         if current_exception.__cause__ is not None:
             relationship_to_inner = _DIRECT_CAUSE_MESSAGE
             next_exception = current_exception.__cause__
-        elif current_exception.__context__ is not None and not current_exception.__suppress_context__:
+        elif (
+            current_exception.__context__ is not None
+            and not current_exception.__suppress_context__
+        ):
             relationship_to_inner = _CONTEXT_MESSAGE
             next_exception = current_exception.__context__
         else:
@@ -261,9 +266,7 @@ def _truncate_source_line(source_line):
 
 def _format_locals(frame, renderer):
     local_variables = [
-        (name, value)
-        for name, value in frame.f_locals.items()
-        if not name.startswith("__")
+        (name, value) for name, value in frame.f_locals.items() if not name.startswith("__")
     ]
     if not local_variables:
         return []
@@ -315,7 +318,9 @@ class _CrashReportRepr(reprlib.Repr):
         # class-level overrides would be discarded by a plain super().__init__().
         super().__init__()
         self.maxlevel = 4
-        self.maxdict = self.maxlist = self.maxtuple = self.maxset = self.maxfrozenset = self.maxdeque = _MAX_CONTAINER_ITEMS
+        self.maxdict = self.maxlist = self.maxtuple = self.maxset = self.maxfrozenset = (
+            self.maxdeque
+        ) = _MAX_CONTAINER_ITEMS
         self.maxstring = self.maxother = _MAX_REPR_LENGTH
         self.secret_values = secret_values
 

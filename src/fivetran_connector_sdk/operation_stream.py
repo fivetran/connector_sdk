@@ -5,7 +5,7 @@ from fivetran_connector_sdk.constants import (
     QUEUE_SIZE,
     MAX_RECORDS_IN_BATCH,
     MAX_BATCH_SIZE_IN_BYTES,
-    CHECKPOINT_OP_TIMEOUT_IN_SEC
+    CHECKPOINT_OP_TIMEOUT_IN_SEC,
 )
 from fivetran_connector_sdk.protos import connector_sdk_pb2
 from fivetran_connector_sdk.protos import common_pb2
@@ -155,7 +155,10 @@ class _OperationStream:
             warning, task, or file upload chunk.
 
         """
-        while self._buffer_record_count < MAX_RECORDS_IN_BATCH and self._buffer_size_bytes < MAX_BATCH_SIZE_IN_BYTES:
+        while (
+            self._buffer_record_count < MAX_RECORDS_IN_BATCH
+            and self._buffer_size_bytes < MAX_BATCH_SIZE_IN_BYTES
+        ):
             operation = self._queue.get()
 
             # Case 1: If operation is sentinel, mark the stream as done, flush the buffer.
@@ -205,7 +208,9 @@ class _OperationStream:
         Args:
             chunk (connector_sdk_pb2.UnstructuredRecord): File upload chunk operation to add to the response.
         """
-        return self._flush_buffer_before(connector_sdk_pb2.UpdateResponse(unstructured_record=chunk))
+        return self._flush_buffer_before(
+            connector_sdk_pb2.UpdateResponse(unstructured_record=chunk)
+        )
 
     def _flush_buffer_before(self, response: connector_sdk_pb2.UpdateResponse):
         """

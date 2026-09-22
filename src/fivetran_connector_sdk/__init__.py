@@ -1,4 +1,5 @@
 import os
+
 os.environ["GRPC_VERBOSITY"] = "ERROR"
 import sys
 import grpc
@@ -25,44 +26,74 @@ from fivetran_connector_sdk.file_upload import ByteStream, FileUpload
 from fivetran_connector_sdk.operations import Operations
 from fivetran_connector_sdk.configuration_form import ConfigurationForm
 from fivetran_connector_sdk.test import Test
-from fivetran_connector_sdk import form_field
 from fivetran_connector_sdk import constants
 from fivetran_connector_sdk.memory_tracker import get_memory_tracker
 from fivetran_connector_sdk.constants import (
-    TESTER_VERSION, VERSION_FILENAME, UTF_8, DEPRECATED_FORCE_FLAG_WARNING,
-    DEFAULT_PYTHON_VERSION, TABLES, PYPROJECT_TOML
+    DEPRECATED_FORCE_FLAG_WARNING,
+    DEFAULT_PYTHON_VERSION,
+    TABLES,
+    PYPROJECT_TOML,
 )
 from fivetran_connector_sdk.helpers import (
-    print_library_log, reset_local_file_directory, find_connector_object, PromptMode, resolve_confirmation,
-    _resolve_existing_project_path, enable_debugging_for_verbose_commands
+    print_library_log,
+    reset_local_file_directory,
+    find_connector_object,
+    PromptMode,
+    resolve_confirmation,
+    _resolve_existing_project_path,
+    enable_debugging_for_verbose_commands,
 )
 from fivetran_connector_sdk.cli_parser import create_argument_parser, intercept_unknown_command
 from fivetran_connector_sdk.connector_helper import (
-    validate_requirements_file, validate_pyproject_file, package_project, create_package,
-    update_connection, are_setup_tests_failing, get_connection_details,
-    handle_failing_tests_message_and_exit, delete_file_if_exists,
-    create_connection, get_os_arch_suffix, get_group_info,
-    java_exe_helper, run_tester, run_configuration_tester, ensure_tester_installed, process_tables,
-    update_base_url_if_required, exit_check,
-    get_available_port, tester_root_dir_helper,
-    check_dict, check_newer_version, cleanup_uploaded_project,
-    get_destination_group, get_connection_name, get_api_key, get_state, get_naming,
-    get_python_version, get_hd_agent_id, get_proxy_id, get_proxy_host_config_key, get_configuration,
+    validate_requirements_file,
+    validate_pyproject_file,
+    package_project,
+    create_package,
+    update_connection,
+    get_connection_details,
+    create_connection,
+    get_group_info,
+    run_tester,
+    run_configuration_tester,
+    ensure_tester_installed,
+    process_tables,
+    update_base_url_if_required,
+    exit_check,
+    get_available_port,
+    check_dict,
+    check_newer_version,
+    get_destination_group,
+    get_connection_name,
+    get_api_key,
+    get_state,
+    get_naming,
+    get_python_version,
+    get_hd_agent_id,
+    get_proxy_id,
+    get_proxy_host_config_key,
+    get_configuration,
     validate_proxy_configuration,
-    handle_connection_response, validate_required_deploy_params, validate_configuration, get_update_prompt
+    handle_connection_response,
+    validate_required_deploy_params,
+    validate_configuration,
+    get_update_prompt,
 )
 
 # Version format: <major_version>.<minor_version>.<patch_version>
 # (where Major Version = 2, Minor Version is incremental MM from Aug 25 onwards, Patch Version is incremental within a month)
 __version__ = "2.12.1"
-MAX_MESSAGE_LENGTH = 128 * 1024 * 1024 # 128MB
+MAX_MESSAGE_LENGTH = 128 * 1024 * 1024  # 128MB
 
-__all__ = [cls.__name__ for cls in [ByteStream, FileUpload, Logging, Operations, ConfigurationForm, Test]] + ["form_field"]
+__all__ = [
+    cls.__name__ for cls in [ByteStream, FileUpload, Logging, Operations, ConfigurationForm, Test]
+] + ["form_field"]
+
 
 def package(
-        project_path: str,
-        prompt_mode: PromptMode = PromptMode.INTERACTIVE,
-        configuration_form_method: Optional[Callable] = None):
+    project_path: str,
+    prompt_mode: PromptMode = PromptMode.INTERACTIVE,
+    configuration_form_method: Optional[Callable] = None,
+):
     """Packages the connector project into a distributable zip file.
 
     Args:
@@ -115,10 +146,21 @@ class Connector(connector_sdk_pb2_grpc.SourceConnectorServicer):
         update_base_url_if_required()
 
     # Call this method to deploy the connector to Fivetran platform
-    def deploy(self, project_path: str, deploy_key: str, group: str, connection: str, hd_agent_id: str,
-               configuration: dict = None, config_path = None, python_version: str = None,
-               prompt_mode: PromptMode = PromptMode.INTERACTIVE, naming: str = None,
-               proxy_id: str = None, proxy_host_config_key: str = None):
+    def deploy(
+        self,
+        project_path: str,
+        deploy_key: str,
+        group: str,
+        connection: str,
+        hd_agent_id: str,
+        configuration: dict = None,
+        config_path=None,
+        python_version: str = None,
+        prompt_mode: PromptMode = PromptMode.INTERACTIVE,
+        naming: str = None,
+        proxy_id: str = None,
+        proxy_host_config_key: str = None,
+    ):
         """Deploys the connector to the Fivetran platform.
 
         Args:
@@ -157,8 +199,13 @@ class Connector(connector_sdk_pb2_grpc.SourceConnectorServicer):
         check_newer_version(__version__)
 
         resolved_proxy_host_config_key = validate_proxy_configuration(
-            configuration or {}, proxy_id, proxy_host_config_key, hd_agent_id)
-        check_dict(configuration, True, {resolved_proxy_host_config_key} if resolved_proxy_host_config_key else None)
+            configuration or {}, proxy_id, proxy_host_config_key, hd_agent_id
+        )
+        check_dict(
+            configuration,
+            True,
+            {resolved_proxy_host_config_key} if resolved_proxy_host_config_key else None,
+        )
 
         secrets_list = []
         if configuration:
@@ -185,24 +232,53 @@ class Connector(connector_sdk_pb2_grpc.SourceConnectorServicer):
             print_library_log(f"skipping dependency validation; {prompt_mode.value} is set")
 
         group_id, group_name = get_group_info(group, deploy_key)
-        connection_id, service = get_connection_details(connection, group, group_id, deploy_key) or (None, None)
+        connection_id, service = get_connection_details(
+            connection, group, group_id, deploy_key
+        ) or (None, None)
 
         if connection_id:
             if naming:
-                print_library_log("ignored --naming flag; naming strategy cannot be changed after connection creation", Logging.Level.WARNING)
-            if service != 'connector_sdk':
                 print_library_log(
-                    f"cannot update connection '{connection}'; not a Connector SDK connection", level=Logging.Level.SEVERE, log_icon=Logging.LogIcon.FAILURE)
+                    "ignored --naming flag; naming strategy cannot be changed after connection creation",
+                    Logging.Level.WARNING,
+                )
+            if service != "connector_sdk":
+                print_library_log(
+                    f"cannot update connection '{connection}'; not a Connector SDK connection",
+                    level=Logging.Level.SEVERE,
+                    log_icon=Logging.LogIcon.FAILURE,
+                )
                 sys.exit(1)
             else:
                 update_prompt = get_update_prompt(connection, group, configuration, config_path)
                 should_update = resolve_confirmation(update_prompt, False, prompt_mode)
 
                 if should_update:
-                    print_library_log(f"updating connection {connection} in group {group_name}", log_icon=Logging.LogIcon.STEP)
-                    package_id = package_project(project_path, deploy_key, self.configuration_form_method)
-                    response = update_connection(connection_id, connection, group_name, connection_config, package_id, deploy_key, hd_agent_id, proxy_id)
-                    handle_connection_response(response, package_id, deploy_key, HTTPStatus.OK.value, is_new_connection=False, connection_id=connection_id)
+                    print_library_log(
+                        f"updating connection {connection} in group {group_name}",
+                        log_icon=Logging.LogIcon.STEP,
+                    )
+                    package_id = package_project(
+                        project_path, deploy_key, self.configuration_form_method
+                    )
+                    response = update_connection(
+                        connection_id,
+                        connection,
+                        group_name,
+                        connection_config,
+                        package_id,
+                        deploy_key,
+                        hd_agent_id,
+                        proxy_id,
+                    )
+                    handle_connection_response(
+                        response,
+                        package_id,
+                        deploy_key,
+                        HTTPStatus.OK.value,
+                        is_new_connection=False,
+                        connection_id=connection_id,
+                    )
                 else:
                     print_library_log("update cancelled", log_icon=Logging.LogIcon.FAILURE)
                     sys.exit(1)
@@ -210,19 +286,27 @@ class Connector(connector_sdk_pb2_grpc.SourceConnectorServicer):
             validate_configuration(configuration)
             if not python_version:
                 print_library_log(
-                    f"python version not specified; connection will use the default python version ({DEFAULT_PYTHON_VERSION})")
+                    f"python version not specified; connection will use the default python version ({DEFAULT_PYTHON_VERSION})"
+                )
                 print_library_log(
-                    "set --python-version <version> in the deploy command or update it in your Fivetran dashboard")
+                    "set --python-version <version> in the deploy command or update it in your Fivetran dashboard"
+                )
             package_id = package_project(project_path, deploy_key, self.configuration_form_method)
-            response = create_connection(deploy_key, group_id, connection_config, hd_agent_id, package_id, naming, proxy_id)
-            handle_connection_response(response, package_id, deploy_key, HTTPStatus.CREATED.value, is_new_connection=True)
+            response = create_connection(
+                deploy_key, group_id, connection_config, hd_agent_id, package_id, naming, proxy_id
+            )
+            handle_connection_response(
+                response, package_id, deploy_key, HTTPStatus.CREATED.value, is_new_connection=True
+            )
 
     # Call this method to run the connector in production
-    def run(self,
-            port: int = 50049,
-            configuration: dict = None,
-            state: dict = None,
-            log_level: Logging.Level = Logging.Level.INFO) -> grpc.Server:
+    def run(
+        self,
+        port: int = 50049,
+        configuration: dict = None,
+        state: dict = None,
+        log_level: Logging.Level = Logging.Level.INFO,
+    ) -> grpc.Server:
         """Runs the connector server.
 
         Args:
@@ -240,19 +324,19 @@ class Connector(connector_sdk_pb2_grpc.SourceConnectorServicer):
 
         if not constants.DEBUGGING:
             """
-                DO NOT MODIFY THE LOG MESSAGE BELOW
-                This is used to identify the readiness of the connector to run the code.
-                Any changes may break integration or automated workflows.
-                This is referenced at https://github.com/fivetran/engineering/blob/main/connector_sdk/core/src/com/fivetran/connector_sdk/core/ConnectorSdkUtils.java#L73
+            DO NOT MODIFY THE LOG MESSAGE BELOW
+            This is used to identify the readiness of the connector to run the code.
+            Any changes may break integration or automated workflows.
+            This is referenced at https://github.com/fivetran/engineering/blob/main/connector_sdk/core/src/com/fivetran/connector_sdk/core/ConnectorSdkUtils.java#L73
             """
             print_library_log(f"Running on fivetran_connector_sdk: {__version__}")
 
         server = grpc.server(
             futures.ThreadPoolExecutor(max_workers=10),
             options=[
-                ('grpc.max_send_message_length', MAX_MESSAGE_LENGTH),
-                ('grpc.max_receive_message_length', MAX_MESSAGE_LENGTH),
-            ]
+                ("grpc.max_send_message_length", MAX_MESSAGE_LENGTH),
+                ("grpc.max_receive_message_length", MAX_MESSAGE_LENGTH),
+            ],
         )
         connector_sdk_pb2_grpc.add_SourceConnectorServicer_to_server(self, server)
         bind_address = "127.0.0.1" if constants.DEBUGGING else "[::]"
@@ -263,12 +347,14 @@ class Connector(connector_sdk_pb2_grpc.SourceConnectorServicer):
         server.wait_for_termination()
 
     # This method starts both the server and the local testing environment
-    def debug(self,
-              project_path: str = None,
-              configuration: dict = None,
-              state: dict = None,
-              naming: str = None,
-              log_level: Logging.Level = Logging.Level.DEBUG):
+    def debug(
+        self,
+        project_path: str = None,
+        configuration: dict = None,
+        state: dict = None,
+        naming: str = None,
+        log_level: Logging.Level = Logging.Level.DEBUG,
+    ):
         """Tests the connector code by running it with the connector tester.\n
         state.json docs: https://fivetran.com/docs/connector-sdk/connector-sdk-concepts/state-management#statemanagement\n
         configuration.json docs: https://fivetran.com/docs/connector-sdk/connector-development-and-configuration/configuration-json#workingwithconfigurationjson
@@ -302,12 +388,14 @@ class Connector(connector_sdk_pb2_grpc.SourceConnectorServicer):
             faulthandler.enable()
         except (RuntimeError, OSError):
             pass
-        
+
         available_port = get_available_port()
         exit_check(project_path)
 
         if available_port is None:
-            raise RuntimeError("failed to allocate port error: no available port in range 50049-50060")
+            raise RuntimeError(
+                "failed to allocate port error: no available port in range 50049-50060"
+            )
 
         server = self.run(available_port, configuration, state, log_level=log_level)
 
@@ -317,8 +405,14 @@ class Connector(connector_sdk_pb2_grpc.SourceConnectorServicer):
         try:
             print_library_log("starting connector tester", log_icon=Logging.LogIcon.STEP)
             for log_msg in run_tester(
-                java_exe, tester_root_dir, project_path, available_port,
-                json.dumps(self.state), self.configuration, naming):
+                java_exe,
+                tester_root_dir,
+                project_path,
+                available_port,
+                json.dumps(self.state),
+                self.configuration,
+                naming,
+            ):
                 print(log_msg, end="")
         finally:
             server.stop(grace=2.0)
@@ -328,7 +422,7 @@ class Connector(connector_sdk_pb2_grpc.SourceConnectorServicer):
             print_library_log(
                 "Your connector does not implement the configuration_form() method. Please implement it and re-run."
                 "\nFor more information, see https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-setup-form",
-                Logging.Level.SEVERE
+                Logging.Level.SEVERE,
             )
             sys.exit(1)
 
@@ -343,7 +437,7 @@ class Connector(connector_sdk_pb2_grpc.SourceConnectorServicer):
         if run_tests and not self._cached_form._tests:
             print_library_log(
                 "Your connector does not provide any configuration tests to run.",
-                Logging.Level.SEVERE
+                Logging.Level.SEVERE,
             )
             sys.exit(1)
 
@@ -356,10 +450,14 @@ class Connector(connector_sdk_pb2_grpc.SourceConnectorServicer):
                 f"continue? (y/N): "
             )
             if confirm.lower() != "y":
-                print_library_log(f"'{constants.CONFIGURATION_JSON}' already exists; creating new file and overriding values cancelled")
+                print_library_log(
+                    f"'{constants.CONFIGURATION_JSON}' already exists; creating new file and overriding values cancelled"
+                )
                 sys.exit(0)
 
-    def generate_configuration(self, project_path: str, run_tests: bool = False, disable_encryption: bool = False):
+    def generate_configuration(
+        self, project_path: str, run_tests: bool = False, disable_encryption: bool = False
+    ):
         """Runs the fivetran configuration command via the connector tester.
 
         Starts the gRPC server and invokes the Java tester in configuration mode.
@@ -386,12 +484,21 @@ class Connector(connector_sdk_pb2_grpc.SourceConnectorServicer):
 
         available_port = get_available_port()
         if available_port is None:
-            raise RuntimeError("failed to allocate port error: no available port in range 50049-50060")
+            raise RuntimeError(
+                "failed to allocate port error: no available port in range 50049-50060"
+            )
 
         server = self.run(available_port, {}, log_level=Logging.Level.INFO)
         try:
             print_library_log("starting connector tester", log_icon=Logging.LogIcon.STEP)
-            run_configuration_tester(java_exe, tester_root_dir, project_path, available_port, run_tests, disable_encryption)
+            run_configuration_tester(
+                java_exe,
+                tester_root_dir,
+                project_path,
+                available_port,
+                run_tests,
+                disable_encryption,
+            )
         except subprocess.CalledProcessError:
             raise
         except Exception as e:
@@ -428,7 +535,10 @@ class Connector(connector_sdk_pb2_grpc.SourceConnectorServicer):
             )
         except Exception as report_error:
             # Crash reports are best-effort diagnostics and must not replace the customer exception.
-            print_library_log(f"failed to build crash report: {report_error}. Please contact support: https://support.fivetran.com/", Logging.Level.WARNING)
+            print_library_log(
+                f"failed to build crash report: {report_error}. Please contact support: https://support.fivetran.com/",
+                Logging.Level.WARNING,
+            )
 
     # -- Methods below override ConnectorServicer methods
     def ConfigurationForm(self, request, context):
@@ -479,7 +589,9 @@ class Connector(connector_sdk_pb2_grpc.SourceConnectorServicer):
             test_fn = form._get_test_function_by_name(request.name)
             if test_fn is None:
                 raise RuntimeError(f"no test registered with name '{request.name}'")
-            configuration = self.configuration if self.configuration else dict(request.configuration)
+            configuration = (
+                self.configuration if self.configuration else dict(request.configuration)
+            )
             print_library_log(f"calling test '{request.name}'", Logging.Level.INFO)
             result = test_fn(configuration)
             if not isinstance(result, common_pb2.TestResponse):
@@ -515,11 +627,15 @@ class Connector(connector_sdk_pb2_grpc.SourceConnectorServicer):
             return connector_sdk_pb2.SchemaResponse(schema_response_not_supported=True)
         else:
             try:
-                configuration = self.configuration if self.configuration else dict(request.configuration)
+                configuration = (
+                    self.configuration if self.configuration else dict(request.configuration)
+                )
                 print_library_log("calling schema()", Logging.Level.INFO)
                 response = self.schema_method(configuration)
                 process_tables(response, table_list)
-                return connector_sdk_pb2.SchemaResponse(without_schema=common_pb2.TableList(tables=TABLES.values()))
+                return connector_sdk_pb2.SchemaResponse(
+                    without_schema=common_pb2.TableList(tables=TABLES.values())
+                )
 
             except Exception as e:
                 self._set_debug_crash_report(e, "schema()")
@@ -594,7 +710,9 @@ class Connector(connector_sdk_pb2_grpc.SourceConnectorServicer):
             if not exception_queue.empty():
                 raise exception_queue.get()
 
-            print_library_log("finished receiving records from customer's update().", Logging.Level.INFO, True)
+            print_library_log(
+                "finished receiving records from customer's update().", Logging.Level.INFO, True
+            )
 
         except Exception as e:
             self._set_debug_crash_report(e, "update()", state=state, memory_tracker=memory_tracker)
@@ -602,9 +720,11 @@ class Connector(connector_sdk_pb2_grpc.SourceConnectorServicer):
             print_library_log(error_message, Logging.Level.SEVERE)
             raise RuntimeError(_format_runtime_error_message(error_message)) from e
 
+
 def print_version():
     print_library_log("fivetran_connector_sdk " + __version__)
     sys.exit(0)
+
 
 def main():
     """The main entry point for the script.
@@ -661,7 +781,9 @@ def main():
         ft_group = get_destination_group(args)
         ft_connection = get_connection_name(args)
         ft_deploy_key = get_api_key(args)
-        validate_required_deploy_params(ft_group=ft_group, ft_connection=ft_connection, ft_deploy_key=ft_deploy_key)
+        validate_required_deploy_params(
+            ft_group=ft_group, ft_connection=ft_connection, ft_deploy_key=ft_deploy_key
+        )
         python_version = get_python_version(args, prompt_mode)
         hd_agent_id = get_hd_agent_id(args, prompt_mode)
         proxy_id = get_proxy_id(args)
@@ -671,11 +793,26 @@ def main():
         naming = get_naming(args)
 
         try:
-            connector_object.deploy(args.project_path, ft_deploy_key, ft_group, ft_connection, hd_agent_id,
-                                    configuration, config_path, python_version, prompt_mode, naming,
-                                    proxy_id, proxy_host_config_key)
+            connector_object.deploy(
+                args.project_path,
+                ft_deploy_key,
+                ft_group,
+                ft_connection,
+                hd_agent_id,
+                configuration,
+                config_path,
+                python_version,
+                prompt_mode,
+                naming,
+                proxy_id,
+                proxy_host_config_key,
+            )
         except Exception as e:
-            print_library_log(f"deploy run failed with error: {str(e)}", level=Logging.Level.SEVERE, log_icon=Logging.LogIcon.FAILURE)
+            print_library_log(
+                f"deploy run failed with error: {str(e)}",
+                level=Logging.Level.SEVERE,
+                log_icon=Logging.LogIcon.FAILURE,
+            )
             sys.exit(1)
     elif args.command.lower() == "debug":
         configuration, config_path = get_configuration(args)
@@ -688,10 +825,18 @@ def main():
             os.environ["FIVETRAN_CONNECTION_NAME"] = "test_connection_name"
             connector_object.debug(args.project_path, configuration, state, naming)
         except subprocess.CalledProcessError as e:
-            print_library_log(f"connector tester failed with exit code: {e.returncode}", level=Logging.Level.SEVERE, log_icon=Logging.LogIcon.FAILURE)
+            print_library_log(
+                f"connector tester failed with exit code: {e.returncode}",
+                level=Logging.Level.SEVERE,
+                log_icon=Logging.LogIcon.FAILURE,
+            )
             sys.exit(e.returncode)
         except Exception as e:
-            print_library_log(f"debug run failed error: {str(e)}", level=Logging.Level.SEVERE, log_icon=Logging.LogIcon.FAILURE)
+            print_library_log(
+                f"debug run failed error: {str(e)}",
+                level=Logging.Level.SEVERE,
+                log_icon=Logging.LogIcon.FAILURE,
+            )
             sys.exit(1)
         finally:
             del os.environ["FIVETRAN_CONNECTION_ID"]
@@ -701,13 +846,22 @@ def main():
 
     elif args.command.lower() == "configuration":
         try:
-            connector_object.generate_configuration(args.project_path, run_tests=args.test,
-                                                   disable_encryption=args.disable_encryption)
+            connector_object.generate_configuration(
+                args.project_path, run_tests=args.test, disable_encryption=args.disable_encryption
+            )
         except subprocess.CalledProcessError as e:
-            print_library_log(f"connector tester failed with exit code: {e.returncode}", level=Logging.Level.SEVERE, log_icon=Logging.LogIcon.FAILURE)
+            print_library_log(
+                f"connector tester failed with exit code: {e.returncode}",
+                level=Logging.Level.SEVERE,
+                log_icon=Logging.LogIcon.FAILURE,
+            )
             sys.exit(e.returncode)
         except Exception as e:
-            print_library_log(f"configuration command failed error: {str(e)}", level=Logging.Level.SEVERE, log_icon=Logging.LogIcon.FAILURE)
+            print_library_log(
+                f"configuration command failed error: {str(e)}",
+                level=Logging.Level.SEVERE,
+                log_icon=Logging.LogIcon.FAILURE,
+            )
             sys.exit(1)
 
 

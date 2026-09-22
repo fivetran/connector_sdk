@@ -23,7 +23,8 @@ from fivetran_connector_sdk.protos import common_pb2
 from fivetran_connector_sdk import constants
 from fivetran_connector_sdk.logger import Logging
 from fivetran_connector_sdk.helpers import (
-    print_library_log, get_input_from_cli,
+    print_library_log,
+    get_input_from_cli,
     validate_and_load_state,
     validate_and_load_configuration,
     _validate_table_name,
@@ -93,59 +94,69 @@ def log_setup_tests_running() -> None:
 def get_destination_group(args):
     ft_group = args.destination if args.destination else None
     if not ft_group:
-        ft_group = os.getenv('FIVETRAN_DESTINATION_NAME', None)
+        ft_group = os.getenv("FIVETRAN_DESTINATION_NAME", None)
         if ft_group:
             print_library_log(
                 "reading destination name from FIVETRAN_DESTINATION_NAME environment variable",
-                Logging.Level.INFO, log_icon=Logging.LogIcon.INFO
+                Logging.Level.INFO,
+                log_icon=Logging.LogIcon.INFO,
             )
     if ft_group and ft_group.strip() == "":
         return None
     return ft_group
 
+
 def get_connection_name(args):
     ft_connection = args.connection if args.connection else None
     if not ft_connection:
-        ft_connection = os.getenv('FIVETRAN_CONNECTION_NAME', None)
+        ft_connection = os.getenv("FIVETRAN_CONNECTION_NAME", None)
         if ft_connection:
             print_library_log(
                 "reading connection name from FIVETRAN_CONNECTION_NAME environment variable",
-                Logging.Level.INFO, log_icon=Logging.LogIcon.INFO
+                Logging.Level.INFO,
+                log_icon=Logging.LogIcon.INFO,
             )
     if ft_connection and not is_connection_name_valid(ft_connection):
+        print_library_log(f"invalid connection name: '{ft_connection}'", Logging.Level.SEVERE)
         print_library_log(
-            f"invalid connection name: '{ft_connection}'", Logging.Level.SEVERE)
-        print_library_log("connection names must use only [a-z0-9_] and begin with '_' or a lowercase letter", Logging.Level.SEVERE)
+            "connection names must use only [a-z0-9_] and begin with '_' or a lowercase letter",
+            Logging.Level.SEVERE,
+        )
         sys.exit(1)
     return ft_connection
+
 
 def get_api_key(args):
     ft_deploy_key = args.api_key if args.api_key else None
     if not ft_deploy_key:
-        ft_deploy_key = os.getenv('FIVETRAN_API_KEY', None)
+        ft_deploy_key = os.getenv("FIVETRAN_API_KEY", None)
         if ft_deploy_key:
             print_library_log(
                 "reading api key from FIVETRAN_API_KEY environment variable",
-                Logging.Level.INFO, log_icon=Logging.LogIcon.INFO
+                Logging.Level.INFO,
+                log_icon=Logging.LogIcon.INFO,
             )
     if ft_deploy_key and ft_deploy_key.strip() == "":
         return None
     return ft_deploy_key
 
+
 def get_python_version(args, prompt_mode: PromptMode):
     python_version = args.python_version if args.python_version else None
-    env_python_version = os.getenv('FIVETRAN_PYTHON_VERSION', None)
+    env_python_version = os.getenv("FIVETRAN_PYTHON_VERSION", None)
     if env_python_version and not python_version and not prompt_mode.is_non_interactive_mode:
         python_version = get_input_from_cli("Provide your python version", env_python_version)
     return python_version
 
+
 def get_hd_agent_id(args, prompt_mode: PromptMode):
     hd_agent_id = args.hybrid_deployment_agent_id if args.hybrid_deployment_agent_id else None
-    env_hd_agent_id = os.getenv('FIVETRAN_HD_AGENT_ID', None)
+    env_hd_agent_id = os.getenv("FIVETRAN_HD_AGENT_ID", None)
 
     if env_hd_agent_id and not hd_agent_id and not prompt_mode.is_non_interactive_mode:
         hd_agent_id = get_input_from_cli("Provide the Hybrid Deployment Agent ID", env_hd_agent_id)
     return hd_agent_id
+
 
 def get_proxy_id(args):
     proxy_id = getattr(args, "proxy_id", None)
@@ -154,9 +165,11 @@ def get_proxy_id(args):
     if not proxy_id.strip():
         print_library_log(
             "--proxy-id was provided with an empty value; please provide a valid Proxy Agent ID.",
-            Logging.Level.SEVERE)
+            Logging.Level.SEVERE,
+        )
         sys.exit(1)
     return proxy_id.strip()
+
 
 def get_proxy_host_config_key(args):
     proxy_host_config_key = getattr(args, "proxy_host_config_key", None)
@@ -164,16 +177,18 @@ def get_proxy_host_config_key(args):
         return None
     return proxy_host_config_key.strip() or None
 
+
 def get_state(args):
     if args.command.lower() == "deploy" and args.state:
         print_library_log(
             "unrecognised argument: '--state'; not supported by 'deploy'\nmanage connection state using the Fivetran API instead\nreference:https://fivetran.com/docs/connector-sdk/connector-development-and-configuration/state-management",
-            Logging.Level.WARNING
+            Logging.Level.WARNING,
         )
         sys.exit(1)
-    state = args.state if args.state else os.getenv('FIVETRAN_STATE', None)
+    state = args.state if args.state else os.getenv("FIVETRAN_STATE", None)
     state = validate_and_load_state(args, state)
     return state
+
 
 def validate_naming(naming):
     """Validate naming value, return uppercase or exit on error.
@@ -191,8 +206,10 @@ def validate_naming(naming):
         return value_upper
     print_library_log(
         f"Invalid naming strategy: '{naming}'. Must be 'FIVETRAN' or 'SOURCE' (case-insensitive).",
-        Logging.Level.SEVERE)
+        Logging.Level.SEVERE,
+    )
     sys.exit(1)
+
 
 def get_naming(args):
     """Fetch, validate, and format naming field from args or environment.
@@ -204,7 +221,7 @@ def get_naming(args):
         str: The formatted naming strategy (e.g., "FIVETRAN_NAMING" or "SOURCE_NAMING"),
              or None if not explicitly set via CLI or environment variable.
     """
-    naming = args.naming if hasattr(args, 'naming') else None
+    naming = args.naming if hasattr(args, "naming") else None
     if not naming:
         naming = os.getenv(FIVETRAN_NAMING_ENV, None)
 
@@ -216,11 +233,12 @@ def get_configuration(args):
     configuration = args.configuration if args.configuration else None
 
     if not configuration:
-        env_configuration = os.getenv('FIVETRAN_CONFIGURATION', None)
+        env_configuration = os.getenv("FIVETRAN_CONFIGURATION", None)
         if env_configuration:
             print_library_log(
                 "reading configuration from FIVETRAN_CONFIGURATION environment variable",
-                Logging.Level.INFO, log_icon=Logging.LogIcon.INFO
+                Logging.Level.INFO,
+                log_icon=Logging.LogIcon.INFO,
             )
             configuration = env_configuration
         else:
@@ -228,7 +246,8 @@ def get_configuration(args):
             if os.path.exists(json_filepath):
                 print_library_log(
                     "reading configuration from configuration.json found in project folder",
-                    Logging.Level.INFO, log_icon=Logging.LogIcon.INFO
+                    Logging.Level.INFO,
+                    log_icon=Logging.LogIcon.INFO,
                 )
                 configuration = CONFIGURATION_JSON
             else:
@@ -239,7 +258,11 @@ def get_configuration(args):
         config_values = validate_and_load_configuration(args.project_path, configuration)
         return config_values, configuration
     except ValueError as e:
-        print_library_log(f"invalid configuration error: {e}", level=Logging.Level.SEVERE, log_icon=Logging.LogIcon.FAILURE)
+        print_library_log(
+            f"invalid configuration error: {e}",
+            level=Logging.Level.SEVERE,
+            log_icon=Logging.LogIcon.FAILURE,
+        )
         sys.exit(1)
 
 
@@ -253,7 +276,7 @@ def check_newer_version(version: str):
 
         if os.path.isfile(last_check_file_path):
             # Is it time to check again?
-            with open(last_check_file_path, 'r', encoding=UTF_8) as f_in:
+            with open(last_check_file_path, "r", encoding=UTF_8) as f_in:
                 timestamp = int(f_in.read())
                 if (int(time.time()) - timestamp) < SIX_HOUR_IN_SEC:
                     return
@@ -265,16 +288,29 @@ def check_newer_version(version: str):
                 response.raise_for_status()
                 data = json.loads(response.text)
                 latest_version = data["info"]["version"]
-                if tuple(int(x) for x in version.split('.')) < tuple(int(x) for x in latest_version.split('.')):
-                    print_library_log(f"fivetran-connector-sdk {latest_version} is available. (a newer release exists)", log_icon=Logging.LogIcon.LIGHTNING, level=Logging.Level.WARNING)
-                    print_library_log("run 'pip install --upgrade fivetran-connector-sdk' to update", log_icon=Logging.LogIcon.LIGHTNING, level=Logging.Level.WARNING)
+                if tuple(int(x) for x in version.split(".")) < tuple(
+                    int(x) for x in latest_version.split(".")
+                ):
+                    print_library_log(
+                        f"fivetran-connector-sdk {latest_version} is available. (a newer release exists)",
+                        log_icon=Logging.LogIcon.LIGHTNING,
+                        level=Logging.Level.WARNING,
+                    )
+                    print_library_log(
+                        "run 'pip install --upgrade fivetran-connector-sdk' to update",
+                        log_icon=Logging.LogIcon.LIGHTNING,
+                        level=Logging.Level.WARNING,
+                    )
 
-                with open(last_check_file_path, 'w', encoding=UTF_8) as f_out:
+                with open(last_check_file_path, "w", encoding=UTF_8) as f_out:
                     f_out.write(f"{int(time.time())}")
                 break
             except Exception:
-                retry_after = 2 ** index
-                print_library_log("unable to check for a newer version of `fivetran-connector-sdk`", Logging.Level.WARNING)
+                retry_after = 2**index
+                print_library_log(
+                    "unable to check for a newer version of `fivetran-connector-sdk`",
+                    Logging.Level.WARNING,
+                )
                 print_library_log(f"retrying after {retry_after} seconds", Logging.Level.WARNING)
                 time.sleep(retry_after)
     except Exception:
@@ -292,11 +328,10 @@ def tester_root_dir_helper() -> str:
     return os.path.join(config_root_dir_helper(), TESTER_LOCATION)
 
 
-
 def _warn_exit_usage(filename, line_no, func):
     print_library_log(
         f"avoid using {func} to exit from python code\nthis may cause the connector to hang\nraise an error instead at: {filename}:{line_no}\nreference: https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-logs#exceptionhandling",
-        Logging.Level.WARNING
+        Logging.Level.WARNING,
     )
 
 
@@ -348,7 +383,8 @@ def check_dict(incoming: dict, string_only: bool = False, exempt_keys: set = Non
 
     if not isinstance(incoming, dict):
         raise ValueError(
-            "invalid configuration file; must be a valid JSON object\nreference: https://fivetran.com/docs/connector-sdk/connector-development-and-configuration/configuration-json#workingwithconfigurationjson")
+            "invalid configuration file; must be a valid JSON object\nreference: https://fivetran.com/docs/connector-sdk/connector-development-and-configuration/configuration-json#workingwithconfigurationjson"
+        )
 
     if string_only:
         exempt = exempt_keys or set()
@@ -356,15 +392,18 @@ def check_dict(incoming: dict, string_only: bool = False, exempt_keys: set = Non
             if k in exempt:
                 if not isinstance(v, (str, list)):
                     print_library_log(
-                        f"invalid configuration file; value for '{k}' must be a string or a list of strings\nreference: https://fivetran.com/docs/connector-sdk/connector-development-and-configuration/configuration-json#workingwithconfigurationjson", Logging.Level.SEVERE)
+                        f"invalid configuration file; value for '{k}' must be a string or a list of strings\nreference: https://fivetran.com/docs/connector-sdk/connector-development-and-configuration/configuration-json#workingwithconfigurationjson",
+                        Logging.Level.SEVERE,
+                    )
                     sys.exit(1)
             elif not isinstance(v, str):
                 print_library_log(
-                    "invalid configuration file; all values must be strings\nreference: https://fivetran.com/docs/connector-sdk/connector-development-and-configuration/configuration-json#workingwithconfigurationjson", Logging.Level.SEVERE)
+                    "invalid configuration file; all values must be strings\nreference: https://fivetran.com/docs/connector-sdk/connector-development-and-configuration/configuration-json#workingwithconfigurationjson",
+                    Logging.Level.SEVERE,
+                )
                 sys.exit(1)
 
     return incoming
-
 
 
 def _fail_proxy_validation(message):
@@ -376,7 +415,8 @@ def _resolve_proxy_host_key(configuration, proxy_host_config_key):
     proxy_host_key = proxy_host_config_key.strip()
     if proxy_host_key not in configuration:
         return _fail_proxy_validation(
-            "The specified --proxy-host-config-key does not exist in configuration.json.")
+            "The specified --proxy-host-config-key does not exist in configuration.json."
+        )
     return proxy_host_key
 
 
@@ -387,7 +427,8 @@ def _detect_default_proxy_host_key(configuration):
     return _fail_proxy_validation(
         "Unable to determine the endpoint to proxy. "
         "Please specify the configuration key containing the host details using --proxy-host-config-key "
-        "or add a 'host' or 'hosts' entry in configuration.json.")
+        "or add a 'host' or 'hosts' entry in configuration.json."
+    )
 
 
 def validate_proxy_configuration(configuration, proxy_id, proxy_host_config_key, hd_agent_id=None):
@@ -404,12 +445,14 @@ def validate_proxy_configuration(configuration, proxy_id, proxy_host_config_key,
     """
     if proxy_id and hd_agent_id:
         return _fail_proxy_validation(
-            "Proxy Agent is not supported in Hybrid Deployment connections.")
+            "Proxy Agent is not supported in Hybrid Deployment connections."
+        )
 
     if not proxy_id:
         if proxy_host_config_key:
             return _fail_proxy_validation(
-                "--proxy-host-config-key is only supported when --proxy-id is provided.")
+                "--proxy-host-config-key is only supported when --proxy-id is provided."
+            )
         return None
 
     if proxy_host_config_key:
@@ -433,7 +476,7 @@ def is_connection_name_valid(connection: str):
 
 def is_port_in_use(port: int):
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        return s.connect_ex(('127.0.0.1', port)) == 0
+        return s.connect_ex(("127.0.0.1", port)) == 0
 
 
 def get_available_port():
@@ -446,12 +489,15 @@ def get_available_port():
 def update_base_url_if_required():
     config_file_path = os.path.join(config_root_dir_helper(), CONFIG_FILE)
     if os.path.isfile(config_file_path):
-        with open(config_file_path, 'r', encoding=UTF_8) as f:
+        with open(config_file_path, "r", encoding=UTF_8) as f:
             data = json.load(f)
-            base_url = data.get('production_base_url')
+            base_url = data.get("production_base_url")
             if base_url is not None:
                 constants.PRODUCTION_BASE_URL = base_url
-                print_library_log(f"using custom production url: {base_url}", log_icon=Logging.LogIcon.INFO)
+                print_library_log(
+                    f"using custom production url: {base_url}", log_icon=Logging.LogIcon.INFO
+                )
+
 
 def fetch_requirements_from_file(file_path: str) -> list[str]:
     """Reads the requirements file and returns a list of dependencies.
@@ -462,8 +508,9 @@ def fetch_requirements_from_file(file_path: str) -> list[str]:
     Returns:
         list[str]: A list of dependencies as strings.
     """
-    with open(file_path, 'r', encoding=UTF_8) as f:
+    with open(file_path, "r", encoding=UTF_8) as f:
         return f.read().splitlines()
+
 
 def fetch_requirements_as_dict(file_path: str) -> dict:
     """Converts a list of dependencies from the requirements file into a dictionary.
@@ -484,12 +531,18 @@ def fetch_requirements_as_dict(file_path: str) -> dict:
             continue
         try:
             key = re.split(r"==|>=|<=|>|<", requirement)[0]
-            requirements_dict[key.lower().replace('-', '_')] = requirement.lower()
+            requirements_dict[key.lower().replace("-", "_")] = requirement.lower()
         except ValueError:
             print_library_log(f"Invalid requirement format: '{requirement}'", Logging.Level.SEVERE)
     return requirements_dict
 
-def validate_requirements_file(project_path: str, is_deploy: bool, version: str, prompt_mode: PromptMode = PromptMode.INTERACTIVE):
+
+def validate_requirements_file(
+    project_path: str,
+    is_deploy: bool,
+    version: str,
+    prompt_mode: PromptMode = PromptMode.INTERACTIVE,
+):
     """Validates the `requirements.txt` file against the project's actual dependencies.
 
     This method generates a temporary requirements file using `pipreqs`, compares
@@ -509,8 +562,10 @@ def validate_requirements_file(project_path: str, is_deploy: bool, version: str,
     requirements = load_or_add_requirements_file(requirements_file_path)
 
     # copying packages of requirements file to tmp file to handle pipreqs fail use-case
-    tmp_requirements_file_path = os.path.join(project_path, 'tmp_requirements.txt')
-    copy_requirements_file_to_tmp_requirements_file(requirements_file_path, tmp_requirements_file_path)
+    tmp_requirements_file_path = os.path.join(project_path, "tmp_requirements.txt")
+    copy_requirements_file_to_tmp_requirements_file(
+        requirements_file_path, tmp_requirements_file_path
+    )
 
     # Run the pipreqs command and capture stderr
     try:
@@ -530,10 +585,16 @@ def validate_requirements_file(project_path: str, is_deploy: bool, version: str,
             delete_file_if_exists(requirements_file_path)
             return
         else:
-            print_library_log("`requirements.txt` file not found in your project folder", Logging.Level.WARNING)
+            print_library_log(
+                "`requirements.txt` file not found in your project folder", Logging.Level.WARNING
+            )
 
-    update_version_requirements = verify_version_mismatch_deps(is_deploy, requirements, tmp_requirements, prompt_mode)
-    update_missing_requirements = verify_missing_deps(is_deploy, requirements, tmp_requirements, prompt_mode)
+    update_version_requirements = verify_version_mismatch_deps(
+        is_deploy, requirements, tmp_requirements, prompt_mode
+    )
+    update_missing_requirements = verify_missing_deps(
+        is_deploy, requirements, tmp_requirements, prompt_mode
+    )
     log_unused_deps_if_present(is_deploy, requirements, tmp_requirements)
 
     if update_version_requirements or update_missing_requirements:
@@ -543,21 +604,31 @@ def validate_requirements_file(project_path: str, is_deploy: bool, version: str,
     elif not requirements:
         delete_file_if_exists(requirements_file_path)
 
-    if is_deploy: print_library_log(f"Validation of {REQUIREMENTS_TXT} completed.")
+    if is_deploy:
+        print_library_log(f"Validation of {REQUIREMENTS_TXT} completed.")
 
 
-def log_unused_deps_if_present(is_deploy, requirements, tmp_requirements, file_name=REQUIREMENTS_TXT):
+def log_unused_deps_if_present(
+    is_deploy, requirements, tmp_requirements, file_name=REQUIREMENTS_TXT
+):
 
-    unused_deps = list(requirements.keys() - tmp_requirements.keys() -
-                       {"fivetran_connector_sdk", "fivetran-connector-sdk", "requests"})
+    unused_deps = list(
+        requirements.keys()
+        - tmp_requirements.keys()
+        - {"fivetran_connector_sdk", "fivetran-connector-sdk", "requests"}
+    )
     if not unused_deps:
         return
 
     log_unused_deps(unused_deps, is_deploy, file_name)
 
 
-def verify_missing_deps(is_deploy, requirements, tmp_requirements, prompt_mode: PromptMode = PromptMode.INTERACTIVE):
-    missing_deps = {key: tmp_requirements[key] for key in (tmp_requirements.keys() - requirements.keys())}
+def verify_missing_deps(
+    is_deploy, requirements, tmp_requirements, prompt_mode: PromptMode = PromptMode.INTERACTIVE
+):
+    missing_deps = {
+        key: tmp_requirements[key] for key in (tmp_requirements.keys() - requirements.keys())
+    }
     if not missing_deps:
         return False
 
@@ -568,52 +639,60 @@ def verify_missing_deps(is_deploy, requirements, tmp_requirements, prompt_mode: 
     if resolve_confirmation(
         f"Would you like us to update {REQUIREMENTS_TXT} to add missing dependent libraries? (y/N): ",
         default=False,
-        prompt_mode=prompt_mode
+        prompt_mode=prompt_mode,
     ):
         for requirement in missing_deps:
             requirements[requirement] = tmp_requirements[requirement]
         print_library_log(f"Successfully added missing dependencies to {REQUIREMENTS_TXT}.")
         return True
     print_library_log(
-        f"Changes identified as missing dependencies for libraries have been ignored. These changes have NOT been made to {REQUIREMENTS_TXT}.")
+        f"Changes identified as missing dependencies for libraries have been ignored. These changes have NOT been made to {REQUIREMENTS_TXT}."
+    )
     return False
 
 
-def verify_version_mismatch_deps(is_deploy, requirements, tmp_requirements, prompt_mode: PromptMode = PromptMode.INTERACTIVE):
-    version_mismatch_deps = {key: tmp_requirements[key] for key in
-                             (requirements.keys() & tmp_requirements.keys())
-                             if requirements[key] != tmp_requirements[key]}
+def verify_version_mismatch_deps(
+    is_deploy, requirements, tmp_requirements, prompt_mode: PromptMode = PromptMode.INTERACTIVE
+):
+    version_mismatch_deps = {
+        key: tmp_requirements[key]
+        for key in (requirements.keys() & tmp_requirements.keys())
+        if requirements[key] != tmp_requirements[key]
+    }
     if not version_mismatch_deps:
         return False
     if not is_deploy:
-        print_library_log(RECOMMEND_STABLE_VERSION_MESSAGE,
-                          Logging.Level.INFO)
+        print_library_log(RECOMMEND_STABLE_VERSION_MESSAGE, Logging.Level.INFO)
         print(version_mismatch_deps)
         return False
 
-    print_library_log(RECOMMEND_STABLE_VERSION_MESSAGE,
-                      Logging.Level.WARNING)
+    print_library_log(RECOMMEND_STABLE_VERSION_MESSAGE, Logging.Level.WARNING)
     print(version_mismatch_deps)
     if resolve_confirmation(
         f"Would you like us to update {REQUIREMENTS_TXT} to the current stable versions of the dependent libraries? (y/N): ",
         default=False,
-        prompt_mode=prompt_mode
+        prompt_mode=prompt_mode,
     ):
         for requirement in version_mismatch_deps:
             requirements[requirement] = tmp_requirements[requirement]
         print_library_log(
-            f"Successfully updated {REQUIREMENTS_TXT} to the current stable versions of the dependent libraries.")
+            f"Successfully updated {REQUIREMENTS_TXT} to the current stable versions of the dependent libraries."
+        )
         return True
     print_library_log(
-        f"Changes identified for libraries with version conflicts have been ignored. These changes have NOT been made to {REQUIREMENTS_TXT}.")
+        f"Changes identified for libraries with version conflicts have been ignored. These changes have NOT been made to {REQUIREMENTS_TXT}."
+    )
     return False
 
 
 def run_pipreqs_with_retries(is_deploy, project_path, tmp_requirements_file_path):
     # Detect and exclude virtual environment directories
-    venv_dirs = [name for name in os.listdir(project_path)
-                 if os.path.isdir(os.path.join(project_path, name)) and
-                 VIRTUAL_ENV_CONFIG in os.listdir(os.path.join(project_path, name))]
+    venv_dirs = [
+        name
+        for name in os.listdir(project_path)
+        if os.path.isdir(os.path.join(project_path, name))
+        and VIRTUAL_ENV_CONFIG in os.listdir(os.path.join(project_path, name))
+    ]
 
     ignored_dirs = EXCLUDED_PIPREQS_DIRS + venv_dirs if venv_dirs else EXCLUDED_PIPREQS_DIRS
 
@@ -621,9 +700,16 @@ def run_pipreqs_with_retries(is_deploy, project_path, tmp_requirements_file_path
     while attempt < MAX_RETRIES:
         attempt += 1
         result = subprocess.run(
-            ["pipreqs", project_path, "--savepath", tmp_requirements_file_path, "--ignore", ",".join(ignored_dirs)],
+            [
+                "pipreqs",
+                project_path,
+                "--savepath",
+                tmp_requirements_file_path,
+                "--ignore",
+                ",".join(ignored_dirs),
+            ],
             stderr=subprocess.PIPE,
-            text=True  # Ensures output is in string format
+            text=True,  # Ensures output is in string format
         )
 
         if result.returncode == 0:
@@ -632,53 +718,68 @@ def run_pipreqs_with_retries(is_deploy, project_path, tmp_requirements_file_path
         print_library_log(f"attempt {attempt}: pipreqs check failed", Logging.Level.WARNING)
 
         if attempt < MAX_RETRIES:
-            retry_after = 3 ** attempt
+            retry_after = 3**attempt
             print_library_log(f"retrying after {retry_after} seconds", Logging.Level.WARNING)
             time.sleep(retry_after)
         else:
             print_library_log(f"pipreqs failed after {MAX_RETRIES} attempts", Logging.Level.SEVERE)
             if result.stderr:
-                print_library_log(f"pipreqs failed with error: {result.stderr.strip()}", Logging.Level.SEVERE)
+                print_library_log(
+                    f"pipreqs failed with error: {result.stderr.strip()}", Logging.Level.SEVERE
+                )
             print_library_log(
                 f"skipping requirements.txt validation; continuing with {'deploy' if is_deploy else 'debug'}",
-                Logging.Level.WARNING)
+                Logging.Level.WARNING,
+            )
 
 
 def log_unused_deps(unused_deps, is_deploy, file_name=REQUIREMENTS_TXT):
     level = Logging.Level.WARNING if is_deploy else Logging.Level.INFO
-    print_library_log("The following dependencies are not needed, "
-                      f"they are already installed or not in use. Remove them from {file_name}:\n" + " ".join(unused_deps), level)
+    print_library_log(
+        "The following dependencies are not needed, "
+        f"they are already installed or not in use. Remove them from {file_name}:\n"
+        + " ".join(unused_deps),
+        level,
+    )
+
 
 def handle_missing_deps(missing_deps, is_deploy, file_name=REQUIREMENTS_TXT):
     level = Logging.Level.SEVERE if is_deploy else Logging.Level.INFO
-    print_library_log(f"Include the following dependency libraries in {file_name}, to be used by "
-                      "Fivetran production. "
-                      "For more information, see our docs: "
-                      "https://fivetran.com/docs/connector-sdk/connector-development-and-configuration/project-dependencies\n" + 
-                      " ".join(list(missing_deps.values())),
-                      level)
+    print_library_log(
+        f"Include the following dependency libraries in {file_name}, to be used by "
+        "Fivetran production. "
+        "For more information, see our docs: "
+        "https://fivetran.com/docs/connector-sdk/connector-development-and-configuration/project-dependencies\n"
+        + " ".join(list(missing_deps.values())),
+        level,
+    )
+
 
 def load_or_add_requirements_file(requirements_file_path):
     if os.path.exists(requirements_file_path):
         requirements = fetch_requirements_as_dict(requirements_file_path)
     else:
-        with open(requirements_file_path, 'w', encoding=UTF_8):
+        with open(requirements_file_path, "w", encoding=UTF_8):
             # Intentional empty block: Creating an empty requirements.txt file
             pass
         requirements = {}
     return requirements
 
-def copy_requirements_file_to_tmp_requirements_file(requirements_file_path: str, tmp_requirements_file_path):
+
+def copy_requirements_file_to_tmp_requirements_file(
+    requirements_file_path: str, tmp_requirements_file_path
+):
     if os.path.exists(requirements_file_path):
         requirements_file_content = fetch_requirements_from_file(requirements_file_path)
-        with open(tmp_requirements_file_path, 'w') as file:
+        with open(tmp_requirements_file_path, "w") as file:
             file.write("\n".join(requirements_file_content))
+
 
 def remove_unwanted_packages(requirements: dict):
     # remove the `fivetran_connector_sdk` and `requests` packages from requirements as we already pre-installed them.
     if requirements.get("fivetran_connector_sdk") is not None:
         requirements.pop("fivetran_connector_sdk")
-    if requirements.get('requests') is not None:
+    if requirements.get("requests") is not None:
         requirements.pop("requests")
 
 
@@ -696,6 +797,7 @@ def parse_pyproject_dependencies(pyproject_path: str) -> dict:
     """
     try:
         import tomllib
+
         with open(pyproject_path, "rb") as f:
             data = tomllib.load(f)
     except Exception:
@@ -713,7 +815,9 @@ def parse_pyproject_dependencies(pyproject_path: str) -> dict:
     return result
 
 
-def validate_pyproject_file(project_path: str, is_deploy: bool, prompt_mode: PromptMode = PromptMode.INTERACTIVE):
+def validate_pyproject_file(
+    project_path: str, is_deploy: bool, prompt_mode: PromptMode = PromptMode.INTERACTIVE
+):
     """Validates the `pyproject.toml` file against the project's actual dependencies.
 
     This method generates a temporary requirements file using `pipreqs`, compares
@@ -738,8 +842,8 @@ def validate_pyproject_file(project_path: str, is_deploy: bool, prompt_mode: Pro
     requirements = parse_pyproject_dependencies(pyproject_path)
 
     # copying packages of pyproject.toml to tmp file
-    tmp_requirements_file_path = os.path.join(project_path, 'tmp_requirements.txt')
-    with open(tmp_requirements_file_path, 'w', encoding=UTF_8) as f:
+    tmp_requirements_file_path = os.path.join(project_path, "tmp_requirements.txt")
+    with open(tmp_requirements_file_path, "w", encoding=UTF_8) as f:
         f.write("\n".join(requirements.values()))
 
     # Run the pipreqs command and capture stderr
@@ -759,11 +863,16 @@ def validate_pyproject_file(project_path: str, is_deploy: bool, prompt_mode: Pro
     verify_pyproject_missing_deps(is_deploy, requirements, tmp_requirements, prompt_mode)
     log_unused_deps_if_present(is_deploy, requirements, tmp_requirements, PYPROJECT_TOML)
 
-    if is_deploy: print_library_log(f"Validation of {PYPROJECT_TOML} completed.")
+    if is_deploy:
+        print_library_log(f"Validation of {PYPROJECT_TOML} completed.")
 
 
-def verify_pyproject_missing_deps(is_deploy, requirements, tmp_requirements, prompt_mode: PromptMode = PromptMode.INTERACTIVE):
-    missing_deps = {key: tmp_requirements[key] for key in (tmp_requirements.keys() - requirements.keys())}
+def verify_pyproject_missing_deps(
+    is_deploy, requirements, tmp_requirements, prompt_mode: PromptMode = PromptMode.INTERACTIVE
+):
+    missing_deps = {
+        key: tmp_requirements[key] for key in (tmp_requirements.keys() - requirements.keys())
+    }
     if not missing_deps:
         return
 
@@ -772,13 +881,19 @@ def verify_pyproject_missing_deps(is_deploy, requirements, tmp_requirements, pro
         return
 
     prompt_pyproject_continue_or_abort(
-        f"Some libraries are imported but not declared in {PYPROJECT_TOML}. Continue? (Y/n):", prompt_mode)
+        f"Some libraries are imported but not declared in {PYPROJECT_TOML}. Continue? (Y/n):",
+        prompt_mode,
+    )
 
 
-def verify_pyproject_version_mismatch_deps(is_deploy, requirements, tmp_requirements, prompt_mode: PromptMode = PromptMode.INTERACTIVE):
-    version_mismatch_deps = {key: tmp_requirements[key] for key in
-                             (requirements.keys() & tmp_requirements.keys())
-                             if requirements[key] != tmp_requirements[key]}
+def verify_pyproject_version_mismatch_deps(
+    is_deploy, requirements, tmp_requirements, prompt_mode: PromptMode = PromptMode.INTERACTIVE
+):
+    version_mismatch_deps = {
+        key: tmp_requirements[key]
+        for key in (requirements.keys() & tmp_requirements.keys())
+        if requirements[key] != tmp_requirements[key]
+    }
     if not version_mismatch_deps:
         return
 
@@ -789,10 +904,14 @@ def verify_pyproject_version_mismatch_deps(is_deploy, requirements, tmp_requirem
         return
 
     prompt_pyproject_continue_or_abort(
-        f"Some libraries in {PYPROJECT_TOML} are not at the current stable version. Continue? (Y/n):", prompt_mode)
+        f"Some libraries in {PYPROJECT_TOML} are not at the current stable version. Continue? (Y/n):",
+        prompt_mode,
+    )
 
 
-def prompt_pyproject_continue_or_abort(prompt_message: str, prompt_mode: PromptMode = PromptMode.INTERACTIVE):
+def prompt_pyproject_continue_or_abort(
+    prompt_message: str, prompt_mode: PromptMode = PromptMode.INTERACTIVE
+):
     """Prompts the user to continue (default Y) or abort (n).
 
     Pressing Enter or any input other than `n`/`N` continues. Only an explicit
@@ -807,7 +926,9 @@ def prompt_pyproject_continue_or_abort(prompt_message: str, prompt_mode: PromptM
         sys.exit(1)
 
 
-def package_project(project_path: str, deploy_key: str, configuration_form_method: Optional[Callable] = None) -> str:
+def package_project(
+    project_path: str, deploy_key: str, configuration_form_method: Optional[Callable] = None
+) -> str:
     """Packages the project for deployment.
 
     Args:
@@ -835,6 +956,7 @@ def package_project(project_path: str, deploy_key: str, configuration_form_metho
         # content (e.g. state.json from prior debug runs) is preserved.
         remove_dir_if_empty(os.path.join(project_path, OUTPUT_FILES_DIR))
 
+
 def cleanup_uploaded_project(deploy_key: str, package_id: str):
     """Cleans up an orphaned package when connection creation fails.
 
@@ -846,7 +968,10 @@ def cleanup_uploaded_project(deploy_key: str, package_id: str):
     if not cleanup_result:
         sys.exit(1)
 
-def log_connection_success(response: rq.Response, is_new_connection: bool, connection_id: Optional[str]) -> None:
+
+def log_connection_success(
+    response: rq.Response, is_new_connection: bool, connection_id: Optional[str]
+) -> None:
     """Logs connection creation or update success details.
 
     Args:
@@ -854,18 +979,26 @@ def log_connection_success(response: rq.Response, is_new_connection: bool, conne
         is_new_connection: True if creating a new connection, False if updating.
         connection_id: The connection ID (provided for updates, extracted for creates).
     """
-    data = response.json()['data']
+    data = response.json()["data"]
     # Extract connection_id from response if not provided (create case)
-    conn_id = connection_id if connection_id else data['id']
+    conn_id = connection_id if connection_id else data["id"]
     # Determine operation text and dashboard action based on flag
     operation = "created" if is_new_connection else "updated"
-    dashboard_action = "to start the initial sync" if is_new_connection else "to manage the connection"
+    dashboard_action = (
+        "to start the initial sync" if is_new_connection else "to manage the connection"
+    )
     print_library_log(f"connection {operation}", log_icon=Logging.LogIcon.SUCCESS)
     print_library_log(f"connection id: {conn_id}", indent=True)
-    print_library_log(f"runtime python version: {data['config']['python_version']}",
-                      level=Logging.Level.INFO, indent=True)
-    print_library_log(f"naming strategy: {data['destination_schema_names']}",
-                      level=Logging.Level.INFO, indent=True)
+    print_library_log(
+        f"runtime python version: {data['config']['python_version']}",
+        level=Logging.Level.INFO,
+        indent=True,
+    )
+    print_library_log(
+        f"naming strategy: {data['destination_schema_names']}",
+        level=Logging.Level.INFO,
+        indent=True,
+    )
     print_library_log(f"visit the Fivetran dashboard {dashboard_action}:")
     print_library_log(f"https://fivetran.com/dashboard/connections/{conn_id}/status")
 
@@ -876,7 +1009,7 @@ def handle_connection_response(
     deploy_key: str,
     expected_status: int,
     is_new_connection: bool,
-    connection_id: Optional[str] = None
+    connection_id: Optional[str] = None,
 ) -> None:
     """Common handler for create/update connection responses.
 
@@ -891,19 +1024,32 @@ def handle_connection_response(
     if response.ok and response.status_code == expected_status:
         if are_setup_tests_failing(response):
             operation = "created" if is_new_connection else "updated"
-            handle_failing_tests_message_and_exit(response, f"connection {operation} but setup tests failed")
+            handle_failing_tests_message_and_exit(
+                response, f"connection {operation} but setup tests failed"
+            )
         else:
             log_connection_success(response, is_new_connection, connection_id)
     else:
         action = "create" if is_new_connection else "update"
         print_library_log(
             f"failed to {action} connection error: {response.json()['message']}",
-            level=Logging.Level.SEVERE, log_icon=Logging.LogIcon.FAILURE)
+            level=Logging.Level.SEVERE,
+            log_icon=Logging.LogIcon.FAILURE,
+        )
         cleanup_uploaded_project(deploy_key, package_id)
         sys.exit(1)
 
-def update_connection(id: str, name: str, group: str, config: dict, package_id: str, deploy_key: str, hd_agent_id: str,
-                      proxy_agent_id: str = None):
+
+def update_connection(
+    id: str,
+    name: str,
+    group: str,
+    config: dict,
+    package_id: str,
+    deploy_key: str,
+    hd_agent_id: str,
+    proxy_agent_id: str = None,
+):
     """Updates the connection with the given ID, name, group, configuration, and deployment key.
 
     Args:
@@ -942,21 +1088,22 @@ def update_connection(id: str, name: str, group: str, config: dict, package_id: 
         config["proxy_host_config_key"] = None
 
     log_setup_tests_running()
-    response = rq.patch(f"{constants.PRODUCTION_BASE_URL}/v1/connectors/{id}",
-                        headers={
-                            "Authorization": f"Basic {deploy_key}",
-                            "User-Agent": get_user_agent()
-                        },
-                        json=json_payload)
+    response = rq.patch(
+        f"{constants.PRODUCTION_BASE_URL}/v1/connectors/{id}",
+        headers={"Authorization": f"Basic {deploy_key}", "User-Agent": get_user_agent()},
+        json=json_payload,
+    )
 
     return response
+
 
 def handle_failing_tests_message_and_exit(resp, log_message):
     print_library_log(log_message, Logging.Level.SEVERE)
     print_failing_setup_tests(resp)
-    connection_id = resp.json().get('data', {}).get('id')
+    connection_id = resp.json().get("data", {}).get("id")
     print_library_log(f"connection id: {connection_id}")
     sys.exit(1)
+
 
 def are_setup_tests_failing(response) -> bool:
     """Checks for failed setup tests in the response and returns True if any test has failed, otherwise False."""
@@ -964,7 +1111,11 @@ def are_setup_tests_failing(response) -> bool:
     setup_tests = response_json.get("data", {}).get("setup_tests", [])
 
     # Return True if any test has "FAILED" status, otherwise False
-    return any(test.get("status") == "FAILED" or test.get("status") == "JOB_FAILED" for test in setup_tests)
+    return any(
+        test.get("status") == "FAILED" or test.get("status") == "JOB_FAILED"
+        for test in setup_tests
+    )
+
 
 def print_failing_setup_tests(response):
     """Checks for failed setup tests in the response and print errors."""
@@ -972,17 +1123,31 @@ def print_failing_setup_tests(response):
     setup_tests = response_json.get("data", {}).get("setup_tests", [])
 
     # Collect failed setup tests
-    failed_tests = [test for test in setup_tests if
-                    test.get("status") == "FAILED" or test.get("status") == "JOB_FAILED"]
+    failed_tests = [
+        test
+        for test in setup_tests
+        if test.get("status") == "FAILED" or test.get("status") == "JOB_FAILED"
+    ]
 
     if failed_tests:
-        print_library_log("failed setup tests:", level=Logging.Level.WARNING, log_icon=Logging.LogIcon.FAILURE)
+        print_library_log(
+            "failed setup tests:", level=Logging.Level.WARNING, log_icon=Logging.LogIcon.FAILURE
+        )
         for test in failed_tests:
-            print_library_log(f"test: {test.get('title')}", level=Logging.Level.WARNING, indent=True)
-            print_library_log(f"status: {test.get('status')}", level=Logging.Level.WARNING, indent=True)
-            print_library_log(f"message: {test.get('message')}", level=Logging.Level.WARNING, indent=True)
+            print_library_log(
+                f"test: {test.get('title')}", level=Logging.Level.WARNING, indent=True
+            )
+            print_library_log(
+                f"status: {test.get('status')}", level=Logging.Level.WARNING, indent=True
+            )
+            print_library_log(
+                f"message: {test.get('message')}", level=Logging.Level.WARNING, indent=True
+            )
 
-def get_connection_details(name: str, group: str, group_id: str, deploy_key: str) -> Optional[Tuple[str, str]]:
+
+def get_connection_details(
+    name: str, group: str, group_id: str, deploy_key: str
+) -> Optional[Tuple[str, str]]:
     """Retrieves the connection ID for the specified connection schema name, group, and deployment key.
 
     Args:
@@ -994,24 +1159,34 @@ def get_connection_details(name: str, group: str, group_id: str, deploy_key: str
     Returns:
         Optional[Tuple[str, str]]: A tuple of (connection_id, service_type) if found, None otherwise.
     """
-    resp = rq.get(f"{constants.PRODUCTION_BASE_URL}/v1/groups/{group_id}/connectors",
-                  headers={
-                      "Authorization": f"Basic {deploy_key}",
-                      "User-Agent": get_user_agent()
-                  },
-                  params={"schema": name})
+    resp = rq.get(
+        f"{constants.PRODUCTION_BASE_URL}/v1/groups/{group_id}/connectors",
+        headers={"Authorization": f"Basic {deploy_key}", "User-Agent": get_user_agent()},
+        params={"schema": name},
+    )
     if not resp.ok:
         print_library_log(
-            f"failed to list connections for destination '{group}'", level=Logging.Level.SEVERE, log_icon=Logging.LogIcon.FAILURE)
+            f"failed to list connections for destination '{group}'",
+            level=Logging.Level.SEVERE,
+            log_icon=Logging.LogIcon.FAILURE,
+        )
         sys.exit(1)
 
-    if resp.json()['data']['items']:
-        return resp.json()['data']['items'][0]['id'], resp.json()['data']['items'][0]['service']
+    if resp.json()["data"]["items"]:
+        return resp.json()["data"]["items"][0]["id"], resp.json()["data"]["items"][0]["service"]
 
     return None
 
-def create_connection(deploy_key: str, group_id: str, config: dict, hd_agent_id: str, package_id: str, naming: str,
-                      proxy_agent_id: str = None) -> rq.Response:
+
+def create_connection(
+    deploy_key: str,
+    group_id: str,
+    config: dict,
+    hd_agent_id: str,
+    package_id: str,
+    naming: str,
+    proxy_agent_id: str = None,
+) -> rq.Response:
     """Creates a new connection with the given deployment key, group ID, and configuration.
 
     Args:
@@ -1037,18 +1212,17 @@ def create_connection(deploy_key: str, group_id: str, config: dict, hd_agent_id:
         "run_setup_tests": True,
         "sync_frequency": "360",
         "destination_schema_names": naming or (FIVETRAN_NAMING_VALUE + UNDERSCORE_NAMING),
-        "hybrid_deployment_agent_id": hd_agent_id
+        "hybrid_deployment_agent_id": hd_agent_id,
     }
     if proxy_agent_id:
         json_payload["proxy_agent_id"] = proxy_agent_id
         json_payload["networking_method"] = NetworkingMethod.PROXY_AGENT.value
 
-    response = rq.post(f"{constants.PRODUCTION_BASE_URL}/v1/connectors",
-                       headers={
-                           "Authorization": f"Basic {deploy_key}",
-                           "User-Agent": get_user_agent()
-                       },
-                       json=json_payload)
+    response = rq.post(
+        f"{constants.PRODUCTION_BASE_URL}/v1/connectors",
+        headers={"Authorization": f"Basic {deploy_key}", "User-Agent": get_user_agent()},
+        json=json_payload,
+    )
     return response
 
 
@@ -1069,7 +1243,9 @@ def create_package(project_path: str, configuration_form_method: Optional[Callab
     return zip_file_path
 
 
-def _generate_configuration_form_bytes(configuration_form_method: Optional[Callable] = None) -> dict:
+def _generate_configuration_form_bytes(
+    configuration_form_method: Optional[Callable] = None,
+) -> dict:
     """Generates the serialized ConfigurationFormResponse bytes for bundling into the package.
 
     Returns a dict of {filename: bytes} to be written into the zip, with an empty
@@ -1082,15 +1258,18 @@ def _generate_configuration_form_bytes(configuration_form_method: Optional[Calla
         dict: {CONFIGURATION_FORM_FILENAME: bytes}.
     """
     if not configuration_form_method:
-        return {CONFIGURATION_FORM_FILENAME: b''}
+        return {CONFIGURATION_FORM_FILENAME: b""}
     if Logging.LOG_LEVEL is None:
         Logging.LOG_LEVEL = Logging.Level.INFO
     try:
-        return {CONFIGURATION_FORM_FILENAME: configuration_form_method()._to_proto().SerializeToString()}
+        return {
+            CONFIGURATION_FORM_FILENAME: configuration_form_method()
+            ._to_proto()
+            .SerializeToString()
+        }
     except Exception as e:
         print_library_log(
-            f"failed to package configuration form response: {e}",
-            Logging.Level.SEVERE
+            f"failed to package configuration form response: {e}", Logging.Level.SEVERE
         )
         sys.exit(1)
 
@@ -1114,18 +1293,22 @@ def load_gitignore(directory_path: str) -> list[str]:
     gitignore_path = os.path.join(directory_path, constants.GITIGNORE_FILENAME)
     if os.path.exists(gitignore_path):
         try:
-            with open(gitignore_path, 'r', encoding=constants.UTF_8) as file:
+            with open(gitignore_path, "r", encoding=constants.UTF_8) as file:
                 patterns = []
                 for line in file:
                     # Strip leading/trailing whitespace
                     line = line.strip()
                     # Skip empty lines and comments
-                    if line and not line.startswith('#'):
+                    if line and not line.startswith("#"):
                         patterns.append(line)
                 print_library_log(f"loaded .gitignore with {len(patterns)} patterns")
                 return patterns
         except OSError as e:
-            print_library_log(f"failed to read .gitignore at {gitignore_path}: {e}", level=Logging.Level.WARNING, log_icon=Logging.LogIcon.FAILURE)
+            print_library_log(
+                f"failed to read .gitignore at {gitignore_path}: {e}",
+                level=Logging.Level.WARNING,
+                log_icon=Logging.LogIcon.FAILURE,
+            )
             print_library_log("using empty ignore patterns", Logging.Level.WARNING)
             return []
     return []
@@ -1140,10 +1323,10 @@ def get_default_ignore_patterns() -> list[str]:
         list[str]: A list of default ignore pattern strings.
     """
     # Convert EXCLUDED_DIRS to pathspec patterns with trailing slashes for directory matching
-    default_patterns = [directory + '/' for directory in EXCLUDED_DIRS]
+    default_patterns = [directory + "/" for directory in EXCLUDED_DIRS]
     # Add pattern to exclude hidden files and directories (starting with .)
-    default_patterns.append('.*')
-    #Exclude configuration.json
+    default_patterns.append(".*")
+    # Exclude configuration.json
     default_patterns.append(CONFIGURATION_JSON)
     return default_patterns
 
@@ -1162,8 +1345,8 @@ def normalize_path_for_matching(path: str) -> str:
     """
     # Replace Windows backslashes with forward slashes
     # This is a no-op on Unix systems where os.sep is already '/'
-    if os.sep != '/':
-        return path.replace(os.sep, '/')
+    if os.sep != "/":
+        return path.replace(os.sep, "/")
     return path
 
 
@@ -1192,7 +1375,7 @@ def transform_gitignore_patterns(patterns: list[str], directory_rel_path: str) -
         >>> transform_gitignore_patterns(['!/important.log'], 'src')
         ['!src/important.log']  # Negation with anchored pattern
     """
-    if not directory_rel_path or directory_rel_path == '.':
+    if not directory_rel_path or directory_rel_path == ".":
         # At project root, no transformation needed
         return patterns
 
@@ -1202,12 +1385,12 @@ def transform_gitignore_patterns(patterns: list[str], directory_rel_path: str) -
             continue
 
         # Handle negation patterns
-        is_negation = pattern.startswith('!')
+        is_negation = pattern.startswith("!")
         if is_negation:
             pattern = pattern[1:]  # Remove '!' temporarily
 
         # Transform based on pattern type
-        if pattern.startswith('/'):
+        if pattern.startswith("/"):
             # Anchored pattern: /foo -> dirpath/foo
             # Matches only direct children of the directory
             transformed_pattern = f"{directory_rel_path}/{pattern[1:]}"
@@ -1248,14 +1431,25 @@ def _collect_zip_contents(zipf, project_path, extra_files, skip_tracker):
             configuration_form_pb_exists = True
         zipf.writestr(arcname, data)
 
-    return connector_file_exists, custom_drivers_exists, custom_driver_installation_script_exists, configuration_form_pb_exists
+    return (
+        connector_file_exists,
+        custom_drivers_exists,
+        custom_driver_installation_script_exists,
+        configuration_form_pb_exists,
+    )
 
 
-def _validate_zip_contents(connector_file_exists, custom_drivers_exists, custom_driver_installation_script_exists, configuration_form_pb_exists):
+def _validate_zip_contents(
+    connector_file_exists,
+    custom_drivers_exists,
+    custom_driver_installation_script_exists,
+    configuration_form_pb_exists,
+):
     if not connector_file_exists:
         print_library_log(
             "connector.py not found in the project root\nthis file is required to start a sync and must be named in lowercase",
-            Logging.Level.SEVERE)
+            Logging.Level.SEVERE,
+        )
         sys.exit(1)
 
     if custom_drivers_exists and not custom_driver_installation_script_exists:
@@ -1264,8 +1458,8 @@ def _validate_zip_contents(connector_file_exists, custom_drivers_exists, custom_
 
     if not configuration_form_pb_exists:
         print_library_log(
-            f"{CONFIGURATION_FORM_FILENAME} not found in the package",
-            Logging.Level.SEVERE)
+            f"{CONFIGURATION_FORM_FILENAME} not found in the package", Logging.Level.SEVERE
+        )
         sys.exit(1)
 
 
@@ -1286,18 +1480,28 @@ def zip_folder(project_path: str, extra_files: dict = None) -> str:
     upload_filename = f"{project_name}.zip" if project_name else UPLOAD_FILENAME
     upload_filepath = os.path.join(project_path, OUTPUT_FILES_DIR, upload_filename)
     os.makedirs(os.path.dirname(upload_filepath), exist_ok=True)
-    skip_tracker = {'has_skipped': False}
+    skip_tracker = {"has_skipped": False}
 
-    with ZipFile(upload_filepath, 'w', ZIP_DEFLATED) as zipf:
-        connector_file_exists, custom_drivers_exists, custom_driver_installation_script_exists, configuration_form_pb_exists = \
-            _collect_zip_contents(zipf, project_path, extra_files, skip_tracker)
+    with ZipFile(upload_filepath, "w", ZIP_DEFLATED) as zipf:
+        (
+            connector_file_exists,
+            custom_drivers_exists,
+            custom_driver_installation_script_exists,
+            configuration_form_pb_exists,
+        ) = _collect_zip_contents(zipf, project_path, extra_files, skip_tracker)
 
-    _validate_zip_contents(connector_file_exists, custom_drivers_exists, custom_driver_installation_script_exists, configuration_form_pb_exists)
+    _validate_zip_contents(
+        connector_file_exists,
+        custom_drivers_exists,
+        custom_driver_installation_script_exists,
+        configuration_form_pb_exists,
+    )
 
-    if skip_tracker['has_skipped']:
+    if skip_tracker["has_skipped"]:
         print_library_log("ignored files based on .gitignore patterns during packaging")
 
     return upload_filepath
+
 
 def _initialize_walker_patterns(top, project_root, parent_patterns):
     """Initialize patterns for directory walking.
@@ -1328,12 +1532,18 @@ def _initialize_walker_patterns(top, project_root, parent_patterns):
     combined_patterns = parent_patterns + local_patterns
 
     try:
-        combined_spec = pathspec.PathSpec.from_lines('gitwildmatch', combined_patterns)
+        combined_spec = pathspec.PathSpec.from_lines("gitwildmatch", combined_patterns)
     except Exception as e:
-        print_library_log(f"failed to parse .gitignore error: {e}", level=Logging.Level.SEVERE, log_icon=Logging.LogIcon.FAILURE)
+        print_library_log(
+            f"failed to parse .gitignore error: {e}",
+            level=Logging.Level.SEVERE,
+            log_icon=Logging.LogIcon.FAILURE,
+        )
         sys.exit(1)
 
-    has_negation = any(pattern.strip().startswith('!') for pattern in combined_patterns if pattern.strip())
+    has_negation = any(
+        pattern.strip().startswith("!") for pattern in combined_patterns if pattern.strip()
+    )
 
     return project_root, combined_patterns, combined_spec, has_negation
 
@@ -1352,7 +1562,9 @@ def _is_virtual_environment(path):
     try:
         return VIRTUAL_ENV_CONFIG in os.listdir(path)
     except OSError as e:
-        Logging.warning(f"Directory '{path}' could not be accessed and will be skipped as a virtual environment. Reason: {e}")
+        Logging.warning(
+            f"Directory '{path}' could not be accessed and will be skipped as a virtual environment. Reason: {e}"
+        )
         return True
 
 
@@ -1370,7 +1582,7 @@ def _should_include_directory(path, project_root, combined_spec, has_negation):
     """
     rel_path = os.path.relpath(path, project_root)
     normalized_rel_path = normalize_path_for_matching(rel_path)
-    dir_match_path = normalized_rel_path + '/'
+    dir_match_path = normalized_rel_path + "/"
 
     if combined_spec.match_file(dir_match_path) and not has_negation:
         return False
@@ -1446,8 +1658,8 @@ def _classify_directory_entries(top, project_root, combined_spec, has_negation, 
         else:
             if _should_include_file(path, project_root, combined_spec, has_negation):
                 files.append(name)
-            elif name!=CONFIGURATION_JSON:
-                skip_tracker['has_skipped'] = True
+            elif name != CONFIGURATION_JSON:
+                skip_tracker["has_skipped"] = True
 
     return dirs, files
 
@@ -1470,12 +1682,15 @@ def dir_walker(top, project_root=None, parent_patterns=None, skip_tracker=None):
         tuple: A tuple containing the current directory path and a list of files (root, files).
     """
     if skip_tracker is None:
-        skip_tracker = {'has_skipped': False}
+        skip_tracker = {"has_skipped": False}
 
-    project_root, combined_patterns, combined_spec, has_negation = \
-        _initialize_walker_patterns(top, project_root, parent_patterns)
+    project_root, combined_patterns, combined_spec, has_negation = _initialize_walker_patterns(
+        top, project_root, parent_patterns
+    )
 
-    dirs, files = _classify_directory_entries(top, project_root, combined_spec, has_negation, skip_tracker)
+    dirs, files = _classify_directory_entries(
+        top, project_root, combined_spec, has_negation, skip_tracker
+    )
 
     yield top, files
 
@@ -1499,13 +1714,10 @@ def upload_package(local_path: str, deploy_key: str) -> Optional[str]:
     print_library_log("uploading package", log_icon=Logging.LogIcon.STEP)
     url = f"{constants.PRODUCTION_BASE_URL}/v1/connector-sdk/packages"
 
-    headers = {
-        "Authorization": f"Basic {deploy_key}",
-        "User-Agent": get_user_agent()
-    }
+    headers = {"Authorization": f"Basic {deploy_key}", "User-Agent": get_user_agent()}
 
-    with open(local_path, 'rb') as f:
-        response = rq.post(url, files={'file': f}, headers=headers)
+    with open(local_path, "rb") as f:
+        response = rq.post(url, files={"file": f}, headers=headers)
 
     if response.ok:
         try:
@@ -1513,14 +1725,17 @@ def upload_package(local_path: str, deploy_key: str) -> Optional[str]:
         except json.JSONDecodeError as e:
             print_library_log(
                 f"package upload succeeded but failed to parse response JSON: {e}. Response text: {response.text}",
-                Logging.Level.SEVERE)
+                Logging.Level.SEVERE,
+            )
             return None
 
-        package_id = response_data.get('data', {}).get('id')
+        package_id = response_data.get("data", {}).get("id")
         if not package_id:
             print_library_log(
-                "package upload succeeded but response missing package ID. Response: " + str(response_data),
-                Logging.Level.SEVERE)
+                "package upload succeeded but response missing package ID. Response: "
+                + str(response_data),
+                Logging.Level.SEVERE,
+            )
             return None
 
         print_library_log("package uploaded", log_icon=Logging.LogIcon.SUCCESS)
@@ -1531,8 +1746,13 @@ def upload_package(local_path: str, deploy_key: str) -> Optional[str]:
     except json.JSONDecodeError:
         error_details = response.text
     error_message = f"{response.reason}: {error_details}"
-    print_library_log(f"failed to upload the package error: {error_message}", level=Logging.Level.SEVERE, log_icon=Logging.LogIcon.FAILURE)
+    print_library_log(
+        f"failed to upload the package error: {error_message}",
+        level=Logging.Level.SEVERE,
+        log_icon=Logging.LogIcon.FAILURE,
+    )
     return None
+
 
 def cleanup_uploaded_code(deploy_key: str, package_id: str) -> bool:
     """Deletes an orphaned package when connection creation fails.
@@ -1545,18 +1765,21 @@ def cleanup_uploaded_code(deploy_key: str, package_id: str) -> bool:
         bool: True if the cleanup was successful, False otherwise.
     """
     print_library_log(f"cleaning up orphaned package: {package_id}", log_icon=Logging.LogIcon.STEP)
-    response = rq.delete(f"{constants.PRODUCTION_BASE_URL}/v1/connector-sdk/packages/{package_id}",
-                         headers={
-                             "Authorization": f"Basic {deploy_key}",
-                             "User-Agent": get_user_agent()
-                         })
+    response = rq.delete(
+        f"{constants.PRODUCTION_BASE_URL}/v1/connector-sdk/packages/{package_id}",
+        headers={"Authorization": f"Basic {deploy_key}", "User-Agent": get_user_agent()},
+    )
     if response.ok:
         print_library_log("cleaned up orphaned package", log_icon=Logging.LogIcon.SUCCESS)
         return True
 
-    print_library_log(f"failed to cleanup orphaned package error: {response.reason}",
-                      level=Logging.Level.SEVERE, log_icon=Logging.LogIcon.FAILURE)
+    print_library_log(
+        f"failed to cleanup orphaned package error: {response.reason}",
+        level=Logging.Level.SEVERE,
+        log_icon=Logging.LogIcon.FAILURE,
+    )
     return False
+
 
 def get_os_arch_suffix() -> str:
     """
@@ -1575,6 +1798,7 @@ def get_os_arch_suffix() -> str:
 
     return f"{plat}-{ARCH_MAP[machine]}"
 
+
 def get_user_agent() -> str:
     """
     Returns the User-Agent string with SDK version, OS and architecture information.
@@ -1583,7 +1807,9 @@ def get_user_agent() -> str:
         str: User-Agent string in format "fivetran-connector-sdk/{version}/{os}-{arch}"
     """
     from fivetran_connector_sdk import __version__
+
     return f"fivetran-connector-sdk/{__version__}/{get_os_arch_suffix()}"
+
 
 def get_group_info(group: str, deploy_key: str) -> tuple[str, str]:
     """Retrieves the group information for the specified group and deployment key.
@@ -1598,38 +1824,42 @@ def get_group_info(group: str, deploy_key: str) -> tuple[str, str]:
     groups_url = f"{constants.PRODUCTION_BASE_URL}/v1/groups"
 
     params = {"limit": 500}
-    headers = {
-        "Authorization": f"Basic {deploy_key}",
-        "User-Agent": get_user_agent()
-    }
+    headers = {"Authorization": f"Basic {deploy_key}", "User-Agent": get_user_agent()}
     resp = rq.get(groups_url, headers=headers, params=params)
 
     if not resp.ok:
         print_library_log(
             f"request failed error: {resp.status_code}\nensure you're using a valid base64-encoded API key",
-            Logging.Level.SEVERE)
+            Logging.Level.SEVERE,
+        )
         sys.exit(1)
 
     data = resp.json().get("data", {})
     groups = data.get("items")
 
     if not groups:
-        print_library_log("failed to deploy; no destinations defined in account", level=Logging.Level.SEVERE, log_icon=Logging.LogIcon.FAILURE)
+        print_library_log(
+            "failed to deploy; no destinations defined in account",
+            level=Logging.Level.SEVERE,
+            log_icon=Logging.LogIcon.FAILURE,
+        )
         sys.exit(1)
 
     if not group:
         if len(groups) == 1:
-            return groups[0]['id'], groups[0]['name']
+            return groups[0]["id"], groups[0]["name"]
         else:
             print_library_log(
                 "failed to deploy; multiple destinations found and --destination not provided",
-                level=Logging.Level.SEVERE, log_icon=Logging.LogIcon.FAILURE)
+                level=Logging.Level.SEVERE,
+                log_icon=Logging.LogIcon.FAILURE,
+            )
             sys.exit(1)
 
     while True:
         for grp in groups:
-            if grp['name'] == group:
-                return grp['id'], grp['name']
+            if grp["name"] == group:
+                return grp["id"], grp["name"]
         next_cursor = data.get("next_cursor")
         if not next_cursor:
             break
@@ -1640,8 +1870,12 @@ def get_group_info(group: str, deploy_key: str) -> tuple[str, str]:
         groups = data.get("items", [])
 
     print_library_log(
-        f"failed to deploy; destination '{group}' not found in account", level=Logging.Level.SEVERE, log_icon=Logging.LogIcon.FAILURE)
+        f"failed to deploy; destination '{group}' not found in account",
+        level=Logging.Level.SEVERE,
+        log_icon=Logging.LogIcon.FAILURE,
+    )
     sys.exit(1)
+
 
 def java_exe_helper(location: str, os_arch_suffix: str) -> str:
     """Returns the path to the Java executable.
@@ -1656,6 +1890,7 @@ def java_exe_helper(location: str, os_arch_suffix: str) -> str:
     java_exe_base = os.path.join(location, "bin", "java")
     return f"{java_exe_base}.exe" if os_arch_suffix.startswith(f"{WIN_OS}-") else java_exe_base
 
+
 def process_stream(stream):
     """Processes a stream of text lines, replacing occurrences of a specified pattern.
 
@@ -1668,8 +1903,8 @@ def process_stream(stream):
     Yields:
         str: Each line from the stream after skipping the matched pattern.
     """
-    tester_pattern = r'com\.fivetran\.partner_sdk.*\.tools\.testers\.\S+'
-    client_pattern = r'com\.fivetran\.partner_sdk.*\.client\.connector\.PartnerSdkConnectorClient'
+    tester_pattern = r"com\.fivetran\.partner_sdk.*\.tools\.testers\.\S+"
+    client_pattern = r"com\.fivetran\.partner_sdk.*\.client\.connector\.PartnerSdkConnectorClient"
     skip_next = False
 
     for line in iter(stream.readline, ""):
@@ -1684,6 +1919,7 @@ def process_stream(stream):
             continue
 
         yield line
+
 
 def redact_configuration_values(configuration: dict) -> dict:
     """Redacts all values in a configuration dictionary while preserving keys.
@@ -1716,17 +1952,26 @@ def _build_tester_command(java_exe_str: str, root_dir: str, working_dir: str, po
     Returns:
         list: The base command list for subprocess execution.
     """
-    return [java_exe_str,
-            "-jar",
-            os.path.join(root_dir, TESTER_FILENAME),
-            "--connector-sdk=true",
-            f"--port={port}",
-            f"--working-dir={working_dir}",
-            "--tester-type=source"]
+    return [
+        java_exe_str,
+        "-jar",
+        os.path.join(root_dir, TESTER_FILENAME),
+        "--connector-sdk=true",
+        f"--port={port}",
+        f"--working-dir={working_dir}",
+        "--tester-type=source",
+    ]
 
 
-def _build_debug_tester_command(java_exe_str: str, root_dir: str, working_dir: str, port: int,
-                                 state_json: str, configuration_json: str, naming: str = None) -> list:
+def _build_debug_tester_command(
+    java_exe_str: str,
+    root_dir: str,
+    working_dir: str,
+    port: int,
+    state_json: str,
+    configuration_json: str,
+    naming: str = None,
+) -> list:
     """Builds the command list for running the tester in debug mode.
 
     Args:
@@ -1742,9 +1987,11 @@ def _build_debug_tester_command(java_exe_str: str, root_dir: str, working_dir: s
         list: The command list for subprocess execution.
     """
     cmd = _build_tester_command(java_exe_str, root_dir, working_dir, port)
-    cmd += [f"--state={state_json}",
-            f"--naming={naming or (FIVETRAN_NAMING_VALUE + UNDERSCORE_NAMING)}",
-            f"--configuration={configuration_json}"]
+    cmd += [
+        f"--state={state_json}",
+        f"--naming={naming or (FIVETRAN_NAMING_VALUE + UNDERSCORE_NAMING)}",
+        f"--configuration={configuration_json}",
+    ]
     return cmd
 
 
@@ -1768,11 +2015,12 @@ def ensure_tester_installed() -> tuple:
 
     return java_exe, tester_root_dir
 
+
 def _should_install_tester(version_file: str, tester_root_dir: str) -> bool:
     if not os.path.isfile(version_file):
         return True
 
-    with open(version_file, 'r', encoding=UTF_8) as fi:
+    with open(version_file, "r", encoding=UTF_8) as fi:
         current_version = fi.readline()
     if current_version == TESTER_VERSION:
         return False
@@ -1780,29 +2028,43 @@ def _should_install_tester(version_file: str, tester_root_dir: str) -> bool:
     shutil.rmtree(tester_root_dir)
     return True
 
+
 def _download_tester(download_filename: str, download_filepath: str):
     try:
-        print_library_log(f"downloading connector tester version: {TESTER_VERSION}", log_icon=Logging.LogIcon.STEP)
+        print_library_log(
+            f"downloading connector tester version: {TESTER_VERSION}",
+            log_icon=Logging.LogIcon.STEP,
+        )
         download_url = f"https://github.com/fivetran/fivetran_sdk_tools/releases/download/{TESTER_VERSION}/{download_filename}"
         with rq.get(download_url, stream=True) as r:
             if not r.ok:
                 raise RuntimeError(
-                    f"failed to download connector tester error: {r.status_code} url:{download_url}")
+                    f"failed to download connector tester error: {r.status_code} url:{download_url}"
+                )
 
-            total_size = int(r.headers.get('content-length', 0))
-            with open(download_filepath, 'wb') as fo:
-                with tqdm(total=total_size or None, unit='B', unit_scale=True, desc="downloading tester", leave=False, file=sys.stdout) as pbar:
+            total_size = int(r.headers.get("content-length", 0))
+            with open(download_filepath, "wb") as fo:
+                with tqdm(
+                    total=total_size or None,
+                    unit="B",
+                    unit_scale=True,
+                    desc="downloading tester",
+                    leave=False,
+                    file=sys.stdout,
+                ) as pbar:
                     for chunk in r.iter_content(chunk_size=8192):
                         if chunk:
                             fo.write(chunk)
                             pbar.update(len(chunk))
     except RuntimeError:
         raise RuntimeError(
-            f"failed to download connector tester\ntraceback:\n{traceback.format_exc()}")
+            f"failed to download connector tester\ntraceback:\n{traceback.format_exc()}"
+        )
+
 
 def _extract_tester(download_filepath: str, tester_root_dir: str, java_exe: str):
     try:
-        with ZipFile(download_filepath, 'r') as z_object:
+        with ZipFile(download_filepath, "r") as z_object:
             z_object.extractall(path=tester_root_dir)
         delete_file_if_exists(download_filepath)
         st = os.stat(java_exe)
@@ -1810,10 +2072,20 @@ def _extract_tester(download_filepath: str, tester_root_dir: str, java_exe: str)
         print_library_log("tester download complete", log_icon=Logging.LogIcon.SUCCESS)
     except Exception:
         shutil.rmtree(tester_root_dir)
-        raise RuntimeError(f"failed to download connector tester\ntraceback:\n{traceback.format_exc()}")
+        raise RuntimeError(
+            f"failed to download connector tester\ntraceback:\n{traceback.format_exc()}"
+        )
 
 
-def run_tester(java_exe_str: str, root_dir: str, project_path: str, port: int, state_json: str, configuration: dict, naming: str = None):
+def run_tester(
+    java_exe_str: str,
+    root_dir: str,
+    project_path: str,
+    port: int,
+    state_json: str,
+    configuration: dict,
+    naming: str = None,
+):
     """Runs the connector tester.
 
     Args:
@@ -1834,10 +2106,20 @@ def run_tester(java_exe_str: str, root_dir: str, project_path: str, port: int, s
     except FileExistsError:
         pass
 
-    cmd = _build_debug_tester_command(java_exe_str, root_dir, working_dir, port, state_json, json.dumps(configuration), naming)
+    cmd = _build_debug_tester_command(
+        java_exe_str, root_dir, working_dir, port, state_json, json.dumps(configuration), naming
+    )
     configuration_redacted = redact_configuration_values(configuration)
-    redacted_cmd = _build_debug_tester_command(java_exe_str, root_dir, working_dir, port, state_json, json.dumps(configuration_redacted), naming)
-    popen = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding='utf-8')
+    redacted_cmd = _build_debug_tester_command(
+        java_exe_str,
+        root_dir,
+        working_dir,
+        port,
+        state_json,
+        json.dumps(configuration_redacted),
+        naming,
+    )
+    popen = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding="utf-8")
     for line in process_stream(popen.stderr):
         yield _maybe_colorize_jar_output(line)
     for line in process_stream(popen.stdout):
@@ -1848,8 +2130,14 @@ def run_tester(java_exe_str: str, root_dir: str, project_path: str, port: int, s
         raise subprocess.CalledProcessError(return_code, redacted_cmd)
 
 
-def run_configuration_tester(java_exe_str: str, root_dir: str, project_path: str, port: int,
-                              run_tests: bool, disable_encryption: bool = False):
+def run_configuration_tester(
+    java_exe_str: str,
+    root_dir: str,
+    project_path: str,
+    port: int,
+    run_tests: bool,
+    disable_encryption: bool = False,
+):
     """Runs the connector tester in configuration mode.
 
     Runs the tester with stdin/stdout/stderr inherited from the terminal so that
@@ -1871,8 +2159,14 @@ def run_configuration_tester(java_exe_str: str, root_dir: str, project_path: str
         raise subprocess.CalledProcessError(return_code, cmd)
 
 
-def _build_configuration_tester_command(java_exe_str: str, root_dir: str, working_dir: str,
-                                         port: int, run_tests: bool, disable_encryption: bool = False) -> list:
+def _build_configuration_tester_command(
+    java_exe_str: str,
+    root_dir: str,
+    working_dir: str,
+    port: int,
+    run_tests: bool,
+    disable_encryption: bool = False,
+) -> list:
     """Builds the command list for running the tester in configuration mode."""
     cmd = _build_tester_command(java_exe_str, root_dir, working_dir, port)
     cmd.append("configuration")
@@ -1893,12 +2187,13 @@ def _maybe_colorize_jar_output(line: str) -> str:
         return f"\033[130m{line}\033[0m"  # ANSI Orange-like color #af5f00
     return line
 
+
 def process_tables(response, table_list):
     for entry in response:
-        if 'table' not in entry:
+        if "table" not in entry:
             raise ValueError("Entry missing table name: " + entry)
 
-        table_name = entry['table']
+        table_name = entry["table"]
 
         _validate_table_name(table_name)
 
@@ -1918,21 +2213,27 @@ def process_tables(response, table_list):
         TABLES[table_name] = table
         table_list[table_name] = table
 
+
 def process_primary_keys(columns, entry):
     for column_name in entry["primary_key"]:
-        column = columns[column_name] if column_name in columns else common_pb2.Column(name=column_name)
+        column = (
+            columns[column_name] if column_name in columns else common_pb2.Column(name=column_name)
+        )
         column.primary_key = True
         columns[column_name] = column
 
+
 def process_columns(columns, entry):
     for column_name, type in entry["columns"].items():
-        column = columns[column_name] if column_name in columns else common_pb2.Column(name=column_name)
+        column = (
+            columns[column_name] if column_name in columns else common_pb2.Column(name=column_name)
+        )
 
         if isinstance(type, str):
             process_data_type(column, type)
 
         elif isinstance(type, dict):
-            if type['type'].upper() != "DECIMAL":
+            if type["type"].upper() != "DECIMAL":
                 error_message = (
                     f"Expecting DECIMAL data type for dictionary column entry, but got: {type['type']} in entry: {entry} "
                     f"for column: {column_name}. "
@@ -1942,8 +2243,8 @@ def process_columns(columns, entry):
                 )
                 raise ValueError(error_message)
             column.type = common_pb2.DataType.DECIMAL
-            column.params.decimal.precision = type['precision']
-            column.params.decimal.scale = type['scale']
+            column.params.decimal.precision = type["precision"]
+            column.params.decimal.scale = type["scale"]
 
         else:
             raise ValueError(
@@ -1953,8 +2254,8 @@ def process_columns(columns, entry):
         if "primary_key" in entry and column_name in entry["primary_key"]:
             column.primary_key = True
 
-
         columns[column_name] = column
+
 
 def process_data_type(column, type):
     if type.upper() == "BOOLEAN":
@@ -1969,11 +2270,11 @@ def process_data_type(column, type):
         raise ValueError(
             "DECIMAL data type missing precision and scale. "
             "Use a dictionary for DECIMAL column type like: "
-            '''"col_name": {  # Decimal data type with precision and scale.\n'''
-            '''    "type": "DECIMAL",\n'''
-            '''    "precision": 15,\n'''
-            '''    "scale": 2\n'''
-            '''}'''
+            """"col_name": {  # Decimal data type with precision and scale.\n"""
+            """    "type": "DECIMAL",\n"""
+            """    "precision": 15,\n"""
+            """    "scale": 2\n"""
+            """}"""
         )
     elif type.upper() == "FLOAT":
         column.type = common_pb2.DataType.FLOAT
@@ -1996,9 +2297,11 @@ def process_data_type(column, type):
     else:
         raise ValueError("Unrecognized column type encountered:: ", str(type))
 
+
 def delete_file_if_exists(file_path):
     if os.path.exists(file_path):
         os.remove(file_path)
+
 
 def remove_dir_if_empty(dir_path):
     """Remove a directory only if it exists and is empty.
@@ -2046,17 +2349,22 @@ def validate_required_deploy_params(ft_group: str, ft_connection: str, ft_deploy
             print_library_log(msg, level=Logging.Level.SEVERE, log_icon=Logging.LogIcon.FAILURE)
         sys.exit(1)
 
+
 def validate_configuration(configuration: dict | None):
     if configuration is None:
         print_library_log(
             "configuration is required; provide it via the --configuration flag, the FIVETRAN_CONFIGURATION environment variable, or by placing configuration.json in the project folder."
             "\nIf your connector does not require configuration, pass an empty configuration.json file."
             "\nFor more information, see https://fivetran.com/docs/connector-sdk/connector-development-and-configuration/configuration-json.",
-            level=Logging.Level.SEVERE, log_icon=Logging.LogIcon.FAILURE)
+            level=Logging.Level.SEVERE,
+            log_icon=Logging.LogIcon.FAILURE,
+        )
         sys.exit(1)
 
 
-def get_update_prompt(connection: str, group: str, configuration: dict | None, config_path: str = None):
+def get_update_prompt(
+    connection: str, group: str, configuration: dict | None, config_path: str = None
+):
     """
     Generates the warning prompt for overwriting an existing Fivetran connection.
     """

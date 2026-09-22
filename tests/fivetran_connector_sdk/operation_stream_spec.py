@@ -3,11 +3,13 @@ import unittest
 import threading
 
 from fivetran_connector_sdk.operations import Operations
-from fivetran_connector_sdk.protos import connector_sdk_pb2,common_pb2
+from fivetran_connector_sdk.protos import connector_sdk_pb2, common_pb2
+
 
 class TestOperationStreamIntegration(unittest.TestCase):
     def setUp(self):
         from fivetran_connector_sdk.operations import Operations, _OperationStream
+
         # Reset the operation stream for each test
         Operations.operation_stream = _OperationStream()
 
@@ -32,7 +34,9 @@ class TestOperationStreamIntegration(unittest.TestCase):
 
         def generate_upserts():
             for rec_num in range(80):
-                Operations.upsert("test_table", {"id": rec_num, "name": f"test_{rec_num}", "data": "x" * 1950})
+                Operations.upsert(
+                    "test_table", {"id": rec_num, "name": f"test_{rec_num}", "data": "x" * 1950}
+                )
             Operations.operation_stream.mark_done()
 
         thread = threading.Thread(target=generate_upserts)
@@ -45,13 +49,14 @@ class TestOperationStreamIntegration(unittest.TestCase):
         self.assertEqual(len(response1.structured_records.structured_records), 50)
         self.assertEqual(len(response2.structured_records.structured_records), 30)
 
-
     def test_batch_upsert_with_checkpoint(self):
 
         def generate_upserts_with_checkpoint():
             for rec_num in range(50):
                 Operations.upsert("test_table", {"id": rec_num, "name": f"test_{rec_num}"})
-            checkpoint = connector_sdk_pb2.Checkpoint(state_json=json.dumps({"cursor": "2024-01-01T00:00:00.00Z"}))
+            checkpoint = connector_sdk_pb2.Checkpoint(
+                state_json=json.dumps({"cursor": "2024-01-01T00:00:00.00Z"})
+            )
             Operations.operation_stream.add_checkpoint(checkpoint)
 
         thread = threading.Thread(target=generate_upserts_with_checkpoint)
@@ -63,7 +68,9 @@ class TestOperationStreamIntegration(unittest.TestCase):
         thread.join()
 
         self.assertEqual(len(response1[0].structured_records.structured_records), 50)
-        self.assertEqual(response1[1].checkpoint.state_json, '{"cursor": "2024-01-01T00:00:00.00Z"}')
+        self.assertEqual(
+            response1[1].checkpoint.state_json, '{"cursor": "2024-01-01T00:00:00.00Z"}'
+        )
 
     def test_multiple_batches_with_checkpoint(self):
         # creates 5 batches, checkpoints after 10 records.
@@ -71,7 +78,9 @@ class TestOperationStreamIntegration(unittest.TestCase):
             for rec_num in range(1, 51):
                 Operations.upsert("test_table", {"id": rec_num, "name": f"test_{rec_num}"})
                 if rec_num % 10 == 0:
-                    checkpoint = connector_sdk_pb2.Checkpoint(state_json=json.dumps({"cursor": f"{rec_num}"}))
+                    checkpoint = connector_sdk_pb2.Checkpoint(
+                        state_json=json.dumps({"cursor": f"{rec_num}"})
+                    )
                     Operations.operation_stream.add_checkpoint(checkpoint)
 
         thread = threading.Thread(target=generate_batches_with_checkpoint)
@@ -83,20 +92,26 @@ class TestOperationStreamIntegration(unittest.TestCase):
             # as consumer should unblock the queue after reading the response
             Operations.operation_stream.unblock()
             self.assertEqual(len(response[0].structured_records.structured_records), 10)
-            self.assertEqual(response[1].checkpoint.state_json, f'{{"cursor": "{batch_num * 10}"}}')
+            self.assertEqual(
+                response[1].checkpoint.state_json, f'{{"cursor": "{batch_num * 10}"}}'
+            )
 
         thread.join()
 
     def test_multiple_producer_with_checkpoint(self):
         def generate_producer_1_data():
             for rec_num in range(1, 26):
-                Operations.upsert("test_table", {"id": rec_num, "name": f"producer1_test_{rec_num}"})
+                Operations.upsert(
+                    "test_table", {"id": rec_num, "name": f"producer1_test_{rec_num}"}
+                )
                 if rec_num % 5 == 0:
                     Operations.checkpoint({"cursor": f"producer1_{rec_num}"})
 
         def generate_producer_2_data():
             for rec_num in range(26, 51):
-                Operations.upsert("test_table", {"id": rec_num, "name": f"producer2_test_{rec_num}"})
+                Operations.upsert(
+                    "test_table", {"id": rec_num, "name": f"producer2_test_{rec_num}"}
+                )
                 if rec_num % 5 == 0:
                     Operations.checkpoint({"cursor": f"producer2_{rec_num}"})
 
@@ -124,13 +139,14 @@ class TestOperationStreamIntegration(unittest.TestCase):
         self.assertEqual(total_record_count, 50)
         self.assertEqual(checkpoint_count, 10)
 
-
     def test_different_record_type_operations(self):
         def generate_records():
             for rec_num in range(1, 51):
                 Operations.upsert("test_table", {"id": rec_num, "name": f"test_{rec_num}"})
                 if rec_num % 10 == 0:
-                    Operations.update("test_table", {"id": rec_num, "name": f"updated_test_{rec_num}"})
+                    Operations.update(
+                        "test_table", {"id": rec_num, "name": f"updated_test_{rec_num}"}
+                    )
                 if rec_num % 20 == 0:
                     Operations.delete("test_table", {"id": rec_num})
             Operations.operation_stream.mark_done()
@@ -145,15 +161,28 @@ class TestOperationStreamIntegration(unittest.TestCase):
 
         self.assertEqual(len(response.structured_records.structured_records), 57)
         # Check individual operation types
-        upsert_count = sum(1 for r in response.structured_records.structured_records if r.type == common_pb2.RecordType.UPSERT)
-        update_count = sum(1 for r in response.structured_records.structured_records if r.type == common_pb2.RecordType.UPDATE)
-        delete_count = sum(1 for r in response.structured_records.structured_records if r.type == common_pb2.RecordType.DELETE)
+        upsert_count = sum(
+            1
+            for r in response.structured_records.structured_records
+            if r.type == common_pb2.RecordType.UPSERT
+        )
+        update_count = sum(
+            1
+            for r in response.structured_records.structured_records
+            if r.type == common_pb2.RecordType.UPDATE
+        )
+        delete_count = sum(
+            1
+            for r in response.structured_records.structured_records
+            if r.type == common_pb2.RecordType.DELETE
+        )
         self.assertEqual(upsert_count, 50)
         self.assertEqual(update_count, 5)
         self.assertEqual(delete_count, 2)
 
     def test_checkpoint_only_operation(self):
         state = {"cursor": "2024-01-01T00:00:00.00Z"}
+
         def generate_checkpoint_only():
             Operations.checkpoint({"cursor": "2024-01-01T00:00:00.00Z"})
             Operations.operation_stream.mark_done()
@@ -192,13 +221,13 @@ class TestOperationStreamIntegration(unittest.TestCase):
                     response = next(Operations.operation_stream)
                     if isinstance(response, list):
                         for item in response:
-                            if hasattr(item, 'checkpoint'):
+                            if hasattr(item, "checkpoint"):
                                 checkpoint_data = json.loads(item.checkpoint.state_json)
                                 checkpoint_processed_order.append(checkpoint_data)
                                 received += 1
                                 # Unblock to allow next checkpoint
                                 Operations.operation_stream.unblock()
-                    elif hasattr(response, 'checkpoint'):
+                    elif hasattr(response, "checkpoint"):
                         checkpoint_data = json.loads(response.checkpoint.state_json)
                         checkpoint_processed_order.append(checkpoint_data)
                         received += 1
@@ -236,7 +265,9 @@ class TestOperationStreamIntegration(unittest.TestCase):
 
         # For each producer, verify its checkpoints were processed in order
         for producer_id in range(producer_count):
-            producer_checkpoints = [c for c in checkpoint_processed_order if c["producer"] == producer_id]
+            producer_checkpoints = [
+                c for c in checkpoint_processed_order if c["producer"] == producer_id
+            ]
             producer_ids = [c["id"] for c in producer_checkpoints]
             self.assertEqual(producer_ids, sorted(producer_ids))
 
@@ -271,6 +302,7 @@ class TestOperationStreamIntegration(unittest.TestCase):
         """
         After flushing buffered records on mark_done(), subsequent next() should raise StopIteration.
         """
+
         def produce():
             for i in range(3):
                 Operations.upsert("test_table", {"id": i, "name": f"item_{i}"})
@@ -295,6 +327,7 @@ class TestOperationStreamIntegration(unittest.TestCase):
 
     def test_checkpoint_with_empty_buffer(self):
         """Test checkpoint when buffer is empty"""
+
         def produce_checkpoint_with_empty_buffer():
             checkpoint = connector_sdk_pb2.Checkpoint(state_json=json.dumps({"empty": True}))
             Operations.operation_stream.add_checkpoint(checkpoint)
@@ -314,6 +347,7 @@ class TestOperationStreamIntegration(unittest.TestCase):
 
     def test_exact_batch_limit_records(self):
         """Test when exactly MAX_RECORDS_IN_BATCH records are added"""
+
         def produce_exact_limit():
             for i in range(100):  # Exactly MAX_RECORDS_IN_BATCH
                 Operations.upsert("test_table", {"id": i})
@@ -333,6 +367,7 @@ class TestOperationStreamIntegration(unittest.TestCase):
 
     def test_flush_buffer_resets_counters(self):
         """Test that _flush_buffer properly resets internal counters"""
+
         def produce():
             for i in range(5):
                 Operations.upsert("test_table", {"id": i})
@@ -352,6 +387,7 @@ class TestOperationStreamIntegration(unittest.TestCase):
 
     def test_sequential_batches_without_checkpoint(self):
         """Test multiple sequential batches without checkpoints"""
+
         def produce():
             # Produce 250 records (will create 3 batches: 100, 100, 50)
             for i in range(250):
@@ -375,6 +411,7 @@ class TestOperationStreamIntegration(unittest.TestCase):
 
     def test_checkpoint_between_batches(self):
         """Test checkpoint that occurs between natural batch boundaries"""
+
         def produce():
             # 100 records (fills first batch)
             for i in range(100):
@@ -413,6 +450,7 @@ class TestOperationStreamIntegration(unittest.TestCase):
 
     def test_flush_buffer_on_warning_with_buffered_records(self):
         """Test _flush_buffer_on_warning with buffered records"""
+
         def produce():
             # Add some records to buffer
             for i in range(5):
@@ -442,6 +480,7 @@ class TestOperationStreamIntegration(unittest.TestCase):
 
     def test_flush_buffer_on_warning_with_empty_buffer(self):
         """Test _flush_buffer_on_warning with empty buffer"""
+
         def produce():
             # Add a warning without any buffered records
             Operations.warning("Empty buffer warning")
@@ -464,6 +503,7 @@ class TestOperationStreamIntegration(unittest.TestCase):
 
     def test_flush_buffer_on_task_with_buffered_records(self):
         """Test _flush_buffer_on_task with buffered records"""
+
         def produce():
             # Add some records to buffer
             for i in range(10):
@@ -494,6 +534,7 @@ class TestOperationStreamIntegration(unittest.TestCase):
 
     def test_flush_buffer_on_task_with_empty_buffer(self):
         """Test _flush_buffer_on_task with empty buffer"""
+
         def produce():
             # Add an error without any buffered records
             Operations.error("Empty buffer error")
@@ -517,6 +558,7 @@ class TestOperationStreamIntegration(unittest.TestCase):
 
     def test_multiple_warnings_in_sequence(self):
         """Test multiple warnings in sequence"""
+
         def produce():
             Operations.warning("Warning 1")
             Operations.upsert("test_table", {"id": 1})
@@ -548,6 +590,7 @@ class TestOperationStreamIntegration(unittest.TestCase):
 
     def test_multiple_errors_in_sequence(self):
         """Test multiple errors in sequence"""
+
         def produce():
             Operations.error("Error 1")
             Operations.upsert("test_table", {"id": 1})
@@ -585,6 +628,7 @@ class TestOperationStreamIntegration(unittest.TestCase):
 
     def test_mixed_operations_with_warnings_and_errors(self):
         """Test mixed operations including records, warnings, errors, and checkpoints"""
+
         def produce():
             Operations.upsert("test_table", {"id": 1})
             Operations.warning("First warning")
@@ -641,6 +685,7 @@ class TestOperationStreamIntegration(unittest.TestCase):
 
     def test_warning_after_full_batch(self):
         """Test warning that comes after a full batch is flushed"""
+
         def produce():
             # Fill a batch with 100 records
             for i in range(100):
@@ -670,6 +715,7 @@ class TestOperationStreamIntegration(unittest.TestCase):
 
     def test_error_after_full_batch(self):
         """Test error that comes after a full batch is flushed"""
+
         def produce():
             # Fill a batch with 100 records
             for i in range(100):
@@ -703,11 +749,15 @@ class TestOperationStreamIntegration(unittest.TestCase):
     def test_add_checkpoint_releases_producer_lock_before_waiting_for_flush(self):
         stream = Operations.operation_stream
         checkpoint = connector_sdk_pb2.Checkpoint(state_json="{}")
-        record = connector_sdk_pb2.StructuredRecord(table_name="normal", type=common_pb2.RecordType.UPSERT, data={})
+        record = connector_sdk_pb2.StructuredRecord(
+            table_name="normal", type=common_pb2.RecordType.UPSERT, data={}
+        )
         record_added = threading.Event()
 
         def wait_for_flush(timeout=None):
-            thread = threading.Thread(target=lambda: (stream.add_record(record), record_added.set()))
+            thread = threading.Thread(
+                target=lambda: (stream.add_record(record), record_added.set())
+            )
             thread.start()
             added = record_added.wait(timeout=1)
             thread.join(timeout=1)
@@ -717,6 +767,7 @@ class TestOperationStreamIntegration(unittest.TestCase):
         stream.add_checkpoint(checkpoint)
 
         self.assertTrue(record_added.is_set())
+
 
 if __name__ == "__main__":
     unittest.main()

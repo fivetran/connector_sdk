@@ -12,6 +12,7 @@ class TestFileUpload(unittest.TestCase):
 
     def setUp(self):
         from fivetran_connector_sdk.operations import Operations, _OperationStream
+
         # Reset the operation stream for each test
         Operations.operation_stream = _OperationStream()
         Operations._file_path_override_logged = False
@@ -19,6 +20,7 @@ class TestFileUpload(unittest.TestCase):
     def tearDown(self):
         from fivetran_connector_sdk.constants import TABLES
         from fivetran_connector_sdk.operations import TABLES_COLUMNS_TYPES
+
         TABLES.clear()
         TABLES_COLUMNS_TYPES.clear()
 
@@ -50,8 +52,11 @@ class TestFileUpload(unittest.TestCase):
 
     def test_upsert_with_file_trims_whitespace_from_path(self):
         """Test that leading and trailing whitespace is trimmed from file paths."""
+
         def producer():
-            Operations.upsert("files", {"id": 1}, file=FileUpload("  invoices/report.pdf  ", io.BytesIO(b"data")))
+            Operations.upsert(
+                "files", {"id": 1}, file=FileUpload("  invoices/report.pdf  ", io.BytesIO(b"data"))
+            )
             Operations.operation_stream.mark_done()
 
         threading.Thread(target=producer).start()
@@ -69,7 +74,9 @@ class TestFileUpload(unittest.TestCase):
 
     def test_upsert_with_file_raises_for_null_byte_in_path(self):
         with self.assertRaises(ValueError) as context:
-            Operations.upsert("files", {"id": 1}, file=FileUpload("invoices/\x00/001.pdf", io.BytesIO(b"x")))
+            Operations.upsert(
+                "files", {"id": 1}, file=FileUpload("invoices/\x00/001.pdf", io.BytesIO(b"x"))
+            )
         self.assertIn("null byte", str(context.exception).lower())
         self.assertTrue(Operations.operation_stream._queue.empty())
 
@@ -81,7 +88,9 @@ class TestFileUpload(unittest.TestCase):
 
     def test_upsert_with_file_raises_for_double_slash(self):
         with self.assertRaises(ValueError) as context:
-            Operations.upsert("files", {"id": 1}, file=FileUpload("invoices//001.pdf", io.BytesIO(b"x")))
+            Operations.upsert(
+                "files", {"id": 1}, file=FileUpload("invoices//001.pdf", io.BytesIO(b"x"))
+            )
         self.assertIn("double slash", str(context.exception).lower())
         self.assertTrue(Operations.operation_stream._queue.empty())
 
@@ -93,8 +102,14 @@ class TestFileUpload(unittest.TestCase):
 
     def test_upsert_with_file_accepts_unicode_paths(self):
         def producer():
-            Operations.upsert("files", {"id": 1}, file=FileUpload("数据/文件.csv", io.BytesIO(b"data")))
-            Operations.upsert("files", {"id": 2}, file=FileUpload("invoices/Q1 Report (Final).pdf", io.BytesIO(b"data")))
+            Operations.upsert(
+                "files", {"id": 1}, file=FileUpload("数据/文件.csv", io.BytesIO(b"data"))
+            )
+            Operations.upsert(
+                "files",
+                {"id": 2},
+                file=FileUpload("invoices/Q1 Report (Final).pdf", io.BytesIO(b"data")),
+            )
             Operations.operation_stream.mark_done()
 
         threading.Thread(target=producer).start()
@@ -119,21 +134,33 @@ class TestFileUpload(unittest.TestCase):
 
     def test_upsert_with_file_raises_for_expected_bytes_exceeding_java_long_max(self):
         from fivetran_connector_sdk.constants import JAVA_LONG_MAX_VALUE
+
         with self.assertRaises(ValueError) as context:
-            Operations.upsert("files", {"id": 1}, file=FileUpload("a.pdf", io.BytesIO(b"x"), JAVA_LONG_MAX_VALUE + 1))
+            Operations.upsert(
+                "files",
+                {"id": 1},
+                file=FileUpload("a.pdf", io.BytesIO(b"x"), JAVA_LONG_MAX_VALUE + 1),
+            )
         self.assertIn("exceeds maximum allowed size", str(context.exception))
         self.assertTrue(Operations.operation_stream._queue.empty())
 
     def test_upsert_with_file_accepts_expected_bytes_at_java_long_max(self):
         from fivetran_connector_sdk.constants import JAVA_LONG_MAX_VALUE
+
         def producer():
-            Operations.upsert("files", {"id": 1}, file=FileUpload("a.pdf", io.BytesIO(b"x"), JAVA_LONG_MAX_VALUE))
+            Operations.upsert(
+                "files", {"id": 1}, file=FileUpload("a.pdf", io.BytesIO(b"x"), JAVA_LONG_MAX_VALUE)
+            )
             Operations.operation_stream.mark_done()
 
         threading.Thread(target=producer).start()
         responses = self._drain_all()
         # Should succeed without errors
-        chunks = [r.unstructured_record for r in responses if r.WhichOneof("operation") == "unstructured_record"]
+        chunks = [
+            r.unstructured_record
+            for r in responses
+            if r.WhichOneof("operation") == "unstructured_record"
+        ]
         self.assertTrue(len(chunks) > 0)
         self.assertTrue(all(c.expected_bytes == JAVA_LONG_MAX_VALUE for c in chunks))
 
@@ -198,14 +225,22 @@ class TestFileUpload(unittest.TestCase):
 
         threading.Thread(target=producer).start()
         responses = self._drain_all()
-        record = next(r.structured_records.structured_records[0] for r in responses if r.WhichOneof("operation") == "structured_records")
+        record = next(
+            r.structured_records.structured_records[0]
+            for r in responses
+            if r.WhichOneof("operation") == "structured_records"
+        )
 
-        self.assertEqual([r.WhichOneof("operation") for r in responses], ["unstructured_record", "unstructured_record", "structured_records"])
+        self.assertEqual(
+            [r.WhichOneof("operation") for r in responses],
+            ["unstructured_record", "unstructured_record", "structured_records"],
+        )
         self.assertEqual(record.type, common_pb2.UPDATE)
         self.assertEqual(record.data["_fivetran_file_path"].string, "updates/1.pdf")
 
     def test_upsert_with_file_overwrites_customer_supplied_file_path_column(self):
         with patch("fivetran_connector_sdk.operations.print_library_log") as mock_log:
+
             def producer():
                 Operations.upsert(
                     "files",
@@ -216,7 +251,11 @@ class TestFileUpload(unittest.TestCase):
 
             threading.Thread(target=producer).start()
             responses = self._drain_all()
-        record = next(r.structured_records.structured_records[0] for r in responses if r.WhichOneof("operation") == "structured_records")
+        record = next(
+            r.structured_records.structured_records[0]
+            for r in responses
+            if r.WhichOneof("operation") == "structured_records"
+        )
         self.assertEqual(record.data["_fivetran_file_path"].string, "correct/path.pdf")
         mock_log.assert_called_once()
 
@@ -227,7 +266,11 @@ class TestFileUpload(unittest.TestCase):
 
         threading.Thread(target=producer).start()
         responses = self._drain_all()
-        chunks = [r.unstructured_record for r in responses if r.WhichOneof("operation") == "unstructured_record"]
+        chunks = [
+            r.unstructured_record
+            for r in responses
+            if r.WhichOneof("operation") == "unstructured_record"
+        ]
         self.assertEqual(len(chunks), 1)
         self.assertEqual(chunks[0].chunk_data, b"")
         self.assertTrue(chunks[0].is_last)
@@ -274,12 +317,18 @@ class TestFileUpload(unittest.TestCase):
         contents = b"a" * FILE_UPLOAD_CHUNK_SIZE_BYTES + b"tail"
 
         def producer():
-            Operations.upsert("files", {"id": 1}, file=FileUpload("large.bin", io.BytesIO(contents)))
+            Operations.upsert(
+                "files", {"id": 1}, file=FileUpload("large.bin", io.BytesIO(contents))
+            )
             Operations.operation_stream.mark_done()
 
         threading.Thread(target=producer).start()
         responses = self._drain_all()
-        chunks = [r.unstructured_record for r in responses if r.WhichOneof("operation") == "unstructured_record"]
+        chunks = [
+            r.unstructured_record
+            for r in responses
+            if r.WhichOneof("operation") == "unstructured_record"
+        ]
 
         self.assertEqual(len(chunks), 3)
         self.assertFalse(chunks[0].is_last)
@@ -320,7 +369,9 @@ class TestFileUpload(unittest.TestCase):
         threading.Thread(target=producer).start()
         responses = self._drain_all()
         cases = [r.WhichOneof("operation") for r in responses]
-        self.assertEqual(cases, ["unstructured_record", "unstructured_record", "structured_records"])
+        self.assertEqual(
+            cases, ["unstructured_record", "unstructured_record", "structured_records"]
+        )
 
     def test_concurrent_operations_cannot_interleave_with_active_file_upload(self):
         upload_started = threading.Event()
@@ -398,14 +449,19 @@ class TestFileUpload(unittest.TestCase):
                 flattened_operations.append(response)
 
         metadata_index = next(
-            i for i, operation in enumerate(flattened_operations)
+            i
+            for i, operation in enumerate(flattened_operations)
             if (
                 isinstance(operation, connector_sdk_pb2.StructuredRecord)
                 and operation.data["_fivetran_file_path"].string == "a.pdf"
             )
         )
         preceding_cases = [
-            "record" if isinstance(operation, connector_sdk_pb2.StructuredRecord) else operation.WhichOneof("operation")
+            (
+                "record"
+                if isinstance(operation, connector_sdk_pb2.StructuredRecord)
+                else operation.WhichOneof("operation")
+            )
             for operation in flattened_operations[:metadata_index]
         ]
         self.assertEqual(preceding_cases, ["unstructured_record", "unstructured_record"])
@@ -415,6 +471,7 @@ class TestFileUploadStreamIntegration(unittest.TestCase):
 
     def setUp(self):
         from fivetran_connector_sdk.operations import Operations, _OperationStream
+
         # Reset the operation stream for each test
         Operations.operation_stream = _OperationStream()
 
@@ -426,11 +483,13 @@ class TestFileUploadStreamIntegration(unittest.TestCase):
         chunk2 = connector_sdk_pb2.UnstructuredRecord(
             storage_name="files", file_path="a.pdf", chunk_data=b"", is_last=True
         )
-        metadata_record = connector_sdk_pb2.StructuredRecord(table_name="files", type=common_pb2.RecordType.UPSERT, data={})
+        metadata_record = connector_sdk_pb2.StructuredRecord(
+            table_name="files", type=common_pb2.RecordType.UPSERT, data={}
+        )
 
         def produce():
             Operations.upsert("test_table", {"id": 1})
-            stream.add_file_upload([ chunk1, chunk2], metadata_record)
+            stream.add_file_upload([chunk1, chunk2], metadata_record)
             stream.mark_done()
 
         thread = threading.Thread(target=produce)
@@ -457,8 +516,12 @@ class TestFileUploadStreamIntegration(unittest.TestCase):
         final_chunk = connector_sdk_pb2.UnstructuredRecord(
             storage_name="files", file_path="a.pdf", chunk_data=b"", is_last=True
         )
-        metadata_record = connector_sdk_pb2.StructuredRecord(table_name="files", type=common_pb2.RecordType.UPSERT, data={})
-        normal_record = connector_sdk_pb2.StructuredRecord(table_name="normal", type=common_pb2.RecordType.UPSERT, data={})
+        metadata_record = connector_sdk_pb2.StructuredRecord(
+            table_name="files", type=common_pb2.RecordType.UPSERT, data={}
+        )
+        normal_record = connector_sdk_pb2.StructuredRecord(
+            table_name="normal", type=common_pb2.RecordType.UPSERT, data={}
+        )
 
         def chunks():
             yield chunk
@@ -466,7 +529,9 @@ class TestFileUploadStreamIntegration(unittest.TestCase):
             release_upload.wait(timeout=5)
             yield final_chunk
 
-        upload_thread = threading.Thread(target=lambda: stream.add_file_upload(chunks(), metadata_record))
+        upload_thread = threading.Thread(
+            target=lambda: stream.add_file_upload(chunks(), metadata_record)
+        )
         normal_thread = threading.Thread(
             target=lambda: (stream.add_record(normal_record), normal_producer_done.set())
         )
@@ -485,7 +550,9 @@ class TestFileUploadStreamIntegration(unittest.TestCase):
         while not stream._queue.empty():
             queued_operations.append(stream._queue.get())
 
-        self.assertEqual(queued_operations[:-1], [chunk, final_chunk, metadata_record, normal_record])
+        self.assertEqual(
+            queued_operations[:-1], [chunk, final_chunk, metadata_record, normal_record]
+        )
         self.assertIs(queued_operations[-1], stream._sentinel)
 
 

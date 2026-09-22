@@ -8,6 +8,7 @@ from typing_extensions import deprecated
 
 from fivetran_connector_sdk import constants
 
+
 class Logging:
     class Level(IntEnum):
         DEBUG = 1
@@ -50,7 +51,7 @@ class Logging:
 
     @staticmethod
     def get_formatted_log(message, prefix):
-        lines = message.split('\n')
+        lines = message.split("\n")
         padding = "\n" + " " * Logging.get_display_width(prefix)
         return padding.join(lines)
 
@@ -60,7 +61,7 @@ class Logging:
         Colors are only safe when output goes to a terminal (TTY).
         When redirected to files or pipes, color codes become garbage text.
         """
-        
+
         # Use colors only if running via CLI AND output is a terminal
         return constants.EXECUTED_VIA_CLI and sys.stdout.isatty()
 
@@ -75,7 +76,9 @@ class Logging:
             constants.DEBUGGER_LOGGING_PREFIX,
             constants.CONNECTOR_LOGGING_PREFIX,
         )
-        target_width = max(Logging.get_display_width(known_origin) for known_origin in known_origins)
+        target_width = max(
+            Logging.get_display_width(known_origin) for known_origin in known_origins
+        )
         padding = target_width - Logging.get_display_width(origin)
         return origin + " " * max(0, padding)
 
@@ -90,7 +93,7 @@ class Logging:
     def get_color(level):
         if not Logging._should_use_colors():
             return ""
-        
+
         if level == Logging.Level.WARNING:
             # 38;5; = 256-color mode (required for color codes 108-255)
             return "\033[38;5;130m"  # ANSI Orange-like color #af5f00
@@ -167,13 +170,21 @@ class Logging:
         """
         if Logging.LOG_LEVEL <= Logging.Level.ERROR:
             if exception:
-                exc_type, exc_value, exc_traceback = type(exception), exception, exception.__traceback__
-                tb_str = "".join(traceback.format_exception(exc_type, exc_value, exc_traceback, limit=1))
+                exc_type, exc_value, exc_traceback = (
+                    type(exception),
+                    exception,
+                    exception.__traceback__,
+                )
+                tb_str = "".join(
+                    traceback.format_exception(exc_type, exc_value, exc_traceback, limit=1)
+                )
                 message += "\n" + tb_str
             Logging.__log(Logging.Level.ERROR, message)
 
     @staticmethod
-    @deprecated("severe() is deprecated, use error() or critical() instead for Python-style logging")
+    @deprecated(
+        "severe() is deprecated, use error() or critical() instead for Python-style logging"
+    )
     def severe(message: str, exception: Exception = None):
         """Logs a severe-level message.
 
@@ -183,11 +194,16 @@ class Logging:
         """
         if Logging.LOG_LEVEL <= Logging.Level.SEVERE:
             if exception:
-                exc_type, exc_value, exc_traceback = type(exception), exception, exception.__traceback__
-                tb_str = "".join(traceback.format_exception(exc_type, exc_value, exc_traceback, limit=1))
+                exc_type, exc_value, exc_traceback = (
+                    type(exception),
+                    exception,
+                    exception.__traceback__,
+                )
+                tb_str = "".join(
+                    traceback.format_exception(exc_type, exc_value, exc_traceback, limit=1)
+                )
                 message += "\n" + tb_str
             Logging.__log(Logging.Level.SEVERE, message)
-
 
     @staticmethod
     def critical(message: str, exception: Exception = None):
@@ -199,7 +215,13 @@ class Logging:
         """
         if Logging.LOG_LEVEL <= Logging.Level.CRITICAL:
             if exception:
-                exc_type, exc_value, exc_traceback = type(exception), exception, exception.__traceback__
-                tb_str = "".join(traceback.format_exception(exc_type, exc_value, exc_traceback, limit=1))
+                exc_type, exc_value, exc_traceback = (
+                    type(exception),
+                    exception,
+                    exception.__traceback__,
+                )
+                tb_str = "".join(
+                    traceback.format_exception(exc_type, exc_value, exc_traceback, limit=1)
+                )
                 message += "\n" + tb_str
             Logging.__log(Logging.Level.CRITICAL, message)

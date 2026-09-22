@@ -8,6 +8,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../s
 from fivetran_connector_sdk import Logging
 from fivetran_connector_sdk import constants
 
+
 class LoggingSpec(unittest.TestCase):
     def setUp(self):
         """Save original global state before each test"""
@@ -53,10 +54,10 @@ class LoggingSpec(unittest.TestCase):
         self.assertEqual(Logging.get_display_width("⚡ debugger "), 12)
         self.assertEqual(Logging.get_display_width("⚡ connector"), 12)
 
-    @patch('sys.stdout.isatty', return_value=True)
+    @patch("sys.stdout.isatty", return_value=True)
     def test_get_color_and_reset_color(self, mock_isatty):
         constants.EXECUTED_VIA_CLI = True
-        
+
         self.assertEqual(Logging.get_color(Logging.Level.DEBUG), "")
         self.assertEqual(Logging.get_color(Logging.Level.INFO), "")
         self.assertEqual(Logging.get_color(Logging.Level.WARNING), "\033[38;5;130m")
@@ -69,28 +70,31 @@ class LoggingSpec(unittest.TestCase):
         self.assertEqual(Logging.reset_color(Logging.Level.WARNING), " \033[0m")
         self.assertEqual(Logging.reset_color(Logging.Level.ERROR), " \033[0m")
 
-    @patch('sys.stdout.isatty', return_value=True)
+    @patch("sys.stdout.isatty", return_value=True)
     def test_colorize(self, mock_isatty):
         constants.EXECUTED_VIA_CLI = True
-        
+
         # No color for DEBUG/INFO: text returned unchanged
         self.assertEqual(Logging.colorize("msg", Logging.Level.DEBUG), "msg")
         self.assertEqual(Logging.colorize("msg", Logging.Level.INFO), "msg")
         # Colored levels: wrapped with color code and reset
-        self.assertEqual(Logging.colorize("msg", Logging.Level.WARNING), "\033[38;5;130mmsg \033[0m")
+        self.assertEqual(
+            Logging.colorize("msg", Logging.Level.WARNING), "\033[38;5;130mmsg \033[0m"
+        )
         self.assertEqual(Logging.colorize("msg", Logging.Level.ERROR), "\033[38;5;196mmsg \033[0m")
 
-    @patch('builtins.print')
+    @patch("builtins.print")
     def test_escaping_special_characters_from_logs(self, mock_print) -> None:
         from fivetran_connector_sdk import print_library_log
+
         constants.DEBUGGING = False
         constants.EXECUTED_VIA_CLI = False
-        log_message = "[INFO] [2025-01-21 15:45:32] [~!@#$%^&*()_+{}|:\"<>?`-=_] Process started... 🚀💻 📂 [✔️] Valid ✔️ {var1=123, var2=!@#$, var3=~!}{}"
+        log_message = '[INFO] [2025-01-21 15:45:32] [~!@#$%^&*()_+{}|:"<>?`-=_] Process started... 🚀💻 📂 [✔️] Valid ✔️ {var1=123, var2=!@#$, var3=~!}{}'
         expected_output = '{"level":"SEVERE", "message": "\\u26a1 sdk [INFO] [2025-01-21 15:45:32] [~!@#$%^&*()_+{}|:\\"<>?`-=_] Process started... \\ud83d\\ude80\\ud83d\\udcbb \\ud83d\\udcc2 [\\u2714\\ufe0f] Valid \\u2714\\ufe0f {var1=123, var2=!@#$, var3=~!}{}", "message_origin": "library"}'
         print_library_log(log_message, Logging.Level.SEVERE)
         mock_print.assert_called_once_with(expected_output)
 
-    @patch('builtins.print')
+    @patch("builtins.print")
     def test_log_level_filtering(self, mock_print):
         Logging.LOG_LEVEL = Logging.Level.WARNING
         Logging.fine("Should not print")
@@ -102,7 +106,7 @@ class LoggingSpec(unittest.TestCase):
         self.assertIn("WARNING", args[0])
         self.assertIn("SEVERE", args[1])
 
-    @patch('builtins.print')
+    @patch("builtins.print")
     def test_all_log_methods(self, mock_print):
         Logging.LOG_LEVEL = Logging.Level.FINE
         constants.DEBUGGING = True
@@ -118,7 +122,7 @@ class LoggingSpec(unittest.TestCase):
         self.assertIn("WARNING  ⚡ connector Warning message", calls[2])
         self.assertIn("SEVERE   ⚡ connector Severe message", calls[3])
 
-    @patch('builtins.print')
+    @patch("builtins.print")
     def test_severe_with_exception(self, mock_print):
         Logging.LOG_LEVEL = Logging.Level.SEVERE
         constants.DEBUGGING = False
@@ -139,7 +143,7 @@ class LoggingSpec(unittest.TestCase):
         self.assertIn("\n" + " " * expected_indent, formatted)
         self.assertTrue(formatted.startswith("Line1"))
 
-    @patch('builtins.print')
+    @patch("builtins.print")
     def test_fine_level_logging(self, mock_print):
         Logging.LOG_LEVEL = Logging.Level.FINE
         constants.DEBUGGING = True
@@ -147,7 +151,7 @@ class LoggingSpec(unittest.TestCase):
         mock_print.assert_called()
         self.assertIn("Fine log message", mock_print.call_args[0][0])
 
-    @patch('builtins.print')
+    @patch("builtins.print")
     def test_log_level_above_threshold(self, mock_print):
         Logging.LOG_LEVEL = Logging.Level.SEVERE
         Logging.info("Should not print")
@@ -161,7 +165,7 @@ class LoggingSpec(unittest.TestCase):
         # FINE is not WARNING or SEVERE, should return ""
         self.assertEqual(Logging.get_color(Logging.Level.FINE), "")
 
-    @patch('builtins.print')
+    @patch("builtins.print")
     def test_fine_with_debugging_off(self, mock_print):
         """Test fine level logging when debugging is off"""
         Logging.LOG_LEVEL = Logging.Level.FINE
@@ -170,21 +174,21 @@ class LoggingSpec(unittest.TestCase):
         # Fine only logs when DEBUG is True
         mock_print.assert_not_called()
 
-    @patch('builtins.print')
+    @patch("builtins.print")
     def test_info_with_log_level_above_info(self, mock_print):
         """Test info level logging when log level is WARNING"""
         Logging.LOG_LEVEL = Logging.Level.WARNING
         Logging.info("Should not print when LOG_LEVEL is WARNING")
         mock_print.assert_not_called()
 
-    @patch('builtins.print')
+    @patch("builtins.print")
     def test_warning_with_log_level_above_warning(self, mock_print):
         """Test warning level logging when log level is SEVERE"""
         Logging.LOG_LEVEL = Logging.Level.SEVERE
         Logging.warning("Should not print when LOG_LEVEL is SEVERE")
         mock_print.assert_not_called()
 
-    @patch('builtins.print')
+    @patch("builtins.print")
     def test_severe_without_exception_debugging_mode(self, mock_print):
         """Test severe level logging without exception in debugging mode"""
         Logging.LOG_LEVEL = Logging.Level.SEVERE
@@ -195,7 +199,7 @@ class LoggingSpec(unittest.TestCase):
         self.assertIn("Severe without exception", args)
         self.assertNotIn("Traceback", args)
 
-    @patch('builtins.print')
+    @patch("builtins.print")
     def test_log_with_non_debugging_mode(self, mock_print):
         """Test logging in non-debugging mode outputs JSON"""
         Logging.LOG_LEVEL = Logging.Level.INFO
@@ -208,13 +212,13 @@ class LoggingSpec(unittest.TestCase):
         self.assertIn('"message":', args)
         self.assertIn('"message_origin": "connector_sdk"', args)
 
-    @patch('builtins.print')
+    @patch("builtins.print")
     def test_get_formatted_log_with_single_line(self, mock_print):
         """Test formatted log with single line message"""
         formatted = Logging.get_formatted_log("Single line", "PREFIX: ")
         self.assertEqual(formatted, "Single line")
 
-    @patch('builtins.print')
+    @patch("builtins.print")
     def test_severe_with_exception_in_non_debugging_mode(self, mock_print):
         """Test severe logging with exception in non-debugging mode"""
         Logging.LOG_LEVEL = Logging.Level.SEVERE
@@ -238,7 +242,7 @@ class LoggingSpec(unittest.TestCase):
         self.assertLess(Logging.Level.ERROR, Logging.Level.SEVERE)
         self.assertLess(Logging.Level.SEVERE, Logging.Level.CRITICAL)
 
-    @patch('builtins.print')
+    @patch("builtins.print")
     def test_fine_with_log_level_above_fine(self, mock_print):
         """Test that fine level logging uses <= comparison"""
         Logging.LOG_LEVEL = Logging.Level.INFO
@@ -246,7 +250,7 @@ class LoggingSpec(unittest.TestCase):
         Logging.fine("Should not print when LOG_LEVEL is INFO")
         mock_print.assert_not_called()
 
-    @patch('builtins.print')
+    @patch("builtins.print")
     def test_fine_with_log_level_below_fine(self, mock_print):
         """Test that fine level logging works when LOG_LEVEL <= FINE"""
         Logging.LOG_LEVEL = Logging.Level.DEBUG
@@ -256,7 +260,7 @@ class LoggingSpec(unittest.TestCase):
         mock_print.assert_called_once()
         self.assertIn("Should print when LOG_LEVEL is DEBUG", mock_print.call_args[0][0])
 
-    @patch('builtins.print')
+    @patch("builtins.print")
     def test_debug_method(self, mock_print):
         """Test debug method works correctly"""
         Logging.LOG_LEVEL = Logging.Level.DEBUG
@@ -265,7 +269,7 @@ class LoggingSpec(unittest.TestCase):
         mock_print.assert_called_once()
         self.assertIn("Debug message", mock_print.call_args[0][0])
 
-    @patch('builtins.print')
+    @patch("builtins.print")
     def test_debug_requires_debugging_mode(self, mock_print):
         """Test that debug() requires DEBUGGING=True"""
         Logging.LOG_LEVEL = Logging.Level.DEBUG
@@ -273,7 +277,7 @@ class LoggingSpec(unittest.TestCase):
         Logging.debug("Should not print in production")
         mock_print.assert_not_called()
 
-    @patch('builtins.print')
+    @patch("builtins.print")
     def test_debug_filtered_by_log_level(self, mock_print):
         """Test that debug() is filtered when LOG_LEVEL > DEBUG"""
         Logging.LOG_LEVEL = Logging.Level.INFO
@@ -281,7 +285,7 @@ class LoggingSpec(unittest.TestCase):
         Logging.debug("Should not print when LOG_LEVEL is INFO")
         mock_print.assert_not_called()
 
-    @patch('builtins.print')
+    @patch("builtins.print")
     def test_error_method(self, mock_print):
         """Test error method works correctly"""
         Logging.LOG_LEVEL = Logging.Level.ERROR
@@ -292,7 +296,7 @@ class LoggingSpec(unittest.TestCase):
         self.assertIn('"level":"ERROR"', args)
         self.assertIn("Error message", args)
 
-    @patch('builtins.print')
+    @patch("builtins.print")
     def test_error_with_exception(self, mock_print):
         """Test error method with exception"""
         Logging.LOG_LEVEL = Logging.Level.ERROR
@@ -305,7 +309,7 @@ class LoggingSpec(unittest.TestCase):
         self.assertIn("Error occurred", args)
         self.assertIn("ValueError", args)
 
-    @patch('builtins.print')
+    @patch("builtins.print")
     def test_critical_method(self, mock_print):
         """Test critical method works correctly"""
         Logging.LOG_LEVEL = Logging.Level.CRITICAL
@@ -316,7 +320,7 @@ class LoggingSpec(unittest.TestCase):
         self.assertIn('"level":"CRITICAL"', args)
         self.assertIn("Critical message", args)
 
-    @patch('builtins.print')
+    @patch("builtins.print")
     def test_critical_with_exception(self, mock_print):
         """Test critical method with exception"""
         Logging.LOG_LEVEL = Logging.Level.CRITICAL
@@ -329,7 +333,7 @@ class LoggingSpec(unittest.TestCase):
         self.assertIn("System failure", args)
         self.assertIn("RuntimeError", args)
 
-    @patch('builtins.print')
+    @patch("builtins.print")
     def test_all_new_log_methods(self, mock_print):
         """Test all new log methods print when LOG_LEVEL=DEBUG"""
         Logging.LOG_LEVEL = Logging.Level.DEBUG
@@ -341,7 +345,7 @@ class LoggingSpec(unittest.TestCase):
         Logging.critical("Critical message")
         self.assertEqual(mock_print.call_count, 5)
 
-    @patch('builtins.print')
+    @patch("builtins.print")
     def test_error_and_critical_in_production(self, mock_print):
         """Test that error() and critical() work in production mode"""
         Logging.LOG_LEVEL = Logging.Level.INFO
@@ -353,5 +357,6 @@ class LoggingSpec(unittest.TestCase):
         self.assertIn('"level":"ERROR"', args[0])
         self.assertIn('"level":"CRITICAL"', args[1])
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()

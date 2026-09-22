@@ -5,7 +5,10 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
-from fivetran_connector_sdk.crash_report import _collect_resource_snapshot, build_debug_crash_report
+from fivetran_connector_sdk.crash_report import (
+    _collect_resource_snapshot,
+    build_debug_crash_report,
+)
 from fivetran_connector_sdk.memory_tracker import DebugMemoryTracker
 
 
@@ -38,7 +41,10 @@ class TestCrashReport(unittest.TestCase):
             configuration = {"payload": "not-json", "token": "state-secret"}
 
             memory_tracker = _tracker(
-                baseline_bytes=0, peak_delta_bytes=5 * 1024 * 1024, total_delta_bytes=5 * 1024 * 1024, sample_count=1
+                baseline_bytes=0,
+                peak_delta_bytes=5 * 1024 * 1024,
+                total_delta_bytes=5 * 1024 * 1024,
+                sample_count=1,
             )
 
             try:
@@ -116,7 +122,9 @@ class TestCrashReport(unittest.TestCase):
             try:
                 module.update(configuration, {"cursor": 1})
             except Exception as exception:
-                report = build_debug_crash_report(exception, project_path, configuration=configuration)
+                report = build_debug_crash_report(
+                    exception, project_path, configuration=configuration
+                )
             else:
                 self.fail("Expected connector update to fail")
 
@@ -184,7 +192,9 @@ class TestCrashReport(unittest.TestCase):
             try:
                 module.update(configuration, {})
             except Exception as exception:
-                report = build_debug_crash_report(exception, project_path, configuration=configuration)
+                report = build_debug_crash_report(
+                    exception, project_path, configuration=configuration
+                )
             else:
                 self.fail("Expected connector update to fail")
 
@@ -229,7 +239,9 @@ class TestCrashReport(unittest.TestCase):
             try:
                 module.update(configuration, {"cursor": "cursor-value"})
             except Exception as exception:
-                report = build_debug_crash_report(exception, project_path, configuration=configuration)
+                report = build_debug_crash_report(
+                    exception, project_path, configuration=configuration
+                )
             else:
                 self.fail("Expected connector update to fail")
 
@@ -239,7 +251,9 @@ class TestCrashReport(unittest.TestCase):
             self.assertIn("basic_value = '****'", report)
             self.assertIn("certificate = '****'", report)
             self.assertIn("jwt_value = '****'", report)
-            self.assertIn("headers = {'Authorization': '****', 'Accept': 'application/json'}", report)
+            self.assertIn(
+                "headers = {'Authorization': '****', 'Accept': 'application/json'}", report
+            )
             self.assertIn("payload = {'client_secret': '****', 'cursor': 'cursor-value'}", report)
             # A local variable name the redaction heuristics do not recognize still gets
             # redacted, because the exact configuration value is scrubbed report-wide.
@@ -250,7 +264,9 @@ class TestCrashReport(unittest.TestCase):
             self.assertNotIn("BEGIN PRIVATE KEY", report)
             self.assertNotIn("eyJabcdefgh.ijklmnopqr.stuvwxyz12", report)
 
-    def test_build_debug_crash_report_redacts_secret_longer_than_repr_bound_before_truncation(self):
+    def test_build_debug_crash_report_redacts_secret_longer_than_repr_bound_before_truncation(
+        self,
+    ):
         with tempfile.TemporaryDirectory() as project_path:
             connector_path = os.path.join(project_path, "connector.py")
             with open(connector_path, "w", encoding="utf-8") as connector_file:
@@ -267,7 +283,9 @@ class TestCrashReport(unittest.TestCase):
             try:
                 module.update(configuration, {})
             except Exception as exception:
-                report = build_debug_crash_report(exception, project_path, configuration=configuration)
+                report = build_debug_crash_report(
+                    exception, project_path, configuration=configuration
+                )
             else:
                 self.fail("Expected connector update to fail")
 
@@ -300,8 +318,13 @@ class TestCrashReport(unittest.TestCase):
             else:
                 self.fail("Expected connector update to fail")
 
-            self.assertLess(report.index("ValueError: invalid payload"), report.index("RuntimeError: failed to load records"))
-            self.assertIn("The above exception was the direct cause of the following exception:", report)
+            self.assertLess(
+                report.index("ValueError: invalid payload"),
+                report.index("RuntimeError: failed to load records"),
+            )
+            self.assertIn(
+                "The above exception was the direct cause of the following exception:", report
+            )
             self.assertIn(f'File "{connector_path}", line 3, in load_record', report)
             self.assertIn(f'File "{connector_path}", line 7, in update', report)
 
@@ -329,8 +352,13 @@ class TestCrashReport(unittest.TestCase):
             else:
                 self.fail("Expected connector update to fail")
 
-            self.assertLess(report.index("ValueError: bad source payload"), report.index("RuntimeError: wrapped without cause"))
-            self.assertIn("During handling of the above exception, another exception occurred:", report)
+            self.assertLess(
+                report.index("ValueError: bad source payload"),
+                report.index("RuntimeError: wrapped without cause"),
+            )
+            self.assertIn(
+                "During handling of the above exception, another exception occurred:", report
+            )
             self.assertIn(f'File "{connector_path}", line 2, in parse_payload', report)
             self.assertIn(f'File "{connector_path}", line 6, in update', report)
 
@@ -392,8 +420,7 @@ class TestCrashReport(unittest.TestCase):
             connector_path = os.path.join(project_path, "connector.py")
             with open(connector_path, "w", encoding="utf-8") as connector_file:
                 connector_file.write(
-                    "def update(configuration, state):\n"
-                    "    raise RuntimeError('boom')\n"
+                    "def update(configuration, state):\n" "    raise RuntimeError('boom')\n"
                 )
 
             module = _load_module(connector_path)
@@ -410,7 +437,9 @@ class TestCrashReport(unittest.TestCase):
     def test_build_debug_crash_report_enforces_source_and_locals_bounds(self):
         with tempfile.TemporaryDirectory() as project_path:
             connector_path = os.path.join(project_path, "connector.py")
-            local_assignments = "".join(f"    local_{index:02d} = {index}\n" for index in range(21))
+            local_assignments = "".join(
+                f"    local_{index:02d} = {index}\n" for index in range(21)
+            )
             long_comment = "x" * 300
             with open(connector_path, "w", encoding="utf-8") as connector_file:
                 connector_file.write(
@@ -441,7 +470,9 @@ class TestCrashReport(unittest.TestCase):
             self.assertNotIn("local_20 = 20", rendered_locals)
             self.assertIn("... 1 more local variable(s) omitted", report)
 
-    def test_collect_resource_snapshot_folds_crash_time_reading_into_tracker_peak_and_average(self):
+    def test_collect_resource_snapshot_folds_crash_time_reading_into_tracker_peak_and_average(
+        self,
+    ):
         # Tracker's own samples say peak/average growth was only 0.5 MB (e.g. sampler ticked
         # once before a fast late-breaking allocation). The live read at crash time (2 MB above
         # baseline) is bigger than that stale peak, and must be folded into the tracker's own
@@ -479,9 +510,16 @@ class TestCrashReport(unittest.TestCase):
         self.assertEqual(snapshot["peak_rss_bytes"], 0)
         self.assertIsNone(snapshot["average_rss_bytes"])
 
-    def test_collect_resource_snapshot_clamps_negative_delta_instead_of_reporting_unavailable(self):
+    def test_collect_resource_snapshot_clamps_negative_delta_instead_of_reporting_unavailable(
+        self,
+    ):
         # Live RSS dipped below baseline (e.g. GC freed memory since the tracker started).
-        memory_tracker = _tracker(baseline_bytes=5 * 1024 * 1024, peak_delta_bytes=1024, total_delta_bytes=1024, sample_count=1)
+        memory_tracker = _tracker(
+            baseline_bytes=5 * 1024 * 1024,
+            peak_delta_bytes=1024,
+            total_delta_bytes=1024,
+            sample_count=1,
+        )
 
         with patch(
             "fivetran_connector_sdk.crash_report.get_debug_memory_bytes",

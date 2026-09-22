@@ -7,6 +7,7 @@ class TestMemoryMonitor(unittest.TestCase):
 
     def setUp(self):
         from fivetran_connector_sdk import constants
+
         self._saved_debugging = constants.DEBUGGING
         self._saved_executed_via_cli = constants.EXECUTED_VIA_CLI
         constants.DEBUGGING = False
@@ -14,6 +15,7 @@ class TestMemoryMonitor(unittest.TestCase):
 
     def tearDown(self):
         from fivetran_connector_sdk import constants
+
         constants.DEBUGGING = self._saved_debugging
         constants.EXECUTED_VIA_CLI = self._saved_executed_via_cli
 
@@ -65,7 +67,9 @@ class TestMemoryMonitor(unittest.TestCase):
     @patch("fivetran_connector_sdk.memory_tracker.os._exit")
     @patch("fivetran_connector_sdk.memory_tracker.get_debug_memory_bytes")
     @patch("builtins.print")
-    def test_debug_tracker_exits_when_limit_exceeded(self, mock_print, mock_get_mem, mock_exit, mock_sleep):
+    def test_debug_tracker_exits_when_limit_exceeded(
+        self, mock_print, mock_get_mem, mock_exit, mock_sleep
+    ):
         from fivetran_connector_sdk.memory_tracker import DebugMemoryTracker
         from fivetran_connector_sdk import constants
 
@@ -85,7 +89,9 @@ class TestMemoryMonitor(unittest.TestCase):
     @patch("fivetran_connector_sdk.memory_tracker.os._exit")
     @patch("fivetran_connector_sdk.memory_tracker.get_debug_memory_bytes")
     @patch("builtins.print")
-    def test_debug_tracker_does_not_exit_within_limit(self, mock_print, mock_get_mem, mock_exit, mock_sleep):
+    def test_debug_tracker_does_not_exit_within_limit(
+        self, mock_print, mock_get_mem, mock_exit, mock_sleep
+    ):
         from fivetran_connector_sdk.memory_tracker import DebugMemoryTracker
         from fivetran_connector_sdk import constants
 
@@ -161,7 +167,10 @@ class TestMemoryMonitor(unittest.TestCase):
         tracker.stop()
 
     @patch.dict("os.environ", {"CONNECTOR_SDK_MEMORY_TRACKING_IN_SYNC": "true"})
-    @patch("fivetran_connector_sdk.memory_tracker._get_sync_memory_bytes", side_effect=Exception("Test failure"))
+    @patch(
+        "fivetran_connector_sdk.memory_tracker._get_sync_memory_bytes",
+        side_effect=Exception("Test failure"),
+    )
     @patch("builtins.print")
     def test_sync_tracker_fails_open_on_startup_error(self, mock_print, mock_get_mem):
         from fivetran_connector_sdk.memory_tracker import SyncMemoryTracker
@@ -177,10 +186,15 @@ class TestMemoryMonitor(unittest.TestCase):
         # stop() should be safe to call
         tracker.stop()
 
-    @patch("fivetran_connector_sdk.memory_tracker.threading.Thread", side_effect=RuntimeError("can't start new thread"))
+    @patch(
+        "fivetran_connector_sdk.memory_tracker.threading.Thread",
+        side_effect=RuntimeError("can't start new thread"),
+    )
     @patch("fivetran_connector_sdk.memory_tracker.get_debug_memory_bytes", return_value=1000)
     @patch("builtins.print")
-    def test_debug_tracker_fails_open_on_thread_start_error(self, mock_print, mock_get_mem, mock_thread):
+    def test_debug_tracker_fails_open_on_thread_start_error(
+        self, mock_print, mock_get_mem, mock_thread
+    ):
         from fivetran_connector_sdk.memory_tracker import DebugMemoryTracker
 
         tracker = DebugMemoryTracker()

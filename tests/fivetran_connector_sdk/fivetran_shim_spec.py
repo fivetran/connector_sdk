@@ -22,10 +22,7 @@ class TestFivetranShim(unittest.TestCase):
 
     def _load_direct_cli(self):
         cli_path = (
-            Path(__file__).resolve().parents[2]
-            / "src"
-            / "fivetran_connector_sdk"
-            / "cli.py"
+            Path(__file__).resolve().parents[2] / "src" / "fivetran_connector_sdk" / "cli.py"
         )
         spec = importlib.util.spec_from_file_location("fivetran_sdk_cli_under_test", cli_path)
         module = importlib.util.module_from_spec(spec)
@@ -79,11 +76,12 @@ class TestFivetranShim(unittest.TestCase):
 
         self.assertEqual(sys.argv, original_argv)
 
-
     def test_reraises_when_fivetran_cli_is_installed_but_cli_module_is_missing(self):
         shim = self._load_shim()
         package = types.ModuleType("fivetran_cli")
-        package.__path__ = []  # empty path: submodule lookup will fail with name="fivetran_cli.cli"
+        package.__path__ = (
+            []
+        )  # empty path: submodule lookup will fail with name="fivetran_cli.cli"
 
         with patch.dict(sys.modules, {"fivetran_cli": package}):
             with self.assertRaises(ModuleNotFoundError):

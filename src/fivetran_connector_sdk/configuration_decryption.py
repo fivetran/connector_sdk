@@ -4,7 +4,12 @@ import os
 from cryptography.exceptions import InvalidTag
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 
-from fivetran_connector_sdk.constants import ROOT_LOCATION, CONFIG_ENCRYPTION_KEY_FILE, ENCRYPTED_VALUE_PREFIX, UTF_8
+from fivetran_connector_sdk.constants import (
+    ROOT_LOCATION,
+    CONFIG_ENCRYPTION_KEY_FILE,
+    ENCRYPTED_VALUE_PREFIX,
+    UTF_8,
+)
 
 NONCE_LENGTH_BYTES = 12
 KEY_SIZE_BYTES = 32  # AES-256
@@ -37,9 +42,7 @@ def _load_key() -> bytes:
         ) from e
 
     if len(key) != KEY_SIZE_BYTES:
-        raise ValueError(
-            f"invalid key length: expected {KEY_SIZE_BYTES} bytes, got {len(key)}"
-        )
+        raise ValueError(f"invalid key length: expected {KEY_SIZE_BYTES} bytes, got {len(key)}")
     return key
 
 
@@ -49,7 +52,7 @@ def _decrypt_value(value: str | None, field_name: str, key: bytes) -> str | None
         return value
 
     try:
-        combined = base64.b64decode(value[len(ENCRYPTED_VALUE_PREFIX):])
+        combined = base64.b64decode(value[len(ENCRYPTED_VALUE_PREFIX) :])
         if len(combined) < NONCE_LENGTH_BYTES:
             raise ValueError("ciphertext shorter than nonce length")
         nonce, ciphertext = combined[:NONCE_LENGTH_BYTES], combined[NONCE_LENGTH_BYTES:]
@@ -70,9 +73,14 @@ def decrypt_configuration_values(configuration: dict) -> dict:
     Mirrors ConfigurationEncryption.decryptConfigurationValues() in the Java tester: the key is
     loaded lazily, only if at least one value in configuration is encrypted.
     """
-    if not any(isinstance(value, str) and value.startswith(ENCRYPTED_VALUE_PREFIX)
-               for value in configuration.values()):
+    if not any(
+        isinstance(value, str) and value.startswith(ENCRYPTED_VALUE_PREFIX)
+        for value in configuration.values()
+    ):
         return configuration
 
     key = _load_key()
-    return {field_name: _decrypt_value(value, field_name, key) for field_name, value in configuration.items()}
+    return {
+        field_name: _decrypt_value(value, field_name, key)
+        for field_name, value in configuration.items()
+    }

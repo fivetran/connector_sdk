@@ -4,19 +4,38 @@ import os
 from typing import Optional
 
 from fivetran_connector_sdk.constants import (
-    JAVA_LONG_MAX_VALUE, TABLES, UPDATE_TYPE, DELETE_TYPE,
-    UPSERT_TYPE, TRUNCATE_TYPE, UNSPECIFIED_COLUMNS_TYPE, TABLES_COLUMNS_TYPES,
-    FIVETRAN_FILE_PATH_COLUMN
+    JAVA_LONG_MAX_VALUE,
+    TABLES,
+    UPDATE_TYPE,
+    DELETE_TYPE,
+    UPSERT_TYPE,
+    TRUNCATE_TYPE,
+    UNSPECIFIED_COLUMNS_TYPE,
+    TABLES_COLUMNS_TYPES,
+    FIVETRAN_FILE_PATH_COLUMN,
 )
-from fivetran_connector_sdk.file_upload import FileUpload, file_upload_chunks, validate_file_upload_if_present
-from fivetran_connector_sdk.helpers import _validate_table_name, _validate_message, _validate_trace, print_library_log
+from fivetran_connector_sdk.file_upload import (
+    FileUpload,
+    file_upload_chunks,
+    validate_file_upload_if_present,
+)
+from fivetran_connector_sdk.helpers import (
+    _validate_table_name,
+    _validate_message,
+    _validate_trace,
+    print_library_log,
+)
 from fivetran_connector_sdk.logger import Logging
 from fivetran_connector_sdk.protos import connector_sdk_pb2, common_pb2
 from fivetran_connector_sdk.operation_stream import _OperationStream
 from fivetran_connector_sdk.type_coercion import (
-    _encode_row_data, _PFX_SCALAR,
-    _parse_utc_datetime_str, _parse_naive_datetime_str, _parse_naive_date_str,
+    _encode_row_data,
+    _PFX_SCALAR,
+    _parse_utc_datetime_str,
+    _parse_naive_datetime_str,
+    _parse_naive_date_str,
 )
+
 
 def _use_row_data() -> bool:
     # Read lazily, not once at import -- `fivetran debug` sets this env var after this module has
@@ -76,10 +95,7 @@ class Operations:
         """
         _validate_table_name(table)
         record = connector_sdk_pb2.StructuredRecord(
-            schema_name=None,
-            table_name=table,
-            type=TRUNCATE_TYPE,
-            data={}
+            schema_name=None, table_name=table, type=TRUNCATE_TYPE, data={}
         )
         Operations.operation_stream.add_record(record)
 
@@ -99,18 +115,12 @@ class Operations:
         if _use_row_data():
             encoded_data = _encode_row_data(columns, keys)
             record = connector_sdk_pb2.StructuredRecord(
-                schema_name=None,
-                table_name=table,
-                type=DELETE_TYPE,
-                row_data=encoded_data
+                schema_name=None, table_name=table, type=DELETE_TYPE, row_data=encoded_data
             )
         else:
             mapped_data = _map_data_to_columns(keys, columns)
             record = connector_sdk_pb2.StructuredRecord(
-                schema_name=None,
-                table_name=table,
-                type=DELETE_TYPE,
-                data=mapped_data
+                schema_name=None, table_name=table, type=DELETE_TYPE, data=mapped_data
             )
         Operations.operation_stream.add_record(record)
 
@@ -207,6 +217,7 @@ def _get_columns(table: str) -> dict:
 
     return columns
 
+
 def _build_record(table: str, data: dict, record_type, file_upload: Optional[FileUpload]):
     validate_file_upload_if_present(file_upload)
 
@@ -216,17 +227,15 @@ def _build_record(table: str, data: dict, record_type, file_upload: Optional[Fil
         if FIVETRAN_FILE_PATH_COLUMN in data and not Operations._file_path_override_logged:
             print_library_log(
                 f"{FIVETRAN_FILE_PATH_COLUMN} was provided in the row data and will be overwritten by FileUpload.path.",
-                level=Logging.Level.WARNING
+                level=Logging.Level.WARNING,
             )
             Operations._file_path_override_logged = True
         mapped_data[FIVETRAN_FILE_PATH_COLUMN] = common_pb2.ValueType(string=file_upload.path)
 
     return connector_sdk_pb2.StructuredRecord(
-        schema_name=None,
-        table_name=table,
-        type=record_type,
-        data=mapped_data
+        schema_name=None, table_name=table, type=record_type, data=mapped_data
     )
+
 
 def _build_row_data_record(table: str, data: dict, record_type, file_upload: Optional[FileUpload]):
     validate_file_upload_if_present(file_upload)
@@ -237,17 +246,15 @@ def _build_row_data_record(table: str, data: dict, record_type, file_upload: Opt
         if FIVETRAN_FILE_PATH_COLUMN in data and not Operations._file_path_override_logged:
             print_library_log(
                 f"{FIVETRAN_FILE_PATH_COLUMN} was provided in the row data and will be overwritten by FileUpload.path.",
-                level=Logging.Level.WARNING
+                level=Logging.Level.WARNING,
             )
             Operations._file_path_override_logged = True
-        encoded_data[FIVETRAN_FILE_PATH_COLUMN] = _PFX_SCALAR + file_upload.path.encode('utf-8')
+        encoded_data[FIVETRAN_FILE_PATH_COLUMN] = _PFX_SCALAR + file_upload.path.encode("utf-8")
 
     return connector_sdk_pb2.StructuredRecord(
-        schema_name=None,
-        table_name=table,
-        type=record_type,
-        row_data=encoded_data
+        schema_name=None, table_name=table, type=record_type, row_data=encoded_data
     )
+
 
 def _emit_record(table: str, record, file_upload: Optional[FileUpload]):
     if file_upload is None:
@@ -255,6 +262,7 @@ def _emit_record(table: str, record, file_upload: Optional[FileUpload]):
         return
 
     Operations.operation_stream.add_file_upload(file_upload_chunks(table, file_upload), record)
+
 
 def _map_data_to_columns(data: dict, columns: dict) -> dict:
     """Maps data to the specified columns.
@@ -276,14 +284,20 @@ def _map_data_to_columns(data: dict, columns: dict) -> dict:
             map_inferred_data_type(key, mapped_data, v)
     return mapped_data
 
+
 _INFERENCE_TYPE_HANDLERS = {
-    int: lambda v: common_pb2.ValueType(float=v) if abs(v)>JAVA_LONG_MAX_VALUE else common_pb2.ValueType(long=v),
+    int: lambda v: (
+        common_pb2.ValueType(float=v)
+        if abs(v) > JAVA_LONG_MAX_VALUE
+        else common_pb2.ValueType(long=v)
+    ),
     float: lambda v: common_pb2.ValueType(float=v),
     bool: lambda v: common_pb2.ValueType(bool=v),
     bytes: lambda v: common_pb2.ValueType(binary=v),
     dict: lambda v: common_pb2.ValueType(json=json.dumps(v)),
-    str: lambda v: common_pb2.ValueType(string=v)
+    str: lambda v: common_pb2.ValueType(string=v),
 }
+
 
 def map_inferred_data_type(k, mapped_data, v):
     data_type = type(v)
@@ -309,6 +323,7 @@ def map_inferred_data_type(k, mapped_data, v):
         # Convert arbitrary objects to string
         mapped_data[k] = common_pb2.ValueType(string=str(v))
 
+
 _TYPE_HANDLERS = {
     common_pb2.DataType.BOOLEAN: lambda val: common_pb2.ValueType(bool=val),
     common_pb2.DataType.SHORT: lambda val: common_pb2.ValueType(short=val),
@@ -317,19 +332,29 @@ _TYPE_HANDLERS = {
     common_pb2.DataType.DECIMAL: lambda val: common_pb2.ValueType(decimal=val),
     common_pb2.DataType.FLOAT: lambda val: common_pb2.ValueType(float=val),
     common_pb2.DataType.DOUBLE: lambda val: common_pb2.ValueType(double=val),
-    common_pb2.DataType.NAIVE_DATE: lambda val: common_pb2.ValueType(naive_date= _parse_naive_date_str(val)),
-    common_pb2.DataType.NAIVE_DATETIME: lambda val: common_pb2.ValueType(naive_datetime= _parse_naive_datetime_str(val)),
-    common_pb2.DataType.UTC_DATETIME: lambda val: common_pb2.ValueType(utc_datetime= _parse_utc_datetime_str(val)),
+    common_pb2.DataType.NAIVE_DATE: lambda val: common_pb2.ValueType(
+        naive_date=_parse_naive_date_str(val)
+    ),
+    common_pb2.DataType.NAIVE_DATETIME: lambda val: common_pb2.ValueType(
+        naive_datetime=_parse_naive_datetime_str(val)
+    ),
+    common_pb2.DataType.UTC_DATETIME: lambda val: common_pb2.ValueType(
+        utc_datetime=_parse_utc_datetime_str(val)
+    ),
     common_pb2.DataType.BINARY: lambda val: common_pb2.ValueType(binary=val),
     common_pb2.DataType.XML: lambda val: common_pb2.ValueType(xml=val),
-    common_pb2.DataType.STRING: lambda val: common_pb2.ValueType(string=val if isinstance(val, str) else str(val)),
-    common_pb2.DataType.JSON: lambda val: common_pb2.ValueType(json=json.dumps(val))
+    common_pb2.DataType.STRING: lambda val: common_pb2.ValueType(
+        string=val if isinstance(val, str) else str(val)
+    ),
+    common_pb2.DataType.JSON: lambda val: common_pb2.ValueType(json=json.dumps(val)),
 }
+
 
 def map_defined_data_type(data_type, k, mapped_data, v):
     handler = _TYPE_HANDLERS.get(data_type)
     if handler:
         mapped_data[k] = handler(v)
     else:
-        raise ValueError(f"Unsupported data type encountered: {data_type}. Please use valid data types.")
-
+        raise ValueError(
+            f"Unsupported data type encountered: {data_type}. Please use valid data types."
+        )

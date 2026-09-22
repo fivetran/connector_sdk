@@ -9,17 +9,21 @@ from fivetran_connector_sdk.protos import common_pb2
 def set_debugging_true():
     constants.DEBUGGING = True
 
+
 def reset_debugging():
     constants.DEBUGGING = False
+
 
 class TestOperations(unittest.TestCase):
 
     def setUp(self):
         # set the batch size to 1 for tests
         from fivetran_connector_sdk import operation_stream
+
         operation_stream.MAX_RECORDS_IN_BATCH = 1
 
         from fivetran_connector_sdk.operations import Operations, _OperationStream
+
         # Reset the operation stream for each test
         Operations.operation_stream = _OperationStream()
 
@@ -36,7 +40,9 @@ class TestOperations(unittest.TestCase):
         Operations.upsert("test_table", {"id": 1, "name": "test"})
         response = next(Operations.operation_stream)
 
-        self.assertEqual(response.structured_records.structured_records[0].table_name, "test_table")
+        self.assertEqual(
+            response.structured_records.structured_records[0].table_name, "test_table"
+        )
         self.assertEqual(response.structured_records.structured_records[0].type, common_pb2.UPSERT)
 
     def test_update(self):
@@ -45,7 +51,9 @@ class TestOperations(unittest.TestCase):
         Operations.upsert("test_table", {"id": 1})
         upsert_response = next(Operations.operation_stream)
         self.assertIsInstance(upsert_response, type(update_response))
-        self.assertEqual(update_response.structured_records.structured_records[0].type, common_pb2.UPDATE)
+        self.assertEqual(
+            update_response.structured_records.structured_records[0].type, common_pb2.UPDATE
+        )
 
     def test_delete(self):
         Operations.delete("test_table", {"id": 3})
@@ -53,7 +61,9 @@ class TestOperations(unittest.TestCase):
         Operations.upsert("test_table", {"id": 1})
         upsert_response = next(Operations.operation_stream)
         self.assertIsInstance(delete_response, type(upsert_response))
-        self.assertEqual(delete_response.structured_records.structured_records[0].type, common_pb2.DELETE)
+        self.assertEqual(
+            delete_response.structured_records.structured_records[0].type, common_pb2.DELETE
+        )
 
     def test_truncate(self):
         Operations.truncate("test_table")
@@ -66,8 +76,12 @@ class TestOperations(unittest.TestCase):
     def test_truncate_with_nonexistent_table(self):
         Operations.truncate("nonexistent_table")
         response = next(Operations.operation_stream)
-        self.assertEqual(response.structured_records.structured_records[0].table_name, "nonexistent_table")
-        self.assertEqual(response.structured_records.structured_records[0].type, common_pb2.TRUNCATE)
+        self.assertEqual(
+            response.structured_records.structured_records[0].table_name, "nonexistent_table"
+        )
+        self.assertEqual(
+            response.structured_records.structured_records[0].type, common_pb2.TRUNCATE
+        )
 
     def test_truncate_emits_no_schema_name(self):
         Operations.truncate("test_table")
@@ -83,6 +97,7 @@ class TestOperations(unittest.TestCase):
 
     def test_checkpoint(self):
         state = {"cursor": "2024-01-01T00:00:00.00Z"}
+
         def generate_checkpoint():
             Operations.checkpoint(state)
             Operations.upsert("test_table", {"id": 1})
@@ -104,17 +119,22 @@ class TestOperations(unittest.TestCase):
         # Should not fail even if table is not in TABLES
         Operations.update("another_table", {"col": 42})
         response = next(Operations.operation_stream)
-        self.assertEqual(response.structured_records.structured_records[0].table_name, "another_table")
+        self.assertEqual(
+            response.structured_records.structured_records[0].table_name, "another_table"
+        )
 
     def test_delete_with_nonexistent_table(self):
         Operations.delete("yet_another_table", {"col": 99})
         response = next(Operations.operation_stream)
-        self.assertEqual(response.structured_records.structured_records[0].table_name, "yet_another_table")
+        self.assertEqual(
+            response.structured_records.structured_records[0].table_name, "yet_another_table"
+        )
 
     def test_map_inferred_data_type(self):
         # int, float, bool, bytes, dict, str, object
         from fivetran_connector_sdk.operations import map_inferred_data_type
         import json
+
         mapped = {}
         map_inferred_data_type("a", mapped, 123)
         self.assertTrue(mapped["a"].HasField("long"))
@@ -135,7 +155,8 @@ class TestOperations(unittest.TestCase):
         self.assertTrue(mapped["f"].HasField("string"))
         self.assertEqual(mapped["f"].string, "string")
 
-        class Dummy: pass
+        class Dummy:
+            pass
 
         dummy_obj = Dummy()
         map_inferred_data_type("g", mapped, dummy_obj)
@@ -144,6 +165,7 @@ class TestOperations(unittest.TestCase):
 
     def test_map_data_to_columns_mixed_none_and_values(self):
         from fivetran_connector_sdk.operations import _map_data_to_columns
+
         data = {"nullable": None, "int_val": 42, "str_val": "foo"}
         columns = {}
         mapped = _map_data_to_columns(data, columns)
@@ -157,6 +179,7 @@ class TestOperations(unittest.TestCase):
     def test_map_data_to_columns_defined_type(self):
         from fivetran_connector_sdk.operations import _map_data_to_columns
         from fivetran_connector_sdk.protos import common_pb2
+
         # Column with type INT
         columns = {"foo": common_pb2.DataType.INT}
         data = {"foo": 42}
@@ -167,8 +190,11 @@ class TestOperations(unittest.TestCase):
     def test_map_defined_data_type_decimal(self):
         from fivetran_connector_sdk.operations import map_defined_data_type
         from fivetran_connector_sdk.protos import common_pb2
+
         class Col:
-            def __init__(self, t): self.type = t
+            def __init__(self, t):
+                self.type = t
+
         mapped = {}
         columns = {"a": common_pb2.Column(name="a", type=common_pb2.DataType.DECIMAL)}
         map_defined_data_type(columns["a"].type, "a", mapped, "123.45")
@@ -176,11 +202,12 @@ class TestOperations(unittest.TestCase):
 
     def test_map_inferred_data_type_list_as_json(self):
         from fivetran_connector_sdk.operations import map_inferred_data_type
+
         mapped = {}
         # Test list inference as JSON
         map_inferred_data_type("a", mapped, [1, 2, 3])
         self.assertTrue(mapped["a"].HasField("json"))
-        self.assertEqual(mapped["a"].json, '[1, 2, 3]')
+        self.assertEqual(mapped["a"].json, "[1, 2, 3]")
 
         # Test list with mixed types
         map_inferred_data_type("b", mapped, [1, "two", 3.0, True])
@@ -190,12 +217,12 @@ class TestOperations(unittest.TestCase):
         # Test nested list
         map_inferred_data_type("c", mapped, [[1, 2], [3, 4]])
         self.assertTrue(mapped["c"].HasField("json"))
-        self.assertEqual(mapped["c"].json, '[[1, 2], [3, 4]]')
+        self.assertEqual(mapped["c"].json, "[[1, 2], [3, 4]]")
 
         # Test empty list
         map_inferred_data_type("d", mapped, [])
         self.assertTrue(mapped["d"].HasField("json"))
-        self.assertEqual(mapped["d"].json, '[]')
+        self.assertEqual(mapped["d"].json, "[]")
 
         # Test list with dict objects
         map_inferred_data_type("e", mapped, [{"key": "value1"}, {"key": "value2"}])
@@ -204,6 +231,7 @@ class TestOperations(unittest.TestCase):
 
     def test_map_inferred_data_type_dict_as_json(self):
         from fivetran_connector_sdk.operations import map_inferred_data_type
+
         mapped = {}
         # Test simple dict
         map_inferred_data_type("a", mapped, {"key": "value"})
@@ -218,7 +246,7 @@ class TestOperations(unittest.TestCase):
         # Test empty dict
         map_inferred_data_type("c", mapped, {})
         self.assertTrue(mapped["c"].HasField("json"))
-        self.assertEqual(mapped["c"].json, '{}')
+        self.assertEqual(mapped["c"].json, "{}")
 
         # Test dict with list values
         map_inferred_data_type("d", mapped, {"items": [1, 2, 3]})
@@ -228,6 +256,7 @@ class TestOperations(unittest.TestCase):
     def test_map_inferred_data_type_java_long_max(self):
         from fivetran_connector_sdk.operations import map_inferred_data_type
         from fivetran_connector_sdk.constants import JAVA_LONG_MAX_VALUE
+
         mapped = {}
         big_val = JAVA_LONG_MAX_VALUE + 1
         map_inferred_data_type("big", mapped, big_val)
@@ -279,6 +308,7 @@ class TestOperations(unittest.TestCase):
         self.assertEqual(mapped["a"].naive_datetime.seconds, 1704070923)
         # UTC_DATETIME
         from datetime import datetime, timezone
+
         columns = {"a": common_pb2.Column(name="a", type=common_pb2.DataType.UTC_DATETIME)}
         dt = datetime(2024, 1, 1, 1, 2, 3, tzinfo=timezone.utc)
         map_defined_data_type(columns["a"].type, "a", mapped, dt)
@@ -307,8 +337,10 @@ class TestOperations(unittest.TestCase):
 
     def test_map_defined_data_type_unsupported(self):
         from fivetran_connector_sdk.operations import map_defined_data_type
+
         class Col:
-            def __init__(self, t): self.type = t
+            def __init__(self, t):
+                self.type = t
 
         mapped = {}
         with self.assertRaises(ValueError):
@@ -316,6 +348,7 @@ class TestOperations(unittest.TestCase):
 
     def test_map_inferred_data_type_string_patterns(self):
         from fivetran_connector_sdk.operations import map_inferred_data_type
+
         mapped = {}
         # Email pattern
         map_inferred_data_type("email", mapped, "user@example.com")
@@ -340,6 +373,7 @@ class TestOperations(unittest.TestCase):
 
     def test_map_inferred_data_type_datetime_formats(self):
         from fivetran_connector_sdk.operations import map_inferred_data_type
+
         mapped = {}
         # ISO date
         map_inferred_data_type("iso_date", mapped, "2024-06-01")
@@ -364,6 +398,7 @@ class TestOperations(unittest.TestCase):
 
     def test_map_inferred_data_type_datetime_variations(self):
         from fivetran_connector_sdk.operations import map_inferred_data_type
+
         mapped = {}
         # Mixed formats
         map_inferred_data_type("mixed", mapped, "06-01/2024")
@@ -380,6 +415,7 @@ class TestOperations(unittest.TestCase):
 
     def test_infer_data_types_should_handle_geojson_wkt_address(self):
         from fivetran_connector_sdk.operations import map_inferred_data_type
+
         mapped = {}
         # GeoJSON
         geojson = '{"type":"Point","coordinates":[125.6, 10.1]}'
@@ -400,6 +436,7 @@ class TestOperations(unittest.TestCase):
 
     def test_infer_data_types_should_handle_corrupted_data(self):
         from fivetran_connector_sdk.operations import map_inferred_data_type
+
         mapped = {}
         # Malformed JSON
         malformed_json = '{"foo": "bar"'
@@ -420,13 +457,15 @@ class TestOperations(unittest.TestCase):
 
     def test_infer_data_types_should_handle_schema_evolution(self):
         from fivetran_connector_sdk.operations import map_inferred_data_type
+
         mapped = {}
         # Type widening: INT -> BIGINT
-        map_inferred_data_type("widen", mapped, 2 ** 40)
+        map_inferred_data_type("widen", mapped, 2**40)
         self.assertTrue(mapped["widen"].HasField("long") or mapped["widen"].HasField("float"))
         # Type narrowing: BIGINT -> INT
         map_inferred_data_type("narrow", mapped, 42)
         self.assertTrue(mapped["narrow"].HasField("long"))
+
         # Incompatible type change: INT -> USER-DEFINED DUMMY CLASS
         class Dummy:
             def __str__(self):
@@ -475,6 +514,7 @@ class TestOperations(unittest.TestCase):
 
     def test_connector_sdk_pb2_serialization(self):
         from fivetran_connector_sdk import Operations
+
         Operations.upsert("test_table", {"id": 1, "name": "test"})
         resp = Operations.operation_stream._queue.get()
         # Should be able to serialize to string (repr) or bytes (if supported)
@@ -573,13 +613,12 @@ class TestOperations(unittest.TestCase):
         result = _INFERENCE_TYPE_HANDLERS[str]("test")
         self.assertTrue(result.HasField("string"))
 
-
     def test_operations_new_path(self):
         from unittest.mock import patch
         from fivetran_connector_sdk import operations
         from fivetran_connector_sdk.protos import common_pb2
 
-        with patch.object(operations, '_use_row_data', return_value=True):
+        with patch.object(operations, "_use_row_data", return_value=True):
             for method, expected_type in [
                 (Operations.upsert, common_pb2.UPSERT),
                 (Operations.update, common_pb2.UPDATE),
@@ -617,6 +656,7 @@ class TestOperations(unittest.TestCase):
 
     def test_warning(self):
         import json
+
         Operations.warning("This is a warning message")
         warning_response = next(Operations.operation_stream)
         Operations.upsert("test_table", {"id": 1})
@@ -628,6 +668,7 @@ class TestOperations(unittest.TestCase):
 
     def test_error_without_trace_field(self):
         import json
+
         Operations.error("This is an error message")
         error_response = next(Operations.operation_stream)
         Operations.upsert("test_table", {"id": 1})
@@ -640,6 +681,7 @@ class TestOperations(unittest.TestCase):
 
     def test_error_with_trace_field(self):
         import json
+
         Operations.error("This is an error message", trace="Stack trace here")
         error_response = next(Operations.operation_stream)
         Operations.upsert("test_table", {"id": 1})
@@ -652,6 +694,7 @@ class TestOperations(unittest.TestCase):
 
     def test_error_with_blank_trace_field(self):
         import json
+
         Operations.error("This is an error message", trace="   ")
         error_response = next(Operations.operation_stream)
         Operations.upsert("test_table", {"id": 1})
@@ -693,6 +736,7 @@ class TestOperations(unittest.TestCase):
     def test_error_allows_none_trace(self):
         Operations.error("Something went wrong")
 
+
 class TestValidateMessage(unittest.TestCase):
 
     def test_raises_for_empty_string(self):
@@ -710,6 +754,7 @@ class TestValidateMessage(unittest.TestCase):
     def test_valid_message(self):
         _validate_message("Something went wrong")
 
+
 class TestValidateTrace(unittest.TestCase):
 
     def test_allows_none(self):
@@ -725,6 +770,7 @@ class TestValidateTrace(unittest.TestCase):
     def test_raises_type_error_for_non_string(self):
         with self.assertRaises(TypeError):
             _validate_trace(12345)
+
 
 class TestValidateTableName(unittest.TestCase):
 
@@ -745,6 +791,7 @@ class TestValidateTableName(unittest.TestCase):
 
     def test_valid_table_name_with_numeric_characters(self):
         _validate_table_name("table123")
+
 
 if __name__ == "__main__":
     unittest.main()

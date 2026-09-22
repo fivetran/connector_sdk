@@ -19,10 +19,12 @@ class TestConnectorUpdateYieldApproach(unittest.TestCase):
 
         # set the batch size to 1 for tests
         from fivetran_connector_sdk import operation_stream
+
         operation_stream.MAX_RECORDS_IN_BATCH = 1
 
         # Reset the operation_stream before each test
         from fivetran_connector_sdk.operations import _OperationStream
+
         Operations.operation_stream = _OperationStream()
 
         self.yield_update_method = yield_update_method
@@ -43,9 +45,16 @@ class TestConnectorUpdateYieldApproach(unittest.TestCase):
         for resp in self.connector.Update(self.request, MagicMock()):
             responses.append(resp)
             self.assertIsInstance(resp, type(update_response))
-            self.assertEqual(resp.structured_records.structured_records[0].table_name, "table_name")
-            self.assertTrue(f"pk_{count}" in str(resp.structured_records.structured_records[0].data["id"]))
-            self.assertTrue(f"message: {count}" in str(resp.structured_records.structured_records[0].data["name"]))
+            self.assertEqual(
+                resp.structured_records.structured_records[0].table_name, "table_name"
+            )
+            self.assertTrue(
+                f"pk_{count}" in str(resp.structured_records.structured_records[0].data["id"])
+            )
+            self.assertTrue(
+                f"message: {count}"
+                in str(resp.structured_records.structured_records[0].data["name"])
+            )
             count += 1
 
         self.assertEqual(len(responses), 5)
@@ -61,9 +70,16 @@ class TestConnectorUpdateYieldApproach(unittest.TestCase):
         for resp in self.connector.Update(self.request, MagicMock()):
             responses.append(resp)
             self.assertIsInstance(resp, type(update_response))
-            self.assertEqual(resp.structured_records.structured_records[0].table_name, "table_name")
-            self.assertTrue(f"pk_{count}" in str(resp.structured_records.structured_records[0].data["id"]))
-            self.assertTrue(f"message: {count}" in str(resp.structured_records.structured_records[0].data["name"]))
+            self.assertEqual(
+                resp.structured_records.structured_records[0].table_name, "table_name"
+            )
+            self.assertTrue(
+                f"pk_{count}" in str(resp.structured_records.structured_records[0].data["id"])
+            )
+            self.assertTrue(
+                f"message: {count}"
+                in str(resp.structured_records.structured_records[0].data["name"])
+            )
             count += 1
 
         self.assertEqual(len(responses), 5)
@@ -84,7 +100,9 @@ class TestConnectorUpdateYieldApproach(unittest.TestCase):
             for resp in connector.Update(self.request, MagicMock()):
                 responses.append(resp)
 
-        self.assertEqual(len(responses), 5) # the first 5 responses should be processed before the exception
+        self.assertEqual(
+            len(responses), 5
+        )  # the first 5 responses should be processed before the exception
 
     def test_no_yield_approach_with_type_error_in_update_method(self):
         def update_method_with_type_error(configuration, state):
@@ -100,5 +118,6 @@ class TestConnectorUpdateYieldApproach(unittest.TestCase):
         # The TypeError should now be re-raised as RuntimeError after the change
         self.assertIn("'NoneType' object is not iterable", str(context.exception))
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()

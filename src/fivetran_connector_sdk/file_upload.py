@@ -30,7 +30,7 @@ class FileUpload:
         if isinstance(self.path, str):
             trimmed_path = self.path.strip()
             # Use object.__setattr__ since the dataclass is frozen
-            object.__setattr__(self, 'path', trimmed_path)
+            object.__setattr__(self, "path", trimmed_path)
 
 
 # Short timeout for worker thread shutdown since it's a daemon thread
@@ -50,11 +50,9 @@ def _validate_path(path: str) -> None:
         raise ValueError(
             f"Invalid file path: expected a string, but received {type(path).__name__}."
         )
-    
+
     if not path:
-        raise ValueError(
-            "Invalid file path: path cannot be empty or contain only whitespace."
-        )
+        raise ValueError("Invalid file path: path cannot be empty or contain only whitespace.")
     if "\x00" in path:
         raise ValueError(
             "Invalid file path: path contains null bytes (\\x00), which are not allowed. "
@@ -106,7 +104,7 @@ def _validate_expected_bytes(expected_bytes: Optional[int]) -> None:
 
 def validate_file_upload_if_present(file_upload: Optional[FileUpload]) -> None:
     """Validate FileUpload path, stream interface, and expected_bytes.
-    
+
     Raises ValueError for invalid fields.
     """
     if file_upload is None:
@@ -121,9 +119,11 @@ def validate_file_upload_if_present(file_upload: Optional[FileUpload]) -> None:
     _validate_expected_bytes(file_upload.expected_bytes)
 
 
-def file_upload_chunks(table: str, file_upload: FileUpload) -> Iterator[connector_sdk_pb2.UnstructuredRecord]:
+def file_upload_chunks(
+    table: str, file_upload: FileUpload
+) -> Iterator[connector_sdk_pb2.UnstructuredRecord]:
     """Generator that reads from stream and yields UnstructuredRecord chunks.
-    
+
     Reads in chunks up to FILE_UPLOAD_CHUNK_SIZE_BYTES with per-read timeout.
     Always emits a final chunk with empty data and is_last=True after reading all data.
     """
@@ -131,7 +131,7 @@ def file_upload_chunks(table: str, file_upload: FileUpload) -> Iterator[connecto
         while True:
             data = _read_next_chunk(reader, FILE_UPLOAD_CHUNK_SIZE_BYTES)
             is_last = len(data) == 0
-            
+
             chunk_args = {
                 "storage_name": table,
                 "file_path": file_upload.path,
@@ -142,14 +142,14 @@ def file_upload_chunks(table: str, file_upload: FileUpload) -> Iterator[connecto
                 chunk_args["expected_bytes"] = file_upload.expected_bytes
 
             yield connector_sdk_pb2.UnstructuredRecord(**chunk_args)
-            
+
             if is_last:
                 break
 
 
 def _read_next_chunk(reader, chunk_size: int) -> bytes:
     """Read up to chunk_size bytes from reader, handling partial reads.
-    
+
     Loops until buffer is full or EOF. Returns empty bytes if stream exhausted.
     """
     buffer = bytearray()
@@ -169,9 +169,10 @@ def _read_next_chunk(reader, chunk_size: int) -> bytes:
 
 class _FileUploadReader:
     """Wraps a ByteStream with per-read timeout enforcement using a worker thread.
-    
+
     Prevents connector hangs when file upload streams block indefinitely.
     """
+
     _SENTINEL = object()
 
     def __init__(self, stream: ByteStream, timeout_sec: int):

@@ -120,7 +120,9 @@ class DropdownField:
         placeholder: Optional[str] = None,
     ) -> common_pb2.FormField:
         if not fields:
-            raise ValueError(f"DropdownField '{name}' must define at least one option in 'fields'.")
+            raise ValueError(
+                f"DropdownField '{name}' must define at least one option in 'fields'."
+            )
         field = common_pb2.FormField(
             name=name,
             label=label,
@@ -170,4 +172,3 @@ class ToggleField:
         if description is not None:
             field.description = description
         return field
-

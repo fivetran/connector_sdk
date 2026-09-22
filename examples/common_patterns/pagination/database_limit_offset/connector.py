@@ -200,12 +200,14 @@ def sync_items(connection, table_name, offset, state):
         while True:
             # Fetch a page of rows. A deterministic ORDER BY is required so that OFFSET refers to a
             # consistent position across requests.
-            query = sql.SQL("""
+            query = sql.SQL(
+                """
                 SELECT id, name, email, updated_at
                 FROM {table}
                 ORDER BY updated_at, id
                 LIMIT %s OFFSET %s
-                """).format(table=sql.Identifier(table_name))
+                """
+            ).format(table=sql.Identifier(table_name))
 
             cursor.execute(query, (__ROWS_PER_PAGE, offset))
             columns = [col[0].lower() for col in cursor.description]

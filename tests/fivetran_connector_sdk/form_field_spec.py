@@ -122,8 +122,12 @@ class TestDropdownField(unittest.TestCase):
         self.assertFalse(field.HasField("dropdown_field"))
         self.assertTrue(field.HasField("descriptive_dropdown_fields"))
         items = list(field.descriptive_dropdown_fields.descriptive_dropdown_field)
-        self.assertEqual([item.value for item in items], ["TrustPilot_CurrentDate", "TrustPilot_History"])
-        self.assertEqual([item.label for item in items], ["TrustPilot_CurrentDate", "TrustPilot_History"])
+        self.assertEqual(
+            [item.value for item in items], ["TrustPilot_CurrentDate", "TrustPilot_History"]
+        )
+        self.assertEqual(
+            [item.label for item in items], ["TrustPilot_CurrentDate", "TrustPilot_History"]
+        )
         self.assertEqual([item.description for item in items], ["", ""])
 
     def test_fields_with_labels_and_descriptions_returns_descriptive_dropdown_field(self):
@@ -191,12 +195,15 @@ class TestToggleField(unittest.TestCase):
         self.assertTrue(field.HasField("toggle_field"))
 
     def test_optional_description(self):
-        field = form_field.ToggleField("enable_tls", "Enable TLS", description="Use TLS encryption")
+        field = form_field.ToggleField(
+            "enable_tls", "Enable TLS", description="Use TLS encryption"
+        )
         self.assertEqual(field.description, "Use TLS encryption")
 
     def test_required_flag(self):
         field = form_field.ToggleField("enable_tls", "Enable TLS", required=True)
         self.assertTrue(field.required)
+
 
 if __name__ == "__main__":
     unittest.main()

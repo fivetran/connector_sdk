@@ -41,7 +41,7 @@ def get_debug_memory_bytes() -> int:
         elif sys.platform == "win32":
             import ctypes
             import ctypes.wintypes
-            
+
             class ProcessMemoryCounters(ctypes.Structure):
                 _fields_ = [
                     ("cb", ctypes.wintypes.DWORD),
@@ -55,7 +55,7 @@ def get_debug_memory_bytes() -> int:
                     ("PagefileUsage", ctypes.c_size_t),
                     ("PeakPagefileUsage", ctypes.c_size_t),
                 ]
-            
+
             pmc = ProcessMemoryCounters()
             pmc.cb = ctypes.sizeof(pmc)
             kernel32 = ctypes.windll.kernel32
@@ -74,7 +74,7 @@ def get_debug_memory_bytes() -> int:
                 return pmc.WorkingSetSize
     except Exception:
         pass
-    
+
     return -1
 
 
@@ -90,21 +90,21 @@ def _get_sync_memory_bytes() -> int:
     # Try cgroups first (production containers)
     try:
         # Try cgroups v2 first
-        total_path = '/sys/fs/cgroup/memory.current'
-        stat_path = '/sys/fs/cgroup/memory.stat'
+        total_path = "/sys/fs/cgroup/memory.current"
+        stat_path = "/sys/fs/cgroup/memory.stat"
 
         # Fallback to cgroups v1
         if not os.path.exists(total_path):
-            total_path = '/sys/fs/cgroup/memory/memory.usage_in_bytes'
-            stat_path = '/sys/fs/cgroup/memory/memory.stat'
+            total_path = "/sys/fs/cgroup/memory/memory.usage_in_bytes"
+            stat_path = "/sys/fs/cgroup/memory/memory.stat"
 
-        with open(total_path, 'r') as f:
+        with open(total_path, "r") as f:
             total_bytes = int(f.read().strip())
 
         inactive_file_bytes = 0
-        with open(stat_path, 'r') as f:
+        with open(stat_path, "r") as f:
             for line in f:
-                if line.startswith('inactive_file '):
+                if line.startswith("inactive_file "):
                     inactive_file_bytes = int(line.split()[1])
                     break
 
@@ -120,7 +120,7 @@ def _log_memory_constraint_warning(memory_limit_bytes: int) -> None:
     print_library_log(
         f"could not enforce memory constraint of {memory_limit_bytes // (1024 ** 3)} GB; "
         "debug will continue without memory constraint",
-        Logging.Level.WARNING
+        Logging.Level.WARNING,
     )
 
 
@@ -183,7 +183,7 @@ class DebugMemoryTracker(_MemoryTrackerBase):
         print_library_log(
             f"enforcing a {self.memory_limit_bytes // (1024 ** 3)} GB memory limit for local testing. "
             "Connectors may be subject to memory limits in production as well",
-            Logging.Level.INFO
+            Logging.Level.INFO,
         )
 
         try:
@@ -203,7 +203,7 @@ class DebugMemoryTracker(_MemoryTrackerBase):
             except Exception:
                 print_library_log(
                     "peak memory reporting could not be registered; memory limit is still enforced",
-                    Logging.Level.WARNING
+                    Logging.Level.WARNING,
                 )
 
     def _monitor_loop(self):
@@ -223,17 +223,17 @@ class DebugMemoryTracker(_MemoryTrackerBase):
                 self.record_sample(current_bytes)
 
                 if current_bytes > self.memory_limit_bytes:
-                    used_gb = current_bytes / (1024 ** 3)
-                    limit_gb = self.memory_limit_bytes / (1024 ** 3)
+                    used_gb = current_bytes / (1024**3)
+                    limit_gb = self.memory_limit_bytes / (1024**3)
                     print_library_log(
                         f"memory usage of connector code exceeded the allowed limit "
                         f"(used: {used_gb:.2f} GB, limit: {limit_gb:.2f} GB)",
-                        Logging.Level.SEVERE
+                        Logging.Level.SEVERE,
                     )
                     print_library_log(
                         "refer to https://fivetran.com/docs/connector-sdk/connector-development-and-configuration/connector-memory-management "
                         "for analysing and fixing memory usage",
-                        Logging.Level.SEVERE
+                        Logging.Level.SEVERE,
                     )
                     sys.stdout.flush()
                     sys.stderr.flush()
@@ -248,7 +248,7 @@ class DebugMemoryTracker(_MemoryTrackerBase):
 
     def stop(self, timeout=3.0):
         """Stop monitoring (no-op for debug mode).
-        
+
         Debug mode logs at exit via atexit hook, not here.
         The daemon thread will exit when the main thread exits.
         """
@@ -280,12 +280,12 @@ class SyncMemoryTracker(_MemoryTrackerBase):
                 print_library_log(
                     "Memory reading unavailable. Continuing without tracking.",
                     Logging.Level.WARNING,
-                    dev_log=True
+                    dev_log=True,
                 )
                 self.active = False
                 self.monitor_thread = None
                 return
-            
+
             self.active = True
             self.monitor_thread = threading.Thread(target=self._monitor_loop, daemon=False)
             self.monitor_thread.start()
@@ -293,7 +293,7 @@ class SyncMemoryTracker(_MemoryTrackerBase):
             print_library_log(
                 f"Failed to start memory tracking: {exception}. Continuing without tracking.",
                 Logging.Level.WARNING,
-                dev_log=True
+                dev_log=True,
             )
             self.active = False
             self.monitor_thread = None

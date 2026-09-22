@@ -8,18 +8,9 @@ WIN_OS = "windows"
 ARM_64 = "arm64"
 X64 = "x64"
 
-OS_MAP = {
-    "darwin": "mac",
-    "linux": "linux",
-    WIN_OS: WIN_OS
-}
+OS_MAP = {"darwin": "mac", "linux": "linux", WIN_OS: WIN_OS}
 
-ARCH_MAP = {
-    "x86_64": X64,
-    "amd64": X64,
-    ARM_64: ARM_64,
-    "aarch64": ARM_64
-}
+ARCH_MAP = {"x86_64": X64, "amd64": X64, ARM_64: ARM_64, "aarch64": ARM_64}
 
 # Constants and cache for operations.py
 UNSPECIFIED_COLUMNS_TYPE = common_pb2.DataType.UNSPECIFIED
@@ -48,16 +39,20 @@ OUTPUT_FILES_DIR = "files"
 REQUIREMENTS_TXT = "requirements.txt"
 PYPROJECT_TOML = "pyproject.toml"
 PYPROJECT_SKIP_VALIDATION_MESSAGE = "using pyproject.toml; skipping dependency validation"
-RECOMMEND_STABLE_VERSION_MESSAGE = "We recommend using the current stable version for the following libraries:"
+RECOMMEND_STABLE_VERSION_MESSAGE = (
+    "We recommend using the current stable version for the following libraries:"
+)
 CONFIGURATION_JSON = "configuration.json"
 FIVETRAN_API_KEY_ENV = "FIVETRAN_API_KEY"
 FIVETRAN_DESTINATION_NAME_ENV = "FIVETRAN_DESTINATION_NAME"
 FIVETRAN_CONNECTION_NAME_ENV = "FIVETRAN_CONNECTION_NAME"
 PYPI_PACKAGE_DETAILS_URL = "https://pypi.org/pypi/fivetran_connector_sdk/json"
 SIX_HOUR_IN_SEC = 6 * 60 * 60
-MEMORY_LIMIT_BYTES = 4 * 1024 ** 3  # 4 GB memory limit to simulate memory constraints during local debug
-CHECKPOINT_OP_TIMEOUT_IN_SEC = 120 # seconds
-FIFO_READ_TIMEOUT_SECONDS = 30 # seconds - timeout for reading from FIFOs (named pipes)
+MEMORY_LIMIT_BYTES = (
+    4 * 1024**3
+)  # 4 GB memory limit to simulate memory constraints during local debug
+CHECKPOINT_OP_TIMEOUT_IN_SEC = 120  # seconds
+FIFO_READ_TIMEOUT_SECONDS = 30  # seconds - timeout for reading from FIFOs (named pipes)
 MAX_RETRIES = 3
 SDK_LOGGING_PREFIX = "⚡ sdk "
 DEBUGGER_LOGGING_PREFIX = "⚡ debugger"
@@ -66,17 +61,26 @@ VIRTUAL_ENV_CONFIG = "pyvenv.cfg"
 GITIGNORE_FILENAME = ".gitignore"
 ROOT_FILENAME = "connector.py"
 MAX_RECORDS_IN_BATCH = 100
-MAX_BATCH_SIZE_IN_BYTES = 100000 # Default 100 KB
+MAX_BATCH_SIZE_IN_BYTES = 100000  # Default 100 KB
 QUEUE_SIZE = 100
 CONNECTOR_SDK_MEMORY_TRACKING_IN_SYNC = "CONNECTOR_SDK_MEMORY_TRACKING_IN_SYNC"
-FILE_UPLOAD_CHUNK_SIZE_BYTES = int(2 * 1024 * 1024) # 2 MB
-FILE_UPLOAD_READ_TIMEOUT_SEC = int(300) # 5 minutes
+FILE_UPLOAD_CHUNK_SIZE_BYTES = int(2 * 1024 * 1024)  # 2 MB
+FILE_UPLOAD_READ_TIMEOUT_SEC = int(300)  # 5 minutes
 FIVETRAN_FILE_PATH_COLUMN = "_fivetran_file_path"
 
 ALWAYS_INCLUDED_FILES = [GITIGNORE_FILENAME]
 EXCLUDED_DIRS = ["__pycache__", "lib", "include", OUTPUT_FILES_DIR]
 EXCLUDED_PIPREQS_DIRS = ["bin,etc,include,lib,Lib,lib64,Scripts,share"]
-VALID_COMMANDS = ["version", "init", "debug", "deploy", "reset", "package", "configuration", "help"]
+VALID_COMMANDS = [
+    "version",
+    "init",
+    "debug",
+    "deploy",
+    "reset",
+    "package",
+    "configuration",
+    "help",
+]
 DEPRECATED_FORCE_FLAG_WARNING = (
     "--force and -f are deprecated and will be removed in a future release. "
     "Use --non-interactive or --yes instead. See help for more details."
@@ -85,10 +89,17 @@ MAX_ALLOWED_EDIT_DISTANCE_FROM_VALID_COMMAND = 3
 COMMANDS_AND_SYNONYMS = {
     "debug": {"test", "verify", "diagnose", "check"},
     "deploy": {"upload", "ship", "launch", "release"},
-    "reset": {"reinitialize", "reinitialise", "re-initialize", "re-initialise", "restart", "restore"},
+    "reset": {
+        "reinitialize",
+        "reinitialise",
+        "re-initialize",
+        "re-initialise",
+        "restart",
+        "restore",
+    },
 }
 
-CONNECTION_SCHEMA_NAME_PATTERN = r'^[_a-z][_a-z0-9]*$'
+CONNECTION_SCHEMA_NAME_PATTERN = r"^[_a-z][_a-z0-9]*$"
 PRODUCTION_BASE_URL = "https://api.fivetran.com"
 INSTALLATION_SCRIPT_MISSING_MESSAGE = "installation.sh not found in the drivers directory; this file is required to configure custom drivers"
 INSTALLATION_SCRIPT = "installation.sh"
@@ -143,7 +154,15 @@ AGENT_PLUGINS = {
         "display_name": "Gemini CLI",
         "cli_command": "gemini",
         "install_commands": [
-            ["gemini", "extensions", "install", TOOLS_GITHUB_REPO_URL, "--consent", "--skip-settings", "--auto-update"],
+            [
+                "gemini",
+                "extensions",
+                "install",
+                TOOLS_GITHUB_REPO_URL,
+                "--consent",
+                "--skip-settings",
+                "--auto-update",
+            ],
         ],
     },
     "copilot": {
@@ -158,5 +177,7 @@ AGENT_PLUGINS = {
         ],
     },
 }
-SUPPORTED_AGENT_DISPLAY_NAMES = ", ".join(config["display_name"] for config in AGENT_PLUGINS.values())
+SUPPORTED_AGENT_DISPLAY_NAMES = ", ".join(
+    config["display_name"] for config in AGENT_PLUGINS.values()
+)
 TEMPLATE_CONNECTOR_PATH = "_template_connector"

@@ -11,7 +11,11 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../.
 sys.modules.pop("fivetran_connector_sdk.configuration_decryption", None)
 sys.modules.pop("fivetran_connector_sdk", None)
 
-from fivetran_connector_sdk.configuration_decryption import decrypt_configuration_values, _decrypt_value, _load_key
+from fivetran_connector_sdk.configuration_decryption import (
+    decrypt_configuration_values,
+    _decrypt_value,
+    _load_key,
+)
 from fivetran_connector_sdk.constants import ENCRYPTED_VALUE_PREFIX, UTF_8
 
 NONCE_LENGTH_BYTES = 12
@@ -49,8 +53,10 @@ class TestConfigEncryption(unittest.TestCase):
         configuration = {"password": f"{ENCRYPTED_VALUE_PREFIX}anything"}
 
         with tempfile.TemporaryDirectory() as tmpdir:
-            with patch("fivetran_connector_sdk.configuration_decryption._key_file_path",
-                       return_value=os.path.join(tmpdir, "config_encryption_key")):
+            with patch(
+                "fivetran_connector_sdk.configuration_decryption._key_file_path",
+                return_value=os.path.join(tmpdir, "config_encryption_key"),
+            ):
                 with self.assertRaises(ValueError) as context:
                     decrypt_configuration_values(configuration)
 
@@ -66,7 +72,10 @@ class TestConfigEncryption(unittest.TestCase):
                 "password": _encrypt(key, "password", "s3cr3t"),
             }
 
-            with patch("fivetran_connector_sdk.configuration_decryption._key_file_path", return_value=key_path):
+            with patch(
+                "fivetran_connector_sdk.configuration_decryption._key_file_path",
+                return_value=key_path,
+            ):
                 result = decrypt_configuration_values(configuration)
 
         self.assertEqual(result["host"], "db.example.com")
@@ -78,7 +87,10 @@ class TestConfigEncryption(unittest.TestCase):
             with open(key_path, "w", encoding=UTF_8) as f:
                 f.write("not-valid-base64!!")
 
-            with patch("fivetran_connector_sdk.configuration_decryption._key_file_path", return_value=key_path):
+            with patch(
+                "fivetran_connector_sdk.configuration_decryption._key_file_path",
+                return_value=key_path,
+            ):
                 with self.assertRaises(ValueError) as context:
                     _load_key()
 
@@ -92,7 +104,10 @@ class TestConfigEncryption(unittest.TestCase):
             with open(key_path, "w", encoding=UTF_8) as f:
                 f.write(base64.b64encode(invalid_key).decode(UTF_8))
 
-            with patch("fivetran_connector_sdk.configuration_decryption._key_file_path", return_value=key_path):
+            with patch(
+                "fivetran_connector_sdk.configuration_decryption._key_file_path",
+                return_value=key_path,
+            ):
                 with self.assertRaises(ValueError) as context:
                     _load_key()
 
@@ -115,7 +130,7 @@ class TestConfigEncryption(unittest.TestCase):
 
     def test_decrypt_value_round_trips_with_matching_field_name(self):
         key = _generate_key()
-        encrypted = _encrypt(key,"password","s3cr3t")
+        encrypted = _encrypt(key, "password", "s3cr3t")
 
         result = _decrypt_value(encrypted, "password", key)
 
@@ -128,7 +143,9 @@ class TestConfigEncryption(unittest.TestCase):
         with self.assertRaises(ValueError) as context:
             _decrypt_value(encrypted, "other_field", key)
 
-        self.assertIn("failed to decrypt configuration field 'other_field'", str(context.exception))
+        self.assertIn(
+            "failed to decrypt configuration field 'other_field'", str(context.exception)
+        )
 
     def test_decrypt_value_raises_when_ciphertext_corrupted(self):
         key = _generate_key()
@@ -137,10 +154,10 @@ class TestConfigEncryption(unittest.TestCase):
         # but its decoded bytes differ, causing GCM tag verification to fail. Appending garbage
         # after the padding would not work here: base64.b64decode() stops at the padding and
         # silently ignores anything after it, so the ciphertext would decode unchanged.
-        body = encrypted[len(ENCRYPTED_VALUE_PREFIX):]
+        body = encrypted[len(ENCRYPTED_VALUE_PREFIX) :]
         index = len(body) - 6
         flipped_char = "A" if body[index] != "A" else "B"
-        corrupted = ENCRYPTED_VALUE_PREFIX + body[:index] + flipped_char + body[index + 1:]
+        corrupted = ENCRYPTED_VALUE_PREFIX + body[:index] + flipped_char + body[index + 1 :]
 
         with self.assertRaises(ValueError) as context:
             _decrypt_value(corrupted, "password", key)
@@ -159,7 +176,9 @@ class TestConfigEncryption(unittest.TestCase):
 
     def test_decrypt_value_raises_when_ciphertext_shorter_than_nonce_length(self):
         key = _generate_key()
-        truncated_ciphertext = ENCRYPTED_VALUE_PREFIX + base64.b64encode(b"too_short").decode(UTF_8)
+        truncated_ciphertext = ENCRYPTED_VALUE_PREFIX + base64.b64encode(b"too_short").decode(
+            UTF_8
+        )
 
         with self.assertRaises(ValueError) as context:
             _decrypt_value(truncated_ciphertext, "password", key)

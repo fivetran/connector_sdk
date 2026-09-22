@@ -26,7 +26,7 @@ from fivetran_connector_sdk.constants import (
     VALID_COMMANDS,
     OUTPUT_FILES_DIR,
     UTF_8,
-    FIFO_READ_TIMEOUT_SECONDS
+    FIFO_READ_TIMEOUT_SECONDS,
 )
 
 
@@ -41,7 +41,7 @@ class PromptMode(Enum):
         return self != PromptMode.INTERACTIVE
 
     @classmethod
-    def from_args(cls, non_interactive: bool, force: bool, yes: bool) -> 'PromptMode':
+    def from_args(cls, non_interactive: bool, force: bool, yes: bool) -> "PromptMode":
         active = [
             (cls.DEFAULT_ANSWER, non_interactive),
             (cls.FORCE, force),
@@ -52,6 +52,7 @@ class PromptMode(Enum):
             flags = " and ".join(m.value for m in active_modes)
             raise ValueError(f"{flags} cannot be used together")
         return active_modes[0] if active_modes else cls.INTERACTIVE
+
 
 def _validate_table_name(table: str) -> None:
     if not isinstance(table, str):
@@ -128,7 +129,7 @@ def safe_read_file(filepath, timeout_seconds=FIFO_READ_TIMEOUT_SECONDS):
     """
     if not is_fifo(filepath):
         # Regular file - open normally
-        with open(filepath, 'r', encoding=UTF_8) as f:
+        with open(filepath, "r", encoding=UTF_8) as f:
             return f.read()
 
     # FIFO - use non-blocking open with timeout
@@ -150,11 +151,12 @@ def safe_read_file(filepath, timeout_seconds=FIFO_READ_TIMEOUT_SECONDS):
         # Without this, read() on a non-blocking fd returns only currently buffered
         # bytes, which can cause truncated reads if the writer emits data in chunks.
         import fcntl  # Unix-only, imported lazily to avoid breaking Windows for non-FIFO paths
+
         flags = fcntl.fcntl(fd, fcntl.F_GETFL)
         fcntl.fcntl(fd, fcntl.F_SETFL, flags & ~os.O_NONBLOCK)
 
         # Read all data - fdopen takes ownership of fd
-        with os.fdopen(fd, 'r', encoding=UTF_8) as f:
+        with os.fdopen(fd, "r", encoding=UTF_8) as f:
             fd = None  # Prevent double-close in finally block
             return f.read()
     finally:
@@ -162,7 +164,13 @@ def safe_read_file(filepath, timeout_seconds=FIFO_READ_TIMEOUT_SECONDS):
             os.close(fd)
 
 
-def print_library_log(message: str, level: Logging.Level = Logging.Level.INFO, dev_log: bool = False, log_icon: Logging.LogIcon = Logging.LogIcon.NONE, indent: bool = False):
+def print_library_log(
+    message: str,
+    level: Logging.Level = Logging.Level.INFO,
+    dev_log: bool = False,
+    log_icon: Logging.LogIcon = Logging.LogIcon.NONE,
+    indent: bool = False,
+):
     """Logs a library message with the specified logging level.
     Args:
         level (Logging.Level): The logging level.
@@ -182,12 +190,12 @@ def print_library_log(message: str, level: Logging.Level = Logging.Level.INFO, d
         current_time = now.strftime("%H:%M:%S.") + f"{now.microsecond // 1000:03d}"
         log_origin = Logging.get_aligned_log_origin(SDK_LOGGING_PREFIX.strip())
         prefix = f"{current_time} {Logging.get_aligned_level_name(level)} {log_origin} "
-        
+
         if "\n" in message:
-            lines = message.split('\n')
+            lines = message.split("\n")
             continuation_indent = Logging.get_display_width(prefix)
             message = f"\n{' ' * continuation_indent}".join(lines)
-        
+
         print(Logging.colorize(f"{prefix}{message}", level))
     elif constants.EXECUTED_VIA_CLI:
         # Other CLI commands (deploy, init, etc.): concise format with icons and colors
@@ -226,6 +234,7 @@ def add_icon_to_log_message(message: str, log_icon: Logging.LogIcon):
 
 # Functions used by main method only
 
+
 def find_connector_object(project_path):
     """Finds the connector object in the given project path.
     Args:
@@ -244,21 +253,25 @@ def find_connector_object(project_path):
         # (Connector is defined in __init__.py which imports this file).
         connector_instances = {}
         for obj, obj_attr in vars(module).items():
-            if not obj.startswith('__'):  # Exclude built-in attributes
+            if not obj.startswith("__"):  # Exclude built-in attributes
                 obj_type = type(obj_attr)
-                if obj_type.__name__ == 'Connector' and obj_type.__module__ == 'fivetran_connector_sdk':
+                if (
+                    obj_type.__name__ == "Connector"
+                    and obj_type.__module__ == "fivetran_connector_sdk"
+                ):
                     connector_instances[obj] = obj_attr
         # The variable must be named 'connector' because production runs: from connector import connector
-        if 'connector' in connector_instances:
-            return connector_instances['connector']
+        if "connector" in connector_instances:
+            return connector_instances["connector"]
         if connector_instances:
-            names_str = ', '.join(f"'{n}'" for n in sorted(connector_instances.keys()))
+            names_str = ", ".join(f"'{n}'" for n in sorted(connector_instances.keys()))
             print_library_log(
                 f"Connector object must be named 'connector', but found: {names_str}\n"
                 f"rename it to 'connector' in connector.py\n"
                 f"example: connector = Connector(update=update, schema=schema)\n"
                 f"reference: https://fivetran.com/docs/connectors/connector-sdk/technical-reference#technicaldetailsrequiredobjectconnector",
-                Logging.Level.SEVERE)
+                Logging.Level.SEVERE,
+            )
             return None
 
     except TypeError as e:
@@ -269,17 +282,20 @@ def find_connector_object(project_path):
             f"error in connector.py {location}"
             f"{e}\n"
             f"reference: https://fivetran.com/docs/connectors/connector-sdk/technical-reference#technicaldetailsrequiredobjectconnector",
-            Logging.Level.SEVERE)
+            Logging.Level.SEVERE,
+        )
         return None
     except FileNotFoundError:
         print_library_log(
             f"connector.py not found in {project_path}\nthis file is required to start a sync\nreference: https://fivetran.com/docs/connectors/connector-sdk/technical-reference#technicaldetailsrequiredobjectconnector",
-            Logging.Level.SEVERE)
+            Logging.Level.SEVERE,
+        )
         return None
 
     print_library_log(
         "connector object not found\ndefine a Connector object in connector.py\nreference: https://fivetran.com/docs/connectors/connector-sdk/technical-reference#technicaldetailsrequiredobjectconnector",
-        Logging.Level.SEVERE)
+        Logging.Level.SEVERE,
+    )
     return None
 
 
@@ -287,7 +303,9 @@ def suggest_correct_command(input_command: str) -> bool:
     # for typos
     # calculate the edit distance of the input command (lowercased) with each of the valid commands
     edit_distances_of_commands = sorted(
-        [(command, edit_distance(command, input_command.lower())) for command in VALID_COMMANDS], key=lambda x: x[1])
+        [(command, edit_distance(command, input_command.lower())) for command in VALID_COMMANDS],
+        key=lambda x: x[1],
+    )
 
     if edit_distances_of_commands[0][1] <= MAX_ALLOWED_EDIT_DISTANCE_FROM_VALID_COMMAND:
         # if the closest command is within the max allowed edit distance, we suggest that command
@@ -296,7 +314,7 @@ def suggest_correct_command(input_command: str) -> bool:
         return True
 
     # for synonyms
-    for (command, synonyms) in COMMANDS_AND_SYNONYMS.items():
+    for command, synonyms in COMMANDS_AND_SYNONYMS.items():
         # check if the input command (lowercased) is a recognised synonym of the valid commands, if yes, suggest that command
         if input_command.lower() in synonyms:
             print_suggested_command_message(command, input_command)
@@ -333,7 +351,13 @@ def edit_distance(first_string: str, second_string: str) -> int:
             else:
                 # Minimum cost of insertion, deletion, or substitution
                 current_row.append(
-                    1 + min(current_row[-1], previous_row[second_string_index], previous_row[second_string_index - 1]))
+                    1
+                    + min(
+                        current_row[-1],
+                        previous_row[second_string_index],
+                        previous_row[second_string_index - 1],
+                    )
+                )
 
         # Move to the next row
         previous_row = current_row
@@ -341,20 +365,19 @@ def edit_distance(first_string: str, second_string: str) -> int:
     # The last value in the last row is the edit distance
     return previous_row[second_string_length]
 
+
 class EnvironmentVariableCompleter(Completer):
     def get_completions(self, document, complete_event):
         text = document.text_before_cursor
-        if text.startswith('$'):
+        if text.startswith("$"):
             # Get the variable name part (text after the '$')
             var_name = text[1:]
 
             # Suggest all environment variables that start with the typed name
             for env_var in os.environ:
                 if env_var.startswith(var_name):
-                    yield Completion(
-                        f'${env_var}',
-                        start_position=-len(text)
-                    )
+                    yield Completion(f"${env_var}", start_position=-len(text))
+
 
 class EnvVarPathCompleter(Completer):
     def get_completions(self, document, complete_event):
@@ -362,39 +385,56 @@ class EnvVarPathCompleter(Completer):
         expanded_text = os.path.expandvars(text_before_cursor)
 
         # Create a new document for the PathCompleter to use
-        expanded_document = Document(
-            text=expanded_text, cursor_position=len(expanded_text)
-        )
+        expanded_document = Document(text=expanded_text, cursor_position=len(expanded_text))
 
         # Use a standard PathCompleter on our new, temporary document
         path_completer = PathCompleter(expanduser=True)
         yield from path_completer.get_completions(expanded_document, complete_event)
 
 
-def get_input_from_cli(prompt_txt: str, default_value: str, hide_value = False) -> str:
+def get_input_from_cli(prompt_txt: str, default_value: str, hide_value=False) -> str:
     """
     Prompts the user for input.
     """
     final_completer = merge_completers([EnvironmentVariableCompleter(), EnvVarPathCompleter()])
-    history = FileHistory(os.path.join(os.path.expanduser('~'), '.fivetran_history'))
+    history = FileHistory(os.path.join(os.path.expanduser("~"), ".fivetran_history"))
     if default_value:
         if hide_value:
             default_value_hidden = default_value[0:8] + "********"
-            value = prompt(f"{prompt_txt} [Default : {default_value_hidden}]: ",
-                           completer=final_completer, history=history, complete_while_typing=False, complete_style='readline_like'
-                           ).strip() or default_value
+            value = (
+                prompt(
+                    f"{prompt_txt} [Default : {default_value_hidden}]: ",
+                    completer=final_completer,
+                    history=history,
+                    complete_while_typing=False,
+                    complete_style="readline_like",
+                ).strip()
+                or default_value
+            )
         else:
-            value = prompt(f"{prompt_txt} [Default : {default_value}]: ",
-                           completer=final_completer, history=history, complete_while_typing=False, complete_style='readline_like'
-                           ).strip() or default_value
+            value = (
+                prompt(
+                    f"{prompt_txt} [Default : {default_value}]: ",
+                    completer=final_completer,
+                    history=history,
+                    complete_while_typing=False,
+                    complete_style="readline_like",
+                ).strip()
+                or default_value
+            )
     else:
-        value = prompt(f"{prompt_txt}: ",
-                       completer=final_completer, history=history, complete_while_typing=False, complete_style='readline_like'
-                       ).strip()
+        value = prompt(
+            f"{prompt_txt}: ",
+            completer=final_completer,
+            history=history,
+            complete_while_typing=False,
+            complete_style="readline_like",
+        ).strip()
 
     if not value:
         raise ValueError("Missing required input: Expected a value but received None")
     return os.path.expandvars(value)
+
 
 def _resolve_existing_project_path(project_path: str) -> str:
     if project_path is None or not str(project_path).strip():
@@ -414,7 +454,8 @@ def validate_and_load_configuration(project_path, configuration):
 
     configuration = os.path.expanduser(configuration)
     json_filepath = os.path.abspath(
-        configuration if os.path.isabs(configuration)
+        configuration
+        if os.path.isabs(configuration)
         else os.path.join(project_path, configuration)
     )
 
@@ -427,7 +468,8 @@ def validate_and_load_configuration(project_path, configuration):
         content = safe_read_file(json_filepath)
     except OSError as e:
         raise ValueError(
-            str(e) if isinstance(e, TimeoutError)
+            str(e)
+            if isinstance(e, TimeoutError)
             else f"Cannot read configuration file at {json_filepath}: {e}"
         ) from e
 
@@ -462,11 +504,11 @@ def validate_and_load_state(args, state):
             except TimeoutError as e:
                 raise ValueError(str(e)) from e
             except OSError as e:
-                raise ValueError(
-                    f"Cannot read state file at {json_filepath}: {e}") from e
+                raise ValueError(f"Cannot read state file at {json_filepath}: {e}") from e
         else:
             raise ValueError(
-                f"State path is incorrect, cannot find file at the location {json_filepath}")
+                f"State path is incorrect, cannot find file at the location {json_filepath}"
+            )
     else:
         state = {}
     return state
@@ -474,8 +516,11 @@ def validate_and_load_state(args, state):
 
 def reset_local_file_directory(args, prompt_mode: PromptMode):
     files_path = os.path.join(args.project_path, OUTPUT_FILES_DIR)
-    if not resolve_confirmation("This will delete your current state and `warehouse.db` files. Do you want to continue? (Y/n): ",
-                                default=True, prompt_mode=prompt_mode):
+    if not resolve_confirmation(
+        "This will delete your current state and `warehouse.db` files. Do you want to continue? (Y/n): ",
+        default=True,
+        prompt_mode=prompt_mode,
+    ):
         print_library_log("reset cancelled")
         return
     try:
@@ -487,9 +532,12 @@ def reset_local_file_directory(args, prompt_mode: PromptMode):
             print_library_log(
                 "No files were deleted. Ensure you are in the project root directory.",
                 level=Logging.Level.SEVERE,
-                log_icon=Logging.LogIcon.FAILURE)
+                log_icon=Logging.LogIcon.FAILURE,
+            )
     except Exception as e:
-        print_library_log("reset failed", level=Logging.Level.SEVERE, log_icon=Logging.LogIcon.FAILURE)
+        print_library_log(
+            "reset failed", level=Logging.Level.SEVERE, log_icon=Logging.LogIcon.FAILURE
+        )
         raise e
 
 
@@ -507,6 +555,7 @@ def resolve_confirmation(prompt: str, default: bool, prompt_mode: PromptMode) ->
     else:
         # Invalid input or empty, return default
         return default
+
 
 def enable_debugging_for_verbose_commands(command: str):
     if command is not None and command.lower() in ("debug", "configuration"):

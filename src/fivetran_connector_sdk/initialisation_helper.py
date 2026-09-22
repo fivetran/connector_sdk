@@ -7,9 +7,18 @@ import sys
 import requests as rq
 
 from fivetran_connector_sdk.logger import Logging
-from fivetran_connector_sdk.constants import EXAMPLES_GITHUB_REPO, GITHUB_BRANCH, \
-    AGENT_PLUGINS, SUPPORTED_AGENT_DISPLAY_NAMES, AI_TOOLS_INSTALLATION_DOCS_URL, TEMPLATE_CONNECTOR_PATH, \
-    CONNECTORS_GITHUB_REPO, CONNECTORS_TEMPLATE_PREFIX, VIRTUAL_ENV_CONFIG, EXCLUDED_DIRS
+from fivetran_connector_sdk.constants import (
+    EXAMPLES_GITHUB_REPO,
+    GITHUB_BRANCH,
+    AGENT_PLUGINS,
+    SUPPORTED_AGENT_DISPLAY_NAMES,
+    AI_TOOLS_INSTALLATION_DOCS_URL,
+    TEMPLATE_CONNECTOR_PATH,
+    CONNECTORS_GITHUB_REPO,
+    CONNECTORS_TEMPLATE_PREFIX,
+    VIRTUAL_ENV_CONFIG,
+    EXCLUDED_DIRS,
+)
 from fivetran_connector_sdk.helpers import print_library_log, PromptMode, resolve_confirmation
 
 
@@ -17,22 +26,33 @@ def init(project_dir: str, template: str, prompt_mode: PromptMode):
     existing_project = is_existing_project(project_dir)
     run_project_setup = True
     if existing_project:
-        run_project_setup = resolve_confirmation("Overwrite existing project? (y/N): ", False, prompt_mode)
+        run_project_setup = resolve_confirmation(
+            "Overwrite existing project? (y/N): ", False, prompt_mode
+        )
     try:
         if run_project_setup:
             setup_connector(project_dir, template)
             print_library_log("project initialized", log_icon=Logging.LogIcon.SUCCESS)
             print_library_log("Time to make a great connector; Happy coding")
         else:
-            print_library_log("skipping project setup; existing files were not overwritten",
-                              log_icon=Logging.LogIcon.STEP)
+            print_library_log(
+                "skipping project setup; existing files were not overwritten",
+                log_icon=Logging.LogIcon.STEP,
+            )
         if prompt_mode == PromptMode.INTERACTIVE:
             setup_ai_agent()
         else:
-            print_library_log(f"skipping AI agent setup; {prompt_mode.value} is set", log_icon=Logging.LogIcon.STEP)
+            print_library_log(
+                f"skipping AI agent setup; {prompt_mode.value} is set",
+                log_icon=Logging.LogIcon.STEP,
+            )
         sys.exit(0)
     except Exception as e:
-        print_library_log(f"failed to initialize project error: {e}", level=Logging.Level.SEVERE, log_icon=Logging.LogIcon.FAILURE)
+        print_library_log(
+            f"failed to initialize project error: {e}",
+            level=Logging.Level.SEVERE,
+            log_icon=Logging.LogIcon.FAILURE,
+        )
         sys.exit(1)
 
 
@@ -45,8 +65,9 @@ def is_existing_project(project_dir: str) -> bool:
             if entry.name.startswith("."):
                 continue
             if entry.is_dir() and (
-                    entry.name in EXCLUDED_DIRS
-                    or os.path.isfile(os.path.join(entry.path, VIRTUAL_ENV_CONFIG))):
+                entry.name in EXCLUDED_DIRS
+                or os.path.isfile(os.path.join(entry.path, VIRTUAL_ENV_CONFIG))
+            ):
                 continue
             return True
 
@@ -97,7 +118,9 @@ def install_agent_plugin(agent_key: str) -> bool:
             )
             _print_plugin_install_guidance()
             return False
-    print_library_log(f"{config['display_name']} plugin installed", log_icon=Logging.LogIcon.SUCCESS)
+    print_library_log(
+        f"{config['display_name']} plugin installed", log_icon=Logging.LogIcon.SUCCESS
+    )
     update_commands = config.get("update_commands", [])
     for cmd in update_commands:
         print_library_log(
@@ -114,7 +137,9 @@ def is_agent_plugin_install_supported(agent_key: str) -> bool:
         return True
 
     try:
-        result = subprocess.run([config["cli_command"], "--version"], capture_output=True, text=True, timeout=30)
+        result = subprocess.run(
+            [config["cli_command"], "--version"], capture_output=True, text=True, timeout=30
+        )
     except (subprocess.TimeoutExpired, OSError):
         return True
 
@@ -137,7 +162,9 @@ def is_agent_plugin_install_supported(agent_key: str) -> bool:
         level=Logging.Level.WARNING,
         log_icon=Logging.LogIcon.FAILURE,
     )
-    print_library_log(f"update {config['display_name']} and rerun agent setup", log_icon=Logging.LogIcon.STEP)
+    print_library_log(
+        f"update {config['display_name']} and rerun agent setup", log_icon=Logging.LogIcon.STEP
+    )
     _print_plugin_install_guidance()
     return False
 
@@ -186,16 +213,13 @@ def setup_ai_agent():
 
 
 def validate_example_directory(files_to_download: list, requested_path: str = ""):
-    connector_files = [
-        f for f in files_to_download
-        if f['local_path'].endswith("connector.py")
-    ]
+    connector_files = [f for f in files_to_download if f["local_path"].endswith("connector.py")]
 
     if len(connector_files) > 1:
-        matches = sorted({f['github_path'].rsplit('/connector.py', 1)[0] for f in connector_files})
+        matches = sorted({f["github_path"].rsplit("/connector.py", 1)[0] for f in connector_files})
         print_library_log(
             f"no connector found at '{requested_path}'; available connectors with prefix '{requested_path}':",
-            Logging.Level.WARNING
+            Logging.Level.WARNING,
         )
         for match in matches:
             print_library_log(f"{match}", log_icon=Logging.LogIcon.STEP, indent=True)
@@ -203,15 +227,15 @@ def validate_example_directory(files_to_download: list, requested_path: str = ""
 
     if len(connector_files) != 1:
         print_library_log(
-            "selected directory is not a valid example; missing connector.py",
-            Logging.Level.SEVERE
+            "selected directory is not a valid example; missing connector.py", Logging.Level.SEVERE
         )
         raise ValueError("Invalid directory passed. Path did not resolve to a valid connector.")
+
 
 def _resolve_repo_and_path(path_prefix: str) -> tuple:
     """Returns (repo, actual_path) based on template routing rules."""
     if path_prefix.startswith(CONNECTORS_TEMPLATE_PREFIX):
-        return CONNECTORS_GITHUB_REPO, path_prefix[len(CONNECTORS_TEMPLATE_PREFIX):]
+        return CONNECTORS_GITHUB_REPO, path_prefix[len(CONNECTORS_TEMPLATE_PREFIX) :]
     if path_prefix.startswith("examples/"):
         return EXAMPLES_GITHUB_REPO, path_prefix
     return CONNECTORS_GITHUB_REPO, path_prefix
@@ -221,29 +245,33 @@ def _collect_download_files(tree: list, actual_path: str) -> tuple:
     files_to_download = []
     prefix_matches = set()
     for item in tree:
-        if item['type'] != 'blob':
+        if item["type"] != "blob":
             continue
         # "actual_path + /" ensures exact directory match, preventing prefix collisions (e.g. "github" matching "github_traffic")
-        if item['path'].startswith(actual_path + "/"):
+        if item["path"].startswith(actual_path + "/"):
             # strip directory prefix and leading "/" to get path relative to project root
-            relative_path = item['path'][len(actual_path):].lstrip('/')
+            relative_path = item["path"][len(actual_path) :].lstrip("/")
             # skip README when downloading the blank starter template (users write their own)
             if actual_path == TEMPLATE_CONNECTOR_PATH and "readme" in relative_path.lower():
                 continue
-            files_to_download.append({
-                'github_path': item['path'],
-                'local_path': relative_path,
-                'size': item.get('size', 0)
-            })
+            files_to_download.append(
+                {
+                    "github_path": item["path"],
+                    "local_path": relative_path,
+                    "size": item.get("size", 0),
+                }
+            )
         # prefix match: collect connector dirs for suggestion when exact path not found
-        elif item['path'].startswith(actual_path) and item['path'].split('/')[-1] == 'connector.py':
-            prefix_matches.add("/".join(item['path'].split('/')[:-1]))
+        elif (
+            item["path"].startswith(actual_path) and item["path"].split("/")[-1] == "connector.py"
+        ):
+            prefix_matches.add("/".join(item["path"].split("/")[:-1]))
     return files_to_download, prefix_matches
 
 
 def _collect_nested_prefix_matches(tree: list, actual_path: str) -> set:
     """Find connectors in subdirectories matching the prefix.
-    
+
     For examples/hello, this finds examples/quickstart/hello and examples/advanced/hello_world,
     but not direct children like examples/hello (those are handled by _collect_download_files).
     """
@@ -254,21 +282,21 @@ def _collect_nested_prefix_matches(tree: list, actual_path: str) -> set:
     parent_path_prefix = parent_path + "/"
     nested_prefix_matches = set()
     for item in tree:
-        if item['type'] != 'blob' or item['path'].split('/')[-1] != 'connector.py':
+        if item["type"] != "blob" or item["path"].split("/")[-1] != "connector.py":
             continue
 
-        connector_path = item['path'].rsplit('/connector.py', 1)[0]
+        connector_path = item["path"].rsplit("/connector.py", 1)[0]
         if not connector_path.startswith(parent_path_prefix):
             continue
 
         # Extract path relative to parent (e.g., "quickstart/hello" from "examples/quickstart/hello")
-        relative_connector_path = connector_path[len(parent_path_prefix):]
+        relative_connector_path = connector_path[len(parent_path_prefix) :]
         # Only match nested paths (containing "/"), skip direct children
         if "/" not in relative_connector_path:
             continue
 
         # Check if the final directory name matches the prefix
-        connector_name = relative_connector_path.rsplit('/', 1)[-1]
+        connector_name = relative_connector_path.rsplit("/", 1)[-1]
         if connector_name.startswith(connector_name_prefix):
             nested_prefix_matches.add(connector_path)
 
@@ -284,10 +312,7 @@ def _raise_no_match(prefix_matches: set, requested_path: str, has_nested_matches
                 f"no connector found at '{requested_path}'; "
                 f"available connectors with prefix '{requested_path}':"
             )
-        print_library_log(
-            match_message,
-            Logging.Level.WARNING
-        )
+        print_library_log(match_message, Logging.Level.WARNING)
         for match in sorted(prefix_matches):
             print_library_log(f"{match}", log_icon=Logging.LogIcon.STEP, indent=True)
         raise ValueError("re-run with an exact connector name from the list above")
@@ -304,23 +329,32 @@ def download_git_directory(path_prefix: str, project_dir: str):
         response.raise_for_status()
 
         tree_data = response.json()
-        if 'tree' not in tree_data:
-            print_library_log("failed to fetch repository from GitHub", level=Logging.Level.SEVERE, log_icon=Logging.LogIcon.FAILURE)
+        if "tree" not in tree_data:
+            print_library_log(
+                "failed to fetch repository from GitHub",
+                level=Logging.Level.SEVERE,
+                log_icon=Logging.LogIcon.FAILURE,
+            )
             return
 
-        files_to_download, prefix_matches = _collect_download_files(tree_data['tree'], actual_path)
+        files_to_download, prefix_matches = _collect_download_files(tree_data["tree"], actual_path)
 
         if not files_to_download:
             # For examples/ repo, also search nested subdirectories (e.g., examples/quickstart/hello)
             nested_prefix_matches = set()
             if repo == EXAMPLES_GITHUB_REPO:
-                nested_prefix_matches = _collect_nested_prefix_matches(tree_data['tree'], actual_path)
+                nested_prefix_matches = _collect_nested_prefix_matches(
+                    tree_data["tree"], actual_path
+                )
                 prefix_matches.update(nested_prefix_matches)
             _raise_no_match(prefix_matches, requested_path, bool(nested_prefix_matches))
 
         validate_example_directory(files_to_download, requested_path)
 
-        print_library_log(f"downloading {len(files_to_download)} files from GitHub", log_icon=Logging.LogIcon.STEP)
+        print_library_log(
+            f"downloading {len(files_to_download)} files from GitHub",
+            log_icon=Logging.LogIcon.STEP,
+        )
         download_file_from_github(files_to_download, project_dir, repo)
 
     except ValueError as e:
@@ -328,16 +362,22 @@ def download_git_directory(path_prefix: str, project_dir: str):
         sys.exit(1)
     except Exception as e:
         print_library_log(f"failed to download files: {e}", Logging.Level.WARNING)
-        print_library_log(f"files are available for manual download from: https://github.com/{repo}/tree/{GITHUB_BRANCH}/{actual_path}")
+        print_library_log(
+            f"files are available for manual download from: https://github.com/{repo}/tree/{GITHUB_BRANCH}/{actual_path}"
+        )
 
 
-def download_file_from_github(files_to_download: list, project_dir: str, repo: str = EXAMPLES_GITHUB_REPO):
+def download_file_from_github(
+    files_to_download: list, project_dir: str, repo: str = EXAMPLES_GITHUB_REPO
+):
     for file_info in files_to_download:
         # Construct raw download URL
-        raw_url = f"https://raw.githubusercontent.com/{repo}/{GITHUB_BRANCH}/{file_info['github_path']}"
+        raw_url = (
+            f"https://raw.githubusercontent.com/{repo}/{GITHUB_BRANCH}/{file_info['github_path']}"
+        )
 
         # Create target path
-        target_path = os.path.join(project_dir, file_info['local_path'])
+        target_path = os.path.join(project_dir, file_info["local_path"])
         target_dir = os.path.dirname(target_path)
 
         # Create directory if needed
@@ -349,9 +389,17 @@ def download_file_from_github(files_to_download: list, project_dir: str, repo: s
             file_response = rq.get(raw_url, timeout=10)
             file_response.raise_for_status()
 
-            with open(target_path, 'wb') as f:
+            with open(target_path, "wb") as f:
                 f.write(file_response.content)
 
-            print_library_log(f"downloaded {file_info['local_path']}", level=Logging.Level.INFO, log_icon=Logging.LogIcon.SUCCESS)
+            print_library_log(
+                f"downloaded {file_info['local_path']}",
+                level=Logging.Level.INFO,
+                log_icon=Logging.LogIcon.SUCCESS,
+            )
         except Exception as e:
-            print_library_log(f"failed to download {file_info['local_path']}: {e}", level=Logging.Level.WARNING, log_icon=Logging.LogIcon.FAILURE)
+            print_library_log(
+                f"failed to download {file_info['local_path']}: {e}",
+                level=Logging.Level.WARNING,
+                log_icon=Logging.LogIcon.FAILURE,
+            )

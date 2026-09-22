@@ -20,8 +20,9 @@ class TestConfigurationFormAddField(unittest.TestCase):
 
     def test_add_field_chaining(self):
         form = ConfigurationForm()
-        form.add_field(form_field.TextField("host", "Host")) \
-            .add_field(form_field.ToggleField("tls", "Enable TLS"))
+        form.add_field(form_field.TextField("host", "Host")).add_field(
+            form_field.ToggleField("tls", "Enable TLS")
+        )
 
         self.assertEqual(len(form._fields), 2)
 
@@ -78,9 +79,10 @@ class TestConfigurationFormAddTest(unittest.TestCase):
         form = ConfigurationForm()
 
         with self.assertRaisesRegex(
-                ValueError,
-                "anonymous lambda functions cannot be used as test functions; "
-                "assign the function to a named variable first"):
+            ValueError,
+            "anonymous lambda functions cannot be used as test functions; "
+            "assign the function to a named variable first",
+        ):
             form.add_test(label="Check connection", func=lambda config: None)
 
     def test_add_test_raises_when_same_function_registered_twice(self):
@@ -90,7 +92,9 @@ class TestConfigurationFormAddTest(unittest.TestCase):
         form = ConfigurationForm()
         form.add_test(label="First", func=my_test)
 
-        with self.assertRaisesRegex(ValueError, "a test function named 'my_test' is already registered"):
+        with self.assertRaisesRegex(
+            ValueError, "a test function named 'my_test' is already registered"
+        ):
             form.add_test(label="Second", func=my_test)
 
     def test_add_test_raises_when_two_functions_share_same_name(self):
@@ -105,7 +109,9 @@ class TestConfigurationFormAddTest(unittest.TestCase):
         form = ConfigurationForm()
         form.add_test(label="First", func=first)
 
-        with self.assertRaisesRegex(ValueError, "a test function named 'connection_test' is already registered"):
+        with self.assertRaisesRegex(
+            ValueError, "a test function named 'connection_test' is already registered"
+        ):
             form.add_test(label="Second", func=connection_test)
 
 
