@@ -1,2 +1,2 @@
-* @fivetran/menon
-**/*.md @fivetran/tech-writers @fivetran/menon
+* @fivetran/connector_sdk_dev
+**/*.md @fivetran/tech-writers @fivetran/connector_sdk_dev
