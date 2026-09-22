@@ -25,7 +25,7 @@ jobs:
         id: black_check
         run: |
           echo "Running black in check mode with diff output..."
-          black --check --diff --line-length 99 . > formatting.diff || true
+          black --check --diff --line-length 99 --extend-exclude '(_pb2\.py|_pb2_grpc\.py)$' . > formatting.diff || true
 
           if [ -s formatting.diff ]; then
             echo "Formatting issues detected:"
@@ -53,7 +53,7 @@ jobs:
             "https://api.github.com/repos/${REPO}/pulls/${PR_NUMBER}/files" \
             | jq -r '.[] | select(.status != "removed") | .filename' > all_files.txt
 
-          grep '\.py$' all_files.txt > changed_files.txt || true
+          grep '\.py$' all_files.txt | grep -Ev '_pb2(_grpc)?\.py$' > changed_files.txt || true
 
           if [[ ! -s changed_files.txt ]]; then
             echo "No Python files changed."

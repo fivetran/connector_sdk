@@ -18,7 +18,7 @@ if ! command -v black &> /dev/null; then
 fi
 
 echo "Finding all Python files..."
-py_files=$(find . -type f -name '*.py')
+py_files=$(find . -type f -name '*.py' -not -name '*_pb2.py' -not -name '*_pb2_grpc.py')
 
 if [ -z "$py_files" ]; then
     echo "No Python files found to format."
