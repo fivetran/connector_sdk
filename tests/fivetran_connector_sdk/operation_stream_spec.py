@@ -7,11 +7,25 @@ from fivetran_connector_sdk.protos import connector_sdk_pb2, common_pb2
 
 
 class TestOperationStreamIntegration(unittest.TestCase):
+    # Generous but bounded: a healthy producer/consumer finishes in milliseconds. A real hang
+    # must fail the test loudly and promptly instead of blocking forever - an unbounded join()
+    # on a thread that shares the class-level `Operations.operation_stream` risks corrupting
+    # every subsequent test's freshly-created stream if that thread ever outlives its own test.
+    JOIN_TIMEOUT_SECONDS = 5
+
     def setUp(self):
         from fivetran_connector_sdk.operations import Operations, _OperationStream
 
         # Reset the operation stream for each test
         Operations.operation_stream = _OperationStream()
+
+    def _join_or_fail(self, thread, name="thread"):
+        thread.join(timeout=self.JOIN_TIMEOUT_SECONDS)
+        self.assertFalse(
+            thread.is_alive(),
+            f"{name} did not finish within {self.JOIN_TIMEOUT_SECONDS}s - this is a genuine "
+            "hang, not flaky timing; investigate rather than re-running.",
+        )
 
     def test_batch_upsert_flush_on_batch_record_limit(self):
 
@@ -20,13 +34,13 @@ class TestOperationStreamIntegration(unittest.TestCase):
                 Operations.upsert("test_table", {"id": rec_num, "name": f"test_{rec_num}"})
             Operations.operation_stream.mark_done()
 
-        thread = threading.Thread(target=generate_upserts)
+        thread = threading.Thread(target=generate_upserts, daemon=True)
         thread.start()
 
         response1 = next(Operations.operation_stream)
         response2 = next(Operations.operation_stream)
 
-        thread.join()
+        self._join_or_fail(thread, "thread")
         self.assertEqual(len(response1.structured_records.structured_records), 100)
         self.assertEqual(len(response2.structured_records.structured_records), 5)
 
@@ -39,12 +53,12 @@ class TestOperationStreamIntegration(unittest.TestCase):
                 )
             Operations.operation_stream.mark_done()
 
-        thread = threading.Thread(target=generate_upserts)
+        thread = threading.Thread(target=generate_upserts, daemon=True)
         thread.start()
 
         response1 = next(Operations.operation_stream)
         response2 = next(Operations.operation_stream)
-        thread.join()
+        self._join_or_fail(thread, "thread")
 
         self.assertEqual(len(response1.structured_records.structured_records), 50)
         self.assertEqual(len(response2.structured_records.structured_records), 30)
@@ -59,13 +73,13 @@ class TestOperationStreamIntegration(unittest.TestCase):
             )
             Operations.operation_stream.add_checkpoint(checkpoint)
 
-        thread = threading.Thread(target=generate_upserts_with_checkpoint)
+        thread = threading.Thread(target=generate_upserts_with_checkpoint, daemon=True)
         thread.start()
 
         response1 = next(Operations.operation_stream)
         # as consumer should unblock the queue after reading the response
         Operations.operation_stream.unblock()
-        thread.join()
+        self._join_or_fail(thread, "thread")
 
         self.assertEqual(len(response1[0].structured_records.structured_records), 50)
         self.assertEqual(
@@ -83,7 +97,7 @@ class TestOperationStreamIntegration(unittest.TestCase):
                     )
                     Operations.operation_stream.add_checkpoint(checkpoint)
 
-        thread = threading.Thread(target=generate_batches_with_checkpoint)
+        thread = threading.Thread(target=generate_batches_with_checkpoint, daemon=True)
         thread.start()
 
         # assert that we get 5 responses, each with 10 records and checkpoint state
@@ -96,7 +110,7 @@ class TestOperationStreamIntegration(unittest.TestCase):
                 response[1].checkpoint.state_json, f'{{"cursor": "{batch_num * 10}"}}'
             )
 
-        thread.join()
+        self._join_or_fail(thread, "thread")
 
     def test_multiple_producer_with_checkpoint(self):
         def generate_producer_1_data():
@@ -115,8 +129,8 @@ class TestOperationStreamIntegration(unittest.TestCase):
                 if rec_num % 5 == 0:
                     Operations.checkpoint({"cursor": f"producer2_{rec_num}"})
 
-        thread1 = threading.Thread(target=generate_producer_1_data)
-        thread2 = threading.Thread(target=generate_producer_2_data)
+        thread1 = threading.Thread(target=generate_producer_1_data, daemon=True)
+        thread2 = threading.Thread(target=generate_producer_2_data, daemon=True)
         thread1.start()
         thread2.start()
 
@@ -133,8 +147,8 @@ class TestOperationStreamIntegration(unittest.TestCase):
                 checkpoint_count += 1
 
         # Wait for threads to complete
-        thread1.join()
-        thread2.join()
+        self._join_or_fail(thread1, "producer-1")
+        self._join_or_fail(thread2, "producer-2")
 
         self.assertEqual(total_record_count, 50)
         self.assertEqual(checkpoint_count, 10)
@@ -151,13 +165,13 @@ class TestOperationStreamIntegration(unittest.TestCase):
                     Operations.delete("test_table", {"id": rec_num})
             Operations.operation_stream.mark_done()
 
-        thread = threading.Thread(target=generate_records)
+        thread = threading.Thread(target=generate_records, daemon=True)
         thread.start()
 
         response = next(Operations.operation_stream)
         # as a consumer unblock the queue
         Operations.operation_stream.unblock()
-        thread.join()
+        self._join_or_fail(thread, "thread")
 
         self.assertEqual(len(response.structured_records.structured_records), 57)
         # Check individual operation types
@@ -187,13 +201,13 @@ class TestOperationStreamIntegration(unittest.TestCase):
             Operations.checkpoint({"cursor": "2024-01-01T00:00:00.00Z"})
             Operations.operation_stream.mark_done()
 
-        thread = threading.Thread(target=generate_checkpoint_only)
+        thread = threading.Thread(target=generate_checkpoint_only, daemon=True)
         thread.start()
 
         response = next(Operations.operation_stream)
         # as consumer should unblock the queue after reading the response
         Operations.operation_stream.unblock()
-        thread.join()
+        self._join_or_fail(thread, "thread")
 
         self.assertTrue(hasattr(response[0], "checkpoint"))
         self.assertEqual(response[0].checkpoint.state_json, json.dumps(state))
@@ -241,24 +255,24 @@ class TestOperationStreamIntegration(unittest.TestCase):
         # Start multiple producer threads
         producers = []
         for producer_num in range(producer_count):
-            producer = threading.Thread(target=producer_thread, args=(producer_num,))
+            producer = threading.Thread(target=producer_thread, args=(producer_num,), daemon=True)
             producers.append(producer)
             producer.start()
 
         # Start consumer thread
-        consumer = threading.Thread(target=consumer_thread)
+        consumer = threading.Thread(target=consumer_thread, daemon=True)
         consumer.start()
 
         # Wait for all producers to finish
-        for p in producers:
-            p.join()
+        for i, p in enumerate(producers):
+            self._join_or_fail(p, f"producer-{i}")
 
         # Mark the operation stream as done
         Operations.operation_stream.mark_done()
 
         # Wait for consumer to process all checkpoints
         all_checkpoints_processed.wait(timeout=5)
-        consumer.join(timeout=1)
+        self._join_or_fail(consumer, "consumer")
 
         # Verify we processed the expected number of checkpoints
         self.assertEqual(len(checkpoint_processed_order), checkpoint_count * producer_count)
@@ -281,7 +295,7 @@ class TestOperationStreamIntegration(unittest.TestCase):
             Operations.operation_stream.mark_done()
             Operations.operation_stream.mark_done()
 
-        thread = threading.Thread(target=generate_mark_done)
+        thread = threading.Thread(target=generate_mark_done, daemon=True)
         thread.start()
 
         with self.assertRaises(StopIteration):
@@ -308,12 +322,12 @@ class TestOperationStreamIntegration(unittest.TestCase):
                 Operations.upsert("test_table", {"id": i, "name": f"item_{i}"})
             Operations.operation_stream.mark_done()
 
-        producer = threading.Thread(target=produce)
+        producer = threading.Thread(target=produce, daemon=True)
         producer.start()
 
         # First next() returns the buffered batch
         response = next(Operations.operation_stream)
-        producer.join()
+        self._join_or_fail(producer, "producer")
         self.assertEqual(len(response.structured_records.structured_records), 3)
 
         # Following next() should indicate end-of-stream
@@ -333,12 +347,12 @@ class TestOperationStreamIntegration(unittest.TestCase):
             Operations.operation_stream.add_checkpoint(checkpoint)
             Operations.operation_stream.mark_done()
 
-        producer = threading.Thread(target=produce_checkpoint_with_empty_buffer)
+        producer = threading.Thread(target=produce_checkpoint_with_empty_buffer, daemon=True)
         producer.start()
 
         response = next(Operations.operation_stream)
         Operations.operation_stream.unblock()
-        producer.join()
+        self._join_or_fail(producer, "producer")
 
         # Should only have checkpoint, no records
         self.assertTrue(isinstance(response, list))
@@ -353,11 +367,11 @@ class TestOperationStreamIntegration(unittest.TestCase):
                 Operations.upsert("test_table", {"id": i})
             Operations.operation_stream.mark_done()
 
-        producer = threading.Thread(target=produce_exact_limit)
+        producer = threading.Thread(target=produce_exact_limit, daemon=True)
         producer.start()
 
         response = next(Operations.operation_stream)
-        producer.join()
+        self._join_or_fail(producer, "producer")
 
         self.assertEqual(len(response.structured_records.structured_records), 100)
 
@@ -373,11 +387,11 @@ class TestOperationStreamIntegration(unittest.TestCase):
                 Operations.upsert("test_table", {"id": i})
             Operations.operation_stream.mark_done()
 
-        producer = threading.Thread(target=produce)
+        producer = threading.Thread(target=produce, daemon=True)
         producer.start()
 
         next(Operations.operation_stream)
-        producer.join()
+        self._join_or_fail(producer, "producer")
 
         # After flushing, internal counters should be reset
         stream = Operations.operation_stream
@@ -394,13 +408,13 @@ class TestOperationStreamIntegration(unittest.TestCase):
                 Operations.upsert("test_table", {"id": i})
             Operations.operation_stream.mark_done()
 
-        producer = threading.Thread(target=produce)
+        producer = threading.Thread(target=produce, daemon=True)
         producer.start()
 
         batch1 = next(Operations.operation_stream)
         batch2 = next(Operations.operation_stream)
         batch3 = next(Operations.operation_stream)
-        producer.join()
+        self._join_or_fail(producer, "producer")
 
         self.assertEqual(len(batch1.structured_records.structured_records), 100)
         self.assertEqual(len(batch2.structured_records.structured_records), 100)
@@ -423,7 +437,7 @@ class TestOperationStreamIntegration(unittest.TestCase):
                 Operations.upsert("test_table", {"id": i})
             Operations.operation_stream.mark_done()
 
-        producer = threading.Thread(target=produce)
+        producer = threading.Thread(target=produce, daemon=True)
         producer.start()
 
         # First batch: 100 records (batch fills and flushes)
@@ -436,7 +450,7 @@ class TestOperationStreamIntegration(unittest.TestCase):
         # Third batch: 50 records
         response3 = next(Operations.operation_stream)
 
-        producer.join()
+        self._join_or_fail(producer, "producer")
 
         # First response should be 100 records
         self.assertEqual(len(response1.structured_records.structured_records), 100)
@@ -459,11 +473,11 @@ class TestOperationStreamIntegration(unittest.TestCase):
             Operations.warning("Test warning message")
             Operations.operation_stream.mark_done()
 
-        producer = threading.Thread(target=produce)
+        producer = threading.Thread(target=produce, daemon=True)
         producer.start()
 
         response = next(Operations.operation_stream)
-        producer.join()
+        self._join_or_fail(producer, "producer")
 
         # Should return a list with records and warning
         self.assertTrue(isinstance(response, list))
@@ -486,11 +500,11 @@ class TestOperationStreamIntegration(unittest.TestCase):
             Operations.warning("Empty buffer warning")
             Operations.operation_stream.mark_done()
 
-        producer = threading.Thread(target=produce)
+        producer = threading.Thread(target=produce, daemon=True)
         producer.start()
 
         response = next(Operations.operation_stream)
-        producer.join()
+        self._join_or_fail(producer, "producer")
 
         # Should return a list with only warning (no records)
         self.assertTrue(isinstance(response, list))
@@ -512,11 +526,11 @@ class TestOperationStreamIntegration(unittest.TestCase):
             Operations.error("Test error message", trace="Stack trace here")
             Operations.operation_stream.mark_done()
 
-        producer = threading.Thread(target=produce)
+        producer = threading.Thread(target=produce, daemon=True)
         producer.start()
 
         response = next(Operations.operation_stream)
-        producer.join()
+        self._join_or_fail(producer, "producer")
 
         # Should return a list with records and task
         self.assertTrue(isinstance(response, list))
@@ -540,11 +554,11 @@ class TestOperationStreamIntegration(unittest.TestCase):
             Operations.error("Empty buffer error")
             Operations.operation_stream.mark_done()
 
-        producer = threading.Thread(target=produce)
+        producer = threading.Thread(target=produce, daemon=True)
         producer.start()
 
         response = next(Operations.operation_stream)
-        producer.join()
+        self._join_or_fail(producer, "producer")
 
         # Should return a list with only task (no records)
         self.assertTrue(isinstance(response, list))
@@ -565,7 +579,7 @@ class TestOperationStreamIntegration(unittest.TestCase):
             Operations.warning("Warning 2")
             Operations.operation_stream.mark_done()
 
-        producer = threading.Thread(target=produce)
+        producer = threading.Thread(target=produce, daemon=True)
         producer.start()
 
         # First response: warning 1 (no buffered records)
@@ -574,7 +588,7 @@ class TestOperationStreamIntegration(unittest.TestCase):
         # Second response: warning 2 with 1 buffered record
         response2 = next(Operations.operation_stream)
 
-        producer.join()
+        self._join_or_fail(producer, "producer")
 
         # First warning should have no records
         self.assertTrue(isinstance(response1, list))
@@ -598,7 +612,7 @@ class TestOperationStreamIntegration(unittest.TestCase):
             Operations.error("Error 2", trace="Trace 2")
             Operations.operation_stream.mark_done()
 
-        producer = threading.Thread(target=produce)
+        producer = threading.Thread(target=produce, daemon=True)
         producer.start()
 
         # First response: error 1 (no buffered records)
@@ -607,7 +621,7 @@ class TestOperationStreamIntegration(unittest.TestCase):
         # Second response: error 2 with 2 buffered records
         response2 = next(Operations.operation_stream)
 
-        producer.join()
+        self._join_or_fail(producer, "producer")
 
         # First error should have no records
         self.assertTrue(isinstance(response1, list))
@@ -640,7 +654,7 @@ class TestOperationStreamIntegration(unittest.TestCase):
             Operations.warning("Second warning")
             Operations.operation_stream.mark_done()
 
-        producer = threading.Thread(target=produce)
+        producer = threading.Thread(target=produce, daemon=True)
         producer.start()
 
         responses = []
@@ -654,7 +668,7 @@ class TestOperationStreamIntegration(unittest.TestCase):
             except StopIteration:
                 break
 
-        producer.join()
+        self._join_or_fail(producer, "producer")
 
         # Should have 4 responses:
         # 1. Warning with 1 record
@@ -694,7 +708,7 @@ class TestOperationStreamIntegration(unittest.TestCase):
             Operations.warning("Post-batch warning")
             Operations.operation_stream.mark_done()
 
-        producer = threading.Thread(target=produce)
+        producer = threading.Thread(target=produce, daemon=True)
         producer.start()
 
         # First response: full batch of 100 records
@@ -703,7 +717,7 @@ class TestOperationStreamIntegration(unittest.TestCase):
         # Second response: warning with no records
         response2 = next(Operations.operation_stream)
 
-        producer.join()
+        self._join_or_fail(producer, "producer")
 
         # First response should be 100 records
         self.assertEqual(len(response1.structured_records.structured_records), 100)
@@ -724,7 +738,7 @@ class TestOperationStreamIntegration(unittest.TestCase):
             Operations.error("Post-batch error", trace="Full trace")
             Operations.operation_stream.mark_done()
 
-        producer = threading.Thread(target=produce)
+        producer = threading.Thread(target=produce, daemon=True)
         producer.start()
 
         # First response: full batch of 100 records
@@ -733,7 +747,7 @@ class TestOperationStreamIntegration(unittest.TestCase):
         # Second response: error with no records
         response2 = next(Operations.operation_stream)
 
-        producer.join()
+        self._join_or_fail(producer, "producer")
 
         # First response should be 100 records
         self.assertEqual(len(response1.structured_records.structured_records), 100)
@@ -756,7 +770,7 @@ class TestOperationStreamIntegration(unittest.TestCase):
 
         def wait_for_flush(timeout=None):
             thread = threading.Thread(
-                target=lambda: (stream.add_record(record), record_added.set())
+                target=lambda: (stream.add_record(record), record_added.set()), daemon=True
             )
             thread.start()
             added = record_added.wait(timeout=1)

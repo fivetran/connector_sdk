@@ -570,9 +570,12 @@ class TestInit(unittest.TestCase):
         original_debugging = constants.DEBUGGING
         constants.DEBUGGING = True
         try:
-            with patch(
-                "fivetran_connector_sdk.build_debug_crash_report",
-                side_effect=RuntimeError("report fail"),
+            with (
+                patch(
+                    "fivetran_connector_sdk.build_debug_crash_report",
+                    side_effect=RuntimeError("report fail"),
+                ),
+                patch("fivetran_connector_sdk.get_memory_tracker", return_value=MagicMock()),
             ):
                 gen = connector.Update(mock_request, mock_context)
                 with self.assertRaises(RuntimeError) as cm:

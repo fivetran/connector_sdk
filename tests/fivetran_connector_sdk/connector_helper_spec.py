@@ -2194,14 +2194,16 @@ class TestConnectorHelper(unittest.TestCase):
 
     @patch("os.path.join", side_effect=lambda *args: "/".join(args))
     def test_java_exe_helper_windows(self, mock_join):
-        from fivetran_connector_sdk.connector_helper import java_exe_helper, WIN_OS, X64
+        from fivetran_connector_sdk.connector_helper import java_exe_helper, WIN_OS
+        from fivetran_connector_sdk.constants import X64
 
         result = java_exe_helper("C:/java", f"{WIN_OS}-{X64}")
         self.assertEqual(result, "C:/java/bin/java.exe")
 
     @patch("os.path.join", side_effect=lambda *args: "/".join(args))
     def test_java_exe_helper_windows_arm64(self, mock_join):
-        from fivetran_connector_sdk.connector_helper import java_exe_helper, WIN_OS, ARM_64
+        from fivetran_connector_sdk.connector_helper import java_exe_helper, WIN_OS
+        from fivetran_connector_sdk.constants import ARM_64
 
         result = java_exe_helper("C:/java", f"{WIN_OS}-{ARM_64}")
         self.assertEqual(result, "C:/java/bin/java.exe")
