@@ -8,15 +8,6 @@ from unittest.mock import patch
 
 class TestFivetranShim(unittest.TestCase):
 
-    def tearDown(self):
-        for module_name in (
-            "fivetran_cli",
-            "fivetran_cli.cli",
-            "fivetran_connector_sdk",
-            "fivetran_connector_sdk.cli",
-        ):
-            sys.modules.pop(module_name, None)
-
     def _load_shim(self):
         shim_path = (
             Path(__file__).resolve().parents[2]

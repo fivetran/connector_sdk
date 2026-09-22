@@ -6,6 +6,7 @@ import sys
 import os
 import stat
 import threading
+from pathlib import Path
 from fivetran_connector_sdk.helpers import _validate_table_name, PromptMode, _resolve_existing_project_path
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../src")))
@@ -951,11 +952,24 @@ class TestHelper(TestCase):
 
                # No writer - should timeout
                with self.assertRaises(ValueError) as cm:
-                   # Need to reload the module to pick up the new constant
-                   from fivetran_connector_sdk import helpers
-                   import importlib
-                   importlib.reload(helpers)
-                   helpers.validate_and_load_configuration(tmpdir, "config_pipe")
+                   # Load a private copy of the module to pick up the new constant.
+                   # Reloading the real fivetran_connector_sdk.helpers module in place
+                   # would redefine PromptMode as a new class object, breaking identity
+                   # comparisons (e.g. `prompt_mode == PromptMode.FORCE`) everywhere else
+                   # that already imported the original PromptMode.
+                   import importlib.util
+                   helpers_path = (
+                       Path(__file__).resolve().parents[2]
+                       / "src"
+                       / "fivetran_connector_sdk"
+                       / "helpers.py"
+                   )
+                   spec = importlib.util.spec_from_file_location(
+                       "helpers_under_test_fifo_timeout", helpers_path
+                   )
+                   private_helpers = importlib.util.module_from_spec(spec)
+                   spec.loader.exec_module(private_helpers)
+                   private_helpers.validate_and_load_configuration(tmpdir, "config_pipe")
                self.assertIn("Timed out", str(cm.exception))
        finally:
            # Restore original timeout
