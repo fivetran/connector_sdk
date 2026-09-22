@@ -10,7 +10,6 @@ from pathlib import Path
 from fivetran_connector_sdk.constants import MEMORY_LIMIT_BYTES, REDACTED_VALUE
 from fivetran_connector_sdk.memory_tracker import get_debug_memory_bytes
 
-
 _SOURCE_CONTEXT_RADIUS = 2
 _MAX_SOURCE_LINE_LENGTH = 240
 _MAX_LOCAL_VARIABLES = 20

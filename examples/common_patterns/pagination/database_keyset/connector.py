@@ -204,15 +204,13 @@ def sync_items(connection, table_name, last_updated_at, last_id, state):
         while True:
             # Fetch the next page of rows beyond the current keyset boundary.
             # The (updated_at, id) > (%s, %s) row-value comparison is a standard PostgreSQL feature.
-            query = sql.SQL(
-                """
+            query = sql.SQL("""
                 SELECT id, name, email, updated_at
                 FROM {table}
                 WHERE (updated_at, id) > (%s, %s)
                 ORDER BY updated_at, id
                 LIMIT %s
-                """
-            ).format(table=sql.Identifier(table_name))
+                """).format(table=sql.Identifier(table_name))
 
             cursor.execute(query, (last_updated_at, last_id, __ROWS_PER_PAGE))
             columns = [col[0].lower() for col in cursor.description]
