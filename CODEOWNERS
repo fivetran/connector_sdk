@@ -1,9 +1,2 @@
-**/*.py @fivetran/menon
-**/*.yml @fivetran/menon
-**/*.yaml @fivetran/menon
-**/*.json @fivetran/menon
-**/*.csv @fivetran/menon
-**/*.txt @fivetran/menon
-**/*.sh @fivetran/menon
-**/*.png @fivetran/menon
-**/*.md @fivetran/tech-writers
+* @fivetran/menon
+**/*.md @fivetran/tech-writers @fivetran/menon
