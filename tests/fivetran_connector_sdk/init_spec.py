@@ -949,9 +949,18 @@ class TestInit(unittest.TestCase):
             patch("fivetran_connector_sdk.get_available_port", return_value=55555),
             patch("fivetran_connector_sdk.run_tester", return_value=[]),
             patch("fivetran_connector_sdk.check_newer_version"),
-            patch("fivetran_connector_sdk.tester_root_dir_helper", return_value="/tmp/tester"),
-            patch("fivetran_connector_sdk.get_os_arch_suffix", return_value="osx-arm64"),
-            patch("fivetran_connector_sdk.java_exe_helper", return_value="/tmp/tester/java"),
+            patch(
+                "fivetran_connector_sdk.connector_helper.tester_root_dir_helper",
+                return_value="/tmp/tester",
+            ),
+            patch(
+                "fivetran_connector_sdk.connector_helper.get_os_arch_suffix",
+                return_value="osx-arm64",
+            ),
+            patch(
+                "fivetran_connector_sdk.connector_helper.java_exe_helper",
+                return_value="/tmp/tester/java",
+            ),
             patch("os.path.isfile", return_value=True),
             patch("builtins.open", mock_open(read_data=constants.TESTER_VERSION)),
             patch("fivetran_connector_sdk.Connector.run", return_value=mock_server),
