@@ -1,0 +1,71 @@
+name: Publish to PyPI
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'src/fivetran_connector_sdk/**'
+      - 'pyproject.toml'
+  workflow_dispatch:
+
+jobs:
+  publish:
+    name: Build and publish
+    runs-on: ubuntu-latest
+    permissions:
+      # Required for PyPI Trusted Publishing (OIDC) - no API token needed.
+      id-token: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Read package version
+        id: version
+        run: |
+          VERSION=$(sed -n "s/^__version__ *= *['\"]\([^'\"]*\)['\"]/\1/p" src/fivetran_connector_sdk/__init__.py)
+          if [ -z "$VERSION" ]; then
+            echo "Could not read __version__ from src/fivetran_connector_sdk/__init__.py" >&2
+            exit 1
+          fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Check if version is already on PyPI
+        id: check
+        run: |
+          if python -c "
+          import json, sys
+          from urllib.request import urlopen, Request
+          req = Request('https://pypi.org/pypi/fivetran-connector-sdk/json', headers={'User-Agent': 'gh-actions'})
+          try:
+              data = json.load(urlopen(req))
+          except Exception:
+              sys.exit(1)  # package not found yet, or network hiccup: treat as not-yet-published
+          sys.exit(0 if '${{ steps.version.outputs.version }}' in data.get('releases', {}) else 1)
+          "; then
+            echo "already_published=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "already_published=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Skip if already published
+        if: steps.check.outputs.already_published == 'true'
+        run: echo "Version ${{ steps.version.outputs.version }} is already on PyPI. Skipping."
+
+      - name: Install build tooling
+        if: steps.check.outputs.already_published == 'false'
+        run: python -m pip install --upgrade pip build
+
+      - name: Build sdist and wheel
+        if: steps.check.outputs.already_published == 'false'
+        run: python -m build
+
+      - name: Publish to PyPI
+        if: steps.check.outputs.already_published == 'false'
+        uses: pypa/gh-action-pypi-publish@release/v1
