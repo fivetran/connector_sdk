@@ -1,6 +1,6 @@
 fivetran_sdk/
 dist/
-src/fivetran_custom_sdk.egg-info/
+src/fivetran_connector_sdk.egg-info/
 **/.idea
 **/__pycache__
 examples/**/files/
@@ -13,6 +13,9 @@ examples/**/dist/
 **/*_pb2.py
 **/*_pb2.pyi
 **/*_pb2_grpc.py
+!src/fivetran_connector_sdk/protos/*_pb2.py
+!src/fivetran_connector_sdk/protos/*_pb2.pyi
+!src/fivetran_connector_sdk/protos/*_pb2_grpc.py
 *.spec
 **/__run.py
 **/Dockerfile

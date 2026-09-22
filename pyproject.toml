@@ -1,0 +1,71 @@
+[project]
+name = "fivetran_connector_sdk"
+dynamic = ["version"]
+authors = [
+  { name="Fivetran", email="developers@fivetran.com" },
+]
+description = "Build custom connectors on Fivetran platform"
+readme = "README.md"
+requires-python = ">=3.10"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+  "grpcio==1.80.0",
+  "grpcio-tools==1.80.0",
+  "requests==2.34.2",
+  "pipreqs-fivetran==1.1.2",
+  "prompt-toolkit==3.0.53",
+  "pathspec==1.1.1",
+  "tqdm==4.70.0",
+  "cryptography==49.0.0"
+]
+
+[project.optional-dependencies]
+test = [
+  "pytest==8.3.5",
+]
+
+[project.scripts]
+fivetran = "fivetran_connector_sdk.fivetran_shim:main"
+
+[project.entry-points."fivetran_cli.plugins"]
+connector_sdk = "fivetran_connector_sdk.plugin:PLUGIN"
+
+[project.urls]
+Homepage = "https://fivetran.com/docs/connectors/connector-sdk"
+Github = "https://github.com/fivetran/connector_sdk"
+Changelog = "https://fivetran.com/docs/connectors/connector-sdk/changelog"
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.hatch.build.targets.sdist]
+ignore-vcs = true
+exclude = [
+  "examples/",
+  "scripts/",
+  "tests/",
+  "fivetran_sdk/",
+]
+
+[tool.setuptools.dynamic]
+version = {attr = "fivetran_connector_sdk.__version__"}
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["*_spec.py"]
+
+[tool.hatch.build.targets.wheel]
+artifacts = [
+  "src/fivetran_connector_sdk/protos/__init__.py",
+  "src/fivetran_connector_sdk/protos/common_pb2_grpc.py",
+  "src/fivetran_connector_sdk/protos/common_pb2.py",
+  "src/fivetran_connector_sdk/protos/common_pb2.pyi",
+  "src/fivetran_connector_sdk/protos/connector_sdk_pb2_grpc.py",
+  "src/fivetran_connector_sdk/protos/connector_sdk_pb2.py",
+  "src/fivetran_connector_sdk/protos/connector_sdk_pb2.pyi",
+]
