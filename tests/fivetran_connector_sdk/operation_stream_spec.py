@@ -376,7 +376,7 @@ class TestOperationStreamIntegration(unittest.TestCase):
         producer = threading.Thread(target=produce)
         producer.start()
 
-        _response = next(Operations.operation_stream)
+        next(Operations.operation_stream)
         producer.join()
 
         # After flushing, internal counters should be reset

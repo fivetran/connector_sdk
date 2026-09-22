@@ -35,8 +35,6 @@ from fivetran_connector_sdk.constants import (
     OS_MAP,
     ARCH_MAP,
     WIN_OS,
-    X64,
-    ARM_64,
     TESTER_FILENAME,
     UPLOAD_FILENAME,
     LAST_VERSION_CHECK_FILE,

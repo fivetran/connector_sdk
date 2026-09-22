@@ -4,7 +4,8 @@ show-source = true
 statistics = false
 doctests = true
 select = C,E,F,W,B,B950
-extend-ignore = E203, E501, B008
-exclude = .git,__pycache__,.mypy_cache,.pytest_cache
+extend-ignore = E203, E501, B008, W503, E704
+exclude = .git,__pycache__,.mypy_cache,.pytest_cache,src/fivetran_connector_sdk/protos
 per-file-ignores =
-    tests/*:D102,D104,F401
+    tests/*:D102,D104,F401,E402
+    src/fivetran_connector_sdk/__init__.py:E402
