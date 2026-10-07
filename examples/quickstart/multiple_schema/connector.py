@@ -36,6 +36,14 @@ def schema(configuration: dict):
             },
         },
         {
+            "schema": "schema_1",
+            "table": "sample_table_2",
+            "primary_key": ["id"],
+            "columns": {
+                "id": "INT",
+            },
+        },
+        {
             "schema": "schema_2",
             "table": "sample_table",
             "primary_key": ["id"],
@@ -57,14 +65,20 @@ def update(configuration: dict, state: dict):
         The state dictionary is empty for the first sync or for any full re-sync
     """
     log.warning("Examples: Quickstart - multiple schemas")
-    # fetch the data row
-    data = get_data_row()
+    # fetch the sample data rows
+    data_rows = get_data_rows()
     # The 'upsert' operation is used to insert or update data in the destination table.
     # The first argument is the name of the schema where the destination table resides.
     # The second argument is the name of the destination table.
     # The third argument is a dictionary containing the record to be upserted.
-    op.upsert(schema="schema_1", table="sample_table", data=data)
-    op.upsert(schema="schema_2", table="sample_table", data=data)
+    for row in data_rows:
+        op.upsert(schema="schema_1", table="sample_table", data=row)
+        op.upsert(schema="schema_2", table="sample_table", data=row)
+
+    # upsert additional sample data into a second table within schema_1, demonstrating that a
+    # single schema can host multiple tables alongside the ones shared with other schemas.
+    for row in get_data_rows_for_table_2():
+        op.upsert(schema="schema_1", table="sample_table_2", data=row)
 
     # Using multiple schema with update()
     modified_data = {"id": 1, "sample_column": 100}
@@ -86,13 +100,31 @@ def update(configuration: dict, state: dict):
     op.checkpoint(state)
 
 
-def get_data_row():
+def get_data_rows():
     """
     This function is a placeholder for your data retrieval logic.
     In a real-world scenario, you would implement the logic to fetch data from your source system.
-    For demonstration purposes, this function returns a static dictionary representing a data row.
+    For demonstration purposes, this function returns a static list of dictionaries representing
+    sample data rows for `sample_table`, shared by `schema_1` and `schema_2`.
     """
-    return {"id": 1, "sample_column": 42}
+    return [
+        {"id": 1, "sample_column": 42},
+        {"id": 2, "sample_column": 43},
+        {"id": 3, "sample_column": 44},
+    ]
+
+
+def get_data_rows_for_table_2():
+    """
+    This function is a placeholder for your data retrieval logic.
+    In a real-world scenario, you would implement the logic to fetch data from your source system.
+    For demonstration purposes, this function returns a static list of dictionaries representing
+    sample data rows for `sample_table_2`, which exists only in `schema_1`.
+    """
+    return [
+        {"id": 1, "sample_column": 100},
+        {"id": 2, "sample_column": 200},
+    ]
 
 
 # Create the connector object using the schema and update functions
@@ -116,16 +148,27 @@ if __name__ == "__main__":
     # Test the connector locally
     connector.debug(configuration=configuration)
 
-# Resulting table:
+# Resulting tables:
 # Schema: schema_1  |  Table: sample_table
 # ┌──────────┐─────────────────────┐─────────────────────┐
 # │    id    │    sample_column    │  _fivetran_deleted  │
 # ├──────────┤─────────────────────┤─────────────────────┤
 # │     1    │         100         │       true          │
+# │     2    │          43         │       true          │
+# │     3    │          44         │       true          │
+# └──────────┴─────────────────────┘─────────────────────┘
+# Schema: schema_1  |  Table: sample_table_2
+# ┌──────────┐─────────────────────┐─────────────────────┐
+# │    id    │    sample_column    │  _fivetran_deleted  │
+# ├──────────┤─────────────────────┤─────────────────────┤
+# │     1    │         100         │       false         │
+# │     2    │         200         │       false         │
 # └──────────┴─────────────────────┘─────────────────────┘
 # Schema: schema_2  |  Table: sample_table
 # ┌──────────┐─────────────────────┐─────────────────────┐
 # │    id    │    sample_column    │  _fivetran_deleted  │
 # ├──────────┤─────────────────────┤─────────────────────┤
 # │     1    │         42          │       true          │
+# │     2    │         43          │       false         │
+# │     3    │         44          │       false         │
 # └──────────┴─────────────────────┘─────────────────────┘
