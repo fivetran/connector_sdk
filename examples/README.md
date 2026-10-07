@@ -39,6 +39,8 @@ These are graded examples designed to help you get started with the Connector SD
   - [file_lifecycle](https://github.com/fivetran/connector_sdk/tree/main/examples/quickstart/unstructured_data/file_lifecycle) - Complete file operation lifecycle including upload, update (upsert vs update), and delete behavior
   - [stream_examples](https://github.com/fivetran/connector_sdk/tree/main/examples/quickstart/unstructured_data/stream_examples) - Different file streaming approaches (HTTP response, BytesIO, custom readers)
 
+- [multiple_schema](https://github.com/fivetran/connector_sdk/tree/main/examples/quickstart/multiple_schema) - This example shows how to implement a simple connector that supports multiple schemas.
+
 </details>
 
 
