@@ -68,11 +68,11 @@ def update(configuration: dict, state: dict):
 
     # Using multiple schema with update()
     modified_data = {"id": 1, "sample_column": 100}
-    op.update(schema="schema_1", table="sample_table", data=modified_data)
+    op.update(schema="schema_1", table="sample_table", modified=modified_data)
 
     # Using multiple schema with delete()
     key_to_delete = {"id": 1}
-    op.delete(schema="schema_2", table="sample_table", key=key_to_delete)
+    op.delete(schema="schema_2", table="sample_table", keys=key_to_delete)
 
     # Using multiple schema with truncate()
     op.truncate(schema="schema_1", table="sample_table")
