@@ -127,7 +127,7 @@ These examples demonstrate common patterns and best practices for building conne
 
 ### Workflows
 
-- [github](https://github.com/fivetran/connector_sdk/tree/main/examples/workflows/github) - This is an example of a GitHub workflow to deploy a hello connector after a push to the hello directory. It uses GitHub secrets and environment variables to create a configuration.json file that is included in the deployment.
+- [GitHub Actions workflows](https://github.com/fivetran/connector_sdk/tree/main/examples/workflows/github): Workflows for deploying Connector SDK connectors to Fivetran from GitHub Actions. Includes `deploy_hello_connector.yml`, a minimal single-file example that deploys a hello connector after a push to the `hello/` directory, and a reusable composite action in `action/` with two example caller workflows: `deploy-single-connector.yml` for one connector per workflow, and `deploy-matrix.yml`, a matrix workflow that deploys several connectors from a single file, including one connector to multiple destinations.
 </details>
 
 ## AI and Connector SDK
