@@ -31,28 +31,19 @@ def schema(configuration: dict):
             "schema": "schema_1",
             "table": "sample_table",
             "primary_key": ["id"],
-            "columns": {
-                "id": "INT",
-                "sample_column": "INT"
-            },
+            "columns": {"id": "INT", "sample_column": "INT"},
         },
         {
             "schema": "schema_1",
             "table": "sample_table_2",
             "primary_key": ["id"],
-            "columns": {
-                "id": "INT",
-                "sample_column": "INT"
-            },
+            "columns": {"id": "INT", "sample_column": "INT"},
         },
         {
             "schema": "schema_2",
             "table": "sample_table",
             "primary_key": ["id"],
-            "columns": {
-                "id": "INT",
-                "sample_column": "INT"
-            },
+            "columns": {"id": "INT", "sample_column": "INT"},
         },
     ]
 
