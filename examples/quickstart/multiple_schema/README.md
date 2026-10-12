@@ -1,6 +1,5 @@
 # Multiple Schema Connector Example
 
-Note: The multiple schema feature demonstrated in this example is currently in private preview and is not available to all accounts by default. If you want to use this feature, reach out to [Fivetran Support](https://support.fivetran.com/hc/en-us) to request access before trying this example.
 
 ## Connector overview
 This connector demonstrates how to define and write to multiple schemas in a single connector by using the `schema()` function and the `op.upsert()`, `op.update()`, `op.delete()`, and `op.truncate()` operations. This is useful when a single connector needs to write data to multiple logical destinations, including multiple tables within the same schema, without creating separate connectors.
@@ -19,7 +18,7 @@ Refer to the [Connector SDK Setup Guide](https://fivetran.com/docs/connectors/co
 To initialize a new Connector SDK project using this connector as a starting point, run:
 
 ```bash
-fivetran init <project-path> --template examples/quickstart/multiple_schema
+fivetran init --template examples/quickstart/multiple_schema
 ```
 
 `fivetran init` initializes a new Connector SDK project by setting up the project structure, configuration files, and a connector you can run immediately with `fivetran debug`.
