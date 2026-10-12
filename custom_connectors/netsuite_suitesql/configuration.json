@@ -1,0 +1,10 @@
+{
+  "account_id": "TSTDRV2028961",
+  "consumer_key": "f2ac898faf6610a1cdd0b8e91a25d9559de6702d3112ec6cace5eca77f531914",
+  "consumer_secret": "be2753680ff59b20fa183492db0559bc002e0911308d5f72742f4756b73622ad",
+  "token_key": "cf1fc4d5460c2f4127ce0fbdfde33e78992a6e04a22d958c187dbb047d37355d",
+  "token_secret": "bc12b9e421f45b8bcaa744a2c6a100f90bcc700248fd1381430b8b54a272205f",
+  "date_from": "2020-01-01",
+  "date_to": "",
+  "subsidiaries": "1,3,4"
+}
