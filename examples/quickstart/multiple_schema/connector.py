@@ -33,6 +33,7 @@ def schema(configuration: dict):
             "primary_key": ["id"],
             "columns": {
                 "id": "INT",
+                "sample_column": "INT"
             },
         },
         {
@@ -41,6 +42,7 @@ def schema(configuration: dict):
             "primary_key": ["id"],
             "columns": {
                 "id": "INT",
+                "sample_column": "INT"
             },
         },
         {
@@ -49,6 +51,7 @@ def schema(configuration: dict):
             "primary_key": ["id"],
             "columns": {
                 "id": "INT",
+                "sample_column": "INT"
             },
         },
     ]

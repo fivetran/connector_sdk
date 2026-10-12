@@ -3,7 +3,7 @@
 Note: The multiple schema feature demonstrated in this example is currently in private preview and is not available to all accounts by default. If you want to use this feature, reach out to [Fivetran Support](https://support.fivetran.com/hc/en-us) to request access before trying this example.
 
 ## Connector overview
-This connector demonstrates how to define and write to multiple schemas in a single connector by using the `schema()` function and the `op.upsert()`, `op.update()`, `op.delete()`, and `op.truncate()` operations.
+This connector demonstrates how to define and write to multiple schemas in a single connector by using the `schema()` function and the `op.upsert()`, `op.update()`, `op.delete()`, and `op.truncate()` operations. This is useful when a single connector needs to write data to multiple logical destinations, including multiple tables within the same schema, without creating separate connectors.
 
 ## Requirements
 - [Supported Python versions](https://github.com/fivetran/connector_sdk/blob/main/README.md#requirements)
@@ -28,14 +28,11 @@ For more information on `fivetran init`, refer to the [Connector SDK `init` docu
 
 
 ## Features
-- Declares two separate destination schemas using `schema()`.
-- Declares two tables, `sample_table` and `sample_table_2`, within `schema_1`, in addition to `schema_2.sample_table`, to show that a single schema can host multiple tables.
-- Upserts multiple sample records to `schema_1.sample_table` and `schema_2.sample_table`.
-- Upserts sample records to `schema_1.sample_table_2`.
-- Demonstrates `op.update()` against a schema-scoped table.
-- Demonstrates `op.delete()` against a schema-scoped table.
-- Demonstrates `op.truncate()` against a schema-scoped table.
-- Persists sync progress through `op.checkpoint(state)`.
+ - Defines two schemas and three tables using `schema()`.
+ - Shows that one schema can host multiple tables: `schema_1` contains both `SAMPLE_TABLE` and `SAMPLE_TABLE_2`.
+ - Upserts records into tables across both schemas using `op.upsert()` with the `schema` and `table` parameters.                                           
+ - Demonstrates `op.update()`, `op.delete()`, and `op.truncate()` with the `schema` parameter.
+ - Persists sync progress with `op.checkpoint()`.
 
 ## Configuration file
 This example does not require any custom configuration fields.
@@ -85,12 +82,12 @@ The `schema()` function defines three tables across the two schemas: `schema_1.s
 ]
 ```
 
-The `update()` function in `connector.py` creates multiple sample rows, upserts them into `schema_1.sample_table` and `schema_2.sample_table`, upserts additional sample rows into `schema_1.sample_table_2`, updates one row in `schema_1.sample_table` with a new value, deletes a row from `schema_2.sample_table`, truncates `schema_1.sample_table`, and then checkpoints state. This pattern is useful when a single connector needs to write data to multiple logical destinations, including multiple tables within the same schema, without creating separate connectors.
+The `update()` function in `connector.py` creates multiple sample rows, upserts them into `schema_1.sample_table` and `schema_2.sample_table`, upserts additional sample rows into `schema_1.sample_table_2`, updates one row in `schema_1.sample_table` with a new value, deletes a row from `schema_2.sample_table`, truncates `schema_1.sample_table`, and then checkpoints state.
 
 ## Tables created
 The connector creates three tables across the two schemas:
 
-Schema: `schema_1` and Table: `sample_table`
+`SAMPLE_TABLE` in `schema_1`: 
 
 | id       | sample_column | fivetran_deleted |
 |----------|:-------------:|-----------------:|
@@ -98,14 +95,14 @@ Schema: `schema_1` and Table: `sample_table`
 | 2        |      43       |             true |
 | 3        |      44       |             true |
 
-Schema: `schema_1` and Table: `sample_table_2`
+`SAMPLE_TABLE_2` in `schema_1`: 
 
 | id       | sample_column | fivetran_deleted |
 |----------|:-------------:|-----------------:|
 | 1        |      100      |            false |
 | 2        |      200      |            false |
 
-Schema: `schema_2` and Table: `sample_table`
+`SAMPLE_TABLE` in `schema_2`: 
 
 | id       | sample_column | fivetran_deleted |
 |----------|:-------------:|-----------------:|
