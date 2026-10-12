@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest projecttype="ACCOUNTCUSTOMIZATION">
+  <projectname>fivetran_netsuite_role</projectname>
+  <frameworkversion>1.0</frameworkversion>
+  <dependencies>
+    <features>
+      <feature required="true">WEBSERVICES</feature>
+      <feature required="true">SUBSIDIARIES</feature>
+      <feature required="false">IPADDRESSRULES</feature>
+      <feature required="false">MULTIBOOK</feature>
+    </features>
+  </dependencies>
+</manifest>

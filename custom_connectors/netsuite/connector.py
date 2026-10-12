@@ -50,9 +50,6 @@ __MAX_RETRY_DELAY_SECONDS = 30
 __REQUEST_TIMEOUT_SECONDS = 60  # page fetches
 __AGGREGATE_REQUEST_TIMEOUT_SECONDS = 150  # COUNT/MIN/MAX - always 1 row, so more room to wait
 
-# Literal 'date_to' value meaning "today, re-resolved every sync" - see resolve_date_to.
-__TODAY_PLACEHOLDER = "TODAY"
-
 # Hardcoded table/column/join list this connector syncs - not configurable. Tables with neither
 # 'date_column' nor 'filter_via' (the 3 dimension tables) sync unfiltered every run; the rest are
 # filtered by date/subsidiary and use adaptive window splitting (see table_has_date_filter,
@@ -134,7 +131,7 @@ __TABLES = [
 
 def validate_configuration(configuration: dict):
     """
-    Fail fast if any required configuration value is missing. See README "Configuration".
+    Fail fast if any required configuration value is missing. See README "6. Configure the connector in Fivetran".
     Raises:
         ValueError: if any required configuration parameter is missing.
     """
@@ -187,13 +184,9 @@ def get_oauth1_auth(configuration: dict):
 
 
 def resolve_date_to(configuration: dict):
-    """Resolve optional 'date_to': None if omitted (open-ended range), __TODAY_PLACEHOLDER -> today, else passed through."""
+    """Resolve optional 'date_to': None if omitted/blank (open-ended range), else passed through as-is."""
     raw_value = configuration.get("date_to")
-    if not raw_value:
-        return None
-    if raw_value == __TODAY_PLACEHOLDER:
-        return datetime.now(timezone.utc).strftime("%Y-%m-%d")
-    return raw_value
+    return raw_value if raw_value else None
 
 
 def parse_date(value: str) -> date:
@@ -808,11 +801,11 @@ def configuration_form():
     config_form.add_field(
         form_field.TextField(
             name="date_to",
-            label="Date To (optional)",
-            description="Upper bound (inclusive), 'YYYY-MM-DD' or 'TODAY'. Leave blank for an open-ended range.",
+            label="Date To",
+            description="Upper bound (inclusive), 'YYYY-MM-DD'. Leave blank to sync through the present.",
             required=False,
             field_type=form_field.TextField.plain_text,
-            placeholder="TODAY",
+            placeholder="2026-12-31",
         )
     )
     config_form.add_field(
