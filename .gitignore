@@ -7,7 +7,7 @@ examples/**/files/
 examples/**/build/
 examples/**/dist/
 custom_connectors/**/files/
-custom_connectors/netsuite/configuration.json
+custom_connectors/netsuite_suitesql/configuration.json
 .venv*
 .env
 
