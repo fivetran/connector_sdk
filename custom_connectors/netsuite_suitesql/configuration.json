@@ -1,0 +1,10 @@
+{
+  "account_id": "<YOUR_NETSUITE_ACCOUNT_ID>",
+  "consumer_key": "<YOUR_CONSUMER_KEY>",
+  "consumer_secret": "<YOUR_CONSUMER_SECRET>",
+  "token_key": "<YOUR_TOKEN_ID>",
+  "token_secret": "<YOUR_TOKEN_SECRET>",
+  "date_from": "2020-01-01",
+  "date_to": "",
+  "subsidiaries": "1,2,3"
+}
