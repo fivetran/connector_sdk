@@ -91,6 +91,9 @@ The connector creates the `CALCULATIONS` table:
   "table": "calculations",
   "primary_key": ["id"],
   "columns": {
+    "id": "LONG",
+    "base": "DOUBLE",
+    "exponent": "DOUBLE",
     "power_result": "DOUBLE",
     "sqrt_result": "DOUBLE"
   }
