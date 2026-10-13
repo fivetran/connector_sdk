@@ -1,7 +1,7 @@
 # This example shows how to call a native C library from a Connector SDK connector using ctypes.
-# The bundled library (native/custom.c) is compiled into native/libcustom.so by drivers/installation.sh
-# at deploy time, which runs before connector.py and guarantees the library is built for the
-# hosted production platform (Linux amd64/x86_64).
+# It uses libm, the C standard math library that ships with every Linux and macOS system (including
+# the Fivetran Connector SDK hosted production base image), so no bundling or compilation step is
+# required. The same ctypes pattern applies if you need to call your own compiled C library instead.
 # See the Technical Reference documentation (https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update)
 # and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details.
 
@@ -14,11 +14,22 @@ from fivetran_connector_sdk import Logging as log
 # For supporting Data operations like Upsert(), Update(), Delete() and checkpoint()
 from fivetran_connector_sdk import Operations as op
 
-# Import json for reading configuration file
+# For reading configuration from a JSON file
 import json
 
-# Import the ctypes wrapper around the bundled native library.
+# Thin ctypes wrapper around libm, the C standard math library (see native_wrapper.py)
 import native_wrapper
+
+# Name of the destination table this connector syncs to.
+__TABLE_NAME = "calculations"
+
+# Sample source rows. In a real connector, these inputs would come from your API or database;
+# here they only illustrate how the native library's result gets upserted alongside the inputs.
+__SAMPLE_ROWS = [
+    {"id": 1, "base": 2.0, "exponent": 10.0},
+    {"id": 2, "base": 3.0, "exponent": 4.0},
+    {"id": 3, "base": 5.0, "exponent": 0.5},
+]
 
 
 def schema(configuration: dict):
@@ -31,58 +42,87 @@ def schema(configuration: dict):
     """
     return [
         {
-            "table": "calculations",  # Name of the table in the destination.
-            "primary_key": ["id"],  # Primary key column(s) for the table.
-            "columns": {  # Define the columns and their data types.
-                "id": "INT",
-                "operand_a": "INT",
-                "operand_b": "INT",
-                "result": "INT",  # Computed by the native C library's `add` function.
+            "table": __TABLE_NAME,
+            "primary_key": ["id"],
+            "columns": {
+                "power_result": "DOUBLE",  # Computed by libm's native `pow` function.
+                "sqrt_result": "DOUBLE",  # Computed by libm's native `sqrt` function; other columns are inferred.
             },
         }
     ]
 
 
+def validate_configuration(configuration: dict):
+    """
+    Validate the configuration dictionary to ensure it contains all required parameters.
+    This function is called at the start of the update method to ensure that the connector has all necessary configuration values.
+    Args:
+        configuration: a dictionary that holds the configuration settings for the connector.
+    Raises:
+        ValueError: if any required configuration parameter is missing.
+    """
+    # This example requires no configuration values; validation is a no-op but kept for consistency
+    # with the standard connector structure and to make future configuration additions easy.
+    return
+
+
 def update(configuration: dict, state: dict):
     """
     Define the update function, which is a required function, and is called by Fivetran during each sync.
-    See the technical reference documentation for more details on the update function:
+    See the technical reference documentation for more details on the update function
     https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update
     Args:
-        configuration: a dictionary contains any secrets or payloads you configure when deploying the connector.
-        state: a dictionary contains whatever state you have chosen to checkpoint during the prior sync.
+        configuration: A dictionary containing connection details
+        state: A dictionary containing state information from previous runs
+        The state dictionary is empty for the first sync or for any full re-sync
     """
-    # Sample source rows. In a real connector, these would come from your API or database.
-    sample_rows = [
-        {"id": 1, "operand_a": 2, "operand_b": 3},
-        {"id": 2, "operand_a": 10, "operand_b": 20},
-        {"id": 3, "operand_a": -5, "operand_b": 5},
-    ]
+    log.warning("Example: common_patterns : native_c_library_integration")
 
-    log.info("Computing results using the native C library (native/libcustom.so).")
-    for row in sample_rows:
-        result = native_wrapper.add(row["operand_a"], row["operand_b"])
+    validate_configuration(configuration)
+
+    for row in __SAMPLE_ROWS:
+        power_result = native_wrapper.power(row["base"], row["exponent"])
+        sqrt_result = native_wrapper.square_root(row["base"])
+        # The 'upsert' operation is used to insert or update data in the destination table.
+        # The first argument is the name of the destination table.
+        # The second argument is a dictionary containing the record to be upserted.
         op.upsert(
-            "calculations",
-            {
+            table=__TABLE_NAME,
+            data={
                 "id": row["id"],
-                "operand_a": row["operand_a"],
-                "operand_b": row["operand_b"],
-                "result": result,
+                "base": row["base"],
+                "exponent": row["exponent"],
+                "power_result": power_result,
+                "sqrt_result": sqrt_result,
             },
         )
 
-    # Checkpoint after each sync. This example has no incremental cursor, so state stays empty.
+    # Save the progress by checkpointing the state. This is important for ensuring that the sync process can resume
+    # from the correct position in case of next sync or interruptions.
+    # You should checkpoint even if you are not using incremental sync, as it tells Fivetran it is safe to write to destination.
+    # For large datasets, checkpoint regularly (e.g., every N records) not only at the end.
+    # Learn more about how and where to checkpoint by reading our best practices documentation
+    # (https://fivetran.com/docs/connector-sdk/best-practices#optimizingperformancewhenhandlinglargedatasets).
     op.checkpoint(state)
 
 
-# Create the connector object using the schema and update functions defined in this connector.py file.
+# Create the connector object using the schema and update functions
 connector = Connector(update=update, schema=schema)
 
-# required inputs docs https://fivetran.com/docs/connector-sdk/technical-reference#technicaldetailsrequiredobjectconnector
+# Check if the script is being run as the main module.
+# This is Python's standard entry method allowing your script to be run directly from the command line or IDE 'run' button.
+#
+# IMPORTANT: The recommended way to test your connector is using the Fivetran debug command:
+#   fivetran debug
+#
+# This local testing block is provided as a convenience for quick debugging during development,
+# such as using IDE debug tools (breakpoints, step-through debugging, etc.).
+# Note: This method is not called by Fivetran when executing your connector in production.
+# Always test using 'fivetran debug' prior to finalizing and deploying your connector.
 if __name__ == "__main__":
-    # Open the configuration.json file and load its contents into a dictionary.
+    # Open the configuration.json file and load its contents
     with open("configuration.json", "r") as f:
         configuration = json.load(f)
-    # Adding this code to your `connector.py` allows you to test your connector by running your file directly from your IDE.
+
+    # Test the connector locally
     connector.debug(configuration=configuration)
