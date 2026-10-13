@@ -5,6 +5,9 @@
 # See the Technical Reference documentation (https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update)
 # and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details.
 
+# For reading configuration from a JSON file
+import json
+
 # Import required classes from fivetran_connector_sdk
 from fivetran_connector_sdk import Connector
 
@@ -13,9 +16,6 @@ from fivetran_connector_sdk import Logging as log
 
 # For supporting Data operations like Upsert(), Update(), Delete() and checkpoint()
 from fivetran_connector_sdk import Operations as op
-
-# For reading configuration from a JSON file
-import json
 
 # Thin ctypes wrapper around libm, the C standard math library (see native_wrapper.py)
 import native_wrapper
