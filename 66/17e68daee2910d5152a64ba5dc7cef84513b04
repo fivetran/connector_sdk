@@ -1,0 +1,21 @@
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.4",
+  "base_commit_sha": "6617e68daee2910d5152a64ba5dc7cef84513b04",
+  "prompts": {
+    "006c72b962f5ef81": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "fe7e6309-5069-495b-b9a9-13d265604f3d",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "fivetran-JenasVimal <jenas.vimal@fivetran.com>",
+      "messages": [],
+      "total_additions": 1,
+      "total_deletions": 0,
+      "accepted_lines": 1,
+      "overriden_lines": 0
+    }
+  }
+}
