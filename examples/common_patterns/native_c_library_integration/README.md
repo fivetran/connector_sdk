@@ -8,7 +8,7 @@ The example calls `libm`, the C standard math library, which ships with every Li
 ## Requirements
 - [Supported Python versions](https://github.com/fivetran/connector_sdk/blob/main/README.md#requirements)
 - Operating system:
-  - Windows: 10 or later (64-bit only)
+  - Windows is not supported by this example because Windows does not provide the Unix `libm` library loaded by `native_wrapper.py`.
   - macOS: 13 (Ventura) or later (Apple Silicon [arm64] or Intel [x86_64])
   - Linux: Distributions such as Ubuntu 20.04 or later, Debian 10 or later, or Amazon Linux 2 or later (arm64 or x86_64)
 
