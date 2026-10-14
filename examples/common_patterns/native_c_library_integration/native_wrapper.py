@@ -16,16 +16,39 @@ library's C header.
 # For loading and calling the native library's compiled functions
 import ctypes
 
-# For resolving the path to the bundled library file
+# For locating libm on macOS when developing locally (see _load_library below)
+import ctypes.util
+
+# For resolving the path to the bundled library file and checking the OS
+import platform
 from pathlib import Path
 
-# The compiled library bundled with this connector. It was built for Linux
-# x86_64, which matches the Fivetran Connector SDK hosted production
-# environment, so no separate build step is required to deploy this connector.
-_LIBRARY_PATH = Path(__file__).resolve().parent / "native" / "libm.so"
 
-# Load the bundled library into this process so its functions can be called directly.
-library = ctypes.CDLL(str(_LIBRARY_PATH))
+def _load_library() -> ctypes.CDLL:
+    """
+    Load the native math library this connector depends on.
+    Returns:
+        The loaded library, ready for argtypes/restype declarations and calls.
+    """
+    if platform.system() == "Linux":
+        # The compiled library bundled with this connector. It was built for
+        # Linux x86_64, which matches the Fivetran Connector SDK hosted
+        # production environment, so no separate build step is required to
+        # deploy this connector.
+        library_path = Path(__file__).resolve().parent / "native" / "libm.so"
+        return ctypes.CDLL(str(library_path))
+
+    # macOS no longer ships libm as a standalone file you can bundle, so this
+    # branch exists only so you can run `fivetran debug` locally on macOS.
+    # It is not used in production: deployed connectors always run on Linux.
+    library_path = ctypes.util.find_library("m")
+    if not library_path:
+        raise OSError("Could not locate libm (the C standard math library) on this system.")
+    return ctypes.CDLL(library_path)
+
+
+# Load the library into this process so its functions can be called directly.
+library = _load_library()
 
 # Match these declarations to libm's C header (math.h).
 library.pow.argtypes = [ctypes.c_double, ctypes.c_double]
