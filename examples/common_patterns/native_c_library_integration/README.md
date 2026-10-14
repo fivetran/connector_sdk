@@ -1,12 +1,9 @@
 # Native C Library Integration Connector Example
 
 ## Connector overview
-This connector demonstrates how to call a native C library from a Connector SDK connector using Python's built-in [`ctypes`](https://docs.python.org/3/library/ctypes.html) module. It simulates a scenario where a connector needs to reuse an existing calculation that is already implemented and validated in C instead of reimplementing that logic in Python and risking it drifting out of sync with the canonical version. For example, a formula shared with other internal systems.
+This connector demonstrates how to call a native C library from a Connector SDK connector using Python's built-in [`ctypes`](https://docs.python.org/3/library/ctypes.html) module. It simulates a scenario where a connector needs to reuse an existing calculation already implemented in C, for example a formula shared with other internal systems, instead of reimplementing that logic in Python.
 
-The example calls `libm`, the C standard math library. `libm` ships with every Linux and macOS system, including the Fivetran Connector SDK hosted production base image, so this example requires no bundling or compilation step, and `native_wrapper.py` loads it directly via `ctypes.util.find_library("m")`. The same `ctypes` pattern applies if you need to call your own compiled, proprietary, or third-party C library instead: bundle the compiled `.so` file alongside your connector code and load it from a fixed path with `ctypes.CDLL(...)`. See `native_wrapper.py` for details on both approaches.
-
-Refer to the [Technical Reference documentation](https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update) and the [Best Practices documentation](https://fivetran.com/docs/connector-sdk/best-practices) for more details.
-
+The example calls `libm`, the C standard math library, which ships with every Linux and macOS system. `native_wrapper.py` loads it directly via `ctypes.util.find_library("m")`. The same `ctypes` pattern applies if you need to call your own C libraries instead of a system library: load the compiled library from a fixed path with `ctypes.CDLL(...)`. See `native_wrapper.py` for details on both approaches.
 
 ## Requirements
 - [Supported Python versions](https://github.com/fivetran/connector_sdk/blob/main/README.md#requirements)
@@ -22,7 +19,7 @@ Refer to the [Connector SDK Setup Guide](https://fivetran.com/docs/connector-sdk
 To initialize a new Connector SDK project using this connector as a starting point, run:
 
 ```bash
-fivetran init <project-path> --template examples/common_patterns/native_c_library_integration
+fivetran init --template examples/common_patterns/native_c_library_integration
 ```
 `fivetran init` initializes a new Connector SDK project by setting up the project structure, configuration files, and a connector you can run immediately with `fivetran debug`.
 If you do not specify a project path, Fivetran creates the project in your current directory.
@@ -31,9 +28,9 @@ For more information on `fivetran init`, refer to the [Connector SDK `init` docu
 
 ## Features
 - Demonstrates loading and calling a native C library from Python using `ctypes`.
-- Declares `argtypes`/`restype` so Python and C agree on how arguments and return values are marshalled.
+- Declares `argtypes`/`restype` so Python and C agree on how arguments and return values are converted between the two languages.
 - Shows calling an already-installed system library (`libm`) with no bundling required.
-- Explains how to adapt the same pattern to load your own bundled `.so` file instead.
+- Explains how to adapt the same pattern to load your own C library instead.
 
 
 ## Configuration file
@@ -49,7 +46,7 @@ Note: Ensure that the `configuration.json` file is not checked into version cont
 ## Requirements file
 This connector does not require any external dependencies. `ctypes` and `ctypes.util` are part of the Python standard library, so no `requirements.txt` is needed.
 
-Note: The `fivetran_connector_sdk:latest` and `requests:latest` packages are pre-installed in the Fivetran environment. To avoid dependency conflicts, do not declare them in your `requirements.txt`.
+> Note: [Some packages](https://fivetran.com/docs/connector-sdk/technical-reference#preinstalledpackages) are pre-installed in the Connector SDK runtime environment. To avoid dependency conflicts, do not declare them in your `requirements.txt`.
 
 
 ## Authentication
@@ -63,19 +60,18 @@ Not applicable — this example syncs static data only. To support pagination, y
 ## Data handling
 - `native_wrapper.py` resolves `libm`'s path with `ctypes.util.find_library("m")`, loads it with `ctypes.CDLL`, and declares `argtypes`/`restype` for the `pow` and `sqrt` functions to match `math.h`.
 - `connector.py` calls `native_wrapper.power()` and `native_wrapper.square_root()` for each sample row and upserts the inputs alongside the native library's results.
-- If you bundle your own compiled library instead, place the `.so` file under a `native/` folder and resolve its path relative to the connector file, for example:
+- To call your own compiled library instead, place its `.so` file under a `native/` folder and resolve its path relative to the connector file, for example:
   ```python
   import ctypes
   from pathlib import Path
 
-  library_path = Path(__file__).resolve().parent / "native" / "libcustom.so"
+  library_path = Path(__file__).resolve().parent
   library = ctypes.CDLL(str(library_path))
   # Match these declarations to the library's C header.
   library.your_function.argtypes = [ctypes.c_int, ctypes.c_int]
   library.your_function.restype = ctypes.c_int
   ```
 
-Ensure any bundled `.so` file is compiled for the Fivetran Connector SDK hosted production platform (Linux amd64/x86_64), not just your local development machine.
 
 
 ## Error handling
@@ -107,8 +103,5 @@ The connector uses one additional file, `native_wrapper.py`, which is a thin `ct
 
 
 ## Additional considerations
-- If you bundle your own `.so` file, it must be compiled for the target platform (Linux amd64/x86_64), not for the platform you're developing on (for example, macOS arm64). Cross-compile with a tool like Docker, or build the library in a Linux CI environment, before committing the binary.
-- We recommend using an already-installed system library (like this example's use of `libm`) over bundling your own binary whenever possible. This avoids the complexity of cross-compilation and keeps your connector's footprint small.
-- Only bundle a compiled library when the logic isn't available as a system library or a pip-installable Python package, for example proprietary business logic that already exists as validated C code elsewhere in your organization.
-
+Your own C library must be compiled for the target platform (Linux amd64/x86_64), not the platform you're developing on (for example, macOS arm64).
 The examples provided are intended to help you effectively use Fivetran's Connector SDK. While we've tested the code, Fivetran cannot be held responsible for any unexpected or negative consequences that may arise from using these examples. For inquiries, please reach out to our Support team.

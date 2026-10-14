@@ -1,15 +1,12 @@
 """Thin ctypes wrapper around libm, the C standard math library.
 
-libm ships with every Linux and macOS system (including the Fivetran
-Connector SDK hosted production base image), so no bundling or compilation
-step is required. Load it once at import time, declare argtypes/restype to
-match the real C API exactly, and expose plain Python functions that
-connector.py can call like any other helper.
+libm ships with every Linux and macOS system. Load it once at import time,
+declare argtypes/restype to match the real C API exactly, and expose plain
+Python functions that connector.py can call like any other helper.
 
-If you need to call your own proprietary/compiled C library instead of a
-system library like libm, follow the same pattern: resolve the path to your
-.so file (bundled with the connector or installed via a drivers/installation.sh
-script), load it with ctypes.CDLL, and declare argtypes/restype to match your
+If you need to call your own C library instead of a system library like
+libm, follow the same pattern: resolve the path to your compiled library,
+load it with ctypes.CDLL, and declare argtypes/restype to match your
 library's C header.
 """
 
