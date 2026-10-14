@@ -3,14 +3,13 @@
 ## Connector overview
 This connector demonstrates how to call a native C library from a Connector SDK connector using Python's built-in [`ctypes`](https://docs.python.org/3/library/ctypes.html) module. It simulates a scenario where a connector needs to reuse an existing calculation already implemented in C, for example a formula shared with other internal systems, instead of reimplementing that logic in Python.
 
-The example calls `libm`, the C standard math library, which ships with every Linux and macOS system. `native_wrapper.py` loads it directly via `ctypes.util.find_library("m")`. The same `ctypes` pattern applies if you need to call your own C libraries instead of a system library: load the compiled library from a fixed path with `ctypes.CDLL(...)`. See `native_wrapper.py` for details on both approaches.
+The example bundles a precompiled copy of `libm`, the C standard math library, as `native/libm.so`. `native_wrapper.py` loads it from a fixed path with `ctypes.CDLL(...)`. The same pattern applies to any other compiled, proprietary, or third-party C library you need to bundle: place its `.so` file alongside the connector code and load it the same way. See `native_wrapper.py` for details.
 
 ## Requirements
 - [Supported Python versions](https://github.com/fivetran/connector_sdk/blob/main/README.md#requirements)
 - Operating system:
-  - Windows is not supported by this example because Windows does not provide the Unix `libm` library loaded by `native_wrapper.py`.
-  - macOS: 13 (Ventura) or later (Apple Silicon [arm64] or Intel [x86_64])
-  - Linux: Distributions such as Ubuntu 20.04 or later, Debian 10 or later, or Amazon Linux 2 or later (arm64 or x86_64)
+  - `native/libm.so` is compiled for Linux x86_64, matching the Fivetran Connector SDK hosted production environment, so this example runs as-is there.
+  - To run this example locally with `fivetran debug`, your machine must also be Linux x86_64 (for example, Ubuntu 20.04 or later, Debian 10 or later, or Amazon Linux 2 or later, running on x86_64). On other platforms (macOS, Windows, or Linux arm64), `ctypes.CDLL(...)` fails to load the bundled `.so` file; recompile or obtain `libm` for your platform to test locally, as you would for your own bundled library.
 
 
 ## Getting started
@@ -27,10 +26,9 @@ For more information on `fivetran init`, refer to the [Connector SDK `init` docu
 
 
 ## Features
-- Demonstrates loading and calling a native C library from Python using `ctypes`.
+- Demonstrates bundling a precompiled `.so` file with a connector and loading it with `ctypes`.
 - Declares `argtypes`/`restype` so Python and C agree on how arguments and return values are converted between the two languages.
-- Shows calling an already-installed system library (`libm`) with no bundling required.
-- Explains how to adapt the same pattern to load your own C library instead.
+- Shows loading the bundled library from a fixed path, the same way you would for your own compiled, proprietary, or third-party C library.
 
 
 ## Configuration file
@@ -44,7 +42,7 @@ Note: Ensure that the `configuration.json` file is not checked into version cont
 
 
 ## Requirements file
-This connector does not require any external dependencies. `ctypes` and `ctypes.util` are part of the Python standard library, so no `requirements.txt` is needed.
+This connector does not require any external dependencies. `ctypes` is part of the Python standard library, so no `requirements.txt` is needed.
 
 > Note: [Some packages](https://fivetran.com/docs/connector-sdk/technical-reference#preinstalledpackages) are pre-installed in the Connector SDK runtime environment. To avoid dependency conflicts, do not declare them in your `requirements.txt`.
 
@@ -58,9 +56,9 @@ Not applicable — this example syncs static data only. To support pagination, y
 
 
 ## Data handling
-- `native_wrapper.py` resolves `libm`'s path with `ctypes.util.find_library("m")`, loads it with `ctypes.CDLL`, and declares `argtypes`/`restype` for the `pow` and `sqrt` functions to match `math.h`.
+- `native_wrapper.py` resolves the bundled library's path relative to the connector file (`native/libm.so`), loads it with `ctypes.CDLL`, and declares `argtypes`/`restype` for the `pow` and `sqrt` functions to match `math.h`.
 - `connector.py` calls `native_wrapper.power()` and `native_wrapper.square_root()` for each sample row and upserts the inputs alongside the native library's results.
-- To call your own compiled library instead, place its `.so` file under a `native/` folder and resolve its path relative to the connector file, for example:
+- To bundle your own compiled library, place its `.so` file under a `native/` folder and resolve its path the same way, for example:
   ```python
   import ctypes
   from pathlib import Path
@@ -75,7 +73,7 @@ Not applicable — this example syncs static data only. To support pagination, y
 
 
 ## Error handling
-- `native_wrapper.py` raises an `OSError` at import time if `libm` cannot be located, so the connector fails fast with a clear error instead of failing later with a confusing `ctypes` error.
+- `native_wrapper.py` lets `ctypes.CDLL(...)` raise an `OSError` at import time if `native/libm.so` is missing or cannot be loaded (for example, because it was built for a different platform), so the connector fails fast with a clear error instead of failing later with a confusing `ctypes` error.
 - Always declare `argtypes` and `restype` for every native function you call. Without them, `ctypes` assumes `int` arguments and return values, which silently corrupts data for other types (for example, truncating `double` values).
 
 
@@ -99,9 +97,11 @@ The connector creates the `CALCULATIONS` table:
 
 ## Additional files
 
-The connector uses one additional file, `native_wrapper.py`, which is a thin `ctypes` wrapper that loads `libm` and exposes `power()` and `square_root()` helpers for `connector.py` to call.
+The connector uses two additional files:
+- `native_wrapper.py`: a thin `ctypes` wrapper that loads the bundled `libm` library and exposes `power()` and `square_root()` helpers for `connector.py` to call.
+- `native/libm.so`: the precompiled, bundled C library, built for Linux x86_64.
 
 
 ## Additional considerations
-Your own C library must be compiled for the target platform (Linux amd64/x86_64), not the platform you're developing on (for example, macOS arm64).
+A bundled `.so` file must be compiled for the target platform (Linux x86_64), not necessarily the platform you're developing on (for example, macOS arm64). `native/libm.so` in this example is compiled for Linux x86_64; see the Requirements section above for how this affects running this example locally.
 The examples provided are intended to help you effectively use Fivetran's Connector SDK. While we've tested the code, Fivetran cannot be held responsible for any unexpected or negative consequences that may arise from using these examples. For inquiries, please reach out to our Support team.

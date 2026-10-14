@@ -1,7 +1,7 @@
 # This example shows how to call a native C library from a Connector SDK connector using ctypes.
-# It uses libm, the C standard math library that ships with every Linux and macOS system (including
-# the Fivetran Connector SDK hosted production base image), so no bundling or compilation step is
-# required. The same ctypes pattern applies if you need to call your own compiled C library instead.
+# It bundles a precompiled copy of libm, the C standard math library, as native/libm.so, and
+# loads it from a fixed path at import time. The same ctypes pattern applies to any other
+# compiled, proprietary, or third-party C library you need to bundle.
 # See the Technical Reference documentation (https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update)
 # and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details.
 
@@ -17,7 +17,7 @@ from fivetran_connector_sdk import Logging as log
 # For supporting Data operations like Upsert(), Update(), Delete() and checkpoint()
 from fivetran_connector_sdk import Operations as op
 
-# Thin ctypes wrapper around libm, the C standard math library (see native_wrapper.py)
+# Thin ctypes wrapper around the bundled libm library (see native_wrapper.py)
 import native_wrapper
 
 # Name of the destination table this connector syncs to.
