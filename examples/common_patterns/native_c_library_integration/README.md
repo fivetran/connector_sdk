@@ -74,7 +74,8 @@ Not applicable — this example syncs static data only. To support pagination, y
 
 
 ## Error handling
-- `native_wrapper.py` lets `ctypes.CDLL(...)` raise an `OSError` at import time if `native/libm.so` is missing or cannot be loaded (for example, because it was built for a different platform), so the connector fails fast with a clear error instead of failing later with a confusing `ctypes` error.
+- `native_wrapper.py` lets `ctypes.CDLL(...)` raise an `OSError` at import time if the native library is missing or cannot be loaded (for example, `native/libm.so` built for a different platform than it is run on), so the connector fails fast with a clear error instead of failing later with a confusing `ctypes` error.
+- On macOS, `native_wrapper.py` raises an `OSError` if `ctypes.util.find_library("m")` cannot locate `libm` on the local system (its local-development fallback; not used in production).
 - Always declare `argtypes` and `restype` for every native function you call. Without them, `ctypes` assumes `int` arguments and return values, which silently corrupts data for other types (for example, truncating `double` values).
 
 
@@ -99,10 +100,10 @@ The connector creates the `CALCULATIONS` table:
 ## Additional files
 
 The connector uses two additional files:
-- `native_wrapper.py`: a thin `ctypes` wrapper that loads the bundled `libm` library and exposes `power()` and `square_root()` helpers for `connector.py` to call.
-- `native/libm.so`: the precompiled, bundled C library, built for Linux x86_64.
+- `native_wrapper.py`: a thin `ctypes` wrapper that loads the bundled `libm` library (with a macOS local-development fallback) and exposes `power()` and `square_root()` helpers for `connector.py` to call.
+- `native/libm.so`: the precompiled, bundled C library, built for Linux x86_64 (used in production and when running `fivetran debug` on Linux x86_64).
 
 
 ## Additional considerations
-A bundled `.so` file must be compiled for the target platform (Linux x86_64), not necessarily the platform you're developing on (for example, macOS arm64). `native/libm.so` in this example is compiled for Linux x86_64; see the Requirements section above for how this affects running this example locally.
+A bundled `.so` file must be compiled for the target platform (Linux x86_64), not necessarily the platform you're developing on (for example, macOS arm64). `native/libm.so` in this example is compiled for Linux x86_64; `native_wrapper.py` only falls back to locating a system-installed copy of `libm` on macOS so you can run `fivetran debug` locally — for your own bundled library, you would need an equivalent local build or a similar fallback. See the Requirements section above for details.
 The examples provided are intended to help you effectively use Fivetran's Connector SDK. While we've tested the code, Fivetran cannot be held responsible for any unexpected or negative consequences that may arise from using these examples. For inquiries, please reach out to our Support team.

@@ -2,15 +2,20 @@
 
 native/libm.so is the real, pre-built C standard math library, compiled for
 Linux x86_64 and bundled with this connector so it is available wherever the
-connector runs, instead of relying on it being separately installed. Load it
-once at import time, declare argtypes/restype to match its real C API, and
-expose plain Python functions that connector.py can call like any other
-helper.
+connector runs in production, instead of relying on it being separately
+installed. _load_library() loads it from that fixed path on Linux, declares
+argtypes/restype to match its real C API, and the module then exposes plain
+Python functions that connector.py can call like any other helper.
 
-The same pattern applies to any other compiled, proprietary, or third-party
-C library you need to bundle: resolve the path to your library's .so file,
-load it with ctypes.CDLL, and declare argtypes/restype to match your
-library's C header.
+On macOS, _load_library() instead falls back to ctypes.util.find_library("m")
+purely so `fivetran debug` can run locally during development; macOS no
+longer ships libm as a standalone file you could bundle in its place. This
+fallback is not used in production: deployed connectors always run on Linux.
+
+The same bundling pattern applies to any other compiled, proprietary, or
+third-party C library you need to ship: resolve the path to your library's
+.so file, load it with ctypes.CDLL, and declare argtypes/restype to match
+your library's C header.
 """
 
 # For loading and calling the native library's compiled functions
