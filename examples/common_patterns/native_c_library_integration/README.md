@@ -9,7 +9,8 @@ The example bundles a precompiled copy of `libm`, the C standard math library, a
 - [Supported Python versions](https://github.com/fivetran/connector_sdk/blob/main/README.md#requirements)
 - Operating system:
   - `native/libm.so` is compiled for Linux x86_64, matching the Fivetran Connector SDK hosted production environment, so this example runs as-is there.
-  - To run this example locally with `fivetran debug`, your machine must also be Linux x86_64 (for example, Ubuntu 20.04 or later, Debian 10 or later, or Amazon Linux 2 or later, running on x86_64). On other platforms (macOS, Windows, or Linux arm64), `ctypes.CDLL(...)` fails to load the bundled `.so` file; recompile or obtain `libm` for your platform to test locally, as you would for your own bundled library.
+  - macOS: supported for local development only. macOS no longer ships `libm` as a standalone file, so `native_wrapper.py` falls back to `ctypes.util.find_library("m")` on macOS purely so `fivetran debug` can run locally; this fallback is not used in production.
+  - Windows and Linux arm64 are not supported by this example, since neither the bundled `.so` nor the macOS fallback can load on them. For your own bundled library, build it for whichever platforms you need to support.
 
 
 ## Getting started
@@ -56,7 +57,7 @@ Not applicable — this example syncs static data only. To support pagination, y
 
 
 ## Data handling
-- `native_wrapper.py` resolves the bundled library's path relative to the connector file (`native/libm.so`), loads it with `ctypes.CDLL`, and declares `argtypes`/`restype` for the `pow` and `sqrt` functions to match `math.h`.
+- `native_wrapper.py` loads `native/libm.so` from a fixed path with `ctypes.CDLL` on Linux (production), falling back to `ctypes.util.find_library("m")` on macOS (local development only), and declares `argtypes`/`restype` for the `pow` and `sqrt` functions to match `math.h`.
 - `connector.py` calls `native_wrapper.power()` and `native_wrapper.square_root()` for each sample row and upserts the inputs alongside the native library's results.
 - To bundle your own compiled library, place its `.so` file under a `native/` folder and resolve its path the same way, for example:
   ```python
