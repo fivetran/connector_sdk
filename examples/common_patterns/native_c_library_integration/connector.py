@@ -2,8 +2,7 @@
 # It bundles a precompiled copy of libm, the C standard math library, as native/libm.so, built
 # for Linux x86_64 (the Fivetran Connector SDK hosted production environment), and loads it from
 # a fixed path at import time. The same ctypes pattern applies to any other compiled, proprietary,
-# or third-party C library you need to bundle. See native_wrapper.py for details, including the
-# macOS fallback used only for local development.
+# or third-party C library you need to bundle. See native_wrapper.py for details.
 # See the Technical Reference documentation (https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update)
 # and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details.
 

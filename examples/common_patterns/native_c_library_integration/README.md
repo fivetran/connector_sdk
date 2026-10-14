@@ -8,9 +8,8 @@ The example bundles a precompiled copy of `libm`, the C standard math library, a
 ## Requirements
 - [Supported Python versions](https://github.com/fivetran/connector_sdk/blob/main/README.md#requirements)
 - Operating system:
-  - `native/libm.so` is compiled for Linux x86_64, matching the Fivetran Connector SDK hosted production environment, so this example runs as-is there.
-  - macOS: supported for local development only. macOS no longer ships `libm` as a standalone file, so `native_wrapper.py` falls back to `ctypes.util.find_library("m")` on macOS purely so `fivetran debug` can run locally; this fallback is not used in production.
-  - Windows and Linux arm64 are not supported by this example, since neither the bundled `.so` nor the macOS fallback can load on them. For your own bundled library, build it for whichever platforms you need to support.
+  - Linux: Distributions such as Ubuntu 20.04 or later, Debian 10 or later, or Amazon Linux 2 or later (x86_64). `native/libm.so` is bundled for this environment, matching the Fivetran Connector SDK hosted production environment, so this example runs as-is there.
+  - macOS and Windows are not supported by this example. `native/libm.so` is a Linux ELF binary; macOS (Mach-O) and Windows (PE/`.dll`) use different binary formats and cannot load it. For your own bundled library, build it for whichever platform(s) you need to support.
 
 
 ## Getting started
@@ -57,7 +56,7 @@ Not applicable — this example syncs static data only. To support pagination, y
 
 
 ## Data handling
-- `native_wrapper.py` loads `native/libm.so` from a fixed path with `ctypes.CDLL` on Linux (production), falling back to `ctypes.util.find_library("m")` on macOS (local development only), and declares `argtypes`/`restype` for the `pow` and `sqrt` functions to match `math.h`.
+- `native_wrapper.py` resolves the bundled library's path relative to the connector file (`native/libm.so`), loads it with `ctypes.CDLL`, and declares `argtypes`/`restype` for the `pow` and `sqrt` functions to match `math.h`.
 - `connector.py` calls `native_wrapper.power()` and `native_wrapper.square_root()` for each sample row and upserts the inputs alongside the native library's results.
 - To bundle your own compiled library, place its `.so` file under a `native/` folder and resolve its path the same way, for example:
   ```python
@@ -74,8 +73,7 @@ Not applicable — this example syncs static data only. To support pagination, y
 
 
 ## Error handling
-- `native_wrapper.py` lets `ctypes.CDLL(...)` raise an `OSError` at import time if the native library is missing or cannot be loaded (for example, `native/libm.so` built for a different platform than it is run on), so the connector fails fast with a clear error instead of failing later with a confusing `ctypes` error.
-- On macOS, `native_wrapper.py` raises an `OSError` if `ctypes.util.find_library("m")` cannot locate `libm` on the local system (its local-development fallback; not used in production).
+- `native_wrapper.py` lets `ctypes.CDLL(...)` raise an `OSError` at import time if `native/libm.so` is missing or cannot be loaded (for example, because it was built for a different platform), so the connector fails fast with a clear error instead of failing later with a confusing `ctypes` error.
 - Always declare `argtypes` and `restype` for every native function you call. Without them, `ctypes` assumes `int` arguments and return values, which silently corrupts data for other types (for example, truncating `double` values).
 
 
@@ -100,10 +98,10 @@ The connector creates the `CALCULATIONS` table:
 ## Additional files
 
 The connector uses two additional files:
-- `native_wrapper.py`: a thin `ctypes` wrapper that loads the bundled `libm` library (with a macOS local-development fallback) and exposes `power()` and `square_root()` helpers for `connector.py` to call.
-- `native/libm.so`: the precompiled, bundled C library, built for Linux x86_64 (used in production and when running `fivetran debug` on Linux x86_64).
+- `native_wrapper.py`: a thin `ctypes` wrapper that loads the bundled `libm` library and exposes `power()` and `square_root()` helpers for `connector.py` to call.
+- `native/libm.so`: the precompiled, bundled C library, built for Linux x86_64.
 
 
 ## Additional considerations
-A bundled `.so` file must be compiled for the target platform (Linux x86_64), not necessarily the platform you're developing on (for example, macOS arm64). `native/libm.so` in this example is compiled for Linux x86_64; `native_wrapper.py` only falls back to locating a system-installed copy of `libm` on macOS so you can run `fivetran debug` locally — for your own bundled library, you would need an equivalent local build or a similar fallback. See the Requirements section above for details.
+A bundled `.so` file must be compiled for the target platform (Linux x86_64), not necessarily the platform you're developing on (for example, macOS arm64). `native/libm.so` in this example is compiled for Linux x86_64; see the Requirements section above for how this affects running this example locally.
 The examples provided are intended to help you effectively use Fivetran's Connector SDK. While we've tested the code, Fivetran cannot be held responsible for any unexpected or negative consequences that may arise from using these examples. For inquiries, please reach out to our Support team.
