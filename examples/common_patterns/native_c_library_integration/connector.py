@@ -45,8 +45,11 @@ def schema(configuration: dict):
             "table": __TABLE_NAME,
             "primary_key": ["id"],
             "columns": {
+                "id": "LONG",
+                "base": "DOUBLE",
+                "exponent": "DOUBLE",
                 "power_result": "DOUBLE",  # Computed by libm's native `pow` function.
-                "sqrt_result": "DOUBLE",  # Computed by libm's native `sqrt` function; other columns are inferred.
+                "sqrt_result": "DOUBLE",  # Computed by libm's native `sqrt` function.
             },
         }
     ]
