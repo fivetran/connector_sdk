@@ -65,7 +65,7 @@ Not applicable — this example syncs static data only. To support pagination, y
   import ctypes
   from pathlib import Path
 
-  library_path = Path(__file__).resolve().parent
+  library_path = Path(__file__).resolve().parent / "native" / "your_library.so"
   library = ctypes.CDLL(str(library_path))
   # Match these declarations to the library's C header.
   library.your_function.argtypes = [ctypes.c_int, ctypes.c_int]
