@@ -247,7 +247,7 @@
       <permkey>TRAN_WOISSUE</permkey>
       <permlevel>VIEW</permlevel>
     </permission>
-+    <permission>
+    <permission>
       <permkey>TRAN_PAYMENTAUDIT</permkey>
       <permlevel>VIEW</permlevel>
     </permission>

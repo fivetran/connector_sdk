@@ -1,18 +1,22 @@
-"""NetSuite connector using SuiteQL via SuiteTalk REST Web Services (no SuiteAnalytics required).
+"""NetSuite connector using SuiteQL via SuiteTalk REST Web Services (no paid SuiteAnalytics
+Connect subscription required; the free SuiteAnalytics Workbook feature is still needed).
 
 Full architecture, setup, and design rationale: see README.md. Quick orientation:
 - Auth: NetSuite Token-Based Authentication (OAuth 1.0a, HMAC-SHA256) via `requests_oauthlib`.
 - Table list/columns/joins are hardcoded (__TABLES) - only date range and subsidiaries configure.
-- Full re-sync every run: no incremental cursor, no delete detection.
+- Full re-sync every run: no incremental cursor. Each table is truncated once when a fresh
+  extraction starts, so rows deleted in NetSuite (or outside a narrowed range) are soft-deleted.
 - NetSuite caps SuiteQL at 100,000 rows/query - date-filtered tables use adaptive
   multi-dimensional window splitting to guarantee full coverage regardless of account size.
   See sync_windowed_table's docstring for the algorithm; see README's "Handling large accounts"
-  for the full rationale and verification results.
+  for the full rationale.
 
-Docs: https://fivetran.com/docs/connector-sdk/technical-reference
+See the Technical Reference documentation (https://fivetran.com/docs/connector-sdk/technical-reference)
+and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details
 """
 
 import json  # configuration.json (local debug entry point only)
+import re  # account id format check in validate_configuration
 import time  # retry/backoff delays
 
 from datetime import date, datetime, timedelta, timezone  # date-window arithmetic
@@ -28,7 +32,13 @@ except ImportError as import_error:  # pragma: no cover - defensive import guard
     ) from import_error
 
 # Import required classes from fivetran_connector_sdk
-from fivetran_connector_sdk import Connector, Logging as log, Operations as op, ConfigurationForm, Test
+from fivetran_connector_sdk import (
+    Connector,
+    Logging as log,
+    Operations as op,
+    ConfigurationForm,
+    Test,
+)
 from fivetran_connector_sdk import form_field  # setup form field types (TextField, etc.)
 
 # NetSuite SuiteQL REST endpoint path, appended to the account-specific host.
@@ -42,6 +52,9 @@ __MAX_ROWS_PER_TABLE = 100_000
 
 # Safety margin below __MAX_ROWS_PER_TABLE for deciding a window is safe to fetch directly.
 __SAFE_ROW_THRESHOLD = __MAX_ROWS_PER_TABLE - 10_000
+
+# NetSuite account ids look like '1234567', 'TSTDRV1234567' or '1234567_SB1' (sandbox).
+__ACCOUNT_ID_PATTERN = re.compile(r"[A-Za-z0-9]+(?:[_-][A-Za-z0-9]+)*")
 
 # Retry/backoff for transient HTTP errors (429, 5xx, network errors).
 __MAX_RETRIES = 5
@@ -63,7 +76,14 @@ __TABLES = [
     },
     {
         "table": "account",
-        "columns": ["id", "acctnumber", "accountsearchdisplayname", "accttype", "subsidiary", "isinactive"],
+        "columns": [
+            "id",
+            "acctnumber",
+            "accountsearchdisplayname",
+            "accttype",
+            "subsidiary",
+            "isinactive",
+        ],
         "primary_key": ["id"],
     },
     {
@@ -73,12 +93,22 @@ __TABLES = [
     {
         "table": "transactionline",
         "alias": "tl",
-        "columns": ["transaction", "linesequencenumber", "subsidiary", "department", "class", "location", "memo"],
+        "columns": [
+            "transaction",
+            "id",
+            "linesequencenumber",
+            "subsidiary",
+            "department",
+            "class",
+            "location",
+            "memo",
+        ],
         "primary_key": ["transaction", "linesequencenumber"],
         "joins": [{"table": "transaction", "alias": "t", "on": "t.id = tl.transaction"}],
         "date_column": "t.trandate",
         "subsidiary_column": "tl.subsidiary",
-        # NOT 'transactionline.id' - empirically not a real per-row identifier here. See README.
+        # 'id' is only unique within a transaction (not across the table), so it can't be the
+        # last-resort split key on its own; it is selected because accounting lines reference it.
         "transaction_id_column": "tl.transaction",
     },
     {
@@ -119,7 +149,10 @@ __TABLES = [
             {
                 "table": "transactionline",
                 "alias": "tl2",
-                "on": "tl2.transaction = tal.transaction AND tl2.linesequencenumber = tal.transactionline",
+                # transactionaccountingline.transactionline references transactionline.id - NOT
+                # linesequencenumber (the two differ on many lines; joining on the latter silently
+                # drops or misassociates accounting lines and breaks the subsidiary filter).
+                "on": "tl2.transaction = tal.transaction AND tl2.id = tal.transactionline",
             },
         ],
         "date_column": "t.trandate",
@@ -131,9 +164,11 @@ __TABLES = [
 
 def validate_configuration(configuration: dict):
     """
-    Fail fast if any required configuration value is missing. See README "6. Configure the connector in Fivetran".
+    Fail fast if any required configuration value is missing or malformed. See README
+    "Configuration file".
     Raises:
-        ValueError: if any required configuration parameter is missing.
+        ValueError: if a required parameter is missing, the account id, dates or subsidiary ids
+        are not in the expected format, or 'date_to' is earlier than 'date_from'.
     """
     required_configs = [
         "account_id",
@@ -148,31 +183,67 @@ def validate_configuration(configuration: dict):
     if missing:
         raise ValueError(f"Missing required configuration value(s): {', '.join(missing)}")
 
+    # Values below are interpolated into the request host and SuiteQL text, so reject anything
+    # malformed here, at setup time, rather than as an opaque NetSuite error mid-sync.
+    account_id = str(configuration["account_id"]).strip()
+    if not __ACCOUNT_ID_PATTERN.fullmatch(account_id):
+        raise ValueError(
+            "Configuration value 'account_id' must contain only letters, digits, hyphens and "
+            f"underscores (e.g. 'TSTDRV1234567' or '1234567_SB1'). Got: {account_id!r}"
+        )
+
+    date_from = parse_config_date(configuration, "date_from")
+    if configuration.get("date_to"):
+        date_to = parse_config_date(configuration, "date_to")
+        if date_to < date_from:
+            raise ValueError(
+                f"Configuration value 'date_to' ({configuration['date_to']}) must not be earlier "
+                f"than 'date_from' ({configuration['date_from']})."
+            )
+
+    parse_subsidiaries(configuration)
+
+
+def parse_config_date(configuration: dict, key: str) -> date:
+    """
+    Parse a 'YYYY-MM-DD' configuration value into a date.
+    Raises:
+        ValueError: if the value is not a valid calendar date in that format.
+    """
+    raw_value = str(configuration.get(key, "")).strip()
+    try:
+        return parse_date(raw_value)
+    except ValueError as parse_error:
+        raise ValueError(
+            f"Configuration value '{key}' must be a valid date in 'YYYY-MM-DD' format. "
+            f"Got: {raw_value!r}"
+        ) from parse_error
+
 
 def parse_subsidiaries(configuration: dict) -> list:
     """
     Parse configuration's comma-separated 'subsidiaries' (e.g. "1,2,3") into a list of ID strings.
     Raises:
-        ValueError: if no subsidiary IDs remain after parsing.
+        ValueError: if no subsidiary IDs remain after parsing, or any ID is not a whole number.
     """
-    raw_value = configuration.get("subsidiaries", "")
+    raw_value = str(configuration.get("subsidiaries", ""))
     subsidiary_ids = [part.strip() for part in raw_value.split(",") if part.strip()]
-    if not subsidiary_ids:
+    if not subsidiary_ids or not all(part.isascii() and part.isdigit() for part in subsidiary_ids):
         raise ValueError(
             "Configuration value 'subsidiaries' must be a non-empty comma-separated list of "
-            f"subsidiary internal IDs (e.g. '1,2,3'). Got: {raw_value!r}"
+            f"numeric subsidiary internal IDs (e.g. '1,2,3'). Got: {raw_value!r}"
         )
     return subsidiary_ids
 
 
 def build_account_host(account_id: str) -> str:
-    """Derive the SuiteTalk host from an account id, e.g. 'TSTDRV2028961' -> 'tstdrv2028961.suitetalk.api.netsuite.com'."""
+    """Derive the SuiteTalk host from an account id, e.g. 'TSTDRV1234567' -> 'tstdrv1234567.suitetalk.api.netsuite.com'."""
     normalized = account_id.strip().lower().replace("_", "-")
     return f"{normalized}.suitetalk.api.netsuite.com"
 
 
 def get_oauth1_auth(configuration: dict):
-    """Build the OAuth1 (HMAC-SHA256) auth handler for NetSuite TBA - see README "Authentication setup"."""
+    """Build the OAuth1 (HMAC-SHA256) auth handler for NetSuite TBA - see README "Authentication"."""
     return OAuth1(
         client_key=configuration["consumer_key"],
         client_secret=configuration["consumer_secret"],
@@ -250,7 +321,9 @@ def build_filter_clause(filter_config: dict, date_from: str, date_to, subsidiary
     date_column = filter_config.get("date_column")
     if date_column:
         if date_to is not None:
-            conditions.append(f"{date_column} BETWEEN TO_DATE(?, 'YYYY-MM-DD') AND TO_DATE(?, 'YYYY-MM-DD')")
+            conditions.append(
+                f"{date_column} BETWEEN TO_DATE(?, 'YYYY-MM-DD') AND TO_DATE(?, 'YYYY-MM-DD')"
+            )
             params.extend([date_from, date_to])
         else:
             conditions.append(f"{date_column} >= TO_DATE(?, 'YYYY-MM-DD')")
@@ -275,7 +348,9 @@ def table_has_date_filter(table_config: dict) -> bool:
     return bool(filter_via and filter_via.get("date_column"))
 
 
-def build_from_joins_where(table_config: dict, alias: str, date_from: str, date_to, subsidiary_ids: list, id_range=None):
+def build_from_joins_where(
+    table_config: dict, alias: str, date_from: str, date_to, subsidiary_ids: list, id_range=None
+):
     """
     Build the 'FROM ... [JOIN ...] [WHERE ...]' portion of a query. Shared by build_query and
     build_count_query so the row-count check and the actual data fetch can never disagree - see
@@ -301,7 +376,9 @@ def build_from_joins_where(table_config: dict, alias: str, date_from: str, date_
         join_column = filter_via["join_column"]
         subquery_from_clause = build_from_clause(subquery_table, subquery_alias)
         subquery_joins_clause = build_joins_clause(filter_via.get("joins"))
-        subquery_where, params = build_filter_clause(filter_via, date_from, date_to, subsidiary_ids)
+        subquery_where, params = build_filter_clause(
+            filter_via, date_from, date_to, subsidiary_ids
+        )
 
         subquery = f"SELECT DISTINCT {select_column} FROM {subquery_from_clause}"
         if subquery_joins_clause:
@@ -311,7 +388,9 @@ def build_from_joins_where(table_config: dict, alias: str, date_from: str, date_
 
         sql += f" WHERE {alias}.{join_column} IN ({subquery})"
     else:
-        where_clause, params = build_filter_clause(table_config, date_from, date_to, subsidiary_ids)
+        where_clause, params = build_filter_clause(
+            table_config, date_from, date_to, subsidiary_ids
+        )
         if where_clause:
             sql += f" WHERE {where_clause}"
 
@@ -347,15 +426,21 @@ def build_query(table_config: dict, date_from: str, date_to, subsidiary_ids: lis
     columns = table_config.get("columns")
     select_list = ", ".join(f"{alias}.{col}" for col in columns) if columns else f"{alias}.*"
 
-    from_joins_where, params = build_from_joins_where(table_config, alias, date_from, date_to, subsidiary_ids, id_range)
+    from_joins_where, params = build_from_joins_where(
+        table_config, alias, date_from, date_to, subsidiary_ids, id_range
+    )
     query = f"SELECT {select_list} {from_joins_where} ORDER BY {order_by_clause}"
     return query, params
 
 
-def build_count_query(table_config: dict, date_from: str, date_to, subsidiary_ids: list, id_range=None):
+def build_count_query(
+    table_config: dict, date_from: str, date_to, subsidiary_ids: list, id_range=None
+):
     """Build 'SELECT COUNT(*)' via the same build_from_joins_where as build_query, so count and fetch never disagree."""
     alias = table_alias(table_config)
-    from_joins_where, params = build_from_joins_where(table_config, alias, date_from, date_to, subsidiary_ids, id_range)
+    from_joins_where, params = build_from_joins_where(
+        table_config, alias, date_from, date_to, subsidiary_ids, id_range
+    )
     query = f"SELECT COUNT(*) AS cnt {from_joins_where}"
     return query, params
 
@@ -364,9 +449,36 @@ def build_id_range_query(table_config: dict, date_from: str, date_to, subsidiary
     """Build 'SELECT MIN/MAX(transaction_id_column)' for the last-resort ID-range split (see split_id_range)."""
     alias = table_alias(table_config)
     id_column = table_config["transaction_id_column"]
-    from_joins_where, params = build_from_joins_where(table_config, alias, date_from, date_to, subsidiary_ids)
+    from_joins_where, params = build_from_joins_where(
+        table_config, alias, date_from, date_to, subsidiary_ids
+    )
     query = f"SELECT MIN({id_column}) AS min_id, MAX({id_column}) AS max_id {from_joins_where}"
     return query, params
+
+
+def upsert_row(table_name: str, row: dict):
+    """Write one NetSuite row to the destination table."""
+    # The 'upsert' operation is used to insert or update data in the destination table.
+    # The first argument is the name of the destination table.
+    # The second argument is a dictionary containing the record to be upserted.
+    op.upsert(table=table_name, data=row)
+
+
+def checkpoint_state(state: dict):
+    """Persist sync progress so an interrupted sync resumes from here rather than starting over."""
+    # Save the progress by checkpointing the state. This is important for ensuring that the sync process can resume
+    # from the correct position in case of next sync or interruptions.
+    # Learn more about how and where to checkpoint by reading our best practices documentation
+    # (https://fivetran.com/docs/connector-sdk/best-practices#optimizingperformancewhenhandlinglargedatasets).
+    op.checkpoint(state)
+
+
+def truncate_table(table_name: str):
+    """Soft-delete every row currently in the destination table, ahead of a fresh full extraction."""
+    # The 'truncate' operation soft-deletes all rows currently in the destination table.
+    # Rows upserted after this call in the same sync are not affected, so rows deleted in NetSuite
+    # (or excluded by a narrowed date range or subsidiary list) end up marked as deleted.
+    op.truncate(table=table_name)
 
 
 def compute_backoff_delay(attempt: int, retry_after_header=None) -> float:
@@ -380,7 +492,13 @@ def compute_backoff_delay(attempt: int, retry_after_header=None) -> float:
 
 
 def execute_suiteql(
-    session, base_url: str, auth, query: str, params: list, limit: int, offset: int,
+    session,
+    base_url: str,
+    auth,
+    query: str,
+    params: list,
+    limit: int,
+    offset: int,
     timeout: int = __REQUEST_TIMEOUT_SECONDS,
 ) -> dict:
     """
@@ -403,9 +521,7 @@ def execute_suiteql(
     last_error_message = None
     for attempt in range(1, __MAX_RETRIES + 1):
         try:
-            response = session.post(
-                url, auth=auth, headers=headers, json=body, timeout=timeout
-            )
+            response = session.post(url, auth=auth, headers=headers, json=body, timeout=timeout)
         except rq.exceptions.RequestException as request_error:
             last_error_message = f"Request error: {request_error}"
             if attempt == __MAX_RETRIES:
@@ -462,7 +578,9 @@ def split_id_range(min_id: str, max_id: str):
     return left, right
 
 
-def get_id_range(session, base_url: str, auth, table_config: dict, date_from: str, date_to, subsidiary_ids: list):
+def get_id_range(
+    session, base_url: str, auth, table_config: dict, date_from: str, date_to, subsidiary_ids: list
+):
     """
     Discover MIN/MAX transaction id for a window - starting point for ID-range splitting.
     Returns:
@@ -471,7 +589,13 @@ def get_id_range(session, base_url: str, auth, table_config: dict, date_from: st
     """
     query, params = build_id_range_query(table_config, date_from, date_to, subsidiary_ids)
     page = execute_suiteql(
-        session, base_url, auth, query, params, limit=1, offset=0,
+        session,
+        base_url,
+        auth,
+        query,
+        params,
+        limit=1,
+        offset=0,
         timeout=__AGGREGATE_REQUEST_TIMEOUT_SECONDS,
     )
     items = page.get("items", [])
@@ -481,12 +605,25 @@ def get_id_range(session, base_url: str, auth, table_config: dict, date_from: st
 
 
 def get_row_count(
-    session, base_url: str, auth, table_config: dict, date_from: str, date_to, subsidiary_ids: list, id_range=None
+    session,
+    base_url: str,
+    auth,
+    table_config: dict,
+    date_from: str,
+    date_to,
+    subsidiary_ids: list,
+    id_range=None,
 ) -> int:
     """Exact row count for a window, used by sync_windowed_table to decide whether it's safe to fetch or must split."""
     query, params = build_count_query(table_config, date_from, date_to, subsidiary_ids, id_range)
     page = execute_suiteql(
-        session, base_url, auth, query, params, limit=1, offset=0,
+        session,
+        base_url,
+        auth,
+        query,
+        params,
+        limit=1,
+        offset=0,
         timeout=__AGGREGATE_REQUEST_TIMEOUT_SECONDS,
     )
     items = page.get("items", [])
@@ -512,7 +649,12 @@ def sync_simple_table(session, base_url: str, auth, table_config: dict, state: d
     tables_state = state.setdefault("tables", {})
     table_state = tables_state.get(table_name)
     if table_state is None or table_state.get("completed"):
+        # Fresh extraction: clear the destination copy once, then record that in state so a
+        # resumed (interrupted) sync does not truncate again and wipe rows already re-loaded.
+        truncate_table(table_name)
         table_state = {"offset": 0, "completed": False}
+        tables_state[table_name] = table_state
+        checkpoint_state(state)
     tables_state[table_name] = table_state
 
     total_rows = table_state["offset"]
@@ -525,11 +667,13 @@ def sync_simple_table(session, base_url: str, auth, table_config: dict, state: d
 
     while True:
         offset = table_state["offset"]
-        page = execute_suiteql(session, base_url, auth, query, params, limit=__PAGE_LIMIT, offset=offset)
+        page = execute_suiteql(
+            session, base_url, auth, query, params, limit=__PAGE_LIMIT, offset=offset
+        )
         items = page.get("items", [])
 
         for row in items:
-            op.upsert(table=table_name, data=row)
+            upsert_row(table_name, row)
 
         total_rows += len(items)
         has_more = bool(page.get("hasMore"))
@@ -547,19 +691,31 @@ def sync_simple_table(session, base_url: str, auth, table_config: dict, state: d
                 "raising rather than silently truncating."
             )
 
-        op.checkpoint(state)
+        checkpoint_state(state)
         # DEBUG (not INFO): fires once per 1,000 rows - would be excessive at production-visible
         # INFO level for a large table. Full per-page detail is still available via `fivetran debug`.
-        log.debug(f"Table '{table_name}': synced {total_rows} row(s) so far (next offset {table_state['offset']})")
+        log.debug(
+            f"Table '{table_name}': synced {total_rows} row(s) so far (next offset {table_state['offset']})"
+        )
 
     tables_state[table_name] = {"completed": True}
-    op.checkpoint(state)
-    log.info(f"Completed sync for table '{table_name}' in {time.time() - started_at:.1f}s. Total rows upserted: {total_rows}")
+    checkpoint_state(state)
+    log.info(
+        f"Completed sync for table '{table_name}' in {time.time() - started_at:.1f}s. Total rows upserted: {total_rows}"
+    )
     return total_rows
 
 
 def sync_windowed_table(
-    session, base_url: str, auth, table_config: dict, state: dict, date_from: str, date_to, subsidiary_ids: list, today: str
+    session,
+    base_url: str,
+    auth,
+    table_config: dict,
+    state: dict,
+    date_from: str,
+    date_to,
+    subsidiary_ids: list,
+    today: str,
 ) -> int:
     """
     Fully sync one date-filtered table via adaptive multi-dimensional window splitting, to
@@ -590,8 +746,11 @@ def sync_windowed_table(
             "completed": False,
             "total_rows": 0,
         }
+        # Fresh extraction: clear the destination copy once. The checkpoint right below persists
+        # the window list, so a resumed (interrupted) sync skips this branch and never re-truncates.
+        truncate_table(table_name)
         tables_state[table_name] = table_state
-        op.checkpoint(state)
+        checkpoint_state(state)
         log.info(f"Starting sync for table '{table_name}' (starting fresh)")
     else:
         log.info(
@@ -606,7 +765,7 @@ def sync_windowed_table(
         window = windows[i]
         if window.get("completed"):
             # Old-format state marked windows completed instead of removing them - drop safely.
-            windows[i:i + 1] = []
+            windows[i : i + 1] = []
             continue
 
         w_start, w_end = window["start"], window["end"]
@@ -619,13 +778,15 @@ def sync_windowed_table(
 
         def replace_window_with(replacement_windows):
             """Splice replacements in at this window's position and checkpoint - shared tail of each split stage below."""
-            windows[i:i + 1] = replacement_windows
-            op.checkpoint(state)
+            windows[i : i + 1] = replacement_windows
+            checkpoint_state(state)
 
         # Only count/decide-to-split a window not yet started (offset 0) - one with progress was
         # already found safe on a prior pass, so just keep paging it.
         if window["offset"] == 0:
-            count = get_row_count(session, base_url, auth, table_config, w_start, w_end, w_subsidiary_ids, w_id_range)
+            count = get_row_count(
+                session, base_url, auth, table_config, w_start, w_end, w_subsidiary_ids, w_id_range
+            )
             log.debug(f"Table '{table_name}': window {window_label} has {count} row(s)")
 
             if count > __SAFE_ROW_THRESHOLD:
@@ -638,10 +799,22 @@ def sync_windowed_table(
                         f"exceeding the safe threshold of {__SAFE_ROW_THRESHOLD} - splitting by "
                         f"date into {left[0]} to {left[1]} and {right[0]} to {right[1] or 'present'}"
                     )
-                    replace_window_with([
-                        {"start": left[0], "end": left[1], "subsidiary_ids": w_subsidiary_ids, "offset": 0},
-                        {"start": right[0], "end": right[1], "subsidiary_ids": w_subsidiary_ids, "offset": 0},
-                    ])
+                    replace_window_with(
+                        [
+                            {
+                                "start": left[0],
+                                "end": left[1],
+                                "subsidiary_ids": w_subsidiary_ids,
+                                "offset": 0,
+                            },
+                            {
+                                "start": right[0],
+                                "end": right[1],
+                                "subsidiary_ids": w_subsidiary_ids,
+                                "offset": 0,
+                            },
+                        ]
+                    )
                     continue  # re-examine the new first half at the same index
 
                 # Stage 2: date exhausted (single day) - split by subsidiary instead, if >1 left.
@@ -651,16 +824,22 @@ def sync_windowed_table(
                         f"already a single day - splitting by subsidiary instead into "
                         f"{len(w_subsidiary_ids)} single-subsidiary windows"
                     )
-                    replace_window_with([
-                        {"start": w_start, "end": w_end, "subsidiary_ids": [sid], "offset": 0}
-                        for sid in w_subsidiary_ids
-                    ])
+                    replace_window_with(
+                        [
+                            {"start": w_start, "end": w_end, "subsidiary_ids": [sid], "offset": 0}
+                            for sid in w_subsidiary_ids
+                        ]
+                    )
                     continue  # re-examine the new first single-subsidiary window at the same index
 
                 # Stage 3: date and subsidiary both exhausted - last resort, split by transaction
                 # ID range (different skew profile than date - see README).
-                id_bounds = w_id_range if w_id_range is not None else get_id_range(
-                    session, base_url, auth, table_config, w_start, w_end, w_subsidiary_ids
+                id_bounds = (
+                    w_id_range
+                    if w_id_range is not None
+                    else get_id_range(
+                        session, base_url, auth, table_config, w_start, w_end, w_subsidiary_ids
+                    )
                 )
                 id_split = split_id_range(*id_bounds) if id_bounds is not None else None
                 if id_split is not None:
@@ -670,20 +849,34 @@ def sync_windowed_table(
                         "already a single day for a single subsidiary - splitting by transaction "
                         f"id instead into {left_ids[0]}-{left_ids[1]} and {right_ids[0]}-{right_ids[1]}"
                     )
-                    replace_window_with([
-                        {"start": w_start, "end": w_end, "subsidiary_ids": w_subsidiary_ids, "id_range": left_ids, "offset": 0},
-                        {"start": w_start, "end": w_end, "subsidiary_ids": w_subsidiary_ids, "id_range": right_ids, "offset": 0},
-                    ])
+                    replace_window_with(
+                        [
+                            {
+                                "start": w_start,
+                                "end": w_end,
+                                "subsidiary_ids": w_subsidiary_ids,
+                                "id_range": left_ids,
+                                "offset": 0,
+                            },
+                            {
+                                "start": w_start,
+                                "end": w_end,
+                                "subsidiary_ids": w_subsidiary_ids,
+                                "id_range": right_ids,
+                                "offset": 0,
+                            },
+                        ]
+                    )
                     continue  # re-examine the new first id-range half at the same index
 
                 # All dimensions exhausted and still over threshold - raise, don't truncate.
+                single_id_suffix = " and a single transaction id" if w_id_range is not None else ""
                 raise RuntimeError(
                     f"Table '{table_name}': the window {window_label} has {count} row(s), "
                     f"exceeding the safe threshold of {__SAFE_ROW_THRESHOLD} (NetSuite's SuiteQL "
                     "hard cap is 100,000 rows/query), and cannot be split further - it is already "
-                    "a single day for a single subsidiary" + (
-                        " and a single transaction id" if w_id_range is not None else ""
-                    ) + ". Full coverage cannot be guaranteed for this window as configured."
+                    f"a single day for a single subsidiary{single_id_suffix}. Full coverage "
+                    "cannot be guaranteed for this window as configured."
                 )
 
             # Confirmed safe - one INFO line per window (not per page) gives volume visibility
@@ -698,18 +891,20 @@ def sync_windowed_table(
 
         while True:
             offset = window["offset"]
-            page = execute_suiteql(session, base_url, auth, query, params, limit=__PAGE_LIMIT, offset=offset)
+            page = execute_suiteql(
+                session, base_url, auth, query, params, limit=__PAGE_LIMIT, offset=offset
+            )
             items = page.get("items", [])
 
             for row in items:
-                op.upsert(table=table_name, data=row)
+                upsert_row(table_name, row)
 
             window_total += len(items)
             has_more = bool(page.get("hasMore"))
             window["offset"] = offset + __PAGE_LIMIT
 
             if has_more:
-                op.checkpoint(state)
+                checkpoint_state(state)
                 # DEBUG (not INFO): fires once per 1,000 rows - see sync_simple_table's identical
                 # rationale. The per-window INFO lines above/below give production-visible
                 # progress without per-page noise.
@@ -723,12 +918,14 @@ def sync_windowed_table(
         total_rows += window_total
         table_state["total_rows"] = total_rows
         log.info(f"Table '{table_name}': window {window_label} complete - {window_total} row(s)")
-        windows[i:i + 1] = []  # drop the completed window rather than let state accumulate it
-        op.checkpoint(state)
+        windows[i : i + 1] = []  # drop the completed window rather than let state accumulate it
+        checkpoint_state(state)
 
     tables_state[table_name] = {"completed": True}
-    op.checkpoint(state)
-    log.info(f"Completed sync for table '{table_name}' in {time.time() - started_at:.1f}s. Total rows upserted: {total_rows}")
+    checkpoint_state(state)
+    log.info(
+        f"Completed sync for table '{table_name}' in {time.time() - started_at:.1f}s. Total rows upserted: {total_rows}"
+    )
     return total_rows
 
 
@@ -746,10 +943,10 @@ def configuration_form():
         form_field.TextField(
             name="account_id",
             label="Account ID",
-            description="NetSuite account id, e.g. 'TSTDRV2028961'.",
+            description="NetSuite account id, e.g. 'TSTDRV1234567'.",
             required=True,
             field_type=form_field.TextField.plain_text,
-            placeholder="TSTDRV2028961",
+            placeholder="TSTDRV1234567",
         )
     )
     config_form.add_field(
@@ -848,7 +1045,9 @@ def connection_test(configuration: dict):
         base_url = f"https://{host}{__SUITEQL_PATH}"
         auth = get_oauth1_auth(configuration)
         with rq.Session() as session:
-            page = execute_suiteql(session, base_url, auth, "SELECT id FROM subsidiary", [], limit=1, offset=0)
+            page = execute_suiteql(
+                session, base_url, auth, "SELECT id FROM subsidiary", [], limit=1, offset=0
+            )
     except Exception as test_error:
         return test.failure(f"Could not query NetSuite: {test_error}")
 
@@ -861,16 +1060,35 @@ def connection_test(configuration: dict):
 
 
 def schema(configuration: dict):
-    """Declare table names/primary keys from __TABLES; column types are left for the SDK to infer."""
-    return [{"table": table_config["table"], "primary_key": table_config["primary_key"]} for table_config in __TABLES]
+    """
+    Define the schema function which lets you configure the schema your connector delivers.
+    See the technical reference documentation for more details on the schema function:
+    https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#schema
+    Table names and primary keys come from __TABLES; column types are left for the SDK to infer.
+    Args:
+        configuration: a dictionary that holds the configuration settings for the connector.
+    """
+    return [
+        {"table": table_config["table"], "primary_key": table_config["primary_key"]}
+        for table_config in __TABLES
+    ]
 
 
 def update(configuration: dict, state: dict):
     """
-    Sync every table in __TABLES: date-filtered tables via sync_windowed_table, dimension tables
-    via sync_simple_table - see README for full architecture. Full re-extraction every run (no
-    incremental cursor); `state` is used only to resume an interrupted sync.
+    Define the update function, which is a required function, and is called by Fivetran during each sync.
+    See the technical reference documentation for more details on the update function
+    https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update
+    Syncs every table in __TABLES: date-filtered tables via sync_windowed_table, dimension tables
+    via sync_simple_table. Each run is a full re-extraction (no incremental cursor).
+    Args:
+        configuration: A dictionary containing connection details
+        state: A dictionary containing state information from previous runs. It is empty for the
+        first sync or any full re-sync, and otherwise only holds progress for resuming an
+        interrupted sync.
     """
+    log.warning("Example: Custom Connectors : NetSuite SuiteQL")
+
     validate_configuration(configuration)
 
     account_id = configuration["account_id"]
@@ -883,7 +1101,11 @@ def update(configuration: dict, state: dict):
     subsidiary_ids = parse_subsidiaries(configuration)
     today = datetime.now(timezone.utc).strftime("%Y-%m-%d")  # split point only, see split_window
 
-    date_range_description = f"{date_from} to {date_to}" if date_to is not None else f"{date_from} onward (no upper bound)"
+    date_range_description = (
+        f"{date_from} to {date_to}"
+        if date_to is not None
+        else f"{date_from} onward (no upper bound)"
+    )
     log.info(
         f"Starting NetSuite SuiteQL sync for account '{account_id}' across {len(__TABLES)} "
         f"table(s) - date range {date_range_description}, subsidiaries {subsidiary_ids}"
@@ -898,13 +1120,25 @@ def update(configuration: dict, state: dict):
             try:
                 if table_has_date_filter(table_config):
                     rows_by_table[table_name] = sync_windowed_table(
-                        session, base_url, auth, table_config, state, date_from, date_to, subsidiary_ids, today
+                        session,
+                        base_url,
+                        auth,
+                        table_config,
+                        state,
+                        date_from,
+                        date_to,
+                        subsidiary_ids,
+                        today,
                     )
                 else:
-                    rows_by_table[table_name] = sync_simple_table(session, base_url, auth, table_config, state)
+                    rows_by_table[table_name] = sync_simple_table(
+                        session, base_url, auth, table_config, state
+                    )
             except Exception as sync_error:
                 log.error(f"Failed to sync table '{table_name}': {sync_error}")
-                raise RuntimeError(f"Failed to sync table '{table_name}': {sync_error}") from sync_error
+                raise RuntimeError(
+                    f"Failed to sync table '{table_name}': {sync_error}"
+                ) from sync_error
     finally:
         session.close()
 
@@ -914,10 +1148,13 @@ def update(configuration: dict, state: dict):
     )
 
 
+# Create the connector object using the schema, update and configuration_form functions defined above.
 connector = Connector(update=update, schema=schema, configuration_form=configuration_form)
 
-# Local debug entry point - not called by Fivetran in production. Prefer `fivetran debug` over
-# running this file directly; this is only for IDE breakpoint/step-through debugging.
+# Check if the script is being run as the main module.
+# This is Python's standard entry method allowing your script to be run directly from the command line or IDE 'run' button.
+# This is useful for debugging while you write your code. Note this method is not called by Fivetran when executing your connector in production.
+# Please test using the Fivetran debug command prior to finalizing and deploying your connector.
 if __name__ == "__main__":
     with open("configuration.json", "r") as config_file:
         configuration = json.load(config_file)  # never log this - contains live TBA credentials
