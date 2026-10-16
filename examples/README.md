@@ -1,9 +1,12 @@
+<!--section="overview-section"-->
 # Overview
 
 This section brings together working Connector SDK examples organized by use case, so you can quickly find the right starting point for your custom connector.
 
 Use these examples to learn core implementation patterns, adapt common approaches, and build custom connectors faster. 
+<!--section-end-->
 
+<!--section="quickstart-examples"-->
 ## Quickstart examples
 
 These are graded examples designed to help you get started with the Connector SDK quickly.
@@ -41,7 +44,9 @@ These are graded examples designed to help you get started with the Connector SD
 
 </details>
 
+<!--section-end-->
 
+<!--section="code-patterns"-->
 ## Common SDK patterns
 
 These examples demonstrate common patterns and best practices for building connectors using the Connector SDK. They cover various aspects such as [authentication](https://fivetran.com/docs/connector-sdk/connector-sdk-concepts/authentication), [data handling](https://fivetran.com/docs/connector-sdk/connector-sdk-concepts/data-handling), [schema management](https://fivetran.com/docs/connector-sdk/connector-sdk-concepts/schema-management), pagination, [state management](https://fivetran.com/docs/connector-sdk/connector-sdk-concepts/state-management), and error handling.
@@ -106,7 +111,6 @@ These examples demonstrate common patterns and best practices for building conne
 - [error_handling](https://github.com/fivetran/connector_sdk/tree/main/examples/common_patterns/errors) - This example shows how to handle errors throughout the Connector SDK process and is driven by the configuration.json error_simulation_type value.
 - [update_and_delete](https://github.com/fivetran/connector_sdk/tree/main/examples/common_patterns/update_and_delete) - This example shows how to handle composite primary keys while using update and delete operations with a PostgreSQL database as the data source.
 
-
 ### SSH Tunnels
 
 - [Key-based Authentication](https://github.com/fivetran/connector_sdk/tree/main/examples/common_patterns/ssh_tunnels/key_based_authentication) - This example demonstrates how to connect to an SSH server using key-based authentication with the Fivetran Connector SDK. The connector securely establishes an SSH session to a remote EC2 instance running the fivetran-api-playground server and facilitates data interaction over the SSH tunnel.
@@ -138,3 +142,4 @@ These examples demonstrate common patterns and best practices for building conne
 - [claude_fda_drug tutorial](https://github.com/fivetran/connector_sdk/tree/main/examples/ai/claude/fda_drug_tutorial) - This example demonstrates how to use Claude to create a CSDK connector to get data from the FDA drug API.
 - [cursor_fda_food tutorial](https://github.com/fivetran/connector_sdk/tree/main/examples/ai/cursor/fda_food_tutorial/fda_food_connector) - This example demonstrates how to use Cursor to create a CSDK connector to get data from the FDA food API.
 - [vscode_fda_tobacco tutorial](https://github.com/fivetran/connector_sdk/tree/main/examples/ai/vscode/fda_tobacco_tutorial/fda_tobacco_connector) - This example demonstrates how to use VSCode to create a CSDK connector to get data from the FDA tobacco API.
+<!--section-end-->
