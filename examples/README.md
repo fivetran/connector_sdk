@@ -1,4 +1,4 @@
-<!--section="overview-section"-->
+<!--section="overview"-->
 # Overview
 
 This section brings together working Connector SDK examples organized by use case, so you can quickly find the right starting point for your custom connector.
@@ -134,6 +134,10 @@ These examples demonstrate common patterns and best practices for building conne
 
 - [GitHub Actions workflows](https://github.com/fivetran/connector_sdk/tree/main/examples/workflows/github): Workflows for deploying Connector SDK connectors to Fivetran from GitHub Actions. Includes `deploy_hello_connector.yml`, a minimal single-file example that deploys a hello connector after a push to the `hello/` directory, and a reusable composite action in `action/` with two example caller workflows: `deploy-single-connector.yml` for one connector per workflow, and `deploy-matrix.yml`, a matrix workflow that deploys several connectors from a single file, including one connector to multiple destinations.
 </details>
+
+<!--section-end-->
+
+<!--section="ai-and-connector-sdk"-->
 
 ## AI and Connector SDK
 - [Readme](https://github.com/fivetran/connector_sdk/blob/main/examples/ai/README.md) - This is an introduction to using AI tools to leverage Connector SDK.
