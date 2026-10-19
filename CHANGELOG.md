@@ -4,6 +4,13 @@ This changelog lists PyPI package releases for the `fivetran-connector-sdk` pack
 
 ## October 2026
 
+### fivetran-connector-sdk [`2.13.1`](https://pypi.org/project/fivetran-connector-sdk/2.13.1/)
+
+- Adds the `--proxy-id` and `--proxy-host-config-key` options to the [`deploy` command](https://fivetran.com/docs/connector-sdk/connector-development-and-configuration/connector-sdk-commands#fivetrandeploy) so you can route your connector's traffic through a [Proxy Agent](https://fivetran.com/docs/connector-sdk/building-connectors/connection-options#proxyagent).
+- Adds support for [Multiple Schemas](https://fivetran.com/docs/connector-sdk/building-connectors/connector-sdk-concepts/schema-management#declaringmultipleschemas) in Connector SDK.
+- Minor enhancements and improvements.
+- Updated testers.
+
 ### fivetran-connector-sdk [`2.13.0`](https://pypi.org/project/fivetran-connector-sdk/2.13.0/)
 
 - Adds the [`configuration` command](https://fivetran.com/docs/connector-sdk/connector-development-and-configuration/connector-sdk-commands#fivetran-configuration) to run the connector's configuration form with interactive prompting support and create `configuration.json` locally from the provided input. Supports an additional `--test` flag to run connector tests locally.
