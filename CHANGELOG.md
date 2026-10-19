@@ -13,7 +13,7 @@ This changelog lists PyPI package releases for the `fivetran-connector-sdk` pack
 
 ### fivetran-connector-sdk [`2.13.0`](https://pypi.org/project/fivetran-connector-sdk/2.13.0/)
 
-- Adds the [`configuration` command](https://fivetran.com/docs/connector-sdk/connector-development-and-configuration/connector-sdk-commands#fivetran-configuration) to run the connector's configuration form with interactive prompting support and create `configuration.json` locally from the provided input. Supports an additional `--test` flag to run connector tests locally.
+- Adds the [`configuration` command](https://fivetran.com/docs/connector-sdk/connector-development-and-configuration/connector-sdk-commands#fivetranconfiguration) to run the connector's configuration form with interactive prompting support and create `configuration.json` locally from the provided input. Supports an additional `--test` flag to run connector tests locally.
 - `fivetran debug` now saves crash reports to the `crash-reports` directory of your project when your connector code fails.
 - Improved CLI prompts and help text.
 - Minor enhancements and improvements.
