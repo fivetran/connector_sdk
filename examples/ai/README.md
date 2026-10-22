@@ -11,7 +11,7 @@ ChatGPT can be effectively used to help you leverage our Connector SDK to build 
 
 ## IDE & AI Assistant Support
 
-Learn about using various IDEs and AI assistants with the Fivetran Connector SDK. Each section includes a summary and links to relevant sub-guides, sample content, and a short video.
+Learn about using various IDEs and AI assistants with the Fivetran Connector SDK. Each section includes a summary and a list of relevant example connectors, system instruction files, and resources. For general guidance on using AI tools to build connectors, see [Building Connectors with AI Tools](https://fivetran.com/docs/connector-sdk/building-connectors/ai-tools).
 
 > You can simplify AI coding agent setup with our [Connector SDK AI plugins](https://github.com/fivetran/connector_sdk_tools). They integrate with Claude Code, Codex CLI, GitHub Copilot CLI, and Gemini CLI, and provide skills for building, testing, deploying, and evaluating connectors.
 
