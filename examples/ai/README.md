@@ -23,6 +23,7 @@ Summary:
 Cursor is an AI-powered code editor designed for productivity, smart completion, and real-time collaboration, with robust Python support.
 
 Contents:
+- [AGENTS.md for Cursor](https://github.com/fivetran/connector_sdk/tree/main/examples/ai/cursor/fda_food_tutorial/AGENTS.md)
 - [Example: FDA Food connector with Cursor](https://github.com/fivetran/connector_sdk/tree/main/examples/ai/cursor/fda_food_tutorial)
 - [Tutorial: Build a connector with Cursor AI](https://fivetran.com/docs/connector-sdk/tutorials/cursor-ai-video)
 - [Installation Guide](https://www.cursor.com/)
@@ -35,6 +36,7 @@ Summary:
 Windsurf is a lightweight, cloud-based IDE for rapid prototyping and collaboration, supporting live sharing and direct browser development.
 
 Contents:
+- [AGENTS.md for Windsurf](https://github.com/fivetran/connector_sdk/tree/main/examples/ai/windsurf/fda_vet_tutorial/AGENTS.md)
 - [Example: FDA Vet connector with Windsurf](https://github.com/fivetran/connector_sdk/tree/main/examples/ai/windsurf/fda_vet_tutorial)
 - [Getting Started](https://docs.windsurf.com/windsurf/getting-started)
 - [Context Awareness](https://docs.windsurf.com/context-awareness/windsurf-overview)
@@ -47,6 +49,7 @@ Summary:
 Visual Studio Code (VS Code) is a widely-used, open-source code editor with Python support, advanced debugging, and a rich extension library.
 
 Contents:
+- [AGENTS.md for VS Code with GitHub Copilot](https://github.com/fivetran/connector_sdk/tree/main/examples/ai/vscode/fda_tobacco_tutorial/AGENTS.md)
 - [Example: FDA Tobacco connector with VS Code](https://github.com/fivetran/connector_sdk/tree/main/examples/ai/vscode/fda_tobacco_tutorial)
 - [Tutorial: Build a connector with GitHub Copilot](https://fivetran.com/docs/connector-sdk/tutorials/github-copilot)
 - [Getting Started](https://code.visualstudio.com/docs/getstarted/getting-started)
