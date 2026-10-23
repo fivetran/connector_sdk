@@ -43,6 +43,10 @@ These are graded examples designed to help you get started with the Connector SD
   - [stream_examples](https://github.com/fivetran/connector_sdk/tree/main/examples/quickstart/unstructured_data/stream_examples) - Different file streaming approaches (HTTP response, BytesIO, custom readers)
 - [multiple_schema](https://github.com/fivetran/connector_sdk/tree/main/examples/quickstart/multiple_schema) - This example shows how to implement a simple connector that supports multiple schemas.
 
+- [regression_test](https://github.com/fivetran/connector_sdk/tree/main/examples/quickstart/regression_test) - These examples show how to record a connector run and replay it without calling the source to detect regressions (Private Preview).
+  - [cli_example](https://github.com/fivetran/connector_sdk/tree/main/examples/quickstart/regression_test/cli_example) - Records and replays with the `fivetran debug --record` and `--replay` commands.
+  - [ide_example](https://github.com/fivetran/connector_sdk/tree/main/examples/quickstart/regression_test/ide_example) - Records and replays from an IDE or a script with `connector.debug(record=..., replay=...)`.
+
 </details>
 
 <!--section-end-->
