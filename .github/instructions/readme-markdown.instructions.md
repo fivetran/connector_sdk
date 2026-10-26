@@ -1,5 +1,5 @@
 ---
-applyTo: "examples/source_examples/**/*README*.md,all_things_ai/ai_agents/**/*AGENTS*.md"
+applyTo: "examples/source_examples/**/*README*.md,examples/ai/**/*AGENTS*.md"
 ---
 
 # Copilot Review Instructions for Fivetran Documentation
