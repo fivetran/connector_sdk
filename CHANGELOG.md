@@ -4,6 +4,15 @@ This changelog lists PyPI package releases for the `fivetran-connector-sdk` pack
 
 ## October 2026
 
+### fivetran-connector-sdk [`3.0.0`](https://pypi.org/project/fivetran-connector-sdk/3.0.0/)
+
+- Introduces the stateless CLI and a local [deployment options file](https://fivetran.com/docs/connector-sdk/technical-reference/options-file) (`options.toml`). As a result of this improvement, `fivetran deploy` no longer uses server-saved settings. Settings resolve from CLI flags, environment variables, or the options file. On your first deploy, the CLI [automatically migrates](https://fivetran.com/docs/connector-sdk/technical-reference/options-file#automaticmigration) your existing settings to the options file.
+- [`fivetran debug`](https://fivetran.com/docs/connector-sdk/getting-started/connector-sdk-commands#fivetrandebug) and [`fivetran configuration`](https://fivetran.com/docs/connector-sdk/getting-started/connector-sdk-commands#fivetranconfiguration) now run your connector in a single local Python process. The CLI no longer downloads a separate tester. The new [`fivetran-connector-sdk-core` package](https://pypi.org/project/fivetran-connector-sdk-core/0.1.0/) (version `0.1.0`), installed automatically, runs the connector and writes the data. See [Local testing](https://fivetran.com/docs/connector-sdk/testing/local-testing).
+- Adds the [`fivetran run` command](https://fivetran.com/docs/connector-sdk/getting-started/connector-sdk-commands#fivetranrun) to write your connector's data to an Apache Iceberg REST catalog configured in `destination.json`.
+- The [`fivetran configuration` command](https://fivetran.com/docs/connector-sdk/getting-started/connector-sdk-commands#fivetranconfiguration) now supports the `--non-interactive` and `--yes` flags.
+- Adds [anonymous CLI usage telemetry](https://fivetran.com/docs/security-and-privacy/telemetry). The CLI shows a one-time notice. To opt out, set the `DO_NOT_TRACK` environment variable to `1` or `true`.
+- Minor enhancements and improvements.
+
 ### fivetran-connector-sdk [`2.13.1`](https://pypi.org/project/fivetran-connector-sdk/2.13.1/)
 
 - Adds the `--proxy-id` and `--proxy-host-config-key` options to the [`deploy` command](https://fivetran.com/docs/connector-sdk/connector-development-and-configuration/connector-sdk-commands#fivetrandeploy) so you can route your connector's traffic through a [Proxy Agent](https://fivetran.com/docs/connector-sdk/building-connectors/connection-options#proxyagent).
