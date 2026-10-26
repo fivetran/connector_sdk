@@ -1,0 +1,21 @@
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.4",
+  "base_commit_sha": "6e23b9fe9bbca888aa61c31722333669bcf94cf3",
+  "prompts": {
+    "7e170091e1b0e9e1": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "53431bc2-4b69-4a31-8b4e-8c47a3d6a5a8",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Sinchana Hegde <sinchana.hegde@fivetran.com>",
+      "messages": [],
+      "total_additions": 53,
+      "total_deletions": 0,
+      "accepted_lines": 53,
+      "overriden_lines": 0
+    }
+  }
+}

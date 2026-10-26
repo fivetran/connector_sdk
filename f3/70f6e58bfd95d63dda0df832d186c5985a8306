@@ -1,0 +1,21 @@
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.4",
+  "base_commit_sha": "f370f6e58bfd95d63dda0df832d186c5985a8306",
+  "prompts": {
+    "07ea1934a079b2a1": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4e61d8b3-01a4-4551-ab1f-6ddcca285874",
+        "model": "claude-haiku-4-5-20251001"
+      },
+      "human_author": "fivetran-meetmahna <meet.mahna@fivetran.com>",
+      "messages": [],
+      "total_additions": 3708,
+      "total_deletions": 303,
+      "accepted_lines": 3405,
+      "overriden_lines": 0
+    }
+  }
+}
