@@ -87,9 +87,9 @@ The connector creates a `HELLO` table:
 
 ### 1. Run the connector
 
-This example does not require a configuration file for `fivetran debug`. From your project directory, run:
+This example does not need configuration values, but SDK v2.11.0 and later require a `configuration.json` file for `fivetran debug`. Keep the template's configuration file, or create one containing `{}` if it is missing.
 
-Note: If you run `connector.py` directly from your IDE, the `__main__` block expects a `configuration.json` file in the project directory. Create an empty one (`{}`) to avoid a `FileNotFoundError`.
+The same file is needed when running `connector.py` directly from your IDE. From your project directory, run:
 
 ```bash
 fivetran debug
