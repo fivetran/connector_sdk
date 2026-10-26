@@ -116,7 +116,7 @@ The `HELLO` table in `warehouse.db` contains one row after a successful run:
 You can query `warehouse.db` directly using the [DuckDB CLI](https://duckdb.org/docs/installation/) or a DuckDB-compatible tool such as [DBeaver](https://dbeaver.io/):
 
 ```bash
-duckdb files/warehouse.db "SELECT * FROM hello"
+duckdb files/warehouse.db "SELECT message FROM tester.hello"
 ```
 
 ### 3. Reset and re-run
