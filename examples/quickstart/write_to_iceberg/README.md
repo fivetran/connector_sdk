@@ -12,6 +12,8 @@ The connector code is the same for any destination. To write to an Iceberg catal
   - macOS: 13 (Ventura) or later (Apple Silicon [arm64] or Intel [x86_64])
   - Linux: Distributions such as Ubuntu 20.04 or later, Debian 10 or later, or Amazon Linux 2 or later (arm64 or x86_64)
 - An Iceberg catalog that Fivetran can reach.
+- Note: [Some packages](https://fivetran.com/docs/connector-sdk/technical-reference#preinstalledpackages) are pre-installed in the Connector SDK runtime environment. To avoid dependency conflicts, do not declare them in your `requirements.txt`.
+
 
 ## Getting started
 
@@ -26,7 +28,7 @@ fivetran init --template examples/quickstart/write_to_iceberg
 To test the connector locally, run:
 
 ```bash
-fivetran debug 
+fivetran debug
 ```
 
 `fivetran debug` runs the sync on your machine and writes the results to `files/warehouse.db`. It does not write to Iceberg.
