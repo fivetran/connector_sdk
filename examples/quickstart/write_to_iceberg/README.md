@@ -81,7 +81,7 @@ Note: [Some packages](https://fivetran.com/docs/connector-sdk/technical-referenc
 | `client_id` | Client ID for OAuth2 client-credentials sign-in.                                                                                                                                                                                  |
 | `client_secret` | Client secret for OAuth2 client-credentials sign-in.                                                                                                                                                                              |
 | `scope` | The scope to request. Goes with the client credentials.                                                                                                                                                                           |
-| `header.X-Iceberg-Access-Delegation` | `vended-credentials` : the catalog gives out the credentials for its storage, and only s3.region may be given besides it. `none`, or left out (the default): it does not, and the s3.* settings below say how to reach the storage. |
+| `header.X-Iceberg-Access-Delegation` | For this example, use `vended-credentials` so the catalog supplies storage credentials; only `s3.region` may be supplied alongside it. Non-vended storage authentication (`none`, or omitting this header) is outside the scope of this example. |
 | `s3.region` | AWS region of the bucket that stores the Parquet files.                                                                                                                                                                           |
 
 Notes:
