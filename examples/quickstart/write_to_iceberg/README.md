@@ -1,7 +1,7 @@
 # Write to Iceberg Example
 
 ## Connector overview
-This example shows how to upsert data from a Connector SDK connector into an Apache Iceberg destination. The connector builds a record at runtime and upserts it into a table named `iceberg_destination`. You can swap in your own data without changing the sync logic.
+This example shows how to upsert data from a Connector SDK connector into an Apache Iceberg destination. The connector builds a record at runtime and upserts it into a table named `hello`. You can swap in your own data without changing the sync logic.
 
 The connector code is the same for any destination. To write to an Iceberg catalog, fill in the catalog settings in `destination.json` and run the connector with [`fivetran run`](https://fivetran.com/docs/connector-sdk/getting-started/connector-sdk-commands#fivetranrun). `fivetran run` reads `destination.json` and sends the data to that catalog. `fivetran debug` ignores `destination.json` and writes to a local DuckDB file instead. For the full walkthrough, see [Write to an Iceberg catalog](https://fivetran.com/docs/connector-sdk/testing/write-to-iceberg-catalog#writetoanicebergcatalog).
 
@@ -90,7 +90,7 @@ Note:
 
 
 ## Data handling
-- `schema()` declares the `iceberg_destination` table with `id` as the primary key.
+- `schema()` declares the `hello` table with `id` as the primary key.
 - `update()` upserts one record . Running the sync again updates the same row instead of adding a duplicate.
 - `op.checkpoint()` runs after the upsert in `update()`. This tells Fivetran it is safe to write the buffered rows to the destination.
 
@@ -101,7 +101,7 @@ Note:
 
 ## Tables created
 
-The connector writes one table, `iceberg_destination`, into the `namespace` set in `destination.json`.
+The connector writes one table, `hello`, into the `namespace` set in `destination.json`.
 
 | Column   | Type   | Primary key | Source                 |
 |----------|--------|-------------|------------------------|

@@ -18,21 +18,7 @@ from fivetran_connector_sdk import Logging as log
 from fivetran_connector_sdk import Operations as op
 
 # Name of the destination table that receives the record
-__TABLE_NAME = "iceberg_destination"
-
-
-def validate_configuration(configuration: dict):
-    """
-    Validate the configuration dictionary to ensure it contains all required parameters.
-    This function is called at the start of the update method to ensure that the connector has all necessary configuration values.
-    Args:
-        configuration: a dictionary that holds the configuration settings for the connector.
-    Raises:
-        ValueError: if any required configuration parameter is missing.
-    """
-    # This example has no configuration values to validate.
-    # When building your own connector, check each required value here and raise ValueError if it is missing or invalid.
-    pass
+__TABLE_NAME = "hello"
 
 
 def schema(configuration: dict):
@@ -64,8 +50,6 @@ def update(configuration: dict, state: dict):
         The state dictionary is empty for the first sync or for any full re-sync
     """
     log.warning("Example: Quickstart : Write to Iceberg")
-
-    validate_configuration(configuration=configuration)
 
     # Build one record at runtime. In a real connector, this record comes from your source system.
     record = {"id": 1, "name": "Coffee beans", "amount": 18.50}
