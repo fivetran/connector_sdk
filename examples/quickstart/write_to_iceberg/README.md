@@ -12,8 +12,6 @@ The connector code is the same for any destination. To write to an Iceberg catal
   - macOS: 13 (Ventura) or later (Apple Silicon [arm64] or Intel [x86_64])
   - Linux: Distributions such as Ubuntu 20.04 or later, Debian 10 or later, or Amazon Linux 2 or later (arm64 or x86_64)
 - An Iceberg catalog that Fivetran can reach.
-- Note: [Some packages](https://fivetran.com/docs/connector-sdk/technical-reference#preinstalledpackages) are pre-installed in the Connector SDK runtime environment. To avoid dependency conflicts, do not declare them in your `requirements.txt`.
-
 
 ## Getting started
 
@@ -64,6 +62,12 @@ The connector requires no configuration parameters, so `configuration.json` is a
 Note: Ensure that the `configuration.json` file is not checked into version control to protect sensitive information.
 
 Iceberg connection settings go in `destination.json`, described below.
+
+
+## Requirements file
+This connector requires no additional packages, so there is no `requirements.txt`.
+
+Note: [Some packages](https://fivetran.com/docs/connector-sdk/technical-reference#preinstalledpackages) are pre-installed in the Connector SDK runtime environment. To avoid dependency conflicts, do not declare them in your `requirements.txt`.
 
 
 ## Destination file
