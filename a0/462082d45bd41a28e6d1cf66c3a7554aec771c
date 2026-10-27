@@ -1,0 +1,23 @@
+examples/quickstart/write_to_iceberg/destination.json
+  8f69b5c1dadc2ec7 7
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.4",
+  "base_commit_sha": "a0462082d45bd41a28e6d1cf66c3a7554aec771c",
+  "prompts": {
+    "8f69b5c1dadc2ec7": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "fa1d1275-3252-4438-a7cf-d554e7bcc14c",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "fivetran-JenasVimal <jenas.vimal@fivetran.com>",
+      "messages": [],
+      "total_additions": 1,
+      "total_deletions": 1,
+      "accepted_lines": 1,
+      "overriden_lines": 0
+    }
+  }
+}
