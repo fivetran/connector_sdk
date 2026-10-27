@@ -1,7 +1,7 @@
 # Write to Iceberg Example
 
 ## Connector overview
-This example shows how to upsert data from a Connector SDK connector into an Apache Iceberg destination. The connector sends 12 mock order rows to a table named `mock_orders`. The sample rows live in a separate file, `mock_data.py`, so you can swap in your own data without changing the sync logic.
+This example shows how to upsert data from a Connector SDK connector into an Apache Iceberg destination. The connector builds a record at runtime and upserts it into a table named `iceberg_destination`. You can swap in your own data without changing the sync logic.
 
 The connector code is the same for any destination. To write to an Iceberg catalog, fill in the catalog settings in `destination.json` and run the connector with [`fivetran run`](https://fivetran.com/docs/connector-sdk/getting-started/connector-sdk-commands#fivetranrun). `fivetran run` reads `destination.json` and sends the data to that catalog. `fivetran debug` ignores `destination.json` and writes to a local DuckDB file instead. For the full walkthrough, see [Write to an Iceberg catalog](https://fivetran.com/docs/connector-sdk/testing/write-to-iceberg-catalog#writetoanicebergcatalog).
 
@@ -49,8 +49,8 @@ See [`fivetran run`](https://fivetran.com/docs/connector-sdk/getting-started/con
 ## Features
 - Implements `schema()` and `update()`.
 - Declares `id` as the primary key and forces its type to `INT`. Other columns are inferred.
-- Upserts 12 rows from `mock_data.py`.
-- Uses `op.checkpoint()` to save state after the upserts.
+- Upserts one record built in `update()`.
+- Uses `op.checkpoint()` to save state after the upsert.
 
 ## Configuration file
 The connector requires no configuration parameters, so `configuration.json` is an empty object:
@@ -90,9 +90,9 @@ Note:
 
 
 ## Data handling
-- `schema()` declares the `mock_orders` table with `id` as the primary key.
-- `update()` upserts each row from `__MOCK_ORDERS` in `mock_data.py`. Running the sync again updates the same rows instead of adding duplicates.
-- `op.checkpoint()` runs after the upserts in `update()`. This tells Fivetran it is safe to write the buffered rows to the destination.
+- `schema()` declares the `iceberg_destination` table with `id` as the primary key.
+- `update()` upserts one record . Running the sync again updates the same row instead of adding a duplicate.
+- `op.checkpoint()` runs after the upsert in `update()`. This tells Fivetran it is safe to write the buffered rows to the destination.
 
 
 ## Error handling
@@ -101,7 +101,7 @@ Note:
 
 ## Tables created
 
-The connector writes one table, `MOCK_ORDERS`, into the `namespace` set in `destination.json`.
+The connector writes one table, `iceberg_destination`, into the `namespace` set in `destination.json`.
 
 | Column   | Type   | Primary key | Source                 |
 |----------|--------|-------------|------------------------|
@@ -109,9 +109,6 @@ The connector writes one table, `MOCK_ORDERS`, into the `namespace` set in `dest
 | `name`   | STRING | No          | Inferred from data     |
 | `amount` | DOUBLE | No          | Inferred from data     |
 
-
-## Additional files
-The connector uses once additional file, `mock_data.py`, which holds the `__MOCK_ORDERS` list of 12 sample rows that `update()` upserts into `mock_orders`.
 
 ## Additional considerations
 The examples provided are intended to help you effectively use Fivetran's Connector SDK. While we've tested the code, Fivetran cannot be held responsible for any unexpected or negative consequences that may arise from using these examples. For inquiries, please reach out to our Support team.
