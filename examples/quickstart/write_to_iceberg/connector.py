@@ -1,6 +1,6 @@
 """
-This connector upserts mock order data into an Apache Iceberg destination.
-The sample rows live in mock_data.py. The destination is set in destination.json, not in this file.
+This connector upserts a record into an Apache Iceberg destination.
+The destination is set in destination.json, not in this file.
 See the Technical Reference documentation (https://fivetran.com/docs/connector-sdk/technical-reference)
 and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details
 """
@@ -17,11 +17,8 @@ from fivetran_connector_sdk import Logging as log
 # For supporting Data operations like Upsert(), Update(), Delete() and checkpoint()
 from fivetran_connector_sdk import Operations as op
 
-# Mock order rows, kept in a separate file
-from mock_data import __MOCK_ORDERS
-
-# Name of the destination table that receives the mock order rows
-__TABLE_NAME = "mock_orders"
+# Name of the destination table that receives the record
+__TABLE_NAME = "iceberg_destination"
 
 
 def validate_configuration(configuration: dict):
@@ -33,7 +30,7 @@ def validate_configuration(configuration: dict):
     Raises:
         ValueError: if any required configuration parameter is missing.
     """
-    # This example has no configuration values to validate, because the data comes from mock_data.py.
+    # This example has no configuration values to validate.
     # When building your own connector, check each required value here and raise ValueError if it is missing or invalid.
     pass
 
@@ -70,13 +67,13 @@ def update(configuration: dict, state: dict):
 
     validate_configuration(configuration=configuration)
 
-    log.info(f"Upserting {len(__MOCK_ORDERS)} mock order rows")
+    # Build one record at runtime. In a real connector, this record comes from your source system.
+    record = {"id": 1, "name": "Coffee beans", "amount": 18.50}
 
-    for record in __MOCK_ORDERS:
-        # The 'upsert' operation is used to insert or update data in the destination table.
-        # The first argument is the name of the destination table.
-        # The second argument is a dictionary containing the record to be upserted.
-        op.upsert(table=__TABLE_NAME, data=record)
+    # The 'upsert' operation is used to insert or update data in the destination table.
+    # The first argument is the name of the destination table.
+    # The second argument is a dictionary containing the record to be upserted.
+    op.upsert(table=__TABLE_NAME, data=record)
 
     # Save the progress by checkpointing the state. This is important for ensuring that the sync process can resume
     # from the correct position in case of next sync or interruptions.
