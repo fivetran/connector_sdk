@@ -67,11 +67,11 @@ Iceberg connection settings go in `destination.json`, described below.
 ## Requirements file
 This connector requires no additional packages, so there is no `requirements.txt`.
 
-Note: [Some packages](https://fivetran.com/docs/connector-sdk/technical-reference#preinstalledpackages) are pre-installed in the Connector SDK runtime environment. To avoid dependency conflicts, do not declare them in your `requirements.txt`.
+Note: [Certain packages](https://fivetran.com/docs/connector-sdk/getting-started/how-to-install-connector-sdk#installconnectorsdk) are pre-installed in the Connector SDK runtime environment. To avoid dependency conflicts, do not declare them in your `requirements.txt`.
 
 
 ## Destination file
-`destination.json` holds the Iceberg catalog settings. It must sit beside `connector.py`, or you can point to it with `--destination-file`. Replace each placeholder with your own values. See [Write to an Iceberg catalog](https://fivetran.com/docs/connector-sdk/testing/write-to-iceberg-catalog#writetoanicebergcatalog).
+`destination.json` holds the Iceberg catalog settings. It must sit beside `connector.py`, or you can point to it with `--destination-file`. Replace each placeholder with your own values. See our [Write to an Iceberg Catalog documentation](https://fivetran.com/docs/connector-sdk/testing/write-to-iceberg-catalog#writetoanicebergcatalog) for more information.
 
 | Key | Description                                                                                                                                                                                                                       |
 |-----|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -84,8 +84,8 @@ Note: [Some packages](https://fivetran.com/docs/connector-sdk/technical-referenc
 | `header.X-Iceberg-Access-Delegation` | For this example, use `vended-credentials` so the catalog supplies storage credentials; only `s3.region` may be supplied alongside it. Non-vended storage authentication (`none`, or omitting this header) is outside the scope of this example. |
 | `s3.region` | AWS region of the bucket that stores the Parquet files.                                                                                                                                                                           |
 
-Notes:
-- Use a namespace that is used only for your connector. `fivetran run` does not ask for confirmation and changes any table with the same name that is already in the namespace.
+Note:
+- Use a namespace that is used only for your connector. `fivetran run` does not ask for confirmation, and changes any table with the same name that is already in the namespace.
 - On the first run, DuckDB downloads its Iceberg extension, so the machine needs internet access.
 
 
@@ -101,7 +101,7 @@ Notes:
 
 ## Tables created
 
-The connector writes one table, `mock_orders`, into the `namespace` set in `destination.json`.
+The connector writes one table, `MOCK_ORDERS`, into the `namespace` set in `destination.json`.
 
 | Column   | Type   | Primary key | Source                 |
 |----------|--------|-------------|------------------------|
