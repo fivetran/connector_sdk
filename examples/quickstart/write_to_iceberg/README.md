@@ -3,7 +3,7 @@
 ## Connector overview
 This example shows how to upsert data from a Connector SDK connector into an Apache Iceberg destination. The connector sends 12 mock order rows to a table named `mock_orders`. The sample rows live in a separate file, `mock_data.py`, so you can swap in your own data without changing the sync logic.
 
-The connector code does not depend on the destination. You select Iceberg in `destination.json`, which is used when you run the connector with [`fivetran run`](https://fivetran.com/docs/connector-sdk/getting-started/connector-sdk-commands#fivetranrun) rather than with `fivetran debug`. For the full walkthrough, see [Write to an Iceberg catalog](https://fivetran.com/docs/connector-sdk/testing/write-to-iceberg-catalog#writetoanicebergcatalog).
+The connector code is the same for any destination. To write to an Iceberg catalog, fill in the catalog settings in `destination.json` and run the connector with [`fivetran run`](https://fivetran.com/docs/connector-sdk/getting-started/connector-sdk-commands#fivetranrun). `fivetran run` reads `destination.json` and sends the data to that catalog. `fivetran debug` ignores `destination.json` and writes to a local DuckDB file instead. For the full walkthrough, see [Write to an Iceberg catalog](https://fivetran.com/docs/connector-sdk/testing/write-to-iceberg-catalog#writetoanicebergcatalog).
 
 ## Requirements
 - [Supported Python versions](https://github.com/fivetran/connector_sdk/blob/main/README.md#requirements)
@@ -12,8 +12,6 @@ The connector code does not depend on the destination. You select Iceberg in `de
   - macOS: 13 (Ventura) or later (Apple Silicon [arm64] or Intel [x86_64])
   - Linux: Distributions such as Ubuntu 20.04 or later, Debian 10 or later, or Amazon Linux 2 or later (arm64 or x86_64)
 - An Iceberg catalog that Fivetran can reach.
-- Note: [Some packages](https://fivetran.com/docs/connector-sdk/technical-reference#preinstalledpackages) are pre-installed in the Connector SDK runtime environment. To avoid dependency conflicts, do not declare them in your `requirements.txt`.
-
 
 ## Getting started
 
@@ -28,7 +26,7 @@ fivetran init --template examples/quickstart/write_to_iceberg
 To test the connector locally, run:
 
 ```bash
-fivetran debug
+fivetran debug 
 ```
 
 `fivetran debug` runs the sync on your machine and writes the results to `files/warehouse.db`. It does not write to Iceberg.
@@ -54,7 +52,6 @@ See [`fivetran run`](https://fivetran.com/docs/connector-sdk/getting-started/con
 - Upserts 12 rows from `mock_data.py`.
 - Uses `op.checkpoint()` to save state after the upserts.
 
-
 ## Configuration file
 The connector requires no configuration parameters, so `configuration.json` is an empty object:
 
@@ -70,19 +67,19 @@ Iceberg connection settings go in `destination.json`, described below.
 ## Destination file
 `destination.json` holds the Iceberg catalog settings. It must sit beside `connector.py`, or you can point to it with `--destination-file`. Replace each placeholder with your own values. See [Write to an Iceberg catalog](https://fivetran.com/docs/connector-sdk/testing/write-to-iceberg-catalog#writetoanicebergcatalog).
 
-| Key | Description |
-|-----|-------------|
-| `uri` | URI of the Iceberg REST catalog endpoint. Must start with `http://` or `https://`. |
-| `warehouse` | Name of the catalog warehouse. |
-| `namespace` | Namespace for the tables. Use one reserved for this connector. |
-| `client_id` | Client ID for OAuth2 client-credentials sign-in. |
-| `client_secret` | Client secret for OAuth2 client-credentials sign-in. |
-| `scope` | The scope to request. Goes with the client credentials. |
-| `header.X-Iceberg-Access-Delegation` | Set to `vended-credentials` so the catalog issues short-lived storage credentials. |
-| `s3.region` | AWS region of the bucket that stores the Parquet files. |
+| Key | Description                                                                                                                                                                                                                       |
+|-----|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `uri` | URI of the Iceberg REST catalog endpoint. Must start with `http://` or `https://`.                                                                                                                                                |
+| `warehouse` | Name of the catalog warehouse.                                                                                                                                                                                                    |
+| `namespace` | Namespace for the tables. Use one reserved for this connector.                                                                                                                                                                    |
+| `client_id` | Client ID for OAuth2 client-credentials sign-in.                                                                                                                                                                                  |
+| `client_secret` | Client secret for OAuth2 client-credentials sign-in.                                                                                                                                                                              |
+| `scope` | The scope to request. Goes with the client credentials.                                                                                                                                                                           |
+| `header.X-Iceberg-Access-Delegation` | `vended-credentials` : the catalog gives out the credentials for its storage, and only s3.region may be given besides it. `none`, or left out (the default): it does not, and the s3.* settings below say how to reach the storage. |
+| `s3.region` | AWS region of the bucket that stores the Parquet files.                                                                                                                                                                           |
 
 Notes:
-- Use a namespace that is used only for your connector. fivetran run does not ask for confirmation and changes any table with the same name that is already in the namespace.
+- Use a namespace that is used only for your connector. `fivetran run` does not ask for confirmation and changes any table with the same name that is already in the namespace.
 - On the first run, DuckDB downloads its Iceberg extension, so the machine needs internet access.
 
 
