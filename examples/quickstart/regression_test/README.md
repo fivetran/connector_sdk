@@ -26,6 +26,13 @@ Regression testing is in Private Preview. Please contact your Fivetran represent
 
 Refer to the [Connector SDK Setup Guide](https://fivetran.com/docs/connector-sdk/setup-guide) to get started.
 
+Start the API Playground in a separate terminal. It serves `http://127.0.0.1:5001`:
+
+```bash
+pip install fivetran-api-playground
+playground start
+```
+
 To initialize a new Connector SDK project using one of these examples as a starting point, run:
 
 ```bash
@@ -36,10 +43,12 @@ For more information on `fivetran init`, refer to the [Connector SDK `init` docu
 
 
 ## Features
-- Marks the source calls with the `@action` decorator so they can be recorded and replayed.
-- Shows how to use `match` with `@action` to identify a call by selected arguments.
-- Limits the size of a recording with `max_records` and `--max-records`.
-- Compares the replay `state.json` and `warehouse.db` with the recorded files to find regressions.
+- Marks the functions that read from the source with the `@action` decorator.
+- Records the `@action` calls, the starting state, and the output of a run with `--record`.
+- Limits the size of a recording with `--max-records`, which counts the `upsert`, `update`, `delete`, and `truncate` operations. The default is 100.
+- Replays a recording with `--replay`, which returns the recorded results and doesn't call the source.
+- Compares the replay `state.json` and `warehouse.db` with the recorded ones to detect regressions.
+- Uses `match` to identify a call by selected arguments, so secrets and other unwanted arguments aren't saved.
 
 
 ## Using `@action` with `match`
@@ -73,10 +82,16 @@ If you don't set `match`, as in `@action("customers_page")`, every argument is p
 
 ## How regression testing works
 1. `@action` marks the function that reads from the source.
-2. A record run calls the source and saves every `@action` call, the starting state, and the output in `fixtures/<scenario>/`.
+2. A record run calls the source and saves the run in `fixtures/<scenario>/`:
+   - `record_start/` holds the starting `state.json` and `warehouse.db`. It's a snapshot of the `files` folder taken just before the run.
+   - `record_data/fixture.jsonl` holds each `@action` call, one per line, with its name, arguments, and result.
+   - `record_end/` holds the `state.json` and `warehouse.db` that the run produced. A replay is compared with them.
+
    > NOTE: A record run saves the arguments of every `@action` call in the fixture. If you don't set `match`, all arguments are saved and identify the call. We recommend setting `match` and returning only the arguments you need to identify the call, so that secrets and other unwanted arguments aren't stored in the fixture. Arguments with names that end in `token`, `secret`, `password`, `api_key`, `credential` or `configuration` are saved as a hash, but other sensitive values aren't masked. Results are never masked.
-3. A replay run starts from the recorded state. Each `@action` call returns the recorded result, and the source isn't called.
-4. The replay `state.json` and `warehouse.db` are compared with the recorded ones. A difference fails the run and lists what changed.
+3. A replay run starts from `record_start/` in a separate `.fixtures_replay` folder, so your `files` folder and the recording aren't changed. Each `@action` call returns the result from `fixture.jsonl`, and the source isn't called.
+4. When the replay finishes, its `state.json` and `warehouse.db` are compared with the ones in `record_end/`. For `warehouse.db`, the comparison covers tables, columns, and rows. If they match, there is no regression. If they differ, the run lists each difference and fails.
+
+The recording stops when the number of write operations reaches the `--max-records` limit. The limit is saved in the fixture, so a replay applies the same limit.
 
 Commit the `fixtures` folder with your connector. A replay creates a `.fixtures_replay` folder, which is added to your `.gitignore` file and shouldn't be committed.
 
