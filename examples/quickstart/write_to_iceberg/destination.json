@@ -5,6 +5,6 @@
   "client_id": "<YOUR_CLIENT_ID>",
   "client_secret": "<YOUR_CLIENT_SECRET>",
   "scope": "<YOUR_OAUTH_SCOPE>",
-  "header.X-Iceberg-Access-Delegation": "vended-credentials",
+  "header.X-Iceberg-Access-Delegation": "<YOUR_ACCESS_DELEGATION_MODE>",
   "s3.region": "<AWS_REGION>"
 }
