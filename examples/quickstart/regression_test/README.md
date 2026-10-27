@@ -10,7 +10,7 @@ Both examples read customers from the [Fivetran API Playground](https://pypi.org
 | [`cli_example`](cli_example) | With the `fivetran debug --record` and `fivetran debug --replay` commands. |
 | [`ide_example`](ide_example) | From an IDE or a script, by passing `record=` and `replay=` to `connector.debug()`. |
 
-Regression testing is in Private Preview.
+Regression testing is in Private Preview. Please contact your Fivetran representative to request access.
 
 
 ## Requirements
@@ -26,13 +26,6 @@ Regression testing is in Private Preview.
 
 Refer to the [Connector SDK Setup Guide](https://fivetran.com/docs/connector-sdk/setup-guide) to get started.
 
-Start the API Playground in a separate terminal. It serves `http://127.0.0.1:5001`:
-
-```bash
-pip install fivetran-api-playground
-playground start
-```
-
 To initialize a new Connector SDK project using one of these examples as a starting point, run:
 
 ```bash
@@ -44,31 +37,44 @@ For more information on `fivetran init`, refer to the [Connector SDK `init` docu
 
 ## Features
 - Marks the source calls with the `@action` decorator so they can be recorded and replayed.
-- Shows both forms of `@action`: with and without `match`.
+- Shows how to use `match` with `@action` to identify a call by selected arguments.
 - Limits the size of a recording with `max_records` and `--max-records`.
-- Compares the replay `state.json` and `warehouse.db` with the recorded files.
+- Compares the replay `state.json` and `warehouse.db` with the recorded files to find regressions.
 
 
-## Using `@action` with and without `match`
-During a replay, the connector finds the recorded result of a call by the `@action` name and the call's arguments. `match` controls which arguments count. The examples use both forms:
+## Using `@action` with `match`
+During a replay, the connector finds the recorded result of a call by the `@action` name and the call's arguments. `fetch_customers_page` uses `match` to say which arguments count:
 
-| Function | Decorator | What identifies the call |
-|----------|-----------|--------------------------|
-| `fetch_customers_page(page)` | `@action("customers_page", match=lambda page: {"page": page})` | Only `page`. |
-| `fetch_total_pages(per_page)` | `@action("customers_total_pages")` | All arguments, which is `per_page`. |
+```python
+@action("customers_page", match=lambda page, updated_since: {"page": page, "updated_since": updated_since})
+def fetch_customers_page(page: int, updated_since: str = None):
+```
 
-**Without `match`**, every argument is part of the call identity. This is the simplest form. Use it when all arguments have the same values on every run, as `per_page` does here. If an argument changes on every run, such as a timestamp or a request ID, the replay can't find the recorded call and fails.
+`match` must accept the same arguments as the decorated function and return a dictionary. Here it returns `page` and `updated_since`, which together identify one page of one query. Use `match` to leave out arguments that change on every run or that you don't want in the recording, such as a secret. For example, suppose `fetch_customers_page` also took a `request_id` that changes on every run and an `api_key`:
 
-**With `match`**, you return a dictionary of only the arguments that identify the call. `match` must accept the same arguments as the decorated function and return a dictionary. Use it to leave out arguments that change on every run or that you don't want in the recording, such as a secret. In this example, the page number is enough to identify a page, so `match` returns `{"page": page}`.
+```python
+@action(
+    "customers_page",
+    match=lambda page, updated_since, request_id, api_key: {"page": page, "updated_since": updated_since},
+)
+def fetch_customers_page(page: int, updated_since: str, request_id: str, api_key: str):
+    ...
+```
 
-For example, if `fetch_customers_page` also took a `request_id` that changes on every run, `match=lambda page, request_id: {"page": page}` ignores it, and the replay still finds the recorded page.
+`match` returns only `page` and `updated_since`, so:
 
-`match` doesn't work with functions that accept `*args` or `**kwargs`. The arguments and results must be JSON-serializable. Arguments whose names end in `token`, `secret`, `password`, `api_key`, `credential` or `configuration` are saved as a hash instead of their value.
+- The fixture stores only those two values for the call. `request_id` and `api_key` aren't saved.
+- During a replay, a call with the same `page` and `updated_since` finds the recorded page, even though `request_id` is different.
+
+If you don't set `match`, as in `@action("customers_page")`, every argument is part of the call identity. Use that form only when all arguments have the same values on every run. If an argument changes on every run, such as a timestamp or a request ID, the replay can't find the recorded call and fails.
+
+`match` doesn't work with functions that accept `*args` or `**kwargs`. The arguments and results must be JSON-serializable.
 
 
 ## How regression testing works
 1. `@action` marks the function that reads from the source.
 2. A record run calls the source and saves every `@action` call, the starting state, and the output in `fixtures/<scenario>/`.
+   > NOTE: A record run saves the arguments of every `@action` call in the fixture. If you don't set `match`, all arguments are saved and identify the call. We recommend setting `match` and returning only the arguments you need to identify the call, so that secrets and other unwanted arguments aren't stored in the fixture. Arguments with names that end in `token`, `secret`, `password`, `api_key`, `credential` or `configuration` are saved as a hash, but other sensitive values aren't masked. Results are never masked.
 3. A replay run starts from the recorded state. Each `@action` call returns the recorded result, and the source isn't called.
 4. The replay `state.json` and `warehouse.db` are compared with the recorded ones. A difference fails the run and lists what changed.
 
@@ -92,17 +98,19 @@ The API Playground does not require authentication.
 
 
 ## Pagination
-The connector uses page-number pagination. It requests `page=1`, `page=2`, and so on, until a page has no data or the last page is reached. The last synced page is saved in the state, so the next sync resumes after it.
+The connector uses page-number pagination. It requests `page=1`, `page=2`, and so on, until the last page is reached or a page has no data. The API returns customers sorted by `updatedAt`, oldest first, and accepts an inclusive `updated_since` filter. The connector saves the newest `updatedAt` it has synced as `last_updated_at` in state, and checkpoints after each fully processed page. The next sync sends `updated_since=<last_updated_at>` and starts again at page 1 of that filtered query, so it reads only new and changed customers and never skips changes on earlier pages. The first sync has no state and reads all customers. Because the filter is inclusive, the newest customer is read again on every sync, which is harmless for an upsert.
 
 
 ## Data handling
 - The `update()` function upserts each customer into the `customer` table.
-- The recorded `@action` results must be JSON-serializable, so the functions return the parsed JSON response or a plain number.
-- Each recording holds the `customers_page` calls, one per page, and one `customers_total_pages` call.
+- The recorded `@action` results must be JSON-serializable, so the function returns the parsed JSON response.
+- Each recording holds the `customers_page` calls, one per page.
 
 
 ## Error handling
-- `response.raise_for_status()` raises an exception for an HTTP error response.
+- The `get_with_retry()` helper retries transient failures, which are timeouts, connection errors, and HTTP 429, 500, 502, 503, and 504 responses. It makes up to three attempts with exponential backoff (2 seconds, then 4 seconds) and logs each retry.
+- Other HTTP errors, such as 400 or 404, raise immediately through `response.raise_for_status()` because retrying can't fix them.
+- Both `@action` functions call the helper, so retries happen only during a live run or `--record`. A replay returns the recorded result and never makes a request.
 - A replay fails with a message to record the scenario again if the connector makes an `@action` call that isn't in the recording.
 
 
@@ -118,4 +126,7 @@ The connector creates a `customer` table:
 
 
 ## Additional considerations
+- Regression testing supports only JSON-serializable data. The arguments and results of an `@action` function must be JSON-serializable, such as dictionaries, lists, strings, numbers, booleans, and `None`.
+- Regression testing is in Private Preview. If you want to try this feature, contact our Support team to enable it.
+
 The examples provided are intended to help you effectively use Fivetran's Connector SDK. While we've tested the code, Fivetran cannot be held responsible for any unexpected or negative consequences that may arise from using these examples. For inquiries, please reach out to our Support team.
