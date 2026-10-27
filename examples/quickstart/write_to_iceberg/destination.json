@@ -1,0 +1,10 @@
+{
+  "uri": "<POLARIS_CATALOG_URI>",
+  "warehouse": "<WAREHOUSE_NAME>",
+  "namespace": "<NAMESPACE>",
+  "client_id": "<CLIENT_ID>",
+  "client_secret": "<CLIENT_SECRET>",
+  "scope": "PRINCIPAL_ROLE:ALL",
+  "header.X-Iceberg-Access-Delegation": "vended-credentials",
+  "s3.region": "<AWS_REGION>"
+}
