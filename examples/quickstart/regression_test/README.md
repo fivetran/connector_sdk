@@ -45,7 +45,7 @@ For more information on `fivetran init`, refer to the [Connector SDK `init` docu
 ## Features
 - Marks the functions that read from the source with the `@action` decorator.
 - Records the `@action` calls, the starting state, and the output of a run with `--record`.
-- Limits the size of a recording with `--max-records`, which counts the `upsert`, `update`, `delete`, and `truncate` operations. The default is 100.
+- Limits the size of a recording with `--max-records`, which counts the `op.upsert`, `op.update`, and `op.delete` calls. The default is 100.
 - Replays a recording with `--replay`, which returns the recorded results and doesn't call the source.
 - Compares the replay `state.json` and `warehouse.db` with the recorded ones to detect regressions.
 - Uses `match` to identify a call by selected arguments, so secrets and other unwanted arguments aren't saved.
@@ -87,11 +87,16 @@ If you don't set `match`, as in `@action("customers_page")`, every argument is p
    - `record_data/fixture.jsonl` holds each `@action` call, one per line, with its name, arguments, and result.
    - `record_end/` holds the `state.json` and `warehouse.db` that the run produced. A replay is compared with them.
 
-   > NOTE: A record run saves the arguments of every `@action` call in the fixture. If you don't set `match`, all arguments are saved and identify the call. We recommend setting `match` and returning only the arguments you need to identify the call, so that secrets and other unwanted arguments aren't stored in the fixture. Arguments with names that end in `token`, `secret`, `password`, `api_key`, `credential` or `configuration` are saved as a hash, but other sensitive values aren't masked. Results are never masked.
+   > NOTE: A record run saves the arguments of every `@action` call in the fixture. If you don't set `match`, all arguments are saved and identify the call. We recommend setting `match` and returning only the arguments you need to identify the call, so that secrets and other unwanted arguments aren't stored in the fixture. Arguments with names that end in `api_key`, `api-key`, `apikey`, `token`, `secret`, `password`, `credential`, `configuration` or `configurations` are saved as a hash, but other sensitive values aren't masked. Results are never masked.
 3. A replay run starts from `record_start/` in a separate `.fixtures_replay` folder, so your `files` folder and the recording aren't changed. Each `@action` call returns the result from `fixture.jsonl`, and the source isn't called.
 4. When the replay finishes, its `state.json` and `warehouse.db` are compared with the ones in `record_end/`. For `warehouse.db`, the comparison covers tables, columns, and rows. If they match, there is no regression. If they differ, the run lists each difference and fails.
 
-The recording stops when the number of write operations reaches the `--max-records` limit. The limit is saved in the fixture, so a replay applies the same limit.
+The `--max-records` limit works as follows:
+- It counts every `op.upsert`, `op.update`, and `op.delete` call. `op.checkpoint` and `op.truncate` aren't counted.
+- The first `N` write operations go through. The next write stops your `update` function, and the run is treated as a successful end of the sync. A checkpoint after that point doesn't run.
+- After the limit is reached, new `@action` calls also stop.
+- `N` is saved as `capped_count` in the first line of `fixture.jsonl`. A replay applies the same limit, so it stops at the same write as the recording. You can't pass `--max-records` to `--replay`.
+- The limit works by raising an exception inside the write operation. If your code wraps a write in `except Exception`, it can catch the exception, but every later write is still rejected.
 
 Commit the `fixtures` folder with your connector. A replay creates a `.fixtures_replay` folder, which is added to your `.gitignore` file and shouldn't be committed.
 

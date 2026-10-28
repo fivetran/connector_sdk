@@ -33,7 +33,7 @@ The example passes the same options as the command line to `connector.debug()`:
 | `debug()` argument | Command-line option | Description |
 |--------------------|---------------------|-------------|
 | `record="<scenario>"` | `--record <scenario>` | Records the run into `fixtures/<scenario>/`. |
-| `max_records=<N>` | `--max-records <N>` | Stops the recording after `N` write operations. The default is 100. Use only with `record`. |
+| `max_records=<N>` | `--max-records <N>` | Stops the recording after `N` write operations (`op.upsert`, `op.update`, and `op.delete`). The default is 100. Use only with `record`. |
 | `replay="<scenario>"` | `--replay <scenario>` | Replays the scenario and compares the output with the recording. |
 
 You can't combine `record` and `replay`, or use `max_records` with `replay`. If a replay doesn't match, `debug()` logs the differences and exits with code 1. Recording over an existing scenario asks for confirmation, so run the file from a terminal to answer it.

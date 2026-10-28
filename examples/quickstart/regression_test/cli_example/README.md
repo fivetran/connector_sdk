@@ -14,13 +14,13 @@ For the record and replay concepts, requirements, and data handling, refer to th
    playground start
    ```
 
-2. From this folder, record a scenario named `basic`. The recording stops after 100 operations (Upsert/Update/Delete) by default:
+2. From this folder, record a scenario named `basic`. The recording stops after 100 write operations (`op.upsert`, `op.update`, and `op.delete` calls) by default:
 
    ```bash
    fivetran debug --record basic
    ```
 
-   To stop after a different number of operations, add `--max-records <N>`. For example, `--max-records 25` stops after 25 operations.
+   To stop after a different number of write operations, add `--max-records <N>`. For example, `--max-records 25` stops after 25 write operations. The first `N` writes go through and the next one ends the sync successfully. The limit is saved in the fixture.
 
    The run logs `recorded <N> interaction(s)` and saves the recording in `fixtures/basic/`. If `basic` already exists, the command asks before it overwrites it. Add `--yes` to overwrite without asking.
 
@@ -43,7 +43,7 @@ For the record and replay concepts, requirements, and data handling, refer to th
 | Option | Description |
 |--------|-------------|
 | `--record <scenario>` | Records the run into `fixtures/<scenario>/`. |
-| `--max-records <N>` | Stops the recording after `N` operations. The default is 100. Use only with `--record`. |
+| `--max-records <N>` | Stops the recording after `N` write operations (`op.upsert`, `op.update`, and `op.delete`). The default is 100. Use only with `--record`. |
 | `--replay <scenario>` | Replays the scenario and compares the output with the recording. |
 | `--yes` | Overwrites an existing recording without asking. |
 | `--non-interactive` | Keeps an existing recording and records nothing, instead of asking. |
