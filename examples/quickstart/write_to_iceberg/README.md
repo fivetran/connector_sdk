@@ -101,7 +101,7 @@ Note:
 
 ## Tables created
 
-The connector writes one table, `hello`, into the `namespace` set in `destination.json`.
+The connector writes one table, `HELLO`, into the `namespace` set in `destination.json`.
 
 | Column   | Type   | Primary key | Source                 |
 |----------|--------|-------------|------------------------|
