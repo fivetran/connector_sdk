@@ -15,6 +15,9 @@ The connector uses a hardcoded product catalog to walk through six stages. The r
 - Upserting a row whose primary key was previously truncated or deleted sets `_fivetran_deleted = false` and applies the new column values.
 
 
+To apply a truncate only after the full refresh completes successfully, refer to the [deferred_truncate_operation](../deferred_truncate_operation) example.
+
+
 ## Requirements
 - [Supported Python versions](https://github.com/fivetran/connector_sdk/blob/main/README.md#requirements)
 - Operating system:
