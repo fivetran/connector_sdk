@@ -128,7 +128,9 @@ These examples demonstrate common patterns and best practices for building conne
 
 ### Data handling
 
+- [deferred_truncate_operation](https://github.com/fivetran/connector_sdk/tree/main/examples/common_patterns/deferred_truncate_operation) - This example compares a regular `truncate()` with a deferred `truncate(deferred=True)` on two tables. A deferred truncate soft-deletes existing rows only after sync completes successfully.
 - [three_operations](https://github.com/fivetran/connector_sdk/tree/main/examples/common_patterns/three_operations) - This example shows how to use upsert, update and delete operations.
+- [truncate_operation](https://github.com/fivetran/connector_sdk/tree/main/examples/common_patterns/truncate_operation) - This example shows how the `truncate()` operation soft-deletes existing rows, and how it interacts with `upsert()`, `update()` and `delete()` on a single table.
 - [tracking_tables](https://github.com/fivetran/connector_sdk/tree/main/examples/common_patterns/tracking_tables) - This example shows how to track tables that have already been synced in order to be able add new tables and have them automatically sync back to an initial timestamp.
 - [update_configuration_during_sync](https://github.com/fivetran/connector_sdk/tree/main/examples/common_patterns/update_configuration_during_sync) - This example shows how to update the configuration of the connector during a sync. It demonstrates how to modify the configuration values based on certain conditions using the Fivetran REST API.
 
