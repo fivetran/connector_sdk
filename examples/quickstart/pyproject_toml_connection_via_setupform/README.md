@@ -73,7 +73,11 @@ The important package metadata settings are:
 
 ## Data handling
 
-This example reads sample records from a REST API and upserts them into the `post` table. The connector is intentionally simple and mirrors the setup form pattern used in `examples/quickstart/configuration_form/connector.py`.
+This example is specific to the dashboard-based connection creation flow enabled by `pyproject.toml` package metadata. The key difference from the generic configuration form example is not the `post` API fetch itself, but that the package is made visible in the Fivetran dashboard via `[tool.package-metadata]` and then selected by a user when they create a connection.
+
+Once the package is published with `visible = true`, Fivetran shows it in **Browse our connectors**. A user selects the package and fills in the setup form fields such as `api_base_url`, `api_key`, `my_host`, `batch_size`, `enable_metrics`, and `data_range`. Those values are then passed into `update()` as the `configuration` dictionary. The connector uses those setup form values to decide which records to fetch and how to sync them into the destination table.
+
+This example remains intentionally simple and mirrors the setup form pattern from `examples/quickstart/configuration_form/connector.py`, but it highlights the additional step of making the package visible for connection creation in the dashboard.
 
 ## Error handling
 
