@@ -59,14 +59,19 @@ def get_with_retry(url: str, params: dict):
         if attempt == __MAX_RETRIES:
             raise error
         delay = __RETRY_BASE_DELAY_SECONDS * 2 ** (attempt - 1)
-        log.warning(f"request failed ({error}); retrying in {delay}s (attempt {attempt} of {__MAX_RETRIES})")
+        log.warning(
+            f"request failed ({error}); retrying in {delay}s (attempt {attempt} of {__MAX_RETRIES})"
+        )
         time.sleep(delay)
 
 
 # match= lists the arguments that identify the call during a replay. It receives the same arguments as the function.
 # You can omit match, and then every argument is saved in the fixture and identifies the call.
 # We recommend setting it so that secrets and other unwanted arguments aren't stored in the fixture.
-@action("customers_page", match=lambda page, updated_since: {"page": page, "updated_since": updated_since})
+@action(
+    "customers_page",
+    match=lambda page, updated_since: {"page": page, "updated_since": updated_since},
+)
 def fetch_customers_page(page: int, updated_since: str = None):
     """
     Fetch one page of customers from the API Playground.
@@ -78,7 +83,7 @@ def fetch_customers_page(page: int, updated_since: str = None):
     Returns:
         The parsed JSON response, which must be JSON-serializable.
     """
-    params = {"page": page, "per_page": __PER_PAGE}
+    params = {"page": page, "per_page": __PER_PAGE, "order_by": "updatedAt", "order_type": "asc"}
     if updated_since:
         params["updated_since"] = updated_since
     response = get_with_retry(f"{__BASE_URL}/pagination/page_number", params)
@@ -113,7 +118,7 @@ def update(configuration: dict, state: dict):
     updated_since = state.get("last_updated_at")
     last_updated_at = updated_since
 
-    # The API returns customers sorted by updatedAt, oldest first, and updated_since is inclusive.
+    # We request customers sorted by updatedAt, oldest first, and updated_since is inclusive.
     # Each sync reads from page 1 of the same filtered query, so the pages never shift past unread changes.
     page = 1
 
