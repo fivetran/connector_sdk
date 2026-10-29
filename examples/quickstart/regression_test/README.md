@@ -3,14 +3,14 @@
 ## Connector overview
 These examples show how to use record and replay regression testing with the Fivetran Connector SDK. You record a connector run against a live source once, and then replay the recording without calling the source to confirm that code changes don't alter the data your connector delivers.
 
-Both examples read customers from the [Fivetran API Playground](https://pypi.org/project/fivetran-api-playground/) with page-number pagination. They differ only in how you start the record and replay runs:
+Both examples read sample records from the [Fivetran API Playground](https://pypi.org/project/fivetran-api-playground/), a local mock API that serves generated test data, so you don't need a real source or credentials. Each customer has an `id`, `name`, `email`, `address`, `company`, `job`, `createdAt`, and `updatedAt`. The connector reads them with page-number pagination and upserts them into the `customer` table. They differ only in how you start the record and replay runs:
 
 | Example | How you run it |
 |---------|----------------|
 | [`cli_example`](cli_example) | With the `fivetran debug --record` and `fivetran debug --replay` commands. |
 | [`ide_example`](ide_example) | From an IDE or a script, by passing `record=` and `replay=` to `connector.debug()`. |
 
-Regression testing is in Private Preview. Please contact your Fivetran representative to request access.
+Regression testing is in Private Preview. Please contact your Fivetran representative to request access. For more information, refer to the [Regression Testing documentation](https://fivetran.com/docs/connector-sdk/testing/regression-testing).
 
 
 ## Requirements
@@ -134,7 +134,7 @@ The connector uses page-number pagination. It requests `page=1`, `page=2`, and s
 - A replay fails with a message to record the scenario again if the connector makes an `@action` call that isn't in the recording.
 
 
-## Tables Created
+## Tables created
 The connector creates a `customer` table:
 
 ```json
@@ -147,6 +147,6 @@ The connector creates a `customer` table:
 
 ## Additional considerations
 - Regression testing supports only JSON-serializable data. The arguments and results of an `@action` function must be JSON-serializable, such as dictionaries, lists, strings, numbers, booleans, and `None`.
-- Regression testing is in Private Preview. If you want to try this feature, contact our Support team to enable it.
+- Regression testing is in Private Preview. If you want to try this feature, contact our Support team to enable it. For more information, refer to the [Regression Testing documentation](https://fivetran.com/docs/connector-sdk/testing/regression-testing).
 
 The examples provided are intended to help you effectively use Fivetran's Connector SDK. While we've tested the code, Fivetran cannot be held responsible for any unexpected or negative consequences that may arise from using these examples. For inquiries, please reach out to our Support team.
