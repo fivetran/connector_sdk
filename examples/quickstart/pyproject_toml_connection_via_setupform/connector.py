@@ -10,7 +10,6 @@ from fivetran_connector_sdk import Connector, Operations as op, Logging as log
 from fivetran_connector_sdk import Test
 from fivetran_connector_sdk import form_field
 
-
 DATA_RANGE_LIMITS = {
     "last_7_days": 7,
     "last_30_days": 30,
@@ -167,13 +166,18 @@ def update(configuration: dict, state: dict):
     total_records = 0
 
     while True:
-        remaining_records = None if max_records is None else max_records - total_records
+        if max_records is None:
+            remaining_records = None
+        else:
+            remaining_records = max_records - total_records
+
         if remaining_records is not None and remaining_records <= 0:
             break
 
-        current_batch_size = (
-            batch_size if remaining_records is None else min(batch_size, remaining_records)
-        )
+        if remaining_records is None:
+            current_batch_size = batch_size
+        else:
+            current_batch_size = min(batch_size, remaining_records)
 
         response = requests.get(
             f"{api_base_url}/posts",
@@ -209,4 +213,3 @@ if __name__ == "__main__":
     with open(config_path, "r") as file:
         configuration = json.load(file)
     connector.debug(configuration=configuration)
-
