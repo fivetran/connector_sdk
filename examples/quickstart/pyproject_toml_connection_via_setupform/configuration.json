@@ -1,0 +1,9 @@
+{
+  "api_base_url": "<YOUR_BASE_URL>",
+  "api_key": "<YOUR_API_KEY>",
+  "batch_size": "<BATCH_SIZE>",
+  "enable_metrics": "<YOUR_METRICS_PREFERENCE>",
+  "data_range": "<YOUR_DATE_RANGE>",
+  "my_host": "<YOUR_TARGET_HOST_FOR_PROXY>"
+}
+
