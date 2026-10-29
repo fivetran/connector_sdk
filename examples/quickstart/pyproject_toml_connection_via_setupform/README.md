@@ -56,7 +56,7 @@ proxy_host_config_key = "my_host"
 
 ## Features
 
-- Uses a setup form like the quickstart configuration form example
+- Uses a setup form like the [quickstart configuration form example](../configuration_form/README.md)
 - Provides a package `pyproject.toml` for dashboard visibility
 - Lets users create a connection directly in the Fivetran UI
 - Includes an example connection test for validating the API endpoint and credentials
