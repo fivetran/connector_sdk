@@ -82,6 +82,3 @@ The connector validates the required configuration values before sync and return
 ## Additional considerations
 
 This example is meant to help you understand how to combine Connector SDK setup forms with package visibility metadata. Use it as a starting point for production connectors that need custom connection creation through the Fivetran dashboard.
-
-
-
