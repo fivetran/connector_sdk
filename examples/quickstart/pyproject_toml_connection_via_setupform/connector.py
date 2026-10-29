@@ -149,6 +149,17 @@ def validate_configuration(configuration: dict):
         if key not in configuration or not configuration[key]:
             raise ValueError(f"Missing required configuration value: '{key}'")
 
+    data_range = configuration.get("data_range", "all_time")
+    if data_range not in DATA_RANGE_LIMITS:
+        raise ValueError("data_range must be last_7_days, last_30_days, or all_time.")
+
+    try:
+        batch_size = int(str(configuration.get("batch_size", 100)))
+    except ValueError as error:
+        raise ValueError("batch_size must be a positive integer.") from error
+    if batch_size <= 0:
+        raise ValueError("batch_size must be a positive integer.")
+
 
 def update(configuration: dict, state: dict):
     """Fetch sample posts from the configured API and load them into the destination."""
