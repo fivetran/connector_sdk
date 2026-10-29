@@ -19,9 +19,9 @@ For the official guidance, see the Connector SDK documentation: https://fivetran
 2. Ensure the package name is unique and visible is set to `true`.
 3. Run the package commands from the project directory:
 
-```bash
-fivetran package create --api-key <BASE_64_ENCODED_API_KEY>
-```
+   ```bash
+   fivetran package create --api-key <BASE_64_ENCODED_API_KEY>
+   ```
 
 4. In the Fivetran dashboard, open **Connections** and select the package in **Browse our connectors**.
 5. Complete the setup form, run the setup test, and save the connection.
