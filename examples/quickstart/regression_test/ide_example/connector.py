@@ -116,7 +116,6 @@ def update(configuration: dict, state: dict):
     # "last_updated_at" is the newest customer updatedAt that was synced. It is None on the first sync.
     # "updated_since" stays fixed for the whole sync, so every page comes from the same filtered query.
     updated_since = state.get("last_updated_at")
-    last_updated_at = updated_since
 
     # We request customers sorted by updatedAt, oldest first, and updated_since is inclusive.
     # Each sync reads from page 1 of the same filtered query, so the pages never shift past unread changes.
@@ -132,16 +131,16 @@ def update(configuration: dict, state: dict):
             op.upsert(table="customer", data=item)
 
         log.info(f"synced page {page} of {payload['total_pages']}")
-        last_updated_at = payload["data"][-1]["updatedAt"]
+        state["last_updated_at"] = payload["data"][-1]["updatedAt"]
 
         # Checkpoint after each fully processed page, so a failed sync resumes from the newest updatedAt it saved.
-        op.checkpoint(state={"last_updated_at": last_updated_at})
+        op.checkpoint(state)
         if page >= payload["total_pages"]:
             break
         page += 1
 
     # Final checkpoint, which also covers a sync that found no data.
-    op.checkpoint(state={"last_updated_at": last_updated_at})
+    op.checkpoint(state)
 
 
 # Create the connector object using the schema and update functions
