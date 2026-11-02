@@ -15,7 +15,7 @@ The connector uses a hardcoded product catalog to walk through six stages. The r
 - Upserting a row whose primary key was previously truncated or deleted sets `_fivetran_deleted = false` and applies the new column values.
 
 
-To apply a truncate only once the full refresh completes successfully, refer to the [deferred_truncate_operation](../deferred_truncate_operation) example.
+To apply a truncate only once the full refresh completes successfully, refer to the [deferred_truncate_operation](https://github.com/fivetran/connector_sdk/tree/main/examples/common_patterns/truncate_operation/deferred_truncate_operation) example.
 
 
 ## Requirements
@@ -32,7 +32,7 @@ Refer to the [Connector SDK Setup Guide](https://fivetran.com/docs/connector-sdk
 To initialize a new Connector SDK project using this connector as a starting point, run:
 
 ```bash
-fivetran init <project-path> --template examples/common_patterns/truncate_operation
+fivetran init <project-path> --template examples/common_patterns/truncate_operation/normal_truncate_operation
 ```
 `fivetran init` initializes a new Connector SDK project by setting up the project structure, configuration files, and a connector you can run immediately with `fivetran debug`.
 If you do not specify a project path, Fivetran creates the project in your current directory.
