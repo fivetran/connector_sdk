@@ -1,14 +1,14 @@
-# Regression Test Connector Examples
+# Regression Test Connector Example
 
 ## Connector overview
-These examples show how to use record and replay regression testing with the Fivetran Connector SDK. You record a connector run against a live source once, and then replay the recording without calling the source to confirm that code changes don't alter the data your connector delivers.
+This example shows how to use record and replay regression testing with the Fivetran Connector SDK. You record a connector run against a live source once, and then replay the recording without calling the source to confirm that code changes don't alter the data your connector delivers.
 
-Both examples read sample records from the [Fivetran API Playground](https://pypi.org/project/fivetran-api-playground/), a local mock API that serves generated test data, so you don't need a real source or credentials. Each customer has an `id`, `name`, `email`, `address`, `company`, `job`, `createdAt`, and `updatedAt`. The connector reads them with page-number pagination and upserts them into the `customer` table. They differ only in how you start the record and replay runs:
+The connector reads sample records from the [Fivetran API Playground](https://pypi.org/project/fivetran-api-playground/), a local mock API that serves generated test data, so you don't need a real source or credentials. Each customer has an `id`, `name`, `email`, `address`, `company`, `job`, `createdAt`, and `updatedAt`. The connector reads them with page-number pagination and upserts them into the `customer` table. You can start the record and replay runs in either of these ways:
 
-| Example | How you run it |
-|---------|----------------|
-| [`cli_example`](cli_example) | With the `fivetran debug --record` and `fivetran debug --replay` commands. |
-| [`ide_example`](ide_example) | From an IDE or a script, by passing `record=` and `replay=` to `connector.debug()`. |
+| How you run it | Command |
+|----------------|---------|
+| From the command line | `fivetran debug --record <scenario>` and `fivetran debug --replay <scenario>` |
+| From an IDE or a script | Pass `record=` and `replay=` to `connector.debug()`, as the `__main__` block in `connector.py` does. |
 
 Regression testing is in Private Preview. Please contact your Fivetran representative to request access. For more information, refer to the [Regression Testing documentation](https://fivetran.com/docs/connector-sdk/testing/regression-testing).
 
@@ -33,13 +33,32 @@ pip install fivetran-api-playground
 playground start
 ```
 
-To initialize a new Connector SDK project using one of these examples as a starting point, run:
+To initialize a new Connector SDK project using this example as a starting point, run:
 
 ```bash
-fivetran init <project-path> --template examples/quickstart/regression_test/cli_example
+fivetran init <project-path> --template examples/quickstart/regression_test
 ```
 
 For more information on `fivetran init`, refer to the [Connector SDK `init` documentation](https://fivetran.com/docs/connector-sdk/setup-guide#createyourcustomconnector).
+
+### Run from the command line
+```bash
+fivetran debug --record basic --max-records 50
+fivetran debug --replay basic
+```
+
+The record run saves the scenario `basic` into `fixtures/basic/` and stops after 50 write operations. The replay doesn't call the source. When it finishes, it compares the resulting state and `warehouse.db` with the recorded ones. If they match, the run logs `replay finished and its state and warehouse.db match the recording`. If they don't, the run prints each mismatch and exits with code 1.
+
+### Run from an IDE or a script
+In the `__main__` block of `connector.py`, `MODE` is set to `"record"`. Run the file to record the scenario `basic`. Then set `MODE` to `"replay"` and run the file again. You can also run it from a terminal with `python connector.py`. The block passes the command-line options to `connector.debug()`:
+
+| `debug()` argument | Command-line option | Description |
+|--------------------|---------------------|-------------|
+| `record="<scenario>"` | `--record <scenario>` | Records the run into `fixtures/<scenario>/`. |
+| `max_records=<N>` | `--max-records <N>` | Stops the recording after `N` write operations (`op.upsert`, `op.update`, and `op.delete`). The default is 100. Use only with `record`. |
+| `replay="<scenario>"` | `--replay <scenario>` | Replays the scenario and compares the output with the recording. |
+
+You can't combine `record` and `replay`, or use `max_records` with `replay`. Recording over an existing scenario asks for confirmation, so run the file from a terminal to answer it.
 
 
 ## Features
@@ -102,13 +121,13 @@ Commit the `fixtures` folder with your connector. A replay creates a `.fixtures_
 
 
 ## Configuration file
-No configuration file values are required for these examples. The `configuration.json` file contains an empty object.
+No configuration file values are required for this example. The `configuration.json` file contains an empty object.
 
 Note: Ensure that the `configuration.json` file is not checked into version control to protect sensitive information.
 
 
 ## Requirements file
-These connectors do not require any Python dependencies.
+This connector does not require any Python dependencies.
 
 Note: The `fivetran_connector_sdk:latest` and `requests:latest` packages are pre-installed in the Fivetran environment. To avoid dependency conflicts, do not declare them in your `requirements.txt`.
 
@@ -149,4 +168,4 @@ The connector creates a `customer` table:
 - Regression testing supports only JSON-serializable data. The arguments and results of an `@action` function must be JSON-serializable, such as dictionaries, lists, strings, numbers, booleans, and `None`.
 - Regression testing is in Private Preview. If you want to try this feature, contact our Support team to enable it. For more information, refer to the [Regression Testing documentation](https://fivetran.com/docs/connector-sdk/testing/regression-testing).
 
-The examples provided are intended to help you effectively use Fivetran's Connector SDK. While we've tested the code, Fivetran cannot be held responsible for any unexpected or negative consequences that may arise from using these examples. For inquiries, please reach out to our Support team.
+The example provided is intended to help you effectively use Fivetran's Connector SDK. While we've tested the code, Fivetran cannot be held responsible for any unexpected or negative consequences that may arise from using this example. For inquiries, please reach out to our Support team.

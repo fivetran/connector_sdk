@@ -1,7 +1,9 @@
 # This is an example for how to record and replay a connector run with the fivetran_connector_sdk module.
-# It reads customers from the Fivetran API Playground and is meant to be run with the `fivetran debug` command:
-#   fivetran debug --record basic     (records the @action calls and the output)
-#   fivetran debug --replay basic     (replays them and compares the output with the recording)
+# It reads dummy data from the Fivetran API Playground. You can run it in two ways:
+#   - From an IDE or a script: set MODE in the `__main__` block below and run the file.
+#       MODE = "record"   records the @action calls and the output into fixtures/<SCENARIO>/
+#       MODE = "replay"   replays them and compares the output with the recording
+#   - From the command line: run `fivetran debug --record <scenario>` and `fivetran debug --replay <scenario>`.
 # See the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details
 
 # Import the json module to load the configuration file.
@@ -75,7 +77,7 @@ def get_with_retry(url: str, params: dict):
 def fetch_customers_page(page: int, updated_since: str = None):
     """
     Fetch one page of customers from the API Playground.
-    The @action decorator records the result during `--record` and returns it during `--replay`.
+    The @action decorator records the result during a record run and returns it during a replay.
     It has no effect when you run the connector without these options.
     Args:
         page: The page number to fetch. It identifies the call during a replay.
@@ -111,11 +113,12 @@ def update(configuration: dict, state: dict):
         state: A dictionary containing state information from previous runs
         The state dictionary is empty for the first sync or for any full re-sync
     """
-    log.warning("Example: Quickstart Examples - Regression Test (CLI)")
+    log.warning("Example: Quickstart Examples - Regression Test")
 
     # "last_updated_at" is the newest customer updatedAt that was synced. It is None on the first sync.
     # "updated_since" stays fixed for the whole sync, so every page comes from the same filtered query.
     updated_since = state.get("last_updated_at")
+
     # We request customers sorted by updatedAt, oldest first, and updated_since is inclusive.
     # Each sync reads from page 1 of the same filtered query, so the pages never shift past unread changes.
     page = 1
@@ -154,5 +157,14 @@ if __name__ == "__main__":
     with open("configuration.json", "r") as f:
         configuration = json.load(f)
 
-    # Test the connector locally
-    connector.debug(configuration=configuration)
+    # "record" captures a scenario from the live source. "replay" runs against that recording and compares the output.
+    MODE = "record"
+    SCENARIO = "basic"
+
+    if MODE == "record":
+        # Stop recording after 50 write operations to keep the recording small.
+        connector.debug(configuration=configuration, record=SCENARIO, max_records=50)
+    elif MODE == "replay":
+        connector.debug(configuration=configuration, replay=SCENARIO)
+    else:
+        connector.debug(configuration=configuration)
