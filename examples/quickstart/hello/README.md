@@ -3,12 +3,12 @@
 ## Connector overview
 This is the simplest possible connector using the Fivetran Connector SDK. It defines only the `update()` function and emits a single row containing the message "hello, world!" to a table named `HELLO`.
 
-This example is useful as a bare-minimum test to:
+This example is useful as a bare-minimum template to:
 - Understand connector structure.
 - Validate your SDK setup and environment.
 - Experiment with local debug execution before building a real connector.
 
-Note: This example omits the `schema()` function and therefore does not explicitly declare column types, which is not recommended for production connectors. See [Best Practices](https://fivetran.com/docs/connector-sdk/best-practices#declaringprimarykeys) for more.
+> Note: This example omits the `schema()` function and therefore does not explicitly declare column types, which is not recommended for production connectors. See [Best Practices](https://fivetran.com/docs/connector-sdk/best-practices#declaringprimarykeys) for more.
 
 
 ## Requirements
@@ -23,13 +23,13 @@ Note: This example omits the `schema()` function and therefore does not explicit
 
 Refer to the [Connector SDK Setup Guide](https://fivetran.com/docs/connector-sdk/setup-guide) to set up your environment.
 
-To start from this example, run:
+To initialize a new Connector SDK project using this connector as a starting point, run:
 
 ```bash
 fivetran init <project-path> --template examples/quickstart/hello
 ```
 
-`fivetran init` creates a new project directory with the connector file and supporting configuration. If you omit `<project-path>`, Fivetran creates the project in your current directory. For more information, see the [`fivetran init` documentation](https://fivetran.com/docs/connector-sdk/setup-guide#createyourcustomconnector).
+`fivetran init` creates a new project at `<project-path>` with the connector file and supporting configuration. If you omit `<project-path>`, the project gets created in your current directory. For more information, see the [`fivetran init` documentation](https://fivetran.com/docs/connector-sdk/setup-guide#createyourcustomconnector).
 
 
 ## Features
@@ -42,7 +42,7 @@ fivetran init <project-path> --template examples/quickstart/hello
 ## Configuration file
 No configuration file is required for this example.
 
-Note: Ensure that `configuration.json` is not checked into version control to protect sensitive information.
+> Note: We do not recommend checking `configuration.json` into version control as it can contain sensitive information.
 
 
 ## Requirements file
@@ -127,8 +127,4 @@ To test a fresh initial sync, delete the local state and warehouse data:
 fivetran reset
 ```
 
-Then run `fivetran debug` again. `fivetran reset` only removes the local `files/state.json` and `files/warehouse.db` — it does not affect any deployed connection.
-
-
-## Additional considerations
-The examples provided are intended to help you effectively use Fivetran's Connector SDK. While we've tested the code, Fivetran cannot be held responsible for any unexpected or negative consequences that may arise from using these examples. For inquiries, please reach out to our Support team.
+Then run `fivetran debug` again.
