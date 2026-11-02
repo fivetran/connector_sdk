@@ -3,14 +3,14 @@
 ## Connector overview
 This example shows how to use record and replay regression testing with the Fivetran Connector SDK. You record a connector run against a live source once, and then replay the recording without calling the source to confirm that code changes don't alter the data your connector delivers.
 
-The connector reads sample records from the [Fivetran API Playground](https://pypi.org/project/fivetran-api-playground/), a local mock API that serves generated test data, so you don't need a real source or credentials. Each customer has an `id`, `name`, `email`, `address`, `company`, `job`, `createdAt`, and `updatedAt`. The connector reads them with page-number pagination and upserts them into the `customer` table. You can start the record and replay runs in either of these ways:
+The connector reads sample records from the [Fivetran API Playground](https://pypi.org/project/fivetran-api-playground/), a local mock API that serves generated test data, so you don't need a real source or credentials. Each customer has an `id`, `name`, `email`, `address`, `company`, `job`, `createdAt`, and `updatedAt`. The connector reads them with page-number pagination and upserts them into the `CUSTOMER` table. You can start the record and replay runs in either of these ways:
 
 | How you run it | Command |
 |----------------|---------|
 | From the command line | `fivetran debug --record <scenario>` and `fivetran debug --replay <scenario>` |
 | From an IDE or a script | Pass `record=` and `replay=` to `connector.debug()`, as the `__main__` block in `connector.py` does. |
 
-Regression testing is in Private Preview. Please contact your Fivetran representative to request access. For more information, refer to the [Regression Testing documentation](https://fivetran.com/docs/connector-sdk/testing/regression-testing).
+Regression testing is in [Private Preview](https://fivetran.com/docs/core-concepts#releasephases). Please contact your Fivetran representative to request access. For more information, refer to the [Regression Testing documentation](https://fivetran.com/docs/connector-sdk/testing/regression-testing).
 
 
 ## Requirements
@@ -100,15 +100,15 @@ If you don't set `match`, as in `@action("customers_page")`, every argument is p
 
 
 ## How regression testing works
-1. `@action` marks the function that reads from the source.
+1. Add the `@action` decorator to each function in your connector that calls the source, such as the function that fetches a page of customers. A record run saves these calls, and a replay returns the saved results instead of calling the source.
 2. A record run calls the source and saves the run in `fixtures/<scenario>/`:
    - `record_start/` holds the starting `state.json` and `warehouse.db`. It's a snapshot of the `files` folder taken just before the run.
    - `record_data/fixture.jsonl` holds each `@action` call, one per line, with its name, arguments, and result.
    - `record_end/` holds the `state.json` and `warehouse.db` that the run produced. A replay is compared with them.
-
-   > NOTE: A record run saves the arguments of every `@action` call in the fixture. If you don't set `match`, all arguments are saved and identify the call. We recommend setting `match` and returning only the arguments you need to identify the call, so that secrets and other unwanted arguments aren't stored in the fixture. Arguments with names that end in `api_key`, `api-key`, `apikey`, `token`, `secret`, `password`, `credential`, `configuration` or `configurations` are saved as a hash, but other sensitive values aren't masked. Results are never masked.
 3. A replay run starts from `record_start/` in a separate `.fixtures_replay` folder, so your `files` folder and the recording aren't changed. Each `@action` call returns the result from `fixture.jsonl`, and the source isn't called.
 4. When the replay finishes, its `state.json` and `warehouse.db` are compared with the ones in `record_end/`. For `warehouse.db`, the comparison covers tables, columns, and rows. If they match, there is no regression. If they differ, the run lists each difference and fails.
+
+Note: A record run saves the arguments of every `@action` call in the fixture. If you don't set `match`, all arguments are saved and identify the call. We recommend setting `match` and returning only the arguments you need to identify the call, so that secrets and other unwanted arguments aren't stored in the fixture. Arguments with names that end in `api_key`, `api-key`, `apikey`, `token`, `secret`, `password`, `credential`, `configuration` or `configurations` are saved as a hash, but other sensitive values aren't masked. Results are never masked.
 
 The `--max-records` limit works as follows:
 - It counts every `op.upsert`, `op.update`, and `op.delete` call. `op.checkpoint` and `op.truncate` aren't counted.
@@ -117,8 +117,8 @@ The `--max-records` limit works as follows:
 - `N` is saved as `capped_count` in the first line of `fixture.jsonl`. A replay applies the same limit, so it stops at the same write as the recording. You can't pass `--max-records` to `--replay`.
 - The limit works by raising an exception inside the write operation. If your code wraps a write in `except Exception`, it can catch the exception, but every later write is still rejected.
 
-Commit the `fixtures` folder with your connector. A replay creates a `.fixtures_replay` folder, which is added to your `.gitignore` file and shouldn't be committed.
-
+## Commit recordings to Git
+Commit the `fixtures` folder with your connector so that you and your team can replay the recordings later. Before you push it to Git, check the recorded data for personal data (PII) and other sensitive values. A replay creates a `.fixtures_replay` folder, which is replaced every time a replay runs to compare its output with the recorded data, so add it to your `.gitignore` file and don't commit it.
 
 ## Configuration file
 No configuration file values are required for this example. The `configuration.json` file contains an empty object.
@@ -137,11 +137,12 @@ The API Playground does not require authentication.
 
 
 ## Pagination
-The connector uses page-number pagination. It requests `page=1`, `page=2`, and so on, until the last page is reached or a page has no data. The API returns customers sorted by `updatedAt`, oldest first, and accepts an inclusive `updated_since` filter. The connector saves the newest `updatedAt` it has synced as `last_updated_at` in state, and checkpoints after each fully processed page. The next sync sends `updated_since=<last_updated_at>` and starts again at page 1 of that filtered query, so it reads only new and changed customers. This works when customers don't change while a sync is running. Page-number pagination can't guarantee that for live data, because a customer that changes between page requests can move to a page you've already read. For a source that changes during a sync, use cursor-based (keyset) pagination instead. The first sync has no state and reads all customers. Because the filter is inclusive, the newest customer is read again on every sync, which is harmless for an upsert.
+The connector uses page-number pagination. It requests `page=1`, `page=2`, and so on, until the last page is reached or a page has no data. The API returns customers sorted by `updatedAt`, oldest first, and accepts an inclusive `updated_since` filter. The connector saves the newest `updatedAt` it has synced as `last_updated_at` in state, and checkpoints after each fully processed page. The next sync sends `updated_since=<last_updated_at>` and starts again at page 1 of that filtered query, so it reads only new and changed customers. 
+This works when customers don't change while a sync is running. Page-number pagination can't guarantee that for live data, because a customer that changes between page requests can move to a page you've already read. For a source that changes during a sync, use cursor-based (keyset) pagination instead. The first sync has no state and reads all customers. Because the filter is inclusive, the newest customer is read again on every sync, which is harmless for an upsert.
 
 
 ## Data handling
-- The `update()` function upserts each customer into the `customer` table.
+- The `update()` function upserts each customer into the `CUSTOMER` table.
 - The recorded `@action` results must be JSON-serializable, so the function returns the parsed JSON response.
 - Each recording holds the `customers_page` calls, one per page.
 
@@ -154,7 +155,7 @@ The connector uses page-number pagination. It requests `page=1`, `page=2`, and s
 
 
 ## Tables created
-The connector creates a `customer` table:
+The connector creates a `CUSTOMER` table:
 
 ```json
 {
@@ -165,7 +166,4 @@ The connector creates a `customer` table:
 
 
 ## Additional considerations
-- Regression testing supports only JSON-serializable data. The arguments and results of an `@action` function must be JSON-serializable, such as dictionaries, lists, strings, numbers, booleans, and `None`.
-- Regression testing is in Private Preview. If you want to try this feature, contact our Support team to enable it. For more information, refer to the [Regression Testing documentation](https://fivetran.com/docs/connector-sdk/testing/regression-testing).
-
 The example provided is intended to help you effectively use Fivetran's Connector SDK. While we've tested the code, Fivetran cannot be held responsible for any unexpected or negative consequences that may arise from using this example. For inquiries, please reach out to our Support team.

@@ -3,6 +3,8 @@
 #   - From an IDE or a script: set MODE in the `__main__` block below and run the file.
 #       MODE = "record"   records the @action calls and the output into fixtures/<SCENARIO>/
 #       MODE = "replay"   replays them and compares the output with the recording
+#       MODE = None       runs a normal debug run, without recording or replaying
+#     To record or replay without changing MODE, pass --record or --replay to the CLI instead (see the next line).
 #   - From the command line: run `fivetran debug --record <scenario>` and `fivetran debug --replay <scenario>`.
 # See the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details
 
@@ -77,7 +79,9 @@ def get_with_retry(url: str, params: dict):
 def fetch_customers_page(page: int, updated_since: str = None):
     """
     Fetch one page of customers from the API Playground.
-    The @action decorator records the result during a record run and returns it during a replay.
+    The @action decorator behaves differently depending on how you run the connector:
+    - Record run: calls the API as usual and saves the arguments and the returned result in the scenario's fixture file.
+    - Replay run: does not call the API. It returns the saved result for the call whose arguments match the recording.
     It has no effect when you run the connector without these options.
     Args:
         page: The page number to fetch. It identifies the call during a replay.
@@ -158,11 +162,14 @@ if __name__ == "__main__":
         configuration = json.load(f)
 
     # "record" captures a scenario from the live source. "replay" runs against that recording and compares the output.
+    # None runs a normal debug run.
     MODE = "record"
     SCENARIO = "basic"
 
     if MODE == "record":
-        # Stop recording after 50 write operations to keep the recording small.
+        # max_records caps the write operations (upsert, update, delete) the recording lets through. When the cap is
+        # reached, the sync ends normally, and replay stops at the same write. The default is 100. A low cap keeps
+        # the recording small and fast to replay.
         connector.debug(configuration=configuration, record=SCENARIO, max_records=50)
     elif MODE == "replay":
         connector.debug(configuration=configuration, replay=SCENARIO)
