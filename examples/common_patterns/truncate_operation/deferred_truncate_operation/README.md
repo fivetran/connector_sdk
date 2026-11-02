@@ -7,7 +7,7 @@ A regular `truncate()` soft-deletes the rows that already exist in the destinati
 
 A deferred truncate captures the truncate timestamp when `op.truncate(table, deferred=True)` is called, but soft-deletes the rows synced before that timestamp only after `update()` returns successfully. The soft-delete is committed together with the final checkpoint, so the destination is never left with the old rows deleted and the replacement rows missing. Rows upserted after the call are never affected.
 
-Use a deferred truncate when you replace a table through a full refresh that takes several checkpoints. Use a regular truncate when you want the existing rows soft-deleted immediately. For a walkthrough of the regular truncate with `upsert()`, `update()` and `delete()`, refer to the [truncate_operation](https://github.com/fivetran/connector_sdk/tree/main/examples/common_patterns/truncate_operation/normal_truncate_operation) example.
+Use a deferred truncate when you replace a table through a full refresh that takes several checkpoints. Use a regular truncate when you want the existing rows soft-deleted immediately. For a walkthrough of the regular truncate with `upsert()`, `update()` and `delete()`, refer to the [regular_truncate_operation](https://github.com/fivetran/connector_sdk/tree/main/examples/common_patterns/truncate_operation/regular_truncate_operation) example.
 
 
 ## Requirements

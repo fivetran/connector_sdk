@@ -1,4 +1,4 @@
-# Truncate Operation Connector Example
+# Regular Truncate Operation Connector Example
 
 ## Connector overview
 This connector demonstrates the [`truncate()` operation](https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-operations#truncate) in the Fivetran Connector SDK, showing how it interacts with `upsert()`, `update()`, and `delete()` on a single table.
@@ -32,7 +32,7 @@ Refer to the [Connector SDK Setup Guide](https://fivetran.com/docs/connector-sdk
 To initialize a new Connector SDK project using this connector as a starting point, run:
 
 ```bash
-fivetran init <project-path> --template examples/common_patterns/truncate_operation/normal_truncate_operation
+fivetran init <project-path> --template examples/common_patterns/truncate_operation/regular_truncate_operation
 ```
 `fivetran init` initializes a new Connector SDK project by setting up the project structure, configuration files, and a connector you can run immediately with `fivetran debug`.
 If you do not specify a project path, Fivetran creates the project in your current directory.
