@@ -44,6 +44,10 @@ These are graded examples designed to help you get started with the Connector SD
 - [multiple_schema](https://github.com/fivetran/connector_sdk/tree/main/examples/quickstart/multiple_schema) - This example shows how to implement a simple connector that supports multiple schemas.
 - [write_to_iceberg](https://github.com/fivetran/connector_sdk/tree/main/examples/quickstart/write_to_iceberg) - This example shows how to upsert a record from a connector into an Apache Iceberg destination.
 
+- [connection_via_setupform](https://github.com/fivetran/connector_sdk/tree/main/examples/quickstart/connection_via_setupform) - This example shows how to make a Connector SDK package visible in the Fivetran dashboard via `pyproject.toml` metadata and create a connection using a setup form.
+
+- [pyproject_toml_dependencies](https://github.com/fivetran/connector_sdk/tree/main/examples/quickstart/pyproject_toml_dependencies) - This example shows how to manage connector dependencies through `pyproject.toml`.
+
 - [regression_test](https://github.com/fivetran/connector_sdk/tree/main/examples/quickstart/regression_test) - This example shows how to record a connector run and replay it without calling the source to detect regressions, from the command line or an IDE (Private Preview).
 
 </details>

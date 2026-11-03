@@ -1,0 +1,13 @@
+[project]
+name = "MyCustomConnector"
+version = "0.1.0"
+description = "A Fivetran connector example demonstrating how customer package_name and visible can be set in pyproject.toml."
+dependencies = [
+   "tenacity==9.1.4",
+]
+
+[tool.package-metadata]
+visible = true
+python_version = "3.14"
+proxy_host_config_key = "my_host"
+
