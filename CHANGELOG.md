@@ -2,6 +2,16 @@
 
 This changelog lists PyPI package releases for the `fivetran-connector-sdk` package, as published in the official [Fivetran Connector SDK release notes](https://fivetran.com/docs/connector-sdk/changelog).
 
+## November 2026
+
+### fivetran-connector-sdk [`3.1.0`](https://pypi.org/project/fivetran-connector-sdk/3.1.0/)
+
+- Adds support for [deferred truncate](https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-operations), which marks a table's existing rows as deleted only after the sync completes successfully, ensuring that existing data is preserved if the sync fails.
+- Adds support for reading package defaults from `pyproject.toml` when resolving deployment values from multiple sources. For more information, see [field resolution order](https://fivetran.com/docs/connector-sdk/getting-started/connector-sdk-commands#fieldresolutionorder).
+- Improves the [`fivetran run`](https://fivetran.com/docs/connector-sdk/getting-started/connector-sdk-commands#fivetranrun) command with bug fixes and enhanced logging.
+- Improves template search and overwrite prompts for the [`fivetran init`](https://fivetran.com/docs/connector-sdk/getting-started/connector-sdk-commands#fivetraninit) command.
+- Minor enhancements and improvements.
+
 ## October 2026
 
 ### fivetran-connector-sdk [`3.0.0`](https://pypi.org/project/fivetran-connector-sdk/3.0.0/)
