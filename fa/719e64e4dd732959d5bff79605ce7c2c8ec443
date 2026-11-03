@@ -1,0 +1,37 @@
+examples/README.md
+  c92c17796308f1da 49
+  c758b169228efa15 47
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.4",
+  "base_commit_sha": "fa719e64e4dd732959d5bff79605ce7c2c8ec443",
+  "prompts": {
+    "c758b169228efa15": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4fab45b4-4eaf-4a6b-a1f5-3c4a3325afef",
+        "model": "claude-haiku-4-5-20251001"
+      },
+      "human_author": "anushka.parashar <anushka.parashar@fivetran.com>",
+      "messages": [],
+      "total_additions": 1,
+      "total_deletions": 1,
+      "accepted_lines": 1,
+      "overriden_lines": 0
+    },
+    "c92c17796308f1da": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0e476b1c-9bd0-47ca-8ae2-fcf9727283da",
+        "model": "claude-haiku-4-5-20251001"
+      },
+      "human_author": "anushka.parashar <anushka.parashar@fivetran.com>",
+      "messages": [],
+      "total_additions": 2,
+      "total_deletions": 0,
+      "accepted_lines": 2,
+      "overriden_lines": 0
+    }
+  }
+}
