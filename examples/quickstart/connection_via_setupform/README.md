@@ -16,7 +16,7 @@ For the official guidance, see the Connector SDK documentation: https://fivetran
 ## Getting started
 
 1. Review the connector package metadata in `pyproject.toml`.
-2. Ensure the package name is unique and visible is set to `true`.
+2. Ensure the package name is unique and that `visible` is set to `true`.
 3. Run the package commands from the project directory:
 
    ```bash
