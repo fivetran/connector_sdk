@@ -8,7 +8,7 @@ This example is useful as a bare-minimum template to:
 - Validate your SDK setup and environment.
 - Experiment with local debug execution before building a real connector.
 
-> Note: This example omits the `schema()` function and therefore does not explicitly declare column types, which is not recommended for production connectors. See [Best Practices](https://fivetran.com/docs/connector-sdk/best-practices#declaringprimarykeys) for more.
+> Note: This example omits the `schema()` function and therefore does not explicitly declare primary keys, which is not recommended for production connectors. See [Best Practices](https://fivetran.com/docs/connector-sdk/best-practices#declaringprimarykeys) for more.
 
 
 ## Requirements
@@ -42,7 +42,7 @@ fivetran init <project-path> --template examples/quickstart/hello
 ## Configuration file
 No configuration file is required for this example.
 
-> Note: We do not recommend checking `configuration.json` into version control as it can contain sensitive information.
+> Note: We do not recommend checking `configuration.json` into version control as it contains sensitive data.
 
 
 ## Requirements file
