@@ -1,0 +1,23 @@
+examples/quickstart/write_to_iceberg/connector.py
+  8f69b5c1dadc2ec7 20-21,70-71
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.4",
+  "base_commit_sha": "0ce2230b61b628b527e9703bfb9d651f826a54ca",
+  "prompts": {
+    "8f69b5c1dadc2ec7": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "fa1d1275-3252-4438-a7cf-d554e7bcc14c",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "fivetran-JenasVimal <jenas.vimal@fivetran.com>",
+      "messages": [],
+      "total_additions": 54,
+      "total_deletions": 62,
+      "accepted_lines": 4,
+      "overriden_lines": 0
+    }
+  }
+}

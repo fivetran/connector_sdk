@@ -1,0 +1,25 @@
+examples/quickstart/write_to_iceberg/connector.py
+  8f69b5c1dadc2ec7 21
+examples/quickstart/write_to_iceberg/README.md
+  8f69b5c1dadc2ec7 4,93,104
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.4",
+  "base_commit_sha": "9be4e55fc7664c92d88d0a05c5813842058461a2",
+  "prompts": {
+    "8f69b5c1dadc2ec7": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "fa1d1275-3252-4438-a7cf-d554e7bcc14c",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "fivetran-JenasVimal <jenas.vimal@fivetran.com>",
+      "messages": [],
+      "total_additions": 4,
+      "total_deletions": 20,
+      "accepted_lines": 4,
+      "overriden_lines": 0
+    }
+  }
+}
