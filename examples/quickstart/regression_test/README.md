@@ -10,7 +10,7 @@ The connector reads sample records from the [Fivetran API Playground](https://py
 | From the command line | `fivetran debug --record <scenario>` and `fivetran debug --replay <scenario>` |
 | From an IDE or a script | Pass `record=` and `replay=` to `connector.debug()`, as the `__main__` block in `connector.py` does. |
 
-Regression testing is in [Private Preview](https://fivetran.com/docs/core-concepts#releasephases). Please contact your Fivetran representative to request access. For more information, refer to the [Regression Testing documentation](https://fivetran.com/docs/connector-sdk/testing/regression-testing).
+Regression testing is in [Public Preview](https://fivetran.com/docs/core-concepts#releasephases). For more information, refer to the [Regression Testing documentation](https://fivetran.com/docs/connector-sdk/testing/regression-testing).
 
 
 ## Requirements
