@@ -1,0 +1,142 @@
+ **CONNECTOR SDK CORE** **LICENSE AGREEMENT**
+
+Effective October 20, 2026
+
+This Fivetran Connector SDK Core License Agreement (this **“Agreement”**) is a legally binding contract between Fivetran Inc., a Delaware corporation (**“Fivetran”** or **“Licensor”**), and the individual or entity that downloads, installs, copies, or otherwise uses the Fivetran CSDK Core  (as defined below) (**“Licensee”** or **“You”**). Fivetran and Licensee are each referred to herein as a **“Party”** and collectively as the **“Parties.”**
+
+**PLEASE READ THIS AGREEMENT CAREFULLY BEFORE DOWNLOADING, INSTALLING, OR USING THE CONNECTOR SDK CORE. BY DOWNLOADING, INSTALLING, COPYING, OR OTHERWISE USING THE CONNECTOR SDK CORE, YOU ACKNOWLEDGE THAT YOU HAVE READ, UNDERSTOOD, AND AGREE TO BE BOUND BY THE TERMS AND CONDITIONS OF THIS AGREEMENT. IF YOU ARE ACCEPTING THESE TERMS ON BEHALF OF AN ENTITY, YOU REPRESENT AND WARRANT THAT YOU HAVE THE AUTHORITY TO BIND SUCH ENTITY TO THIS AGREEMENT. IF YOU DO NOT AGREE TO THESE TERMS, DO NOT DOWNLOAD, INSTALL, OR USE THE CONNECTOR SDK CORE.**
+
+**RECITALS**
+
+Fivetran develops and provides automated data integration and data pipeline solutions, including the Fivetran Connector SDK, a software development kit currently licensed under the MIT License that enables developers to build data connectors.
+
+Fivetran has developed the Fivetran CSDK Core or Core (each as defined below), which is a separate proprietary software package that is downloaded automatically when Licensee initiates a testing workflow through the SDK. The SDK and the Core are independent packages; the Core is proprietary software subject to the terms and conditions of this Agreement, notwithstanding that it may be obtained through the SDK.
+
+Licensee desires to use the Core solely to test data connectors built using the Fivetran Connector SDK, and Fivetran is willing to grant Licensee a limited license to do so, subject to the terms and conditions set forth herein.
+
+1. **DEFINITIONS**
+
+   1. **“Affiliate”** means an entity controlling, controlled by or under common control with a party to this Agreement at any time during the term, for so long as such control exists, where for purposes of this definition, “control” means direct or indirect ownership of more than 50% of the voting interests of the subject entity; provided, as it relates to Licensee, such entity is not a current or prospective competitor to Fivetran or in the business of developing or offering products or technologies that are substantially similar to any Fivetran product.
+
+   2. **“Confidential Information”** means the Fivetran CSDK Core (including, without limitation, its source code, object code, architecture, design, algorithms, data models, processing logic, functionality, performance characteristics, technical documentation, and any other non-public technical or business information embodied therein), together with any information that Fivetran designates as confidential or that a reasonable person would understand to be confidential given the nature of the information and circumstances of disclosure.
+
+   3. **“Connector”** means a data connector built by or on behalf of Licensee using the SDK in accordance with the SDK’s documentation and applicable license terms.
+
+   4. **“Documentation”** means any user guides, reference materials, release notes, instructions, specifications, or other documentation made available by Fivetran in connection with the Fivetran CSDK Core, in any form or medium.
+
+   5. **“Intellectual Property Rights”** means all patent rights, copyright rights, mask work rights, moral rights, rights of publicity, trademark, trade dress and service mark rights, goodwill, trade secret rights, and all other intellectual property and proprietary rights of every kind and nature, whether arising under any statute or at common law, and whether registered or unregistered, and all applications, registrations, renewals, and extensions thereof, now or hereafter in force and effect worldwide.
+
+   6. **“Licensee Systems”** means the machine, computing environment, operating system, and any associated infrastructure in which Licensee installs and runs the Fivetran CSDK Core, whether physical or virtual.
+
+   
+
+   7. **“Permitted Purpose”** means the sole purpose of installing and running the Core on a single machine to test Connectors built using the SDK, strictly in accordance with the Documentation and this Agreement.
+
+   8. **“SDK”** means the Fivetran Connector SDK, a software development kit made available by Fivetran under the MIT License, as may be updated by Fivetran from time to time.
+
+   9. **“Core”** **or “Fivetran CSDK Core”** means the Fivetran CSDK Core software, including all components, source code, libraries, binaries, executables, firmware, runtime environments, configuration files, Documentation, and any updates, upgrades, patches, bug fixes, or other modifications thereto provided by Fivetran.
+
+   10. **“User”** means an employee, contractor (to the extent providing services to Licensee) or end user of Licensee that Licensee has provisioned to use the Fivetran CSDK Core through Licensee’s account.
+
+2. **LICENSE GRANT & RESTRICTIONS**
+
+   1. **License Grant.** Subject to Licensee’s compliance with this Agreement, Fivetran hereby grants to Licensee a limited, non-exclusive, non-transferable, non-sublicensable, revocable, royalty-free license, during the term of this Agreement, solely to install and use the Core on a machine owned or controlled by Licensee, solely for the Permitted Purpose.
+
+   2. **Relationship to SDK.** This Agreement governs solely the Core. Licensee’s use of the SDK is governed by the applicable license under which the SDK is distributed (currently the MIT License) and not by this Agreement. Nothing in this Agreement modifies, limits, or expands the terms of the SDK’s license.
+
+   3. **Restrictions.** Licensee shall not, and shall not allow, permit or assist any third party to, directly or indirectly:
+
+      1) reverse engineer, decompile, disassemble, or derive or otherwise attempt to discover the source code underlying the Fivetran CSDK Core, including its underlying algorithms, data structures, processing logic, or architecture, in whole or in part;
+
+      2) modify, adapt, translate, port, or create derivative works based upon the Core or any portion thereof;
+
+      3) copy, reproduce, distribute, duplicate, or otherwise make available the Core, in whole or in part, to any third party, except as strictly necessary to exercise the license granted in **Section 2.1** (License Grant);
+
+      4) use the Core for benchmarking (except solely for internal purposes), competitive analysis, competitive intelligence, or the development, improvement, or training of any product, service, or technology that competes with any Fivetran product or service; disclose, publish, or otherwise make available to any third party any performance data, benchmarking results, testing results, security audit results, or vulnerability information relating to the Core, without the prior written consent of Fivetran;
+
+      5) remove, obscure, alter, or deface any proprietary notices, labels, marks, logos, trademarks, watermarks, or branding on or in the Core or Documentation;
+
+      6) circumvent, disable, defeat, or otherwise interfere with any technological protection measure, license key, access control, digital rights management mechanism, telemetry, usage tracking, or security feature of the Core;
+
+      7) attempt to probe, scan, or test the vulnerability of the Core, breach the security or authentication measures of the Core without proper authorization, or willfully render any part of the Core unusable;
+
+      
+
+      8) use the Core in violation of any applicable laws or regulations (including any export law) or outside the scope expressly permitted in this Agreement; or
+
+      9) attempt to do any of the foregoing, or assist, encourage, or facilitate any third party in doing any of the foregoing.
+
+   4. **Verification and Audit.** Licensee shall provide upon Fivetran’s request a certification that its use of the Core is in accordance with this Agreement. Fivetran shall have the right to audit Licensee’s use of the Core to verify compliance with this Agreement. Licensee shall cooperate and assist Fivetran in conducting any such audit, without charge, and shall make such documents available for inspection and copying, and shall make such personnel available for interviews, as may be reasonably necessary to allow Fivetran to perform the audit. If any audit reveals that Licensee has used the Core in breach of the terms and conditions of this Agreement, Licensee shall reimburse Fivetran for all costs and expenses incurred by Fivetran in connection with the audit within thirty (30) days of an invoice.
+
+3. **INTELLECTUAL PROPERTY OWNERSHIP**
+
+   1. **Ownership.** As between the Parties, Fivetran retains all right, title, and interest in and to the Core, including all Intellectual Property Rights therein. Licensee does not acquire any ownership interest in the Core under this Agreement or otherwise. Nothing in this Agreement transfers to Fivetran any ownership interest in the Connectors developed by Licensee, provided that Licensee’s Connectors do not incorporate any portion of the Core or Fivetran’s Confidential Information.
+
+   2. **Feedback.** If Licensee provides Fivetran with any feedback, suggestions, enhancement requests, recommendations, comments, or other input relating to the Core or any Fivetran product or service (“Feedback”), Licensee hereby irrevocably assigns to Fivetran all right, title, and interest in and to such Feedback, including all Intellectual Property Rights therein. To the extent such assignment is not effective under applicable law, Licensee hereby grants Fivetran a perpetual, irrevocable, worldwide, royalty-free, fully paid-up, exclusive, transferable, sublicensable license to use, reproduce, modify, create derivative works of, distribute, display, perform, and otherwise exploit such Feedback for any purpose without restriction or obligation to Licensee.
+
+   3. **Modifications.** Licensee acknowledges that it is not permitted to modify the Core unless approved by Fivetran in writing. Without limiting the foregoing, Licensee hereby assigns to Fivetran all right, title, and interest in and to any and all modifications, improvements, or derivative works of the Core (collectively, “Modifications”) that Licensee may make or obtain any interest in, including all Intellectual Property Rights therein. Licensee shall assist Fivetran to further evidence, record, and perfect such assignment, and to perfect, obtain, maintain, enforce, and defend any rights assigned.
+
+4. **CONFIDENTIALITY**
+
+   1. **Confidential Treatment.** Licensee acknowledges that the Core and all related information constitute Confidential Information of Fivetran. Licensee shall (a) maintain the Confidential Information in strict confidence; (b) not disclose, publish, or disseminate the Confidential Information to any third party without the prior written consent of Fivetran; (c) use the Confidential Information solely for the Permitted Purpose; and (d) protect the Confidential Information with at least the same degree of care that Licensee uses to protect its own most sensitive confidential information, but in no event less than reasonable care.
+
+   2. **Nondisclosure and Use.** The Licensee will not disclose any of Licensor’s Confidential Information to any person or entity, except: (a) to employees, agents and professional advisors who have a need to know such information and who are subject to confidentiality agreements with Licensee at least as protective of Licensor’s Confidential Information as this Agreement; or (b) as required to be disclosed by law by any governmental or other regulatory authority, securities exchange or pursuant to the terms of a valid and effective subpoena or court order, provided that Licensee immediately notifies Licensor (to the extent permitted) of the existence, terms and circumstances surrounding such a request so that Licensor may seek appropriate protective action. Licensee may not use Licensor's Confidential Information for any purpose other than to exercise its rights and comply with its obligations under this Agreement.
+
+   3. **Return; Destroy; Protect.** On Licensor’s request, Licensee will return or destroy all of Licensor’s Confidential Information that has been supplied to or acquired by Licensee, other than: (a) records Licensee has a separate legal right or obligation to retain; and (b) copies of such Confidential Information created in the ordinary course of Licensee’s business and retained in accordance with its internal document retention and information technology policies. To the extent Licensee retains such Confidential Information, it will continue to protect such Confidential Information in accordance with **Section 4.1** (Confidential Treatment) and **Section 4.2** (Nondisclosure and Use) for so long as it meets the definition of Confidential Information.
+
+   4. **Injunction for Breach**. The parties agree that damages would be an inadequate remedy in the event of a breach of this **Section 4** (Confidentiality). The parties agree Licensor is entitled, in addition to any other rights and remedies otherwise available, to seek injunctive and other equitable relief in the event of a breach or threatened breach by Licensee of this **Section 4** (Confidentiality).
+
+5. **DATA AND PRIVACY**
+
+   1. **Telemetry and Usage Data.** Licensee acknowledges and agrees that the Core may collect and transmit to Fivetran usage data, telemetry data, diagnostic information, crash reports, performance metrics, and other technical data relating to Licensee’s use of the Core (“Usage Data”). Fivetran may use such Usage Data for any lawful purpose, including to improve Fivetran’s products and services.
+
+   2. **Privacy Policy.** Fivetran’s collection, use, and processing of any personal data in connection with the Core is governed by the Fivetran Privacy Policy, available at https\://www\.fivetran.com/legal/privacy, as may be updated from time to time.
+
+   3. **Licensee Data.** Any data that Licensee accesses, processes, or inputs using the Core ("Licensee Data") is processed within Licensee Systems at Licensee's sole discretion and risk. Licensee is solely responsible for Licensee Data, including obtaining all rights, consents, and authorizations required to process it, and for complying with all applicable data protection, privacy, and other laws in connection with such processing. Fivetran does not access or receive the contents of Licensee Data through the Core and has no obligations with respect to Licensee Data. Usage Data collected under Section 5.1 is not intended to include the contents of Licensee Data, and Fivetran uses reasonable measures designed to remove or exclude personal data from Usage Data before it is transmitted to Fivetran. Licensee shall not modify or configure the Core to transmit Licensee Data to Fivetran.
+
+   4. **Security Responsibility.**  When using the Fivetran CSDK Core, all data processing occurs within Licensee Systems and data does not leave Licensee Systems without explicit Licensee authorization.  Licensee is solely responsible for the security of Licensee Systems and its own environment in which the Core operates, including, without limitation, the security of Licensee’s machine, network, operating system, and any data processed in connection with the Core. Fivetran bears no security or data processing obligations with respect to the Core processing data within Licensee’s environment. Notwithstanding anything to the contrary in this Agreement, Fivetran is not responsible for any sources, destinations, third-party platforms, or other systems used by Licensee in conjunction with the Core.
+
+6. **TERM AND TERMINATION**
+
+   1. **Term.** This Agreement is effective as of the date Licensee first downloads, installs, or uses the Core (the “Effective Date”) and shall continue in effect until terminated in accordance with this **Section 6** (Term and Termination).
+
+   2. **Termination.** This Agreement and the license granted hereunder shall terminate automatically and immediately, without notice, upon any breach by Licensee of any term or condition of this Agreement. In addition, Fivetran may terminate this Agreement and the license granted hereunder at any time, for any reason or no reason, upon written notice (including by email or electronic notification) to Licensee. 
+
+   3. **Effect of Termination.** Upon termination or expiration of this Agreement for any reason, (a) all rights and licenses granted to Licensee hereunder shall immediately terminate; (b) Licensee shall immediately cease all use of the Core; (c) Licensee shall promptly destroy or delete all copies of the Core and Documentation in Licensee’s possession or control, including from all machines, storage media, and backup systems; and (d) upon Fivetran’s request, Licensee shall certify in writing that it has complied with the foregoing obligations.
+
+   4. **Survival.** All sections of this Agreement that by their nature should survive termination will survive termination, including terms and conditions relating to license restrictions, verification and audit, intellectual property ownership, confidentiality, data and privacy, termination, disclaimers, limitation of liability,  indemnification, and general provisions below.
+
+7. **DISCLAIMER OF WARRANTIES**
+
+FIVETRAN DOES NOT WARRANT THAT THE FIVETRAN CSDK CORE WILL BE UNINTERRUPTED OR ERROR FREE, THAT IT WILL BE SECURE OR AVAILABLE AT ANY PARTICULAR TIME OR LOCATION; NOR DOES IT MAKE ANY WARRANTY AS TO THE RESULTS THAT MAY BE OBTAINED FROM USE OF THE CORE. TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, THE CORE IS PROVIDED “AS IS” AND “AS AVAILABLE”, WITHOUT ANY WARRANTIES, REPRESENTATIONS, CONDITIONS, INDEMNITIES, SERVICE LEVEL COMMITMENTS, OR SUPPORT OR OTHER OBLIGATIONS OR LIABILITIES, AND FIVETRAN DISCLAIMS ALL WARRANTIES, REPRESENTATIONS AND CONDITIONS, EXPRESS OR IMPLIED, INCLUDING IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, TITLE AND NON-INFRINGEMENT, WITH RESPECT THERETO. NOTWITHSTANDING ANYTHING HEREIN, FIVETRAN IS NOT RESPONSIBLE OR LIABLE FOR ANY THIRD PARTY PLATFORMS. 
+
+8. **INDEMNIFICATION**
+
+Licensee shall defend, indemnify, and hold harmless Fivetran and its Affiliates and its and their respective officers, directors and employees (collectively, “Fivetran Indemnified Parties”), from and against any and all claims, demands, actions, suits, proceedings, losses, liabilities, damages, costs, and expenses (including reasonable attorneys’ fees and court costs) (collectively, “Losses”) arising out of or in connection with: (a) Licensee’s use of the Core; (b) any breach or alleged breach by Licensee of this Agreement; (c) any Connector developed by Licensee, including any claim that a Connector infringes or misappropriates the Intellectual Property Rights of any third party; (d) Licensee’s violation of any applicable law, regulation, or third-party right; or (e) any Licensee Data.
+
+9. **GENERAL PROVISIONS**
+
+   1. **Governing Law and Jurisdiction; Fees**. This Agreement shall be governed by the laws of the State of California, without regard to its conflict of laws provisions. This Agreement shall not be governed by the United Nations Convention on Contracts for the International Sale of Goods or the Uniform Computer Information Transactions Act. Any legal action relating to this Agreement must be brought in the federal or state courts in San Francisco or Alameda Counties, California. The parties hereby accept generally and unconditionally the jurisdiction, resolution method, and venue noted above. The prevailing party is entitled to recover all reasonable fees, costs and expenses of enforcing its rights, including reasonable attorneys’ fees.
+
+   2. **Entire Agreement.** This Agreement constitutes the entire agreement between the Parties with respect to the subject matter hereof and supersedes all prior and contemporaneous agreements, understandings, negotiations, and representations, whether oral or written, relating to such subject matter. For purposes of clarity, any Master Subscription Agreement or other agreement for Licensee’s use of the Fivetran Products and Professional Services (each as defined therein) entered into between Fivetran or any of its Affiliates (including, but not limited to, dbt Labs, LLC) and Licensee will not apply to use of the Core, which use shall solely be governed by this Agreement. 
+
+   3. **Enforceability**. If any provision of this Agreement is adjudicated invalid or unenforceable, the remaining provisions will remain in full force and effect and this Agreement will be amended to the minimum extent necessary to achieve, to the maximum extent possible, the same legal and commercial effect originally intended by the parties. To the extent permitted by applicable law, if such modification is not possible, the provision will be severed, and the remainder of this Agreement shall remain in full force and effect.
+
+   4. **Waiver.** No failure or delay by Fivetran in exercising any right, power, or remedy under this Agreement shall operate as a waiver thereof, nor shall any single or partial exercise of any such right, power, or remedy preclude any other or further exercise thereof or the exercise of any other right, power, or remedy. Any waiver must be in writing and signed by Fivetran to be effective.
+
+   5. **Assignment.** Licensee may not assign, transfer, or delegate this Agreement or any of its rights or obligations hereunder, in whole or in part, whether by operation of law or otherwise, without the prior written consent of Fivetran. Fivetran may freely assign, transfer, or delegate this Agreement or any of its rights or obligations hereunder without restriction. Any purported assignment in violation of this Section shall be null and void.
+
+   6. **Notices.** Fivetran may provide notices to Licensee by email, electronic notification within the Core or SDK, or by posting on Fivetran’s website. 
+
+   7. **Force Majeure**. If the performance of this Agreement or any obligations (other than payment obligations) hereunder is prevented or interfered with by any act or condition beyond the reasonable control of a party hereto, including acts of God, unusually severe weather, war, invasion, riot or other civil unrest, government laws, orders or embargoes, strikes or lockouts (a “Force Majeure Event”), that party upon giving prompt notice to the other party (including the cause and effect of such failure and the anticipated duration of its inability to perform) shall be excused from such performance during such occurrence for a period equal to the duration of such Force Majeure Event; provided, however, the party affected by a Force Majeure Event will take all reasonable actions to minimize the consequences and cause the cessation of any such event.
+
+   8. **No Agency; No Third Party Rights**. No agency, partnership, joint venture, or employment is created as a result of this Agreement and neither party has any authority of any kind to bind the other party in any respect whatsoever to any third party. For the avoidance of doubt, there are no third party beneficiaries under this Agreement.
+
+   9. **Export Compliance.**  Licensee acknowledges that the Core may be subject to laws and regulations related to international transactions, including export controls, import controls, and trade sanctions administered or enforced by the United States and other applicable jurisdictions. Licensee acknowledges and agrees that it will comply with all applicable export controls, import controls, trade sanctions, and all other applicable international trade laws, regulations and/or any other relevant restrictions in Licensee’s use of the Core, including that Licensee will not export or re-export, directly or indirectly, the Core in violation of applicable law, permit access to or use of the Core in Afghanistan, Belarus, Russia and Venezuela (collectively, “Designated Jurisdictions”) or any country where such access or use is subject to a trade embargo or prohibition, and that Licensee will not use the Core in support of any controlled technology, industry, or goods or services, or any other restricted use, without having a valid governmental license, authority, or permission to engage in such conduct. Licensee will not submit to the Core any data controlled under the U.S. International Traffic in Arms Regulations. Licensee represents that it and each User and / or Affiliate accessing the Core is (a) not located in a country or jurisdiction subject to a trade embargo or comprehensive sanctions relevant to this Agreement, (b) not named on any governmental or quasi-governmental denied party or debarment list relevant to this Agreement, and (c) is not owned directly or indirectly by persons who are named on any such list(s).
+
+10. **UPDATES AND MODIFICATIONS**
+
+    1. **Updates to the Core.** Fivetran may, in its sole discretion, release updates, upgrades, patches, or new versions of the Core at any time. Fivetran is under no obligation to provide any updates, maintenance, or support for the Core. Any updates provided by Fivetran shall be deemed part of the Core and subject to the terms of this Agreement. The Core may automatically download and install updates when Licensee initiates a testing workflow through the SDK. Licensee shall not modify or configure the Core or Licensee Systems in a manner that prevents the Core from performing automatic updates.
+
+    2. **Modifications to this Agreement.** From time to time, Fivetran may modify this Agreement. Fivetran may provide a copy upon written request by Licensee. Licensee’s continued use of the Core after any such modification constitutes Licensee’s acceptance of the modified Agreement. If Licensee does not agree to the modified Agreement, Licensee must immediately cease use of the Core and destroy all copies in Licensee’s possession.
+
