@@ -8,7 +8,7 @@ This example is useful as a bare-minimum template to:
 - Validate your SDK setup and environment.
 - Experiment with local debug execution before building a real connector.
 
-> Note: This example omits the `schema()` function and therefore does not explicitly declare primary keys, which is not recommended for production connectors. See [Best Practices](https://fivetran.com/docs/connector-sdk/best-practices#declaringprimarykeys) for more.
+> Note: This example omits the `schema()` function and therefore does not explicitly declare primary keys, which is not recommended for production connectors. For more information, see our [Schema Management documentation](https://fivetran.com/docs/connector-sdk/building-connectors/connector-sdk-concepts/schema-management).
 
 
 ## Requirements
@@ -29,7 +29,7 @@ To initialize a new Connector SDK project using this connector as a starting poi
 fivetran init <project-path> --template examples/quickstart/hello
 ```
 
-`fivetran init` creates a new project at `<project-path>` with the connector file and supporting configuration. If you omit `<project-path>`, the project gets created in your current directory. For more information, see the [`fivetran init` documentation](https://fivetran.com/docs/connector-sdk/setup-guide#createyourcustomconnector).
+`fivetran init` creates a new project at `<project-path>` with the connector file and supporting configuration. If you omit `<project-path>`, the project gets created in your current directory. For more information, see the [`fivetran init` documentation](https://fivetran.com/docs/connector-sdk/getting-started/connector-sdk-commands#fivetraninit).
 
 
 ## Features
@@ -40,15 +40,12 @@ fivetran init <project-path> --template examples/quickstart/hello
 
 
 ## Configuration file
-No configuration file is required for this example.
-
-> Note: We do not recommend checking `configuration.json` into version control as it contains sensitive data.
-
-
+This example does not need configuration values, but SDK v2.11.0 and later require a [`configuration.json`](https://fivetran.com/docs/connector-sdk/building-connectors/configuration-json) for `fivetran debug`. Keep the template's configuration file, or create one containing `{}` if it is missing. The same file is needed when running `connector.py` directly from your IDE.
+ 
 ## Requirements file
 This connector does not require any Python dependencies.
 
-Note: The `fivetran_connector_sdk:latest` and `requests:latest` packages are pre-installed in the Fivetran environment. To avoid dependency conflicts, do not declare them in your `requirements.txt`.
+> Note: The `fivetran_connector_sdk:latest` and `requests:latest` packages are pre-installed in the Fivetran environment. To avoid dependency conflicts, do not declare them in your `requirements.txt`.
 
 
 ## Authentication
@@ -87,9 +84,7 @@ The connector creates a `HELLO` table:
 
 ### 1. Run the connector
 
-This example does not need configuration values, but SDK v2.11.0 and later require a `configuration.json` file for `fivetran debug`. Keep the template's configuration file, or create one containing `{}` if it is missing.
-
-The same file is needed when running `connector.py` directly from your IDE. From your project directory, run:
+From your project directory, run:
 
 ```bash
 fivetran debug
