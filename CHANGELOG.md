@@ -4,6 +4,13 @@ This changelog lists PyPI package releases for the `fivetran-connector-sdk` pack
 
 ## November 2026
 
+### fivetran-connector-sdk [`3.1.1`](https://pypi.org/project/fivetran-connector-sdk/3.1.1/)
+
+- Released [record and replay regression testing](https://fivetran.com/docs/connector-sdk/testing/regression-testing) in Public Preview. Use the `@action` decorator to mark your source-reading functions, record a scenario with `fivetran debug --record <scenario>`, and replay it to catch changes in the data your connector delivers.
+- Improved the connection setup form experience.
+- Added validation that rejects connectors that mix multiple-schema and single-schema declarations, and raises a clear error.
+- Minor enhancements and improvements.
+
 ### fivetran-connector-sdk [`3.1.0`](https://pypi.org/project/fivetran-connector-sdk/3.1.0/)
 
 - Adds support for [deferred truncate](https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-operations), which marks a table's existing rows as deleted only after the sync completes successfully, ensuring that existing data is preserved if the sync fails.
