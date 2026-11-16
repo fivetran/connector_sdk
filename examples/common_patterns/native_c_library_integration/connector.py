@@ -1,8 +1,8 @@
 # This example shows how to call a native C library from a Connector SDK connector using ctypes.
-# It bundles a precompiled copy of libm, the C standard math library, as native/libm.so, built
-# for Linux x86_64 (the Fivetran Connector SDK hosted production environment), and loads it from
-# a fixed path at import time. The same ctypes pattern applies to any other compiled, proprietary,
-# or third-party C library you need to bundle. See native_wrapper.py for details.
+# It bundles a custom compiled C library, native/libnative_math.so (built from native/native_math.c),
+# for Linux x86_64 (the Fivetran Connector SDK hosted production environment), and loads it from a
+# fixed path at import time. The same ctypes pattern applies to any other compiled, proprietary, or
+# third-party C library you need to bundle. See native_wrapper.py for details.
 # See the Technical Reference documentation (https://fivetran.com/docs/connector-sdk/technical-reference/connector-sdk-code/connector-sdk-methods#update)
 # and the Best Practices documentation (https://fivetran.com/docs/connector-sdk/best-practices) for details.
 
@@ -18,11 +18,12 @@ from fivetran_connector_sdk import Logging as log
 # For supporting Data operations like Upsert(), Update(), Delete() and checkpoint()
 from fivetran_connector_sdk import Operations as op
 
-# Thin ctypes wrapper around the bundled libm library (see native_wrapper.py)
+# Thin ctypes wrapper around the bundled custom native library (see native_wrapper.py)
 import native_wrapper
 
 # Name of the destination table this connector syncs to.
 __TABLE_NAME = "calculations"
+__DEFAULT_RATIO_VALUE = 0.0
 
 # Sample source rows. In a real connector, these inputs would come from your API or database;
 # here they only illustrate how the native library's result gets upserted alongside the inputs.
@@ -49,8 +50,9 @@ def schema(configuration: dict):
                 "id": "LONG",
                 "base": "DOUBLE",
                 "exponent": "DOUBLE",
-                "power_result": "DOUBLE",  # Computed by libm's native `pow` function.
-                "sqrt_result": "DOUBLE",  # Computed by libm's native `sqrt` function.
+                "power_result": "DOUBLE",  # Computed by native `connector_power`.
+                "sqrt_result": "DOUBLE",  # Computed by native `connector_square_root`.
+                "power_to_sqrt_ratio": "DOUBLE",  # Computed by native `connector_safe_ratio`.
             },
         }
     ]
@@ -87,6 +89,7 @@ def update(configuration: dict, state: dict):
     for row in __SAMPLE_ROWS:
         power_result = native_wrapper.power(row["base"], row["exponent"])
         sqrt_result = native_wrapper.square_root(row["base"])
+        ratio_result = native_wrapper.safe_ratio(power_result, sqrt_result, __DEFAULT_RATIO_VALUE)
         # The 'upsert' operation is used to insert or update data in the destination table.
         # The first argument is the name of the destination table.
         # The second argument is a dictionary containing the record to be upserted.
@@ -98,6 +101,7 @@ def update(configuration: dict, state: dict):
                 "exponent": row["exponent"],
                 "power_result": power_result,
                 "sqrt_result": sqrt_result,
+                "power_to_sqrt_ratio": ratio_result,
             },
         )
 
