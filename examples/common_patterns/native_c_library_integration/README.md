@@ -3,7 +3,7 @@
 ## Connector overview
 This connector demonstrates how to call a native C library from a Connector SDK connector using Python's built-in [`ctypes`](https://docs.python.org/3/library/ctypes.html) module. It simulates a scenario where a connector needs to reuse an existing calculation already implemented in C, for example a formula shared with other internal systems, instead of reimplementing that logic in Python.
 
-The example bundles a custom compiled C library as `native/libnative_math.so`. `native_wrapper.py` loads it from a fixed path with `ctypes.CDLL(...)`. The library is built from `native/native_math.c` using `native/Makefile`, so this example includes a complete C source + build flow.
+The example bundles a custom-compiled C library as `native/libnative_math.so`. `native_wrapper.py` loads it from a fixed path with `ctypes.CDLL(...)`. The library is built from `native/native_math.c` using `native/Makefile`, so this example includes a complete C source and build flow.
 
 ## Requirements
 - [Supported Python versions](https://github.com/fivetran/connector_sdk/blob/main/README.md#requirements)
