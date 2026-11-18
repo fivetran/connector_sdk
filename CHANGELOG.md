@@ -4,6 +4,15 @@ This changelog lists PyPI package releases for the `fivetran-connector-sdk` pack
 
 ## November 2026
 
+### fivetran-connector-sdk [`3.1.2`](https://pypi.org/project/fivetran-connector-sdk/3.1.2/)
+
+- Added support for Cursor CLI to the [AI coding agents](/docs/connector-sdk/getting-started/connector-sdk-commands#aicodingagentsetup).
+- Added support for Python 3.15 in the CLI. For more information about supported Python versions, see [Python version support](/docs/connector-sdk/getting-started/how-to-install-connector-sdk#pythonversionsupport).
+- Added command to delete a Connector SDK package using [`fivetran package delete`](/docs/connector-sdk/getting-started/connector-sdk-commands#fivetranpackage)
+- Added support for configuration fields in [record and replay regression testing](/docs/connector-sdk/testing/regression-testing).
+- Updated `grpcio` to version 1.80.1.
+- Minor enhancements and improvements.
+
 ### fivetran-connector-sdk [`3.1.1`](https://pypi.org/project/fivetran-connector-sdk/3.1.1/)
 
 - Released [record and replay regression testing](https://fivetran.com/docs/connector-sdk/testing/regression-testing) in Public Preview. Use the `@action` decorator to mark your source-reading functions, record a scenario with `fivetran debug --record <scenario>`, and replay it to catch changes in the data your connector delivers.
