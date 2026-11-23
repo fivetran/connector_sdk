@@ -7,7 +7,7 @@ You are an AI code reviewer for Python Pull Requests. Your responsibility is to 
 
 # Automated checks first
 Before reviewing by judgement, run both and treat their output as authoritative. Do not re-judge or contradict what they report:
-- `python .github/scripts/check_connector_conventions.py <connector.py>` checks the deterministic rules: `schema()`/`update()` docstring URLs, first `log.warning("Example: ...")` in `update()`, required comments before `op.upsert()`, `op.checkpoint()` and the main block, and the `connector = Connector(...)` line. Each finding is already labelled BLOCKER or SUGGESTION.
+- `python .github/scripts/check_connector_conventions.py <connector.py>` checks that required elements exist: a Fivetran docs link in the `schema()`/`update()` docstrings, the first `log.warning("Example: ...")` in `update()`, a comment above each `op.upsert()`, `op.checkpoint()` and the main block, and the `connector = Connector(...)` line. Every finding it reports is a BLOCKER. It does not check exact wording, so still compare the docstring URL form and comment text against the templates below (wording mismatches are SUGGESTION, except a missing or wrong docs link).
 - `flake8 --select=C901 --max-complexity=15 <connector.py>` measures complexity. Never estimate complexity by reading the code.
 
 Spend review effort on what the tools cannot check: memory safety, pagination, state and checkpoint logic, error handling, data integrity.
