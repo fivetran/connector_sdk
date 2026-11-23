@@ -48,6 +48,8 @@ These are graded examples designed to help you get started with the Connector SD
 
 - [pyproject_toml_dependencies](https://github.com/fivetran/connector_sdk/tree/main/examples/quickstart/pyproject_toml_dependencies) - This example shows how to manage connector dependencies through `pyproject.toml`.
 
+- [omni](https://github.com/fivetran/connector_sdk/tree/main/examples/quickstart/omni) - This is a real-life example which syncs the semantic layer of Omni (views, dimensions, measures, topics and their joins) and its documents from the Omni REST API. It shows how to split a connector into modules, define a setup form with a connection test, and mark rows deleted with a deferred `truncate()` when a full refresh succeeds.
+
 - [regression_test](https://github.com/fivetran/connector_sdk/tree/main/examples/quickstart/regression_test) - This example shows how to record a connector run and replay it without calling the source to detect regressions, from the command line or an IDE (Private Preview).
 
 </details>

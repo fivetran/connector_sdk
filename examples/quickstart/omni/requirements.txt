@@ -1,0 +1,2 @@
+# For parsing the YAML documents Omni returns for each model
+PyYAML==6.0.2
