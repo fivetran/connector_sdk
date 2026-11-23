@@ -1,0 +1,23 @@
+examples/zz_review_test/connector.py
+  4bc3301604dbb262 1-75
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.4",
+  "base_commit_sha": "689a6e727006da440f9c84107bd33949f36b853b",
+  "prompts": {
+    "4bc3301604dbb262": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "cd45f80e-d1ed-4c48-807d-caf6c6e14335",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "unknown",
+      "messages": [],
+      "total_additions": 75,
+      "total_deletions": 0,
+      "accepted_lines": 75,
+      "overriden_lines": 0
+    }
+  }
+}
