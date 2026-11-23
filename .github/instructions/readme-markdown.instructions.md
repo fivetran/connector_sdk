@@ -77,7 +77,6 @@ Apply these rules to every `README.md` file inside Connector SDK connector examp
 If a section is irrelevant (e.g., no error handling), the empty stub should be not present.
 
 ---
-<!---
 ## Section Compliance
 
 * **Connector overview** → Must explain purpose, data source, and use cases.
@@ -160,7 +159,7 @@ If a section is irrelevant (e.g., no error handling), the empty stub should be n
   }
   ```
   ``` 
-* **Additional files** → Must list additional Python files and explain purpose, for example, as provided below:
+* **Additional files** → Required when the connector has any file besides `connector.py` and `configuration.json`; omit the section otherwise. List every extra Python module (helpers, `constants.py`, API clients) and any data or resource file the connector reads, one line each: file name, an en dash, and its purpose. For example, as provided below:
   ```markdown
   ## Additional files
   The connector uses the following additional files:
@@ -174,7 +173,6 @@ If a section is irrelevant (e.g., no error handling), the empty stub should be n
   ## Additional considerations
   The examples provided are intended to help you effectively use Fivetran's Connector SDK. While we've tested the code, Fivetran cannot be held responsible for any unexpected or negative consequences that may arise from using these examples. For inquiries, please reach out to our Support team.
   ```
---->
 
 ---
 
