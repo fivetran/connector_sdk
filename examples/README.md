@@ -156,4 +156,5 @@ These examples demonstrate common patterns and best practices for building conne
 - [claude_fda_drug tutorial](https://github.com/fivetran/connector_sdk/tree/main/examples/ai/claude/fda_drug_tutorial) - This example demonstrates how to use Claude to create a CSDK connector to get data from the FDA drug API.
 - [cursor_fda_food tutorial](https://github.com/fivetran/connector_sdk/tree/main/examples/ai/cursor/fda_food_tutorial/fda_food_connector) - This example demonstrates how to use Cursor to create a CSDK connector to get data from the FDA food API.
 - [vscode_fda_tobacco tutorial](https://github.com/fivetran/connector_sdk/tree/main/examples/ai/vscode/fda_tobacco_tutorial/fda_tobacco_connector) - This example demonstrates how to use VSCode to create a CSDK connector to get data from the FDA tobacco API.
+- [zz_review_test](https://github.com/fivetran/connector_sdk/tree/main/examples/zz_review_test) - TEMPORARY: intentionally violates the review rules to test the updated review instructions (RD-1322776). Do not merge.
 <!--section-end-->
