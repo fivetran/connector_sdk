@@ -1,0 +1,27 @@
+.github/scripts/check_connector_conventions.py
+  4bc3301604dbb262 1-17,19,21,23,25-48,50-63,65,67-76,78-94,96-123,125-152
+.github/instructions/python-review.instructions.md
+  4bc3301604dbb262 8-20,35,142,266-269,271,278,298-300,312
+.github/instructions/readme-markdown.instructions.md
+  4bc3301604dbb262 162
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.4",
+  "base_commit_sha": "5bba8dced53acdb15484c22b5aef193cb348e033",
+  "prompts": {
+    "4bc3301604dbb262": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "cd45f80e-d1ed-4c48-807d-caf6c6e14335",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "unknown",
+      "messages": [],
+      "total_additions": 149,
+      "total_deletions": 21,
+      "accepted_lines": 168,
+      "overriden_lines": 7
+    }
+  }
+}
