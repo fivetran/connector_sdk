@@ -1,0 +1,25 @@
+.github/instructions/readme-markdown.instructions.md
+  4bc3301604dbb262 82-83
+.github/scripts/check_connector_conventions.py
+  4bc3301604dbb262 8-12,137-165,168-172
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.4",
+  "base_commit_sha": "45e72752c90655ca53603e84d80781c0e650f20d",
+  "prompts": {
+    "4bc3301604dbb262": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "cd45f80e-d1ed-4c48-807d-caf6c6e14335",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "unknown",
+      "messages": [],
+      "total_additions": 39,
+      "total_deletions": 4,
+      "accepted_lines": 41,
+      "overriden_lines": 0
+    }
+  }
+}
