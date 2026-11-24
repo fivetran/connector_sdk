@@ -25,11 +25,11 @@ all: $(TARGET)
 
 # Build rule:
 # Rebuild $(TARGET) when $(SOURCE) changes or if $(TARGET) is missing.
+# $@ = target file (libnative_math.so), $< = first dependency (native_math.c)
 $(TARGET): $(SOURCE)
-	# $@ = target file (libnative_math.so), $< = first dependency (native_math.c)
 	$(CC) $(CFLAGS) -o $@ $< $(LDFLAGS)
 
 # Cleanup target: remove generated build artifact.
+# -f prevents errors if the file does not exist.
 clean:
-	# -f prevents errors if the file does not exist.
 	rm -f $(TARGET)

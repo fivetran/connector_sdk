@@ -26,7 +26,7 @@ For more information on `fivetran init`, refer to the [Connector SDK `init` docu
 
 
 ## Features
-- Demonstrates bundling a precompiled `.so` file with a connector and loading it with `ctypes`.
+- Demonstrates building a custom shared library from the included C source and `Makefile`, bundling it with a connector, and loading it with `ctypes`.
 - Declares `argtypes`/`restype` so Python and C agree on how arguments and return values are converted between the two languages.
 - Shows loading the bundled library from a fixed path, the same way you would for your own compiled, proprietary, or third-party C library.
 - Includes a C source file and `Makefile` so you can build a custom shared library (`libnative_math.so`) with `make`.
@@ -108,7 +108,7 @@ The connector creates the `CALCULATIONS` table:
 The connector uses four additional files:
 - `native_wrapper.py`: a thin `ctypes` wrapper that loads the bundled custom native library and exposes `power()`, `square_root()`, and `safe_ratio()` helpers for `connector.py` to call.
 - `native/libnative_math.so`: the compiled, bundled C library, built for Linux x86_64.
-- `native/native_math.c`: example C source with exported functions (`connector_power`, `connector_square_root`) that call `pow`/`sqrt`.
+- `native/native_math.c`: example C source with exported functions (`connector_power`, `connector_square_root`, `connector_safe_ratio`). The first two call `pow`/`sqrt`. `connector_safe_ratio` divides `numerator` by `denominator` and returns `default_value` when the denominator is zero.
 - `native/Makefile`: build recipe for compiling `native/native_math.c` into a shared library (`libnative_math.so`).
 
 
