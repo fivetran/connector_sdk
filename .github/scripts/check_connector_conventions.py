@@ -5,10 +5,10 @@ It checks that required elements exist (docstring links, first log line, comment
 operations and the main block, the connector object), not their exact wording, so docs or
 comment text changes do not require changing this script.
 
-It also checks the Getting started section of a README: a Fivetran docs link, and with
-`--require-init` a `fivetran init` command.
+It also checks the Getting started section of a README: a Fivetran docs link and a
+`fivetran init` command.
 
-Usage: python .github/scripts/check_connector_conventions.py [--require-init] path/to/file [...]
+Usage: python .github/scripts/check_connector_conventions.py path/to/file [...]
 Each path is a connector `.py` file or an example `README.md`.
 
 Prints one line per finding as `path:line: SEVERITY: message` and exits 1 if any BLOCKER is found.
@@ -134,7 +134,7 @@ def check_file(path):
     return sorted(findings)
 
 
-def check_readme(path, require_init):
+def check_readme(path):
     """Check the Getting started section of a README and return (line, severity, message) tuples."""
     with open(path, encoding="utf-8") as handle:
         lines = handle.read().splitlines()
@@ -150,23 +150,20 @@ def check_readme(path, require_init):
     findings = []
     if not re.search(r"https://fivetran\.com/docs/\S+", section):
         findings.append((start + 1, BLOCKER, "Getting started has no link to the Fivetran docs"))
-    if require_init and not re.search(r"^\s*fivetran init\b", section, re.M):
+    if not re.search(r"^\s*fivetran init\b", section, re.M):
         findings.append((start + 1, BLOCKER, "Getting started has no `fivetran init` command"))
     return findings
 
 
-def main(arguments):
+def main(paths):
     """Print findings for each path and return the process exit code.
 
     `.md` paths get the README check, other paths get the connector checks.
-    `--require-init` makes the README check require a `fivetran init` command.
     """
-    require_init = "--require-init" in arguments
-    paths = [argument for argument in arguments if argument != "--require-init"]
     has_blocker = False
     for path in paths:
         if path.lower().endswith(".md"):
-            findings = check_readme(path, require_init)
+            findings = check_readme(path)
         else:
             findings = check_file(path)
         for line, severity, message in findings:

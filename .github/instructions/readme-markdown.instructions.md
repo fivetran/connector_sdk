@@ -79,7 +79,7 @@ If a section is irrelevant (e.g., no error handling), the empty stub should be n
 ---
 ## Section Compliance
 
-Before reviewing by judgement, run `python .github/scripts/check_connector_conventions.py <README.md>` on each README the PR changes and treat its output as authoritative. It checks that the Getting started section exists and links to the Fivetran docs. If you cannot run commands, check the same two things by reading.
+Before reviewing by judgement, run `python .github/scripts/check_connector_conventions.py <README.md>` on each README the PR changes and treat its output as authoritative. It checks that the Getting started section exists, links to the Fivetran docs, and contains a `fivetran init` command. If you cannot run commands, check the same three things by reading.
 
 Apply the rules below only to README files this PR adds or changes. For a new README, a mismatch with fixed content is a BLOCKER. For an existing README the PR edits, report a mismatch as a SUGGESTION. Do not report on READMEs the PR does not touch.
 
@@ -93,10 +93,19 @@ Apply the rules below only to README files this PR adds or changes. For a new RE
     - macOS: 13 (Ventura) or later (Apple Silicon [arm64] or Intel [x86_64])
     - Linux: Distributions such as Ubuntu 20.04 or later, Debian 10 or later, or Amazon Linux 2 or later (arm64 or x86_64)
   ```   
-* **Getting started** → Must include link to Connector SDK Setup Guide. It is a fixed content, verbatim (no edits or omissions), as provided below:
+* **Getting started** → Must include link to Connector SDK Setup Guide and the `fivetran init` command. It is a fixed content, verbatim (no edits or omissions) apart from the template path, as provided below:
   ```markdown
   ## Getting started
-  Refer to the [Connector SDK Setup Guide](https://fivetran.com/docs/connectors/connector-sdk/setup-guide) to get started.
+  Refer to the [Connector SDK Setup Guide](https://fivetran.com/docs/connector-sdk/setup-guide) to get started.
+
+  To initialize a new Connector SDK project using this connector as a starting point, run:
+
+  ```bash
+  fivetran init <project-path> --template examples/<path-to-this-example>
+  ```
+  `fivetran init` initializes a new Connector SDK project by setting up the project structure, configuration files, and a connector you can run immediately with `fivetran debug`.
+  If you do not specify a project path, Fivetran creates the project in your current directory.
+  For more information on `fivetran init`, refer to the [Connector SDK `init` documentation](https://fivetran.com/docs/connector-sdk/setup-guide#createyourcustomconnector).
   ```
 * **Features** → Must list concrete features (not left blank or italicized template text).
 * **Configuration file** → Must include a JSON code block showing keys. Must mention that `configuration.json` should not be versioned, for example, as provided below:
