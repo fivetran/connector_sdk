@@ -79,6 +79,8 @@ If a section is irrelevant (e.g., no error handling), the empty stub should be n
 ---
 ## Section Compliance
 
+Before reviewing by judgement, run `python .github/scripts/check_connector_conventions.py <README.md>` on each README the PR changes and treat its output as authoritative. It checks that the Getting started section exists and links to the Fivetran docs. If you cannot run commands, check the same two things by reading.
+
 Apply the rules below only to README files this PR adds or changes. For a new README, a mismatch with fixed content is a BLOCKER. For an existing README the PR edits, report a mismatch as a SUGGESTION. Do not report on READMEs the PR does not touch.
 
 * **Connector overview** → Must explain purpose, data source, and use cases.
