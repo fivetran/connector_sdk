@@ -73,17 +73,24 @@ jobs:
         if: env.SKIP == 'false'
         continue-on-error: true
         run: |
+          # Structure checks: only changed connector.py files
+          for f in $(grep '/connector\.py$' changed_files.txt || true); do
+            python3 .github/scripts/check_connector_conventions.py "$f" || true
+          done > conventions_report.txt
+          # Complexity: McCabe limit 15, same as the review instructions
+          flake8 --isolated --select=C901 --max-complexity=15 $CHANGED >> conventions_report.txt || true
+
+          # Show findings in the job log and the run summary
+          cat conventions_report.txt
           {
             echo "### Connector conventions (warning only)"
             echo '```'
-            # Structure checks: only changed connector.py files
-            for f in $(grep '/connector\.py$' changed_files.txt || true); do
-              python3 .github/scripts/check_connector_conventions.py "$f" || true
-            done
-            # Complexity: McCabe limit 15, same as the review instructions
-            flake8 --isolated --select=C901 --max-complexity=15 $CHANGED || true
+            cat conventions_report.txt
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
+
+          # Show findings as warning annotations on the PR (path:line: message)
+          sed -E -n 's/^([^:]+):([0-9]+):([0-9]+:)? (.*)$/::warning file=\1,line=\2::\4/p' conventions_report.txt
 
       - name: Format Flake8 results as PR comment
         if: env.SKIP == 'false'
