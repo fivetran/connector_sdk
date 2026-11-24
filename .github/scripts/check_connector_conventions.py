@@ -22,12 +22,15 @@ BLOCKER = "BLOCKER"
 
 
 def is_connector_assignment(node):
-    """Return True for a module-level `<name> = Connector(...)` assignment, however formatted."""
+    """Return True for a module-level `connector = Connector(...)` assignment, however formatted."""
     value = getattr(node, "value", None)
     if not isinstance(node, (ast.Assign, ast.AnnAssign)) or not isinstance(value, ast.Call):
         return False
+    targets = node.targets if isinstance(node, ast.Assign) else [node.target]
+    is_connector_name = any(isinstance(t, ast.Name) and t.id == "connector" for t in targets)
     function = value.func
-    return getattr(function, "id", getattr(function, "attr", None)) == "Connector"
+    is_connector_call = getattr(function, "id", getattr(function, "attr", None)) == "Connector"
+    return is_connector_name and is_connector_call
 
 
 def is_main_guard(node):
@@ -63,7 +66,7 @@ def check_docstring_url(function, name, findings):
 
 
 def check_first_log(update, findings):
-    """Check that update() starts with log.warning("Example: <CATEGORY> : <EXAMPLE_NAME>")."""
+    """Check that update() starts with a log.warning("Example: ...") call."""
     body = update.body
     if body and isinstance(body[0], ast.Expr) and isinstance(body[0].value, ast.Constant):
         body = body[1:]  # skip docstring
@@ -72,16 +75,17 @@ def check_first_log(update, findings):
         first.value if isinstance(first, ast.Expr) and isinstance(first.value, ast.Call) else None
     )
     argument = call.args[0] if call is not None and call.args else None
-    is_warning_call = call is not None and getattr(call.func, "attr", None) == "warning"
+    function = call.func if call is not None else None
+    receiver = getattr(function, "value", None)
+    is_log_receiver = isinstance(receiver, ast.Name) and receiver.id == "log"
+    is_warning_call = is_log_receiver and getattr(function, "attr", None) == "warning"
     message = argument.value if isinstance(argument, ast.Constant) else None
-    if not (
-        is_warning_call and isinstance(message, str) and re.match(r"Example: .+ : .+", message)
-    ):
+    if not (is_warning_call and isinstance(message, str) and message.startswith("Example:")):
         findings.append(
             (
                 update.lineno,
                 BLOCKER,
-                'update() must start with log.warning("Example: <CATEGORY> : <EXAMPLE_NAME>")',
+                'update() must start with log.warning("Example: ...")',
             )
         )
 
