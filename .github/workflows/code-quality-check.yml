@@ -70,7 +70,7 @@ jobs:
           flake8 $CHANGED > flake8_output.txt || true
 
       - name: Check connector conventions (warning only)
-        if: env.SKIP == 'false'
+        # No SKIP guard: README checks must also run on PRs that change no Python files
         continue-on-error: true
         run: |
           # Structure checks: only changed connector.py files
@@ -81,8 +81,10 @@ jobs:
           for f in $(grep 'examples/.*README\.md$' all_files.txt || true); do
             python3 .github/scripts/check_connector_conventions.py "$f" || true
           done >> conventions_report.txt
-          # Complexity: McCabe limit 15, same as the review instructions
-          flake8 --isolated --select=C901 --max-complexity=15 $CHANGED >> conventions_report.txt || true
+          # Complexity: McCabe limit 15, same as the review instructions (Python files only)
+          if [ "$SKIP" = "false" ]; then
+            flake8 --isolated --select=C901 --max-complexity=15 $CHANGED >> conventions_report.txt || true
+          fi
 
           # Show findings in the job log and the run summary
           cat conventions_report.txt
