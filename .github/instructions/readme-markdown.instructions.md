@@ -79,6 +79,8 @@ If a section is irrelevant (e.g., no error handling), the empty stub should be n
 ---
 ## Section Compliance
 
+Apply the rules below only to README files this PR adds or changes. For a new README, a mismatch with fixed content is a BLOCKER. For an existing README the PR edits, report a mismatch as a SUGGESTION. Do not report on READMEs the PR does not touch.
+
 * **Connector overview** → Must explain purpose, data source, and use cases.
 * **Requirements** → Must list OS and Python versions. Use provided bullet format. It is a fixed content, verbatim (no edits or omissions), as provided below:
   ```markdown
@@ -159,7 +161,7 @@ If a section is irrelevant (e.g., no error handling), the empty stub should be n
   }
   ```
   ``` 
-* **Additional files** → Required when the connector has any file besides `connector.py` and `configuration.json`; omit the section otherwise. List every extra Python module (helpers, `constants.py`, API clients) and any data or resource file the connector reads, one line each: file name, an en dash, and its purpose. For example, as provided below:
+* **Additional files** → Required when the connector has any file besides `connector.py`, `configuration.json`, `requirements.txt`, `README.md`, `__init__.py` and image files; omit the section otherwise. List every extra Python module (helpers, `constants.py`, API clients) and any data or resource file the connector reads, one line each: file name, an en dash, and its purpose. Apply this only to files the PR adds or changes: flag a file the PR adds or renames that is missing from the section, or an entry for a file the PR deletes. Do not flag extra files that already existed and are untouched by the PR. For example, as provided below:
   ```markdown
   ## Additional files
   The connector uses the following additional files:

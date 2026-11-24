@@ -69,6 +69,22 @@ jobs:
           echo "Running flake8 on: $CHANGED"
           flake8 $CHANGED > flake8_output.txt || true
 
+      - name: Check connector conventions (warning only)
+        if: env.SKIP == 'false'
+        continue-on-error: true
+        run: |
+          {
+            echo "### Connector conventions (warning only)"
+            echo '```'
+            # Structure checks: only changed connector.py files
+            for f in $(grep '/connector\.py$' changed_files.txt || true); do
+              python3 .github/scripts/check_connector_conventions.py "$f" || true
+            done
+            # Complexity: McCabe limit 15, same as the review instructions
+            flake8 --isolated --select=C901 --max-complexity=15 $CHANGED || true
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
       - name: Format Flake8 results as PR comment
         if: env.SKIP == 'false'
         run: |

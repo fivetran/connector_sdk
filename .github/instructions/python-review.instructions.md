@@ -10,6 +10,10 @@ Before reviewing by judgement, run both and treat their output as authoritative.
 - `python .github/scripts/check_connector_conventions.py <connector.py>` checks that required elements exist: a Fivetran docs link in the `schema()`/`update()` docstrings, the first `log.warning("Example: ...")` in `update()`, a comment above each `op.upsert()`, `op.checkpoint()` and the main block, and the `connector = Connector(...)` line. Every finding it reports is a BLOCKER. It does not check exact wording, so still compare the docstring URL form and comment text against the templates below (wording mismatches are SUGGESTION, except a missing or wrong docs link).
 - `flake8 --select=C901 --max-complexity=15 <connector.py>` measures complexity. Never estimate complexity by reading the code.
 
+If you cannot run commands, apply the same rules by reading the code. Do not state a numeric complexity; mention deep nesting or long functions only as a SUGGESTION.
+
+Review only the files and lines this PR adds or changes. Do not report problems in code the PR does not touch.
+
 Spend review effort on what the tools cannot check: memory safety, pagination, state and checkpoint logic, error handling, data integrity.
 
 # Severity classification
@@ -17,6 +21,11 @@ Spend review effort on what the tools cannot check: memory safety, pagination, s
 - REQUEST_CHANGES: complexity above the flake8 C901 limit, deep nesting, dependency and import hygiene, schema practices.
 - SUGGESTION (never block a merge): abbreviations in names, magic numbers, naming style, legacy docs URL form, wording of comments.
 - Report a SUGGESTION only when a specific line is named. Do not raise it as a BLOCKER.
+
+## Do not flag
+- A required comment that lives in a helper function the `update()` function calls, when the helper holds the `op.upsert()` or `op.checkpoint()`.
+- Anything flake8 or Black already reports.
+- Code the PR does not change.
 
 # Blocker Criteria
 
@@ -165,7 +174,7 @@ Spend review effort on what the tools cannot check: memory safety, pagination, s
   import pandas as pd  # For CSV parsing and data transformation
   ```
 
-## Configuration validation (REQUIRED for proper error handling)
+## Configuration validation (REQUEST_CHANGES if missing)
 - **`validate_configuration()` function is ALWAYS REQUIRED** to validate configuration values
   - REQUIRED: Always define `validate_configuration()` to check:
     - Value formats (e.g., valid URLs, port ranges, email formats)
@@ -297,7 +306,7 @@ def function_name(arg1, arg2):
 
 The documentation URL in the `schema()` and `update()` docstrings below is a BLOCKER only when missing or pointing elsewhere. The older form `https://fivetran.com/docs/connectors/connector-sdk/technical-reference#<method>` is still used by existing examples: report it as a SUGGESTION to switch to the form below, never as a BLOCKER.
 
-**Schema function docstring** (BLOCKER - must contain this text and URL):
+**Schema function docstring** (BLOCKER only if the docs link is missing or wrong; other wording or the legacy URL form is a SUGGESTION). Template:
 ```python
 def schema(configuration: dict):
     """
@@ -309,7 +318,7 @@ def schema(configuration: dict):
     """
 ```
 
-**Update function docstring** (BLOCKER - must contain this text and URL):
+**Update function docstring** (BLOCKER only if the docs link is missing or wrong; other wording or the legacy URL form is a SUGGESTION). Template:
 ```python
 def update(configuration: dict, state: dict):
     """

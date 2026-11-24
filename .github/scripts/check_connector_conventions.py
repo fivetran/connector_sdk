@@ -2,7 +2,8 @@
 Check the structural connector conventions from python-review.instructions.md.
 
 It checks that required elements exist (docstring links, first log line, comments above
-operations and the main block, the connector object), not their exact wording.
+operations and the main block, the connector object), not their exact wording, so docs or
+comment text changes do not require changing this script.
 
 Usage: python .github/scripts/check_connector_conventions.py path/to/connector.py [...]
 
@@ -15,14 +16,33 @@ import sys
 
 BLOCKER = "BLOCKER"
 
-# Only the shape is checked, never the exact wording, so docs or comment text changes
-# do not require changing this script.
-INIT_PATTERN = re.compile(r"^connector = Connector\(update=update(, schema=schema)?\)\s*$", re.M)
+
+def is_connector_assignment(node):
+    """Return True for a module-level `<name> = Connector(...)` assignment, however formatted."""
+    value = getattr(node, "value", None)
+    if not isinstance(node, (ast.Assign, ast.AnnAssign)) or not isinstance(value, ast.Call):
+        return False
+    function = value.func
+    return getattr(function, "id", getattr(function, "attr", None)) == "Connector"
+
+
+def is_main_guard(node):
+    """Return True for `if __name__ == "__main__":` in either quote style or operand order."""
+    if not (isinstance(node, ast.If) and isinstance(node.test, ast.Compare)):
+        return False
+    operands = [node.test.left, *node.test.comparators]
+    names = [o.id for o in operands if isinstance(o, ast.Name)]
+    strings = [o.value for o in operands if isinstance(o, ast.Constant)]
+    is_single_equality = len(node.test.ops) == 1 and isinstance(node.test.ops[0], ast.Eq)
+    return is_single_equality and names == ["__name__"] and strings == ["__main__"]
 
 
 def has_comment_above(lines, lineno):
-    """Return True if the line directly above a 1-based line number is a comment."""
-    return lineno >= 2 and lines[lineno - 2].strip().startswith("#")
+    """Return True if the nearest non-blank line above a 1-based line number is a comment."""
+    index = lineno - 2
+    while index >= 0 and not lines[index].strip():
+        index -= 1
+    return index >= 0 and lines[index].strip().startswith("#")
 
 
 def check_docstring_url(function, name, findings):
@@ -81,7 +101,10 @@ def check_file(path):
     with open(path, encoding="utf-8") as handle:
         source = handle.read()
     lines = source.splitlines()
-    tree = ast.parse(source)
+    try:
+        tree = ast.parse(source)
+    except SyntaxError as error:
+        return [(error.lineno or 1, BLOCKER, f"file does not parse: {error.msg}")]
     findings = []
 
     functions = {n.name: n for n in tree.body if isinstance(n, ast.FunctionDef)}
@@ -95,22 +118,14 @@ def check_file(path):
 
     check_operation_comments(tree, lines, findings)
 
-    if not INIT_PATTERN.search(source):
-        findings.append(
-            (
-                1,
-                BLOCKER,
-                "missing `connector = Connector(update=update, schema=schema)` at module level",
-            )
-        )
+    if not any(is_connector_assignment(node) for node in tree.body):
+        findings.append((1, BLOCKER, "missing module-level `connector = Connector(...)`"))
 
-    main_lines = [
-        i for i, line in enumerate(lines, 1) if line.startswith('if __name__ == "__main__"')
-    ]
-    if not main_lines:
+    main_blocks = [node for node in tree.body if is_main_guard(node)]
+    if not main_blocks:
         findings.append((len(lines), BLOCKER, 'missing `if __name__ == "__main__":` block'))
-    elif not has_comment_above(lines, main_lines[0]):
-        findings.append((main_lines[0], BLOCKER, "main block has no comment above it"))
+    elif not has_comment_above(lines, main_blocks[0].lineno):
+        findings.append((main_blocks[0].lineno, BLOCKER, "main block has no comment above it"))
 
     return sorted(findings)
 
