@@ -8,7 +8,7 @@ The example bundles a custom-compiled C library as `native/libnative_math.so`. `
 ## Requirements
 - [Supported Python versions](https://github.com/fivetran/connector_sdk/blob/main/README.md#requirements)
 - Operating system:
-  - Linux: Distributions such as Ubuntu 20.04 or later, Debian 10 or later, or Amazon Linux 2 or later (x86_64). `native/libnative_math.so` is built for this environment, matching the Fivetran Connector SDK hosted production environment.
+  - Linux x86_64 with glibc 2.29 or later, such as Ubuntu 20.04 or later, Debian 11 or later, or Amazon Linux 2023 or later. The bundled `native/libnative_math.so` requires `GLIBC_2.29`; rebuild it against an older glibc baseline if you need to support older systems.
   - macOS and Windows are not supported by this example as provided. `native/libnative_math.so` is a Linux ELF binary; macOS (Mach-O) and Windows (PE/`.dll`) use different binary formats and cannot load it.
 
 
