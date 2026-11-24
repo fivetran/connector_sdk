@@ -1,0 +1,2 @@
+# For pulling messages from Pub/Sub and managing subscription snapshots
+google-cloud-pubsub==2.31.1

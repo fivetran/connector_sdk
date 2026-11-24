@@ -1,0 +1,7 @@
+{
+  "workspace": "<YOUR_BITBUCKET_WORKSPACE>",
+  "repository_slug": "<YOUR_BITBUCKET_REPOSITORY_SLUG>",
+  "email": "<YOUR_ATLASSIAN_ACCOUNT_EMAIL>",
+  "api_token": "<YOUR_ATLASSIAN_API_TOKEN>",
+  "include_path_pattern": "<OPTIONAL_INCLUDE_PATH_GLOB>"
+}

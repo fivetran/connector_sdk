@@ -50,6 +50,16 @@ These are graded examples designed to help you get started with the Connector SD
 
 - [omni](https://github.com/fivetran/connector_sdk/tree/main/examples/quickstart/omni) - This is a real-life example which syncs the semantic layer of Omni (views, dimensions, measures, topics and their joins) and its documents from the Omni REST API. It shows how to split a connector into modules, define a setup form with a connection test, and mark rows deleted with a deferred `truncate()` when a full refresh succeeds.
 
+- [bitbucket_files](https://github.com/fivetran/connector_sdk/tree/main/examples/quickstart/bitbucket_files) - This is a real-life example which syncs a Bitbucket Cloud repository's metadata, file listing and raw file content from the Bitbucket REST API. It shows how to stream file bytes to the destination with `FileUpload` and mark removed files deleted with a deferred `truncate()`.
+
+- [github_files](https://github.com/fivetran/connector_sdk/tree/main/examples/quickstart/github_files) - This is a real-life example which syncs the files on a GitHub repository's default branch over the git protocol, using a pure-Python git client with HTTPS token or SSH deploy key authentication. It shows how to sync incrementally by comparing blob hashes kept in the state.
+
+- [google_pubsub](https://github.com/fivetran/connector_sdk/tree/main/examples/quickstart/google_pubsub) - This is a real-life example which consumes messages from a Google Cloud Pub/Sub subscription. It shows how to acknowledge messages only after their rows are checkpointed, and how to use Pub/Sub snapshots to replay messages after a failed sync.
+
+- [amqp](https://github.com/fivetran/connector_sdk/tree/main/examples/quickstart/amqp) - This is a real-life example which consumes a queue from an AMQP 1.0 broker such as RabbitMQ, Solace PubSub+ or Azure Service Bus, over TLS or mutual TLS. It shows how to accept messages only after their rows are checkpointed, and how to report sync failures and warnings with `op.error()` and `op.warning()`.
+
+- [planetscale_vitess](https://github.com/fivetran/connector_sdk/tree/main/examples/quickstart/planetscale_vitess) - This example syncs PlanetScale and Vitess databases through the VStream gRPC API, with an initial copy followed by incremental changes tracked per shard. It shows how to call a gRPC streaming API and keep one cursor per shard in the state.
+
 - [regression_test](https://github.com/fivetran/connector_sdk/tree/main/examples/quickstart/regression_test) - This example shows how to record a connector run and replay it without calling the source to detect regressions, from the command line or an IDE (Private Preview).
 
 </details>

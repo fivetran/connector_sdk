@@ -1,0 +1,13 @@
+{
+  "host": "<YOUR_BROKER_HOST>",
+  "port": "<YOUR_BROKER_AMQPS_PORT>",
+  "namespace": "<YOUR_VHOST_OR_MESSAGE_VPN>",
+  "queue_name": "<YOUR_QUEUE_NAME>",
+  "auth_type": "<BasicAuth_OR_MutualTLS>",
+  "username": "<YOUR_USERNAME>",
+  "password": "<YOUR_PASSWORD>",
+  "client_certificate": "<YOUR_BASE64_ENCODED_PEM_CLIENT_CERTIFICATE>",
+  "client_private_key": "<YOUR_BASE64_ENCODED_PEM_CLIENT_PRIVATE_KEY>",
+  "message_type": "<Text_OR_JSON>",
+  "json_delivery_mode": "<Packed_OR_Unpacked>"
+}

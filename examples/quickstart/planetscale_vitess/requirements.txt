@@ -1,0 +1,6 @@
+# For calling the PlanetScale VStream gRPC API
+grpcio==1.85.3
+# For the VStream message types
+protobuf==7.36.2
+# For schema discovery over the MySQL protocol
+PyMySQL==1.2.4

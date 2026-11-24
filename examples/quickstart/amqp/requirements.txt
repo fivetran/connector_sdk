@@ -1,0 +1,2 @@
+# For connecting to AMQP 1.0 brokers
+python-qpid-proton==0.41.1
