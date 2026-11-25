@@ -1,0 +1,9 @@
+{
+  "host": "<YOUR_PLANETSCALE_HOST>",
+  "database": "<YOUR_PLANETSCALE_DATABASE>",
+  "username": "<YOUR_PLANETSCALE_USERNAME>",
+  "password": "<YOUR_PLANETSCALE_PASSWORD>",
+  "shards": "<OPTIONAL_COMMA_SEPARATED_SHARDS>",
+  "use_replica": "false",
+  "treat_tiny_int_as_boolean": "false"
+}

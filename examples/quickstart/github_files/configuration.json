@@ -1,0 +1,7 @@
+{
+  "auth_mode": "<personal_access_token OR ssh_deploy_key>",
+  "personal_access_token": "<YOUR_GITHUB_FINE_GRAINED_PERSONAL_ACCESS_TOKEN>",
+  "ssh_private_key": "<YOUR_SSH_DEPLOY_KEY_PRIVATE_KEY>",
+  "repository": "<OWNER/REPOSITORY>",
+  "include_path_patterns": "<OPTIONAL_COMMA_SEPARATED_GLOBS_E.G._src/**>"
+}

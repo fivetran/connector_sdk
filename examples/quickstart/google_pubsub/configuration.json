@@ -1,0 +1,7 @@
+{
+  "project_id": "<YOUR_GOOGLE_CLOUD_PROJECT_ID>",
+  "subscription_id": "<YOUR_PUBSUB_SUBSCRIPTION_ID>",
+  "sync_format": "<PACKED_OR_UNPACKED>",
+  "unpacking_level": "<ONE_OR_TWO_FOR_UNPACKED>",
+  "key_content": "<YOUR_SERVICE_ACCOUNT_KEY_JSON>"
+}

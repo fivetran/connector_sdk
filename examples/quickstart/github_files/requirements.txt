@@ -1,0 +1,5 @@
+# For reading the repository over the git protocol without a git binary
+dulwich==1.2.21
+
+# For SSH deploy key authentication with a pinned github.com host key
+paramiko==5.1.0
