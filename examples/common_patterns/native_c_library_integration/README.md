@@ -3,13 +3,13 @@
 ## Connector overview
 This connector demonstrates how to call a native C library from a Connector SDK connector using Python's built-in [`ctypes`](https://docs.python.org/3/library/ctypes.html) module. It simulates a scenario where a connector needs to reuse an existing calculation already implemented in C, for example a formula shared with other internal systems, instead of reimplementing that logic in Python.
 
-The example bundles a precompiled copy of `libm`, the C standard math library, as `native/libm.so`. `native_wrapper.py` loads it from a fixed path with `ctypes.CDLL(...)`. The same pattern applies to any other compiled, proprietary, or third-party C library you need to bundle: place its `.so` file alongside the connector code and load it the same way. See `native_wrapper.py` for details.
+The example bundles a custom-compiled C library as `native/libnative_math.so`. `native_wrapper.py` loads it from a fixed path with `ctypes.CDLL(...)`. The library is built from `native/native_math.c` using `native/Makefile`, so this example includes a complete C source and build flow.
 
 ## Requirements
 - [Supported Python versions](https://github.com/fivetran/connector_sdk/blob/main/README.md#requirements)
 - Operating system:
-  - Linux: Distributions such as Ubuntu 20.04 or later, Debian 10 or later, or Amazon Linux 2 or later (x86_64). `native/libm.so` is bundled for this environment, matching the Fivetran Connector SDK hosted production environment, so this example runs as-is there.
-  - macOS and Windows are not supported by this example. `native/libm.so` is a Linux ELF binary; macOS (Mach-O) and Windows (PE/`.dll`) use different binary formats and cannot load it. For your own bundled library, build it for whichever platform(s) you need to support.
+  - Linux x86_64 with glibc 2.29 or later, such as Ubuntu 20.04 or later, Debian 11 or later, or Amazon Linux 2023 or later. The bundled `native/libnative_math.so` requires `GLIBC_2.29`; rebuild it against an older glibc baseline if you need to support older systems.
+  - macOS and Windows are not supported by this example as provided. `native/libnative_math.so` is a Linux ELF binary; macOS (Mach-O) and Windows (PE/`.dll`) use different binary formats and cannot load it.
 
 
 ## Getting started
@@ -26,9 +26,10 @@ For more information on `fivetran init`, refer to the [Connector SDK `init` docu
 
 
 ## Features
-- Demonstrates bundling a precompiled `.so` file with a connector and loading it with `ctypes`.
+- Demonstrates building a custom shared library from the included C source and `Makefile`, bundling it with a connector, and loading it with `ctypes`.
 - Declares `argtypes`/`restype` so Python and C agree on how arguments and return values are converted between the two languages.
 - Shows loading the bundled library from a fixed path, the same way you would for your own compiled, proprietary, or third-party C library.
+- Includes a C source file and `Makefile` so you can build a custom shared library (`libnative_math.so`) with `make`.
 
 
 ## Configuration file
@@ -56,8 +57,14 @@ Not applicable — this example syncs static data only. To support pagination, y
 
 
 ## Data handling
-- `native_wrapper.py` resolves the bundled library's path relative to the connector file (`native/libm.so`), loads it with `ctypes.CDLL`, and declares `argtypes`/`restype` for the `pow` and `sqrt` functions to match `math.h`.
-- `connector.py` calls `native_wrapper.power()` and `native_wrapper.square_root()` for each sample row and upserts the inputs alongside the native library's results.
+- `native_wrapper.py` resolves the bundled library's path relative to the connector file (`native/libnative_math.so`), loads it with `ctypes.CDLL`, and declares `argtypes`/`restype` for `connector_power`, `connector_square_root`, and `connector_safe_ratio`.
+- `connector.py` calls `native_wrapper.power()`, `native_wrapper.square_root()`, and `native_wrapper.safe_ratio()` for each sample row and upserts the results.
+- `native/native_math.c` and `native/Makefile` demonstrate how to build your own Linux shared library:
+  ```bash
+  cd native
+  make
+  ```
+  This produces `native/libnative_math.so`, which you can load from `native_wrapper.py` when adapting this example for your own native code.
 - To bundle your own compiled library, place its `.so` file under a `native/` folder and resolve its path the same way, for example:
   ```python
   import ctypes
@@ -73,7 +80,7 @@ Not applicable — this example syncs static data only. To support pagination, y
 
 
 ## Error handling
-- `native_wrapper.py` lets `ctypes.CDLL(...)` raise an `OSError` at import time if `native/libm.so` is missing or cannot be loaded (for example, because it was built for a different platform), so the connector fails fast with a clear error instead of failing later with a confusing `ctypes` error.
+- `native_wrapper.py` lets `ctypes.CDLL(...)` raise an `OSError` at import time if `native/libnative_math.so` is missing or cannot be loaded (for example, because it was built for a different platform), so the connector fails fast with a clear error instead of failing later with a confusing `ctypes` error.
 - Always declare `argtypes` and `restype` for every native function you call. Without them, `ctypes` assumes `int` arguments and return values, which silently corrupts data for other types (for example, truncating `double` values).
 
 
@@ -89,7 +96,8 @@ The connector creates the `CALCULATIONS` table:
     "base": "DOUBLE",
     "exponent": "DOUBLE",
     "power_result": "DOUBLE",
-    "sqrt_result": "DOUBLE"
+    "sqrt_result": "DOUBLE",
+    "power_to_sqrt_ratio": "DOUBLE"
   }
 }
 ```
@@ -97,11 +105,13 @@ The connector creates the `CALCULATIONS` table:
 
 ## Additional files
 
-The connector uses two additional files:
-- `native_wrapper.py`: a thin `ctypes` wrapper that loads the bundled `libm` library and exposes `power()` and `square_root()` helpers for `connector.py` to call.
-- `native/libm.so`: the precompiled, bundled C library, built for Linux x86_64.
+The connector uses four additional files:
+- `native_wrapper.py`: a thin `ctypes` wrapper that loads the bundled custom native library and exposes `power()`, `square_root()`, and `safe_ratio()` helpers for `connector.py` to call.
+- `native/libnative_math.so`: the compiled, bundled C library, built for Linux x86_64.
+- `native/native_math.c`: example C source with exported functions (`connector_power`, `connector_square_root`, `connector_safe_ratio`). The first two call `pow`/`sqrt`. `connector_safe_ratio` divides `numerator` by `denominator` and returns `default_value` when the denominator is zero.
+- `native/Makefile`: build recipe for compiling `native/native_math.c` into a shared library (`libnative_math.so`).
 
 
 ## Additional considerations
-A bundled `.so` file must be compiled for the target platform (Linux x86_64), not necessarily the platform you're developing on (for example, macOS arm64). `native/libm.so` in this example is compiled for Linux x86_64; see the Requirements section above for how this affects running this example locally.
+A bundled `.so` file must be compiled for the target platform (Linux x86_64), not necessarily the platform you're developing on (for example, macOS arm64). `native/libnative_math.so` in this example is compiled for Linux x86_64; see the Requirements section above for how this affects running this example locally.
 The examples provided are intended to help you effectively use Fivetran's Connector SDK. While we've tested the code, Fivetran cannot be held responsible for any unexpected or negative consequences that may arise from using these examples. For inquiries, please reach out to our Support team.
