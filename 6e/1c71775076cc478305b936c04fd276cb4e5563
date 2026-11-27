@@ -1,0 +1,25 @@
+examples/common_patterns/native_c_library_integration/README.md
+  a1df9127b13f8972 29,111
+examples/common_patterns/native_c_library_integration/native/Makefile
+  a1df9127b13f8972 28,33
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.4",
+  "base_commit_sha": "6e1c71775076cc478305b936c04fd276cb4e5563",
+  "prompts": {
+    "a1df9127b13f8972": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ef5af229-6427-448c-b634-773e62a4deb7",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "fivetran-JenasVimal <jenas.vimal@fivetran.com>",
+      "messages": [],
+      "total_additions": 4,
+      "total_deletions": 4,
+      "accepted_lines": 4,
+      "overriden_lines": 0
+    }
+  }
+}
