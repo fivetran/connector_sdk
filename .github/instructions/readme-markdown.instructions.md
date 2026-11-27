@@ -9,7 +9,7 @@ These rules override generic Copilot comments. Review all Markdown files that ha
 ## Never use:
 - Title Case in subheadings
 - Nested bulleted lists where a simple list would be sufficient
-- Bold text to stress important information. If you see bold text, you should flag this and request to change it to plain text unless this is a UI element name.
+- Bold text to emphasize important information. If you see bold text, you should flag this and request to change it to plain text unless this is a UI element name.
 Example of wrong format and style:
 
 "- **API example**
@@ -27,7 +27,7 @@ The correct format and style would be as follows:
 
 ## Lists:
 
-Use bulleted lists when just listing items in no particular order or when listing the alternatives, for example:
+Use bulleted lists when just listing items in no particular order or when listing alternatives, for example:
 "The management actions are as follows:
 - Create connection
 - Retrieve connection
@@ -37,7 +37,7 @@ Use numbered list for actions that need to be taken in a particular order, for e
 "To obtain your API key, do the following:
 1. Log in to your DreemBleem account.
 2. Go to **Settings > API Key**.
-3. Make a note the API key and secret. You will need to add it to `configuration.json` file later."
+3. Make a note of the API key and secret. You will need to add it to `configuration.json` file later."
 
 ## Comment and suggestions
 
@@ -64,8 +64,8 @@ Apply these rules to every `README.md` file inside Connector SDK connector examp
   2. Requirements - this section is required.
   3. Getting started - this section is required.
   4. Features - this section is required.
-  5. Configuration file - this section is optional and must be present if the `configuration.json` file is used by the connector. If this section is present, it must contain the JSON outlining the configuration parameters and that `configuration.json` should be not checked into version control to protect sensitive information.
-  6. Requirements file - this section is optional and must be present if the `reqirements.txt` file is used by the connector. If this section is present, it must contain the list of imported packages that the connector requires. 
+  5. Configuration file - this section is optional and must be present if the `configuration.json` file is used by the connector. If this section is present, it must contain the JSON outlining the configuration parameters and that `configuration.json` should not be checked into version control to protect sensitive information.
+  6. Requirements file - this section is optional and must be present if the `requirements.txt` file is used by the connector. If this section is present, it must contain the list of imported packages that the connector requires. 
   7. Authentication - this section is optional and must be present if the connector requires authentication. If this section is present, it must mention the authentication method used, the required credentials and how to obtain the credentials as a numbered list of user actions. 
   8. Pagination - this section is optional and must be present if the connector uses pagination.
   9. Data handling - this section is required.
@@ -74,7 +74,7 @@ Apply these rules to every `README.md` file inside Connector SDK connector examp
   12. Additional files - this section is optional and must be present if the connector requires additional Python files besides `connector.py`. If this section is present, it must list the additional files and their functions.
   13. Additional considerations - this section is required.
 
-If a section is irrelevant (e.g., no error handling), the empty stub should be not present.
+If a section is irrelevant (e.g., no error handling), the empty stub should not be present.
 
 ---
 ## Section Compliance
@@ -172,7 +172,7 @@ Apply the rules below only to README files this PR adds or changes. For a new RE
   }
   ```
   ``` 
-* **Additional files** → Required when the connector has any file besides `connector.py`, `configuration.json`, `requirements.txt`, `README.md`, `__init__.py` and image files; omit the section otherwise. List every extra Python module (helpers, `constants.py`, API clients) and any data or resource file the connector reads, one line each: file name, an en dash, and its purpose. Apply this only to files the PR adds or changes: flag a file the PR adds or renames that is missing from the section, or an entry for a file the PR deletes. Do not flag extra files that already existed and are untouched by the PR. For example, as provided below:
+* **Additional files** → Required when the connector has any file besides `connector.py`, `configuration.json`, `requirements.txt`, `README.md`, `__init__.py`, and image files; omit the section otherwise. List every extra Python module (helpers, `constants.py`, API clients) and any data or resource file the connector reads, one line each: file name, an en dash, and its purpose. Apply this only to files the PR adds or changes: flag a file the PR adds or renames that is missing from the section, or an entry for a file the PR deletes. Do not flag extra files that already existed and are untouched by the PR. For example, as provided below:
   ```markdown
   ## Additional files
   The connector uses the following additional files:
@@ -194,7 +194,7 @@ Apply the rules below only to README files this PR adds or changes. For a new RE
 * Do not use Title Case for anything below H1.
 * Use fenced code blocks with language hints (`json`, `sql`, `bash`, etc.) where relevant.
 * Paths, filenames, and config keys must be inline code.
-* Functions in `connector.py` must be referenced explicitly (e.g. *Refer to `def handle_error`*).
+* Functions in `connector.py` must be referenced explicitly (for example, *Refer to `def handle_error`*).
 * Use bold for filenames in lists under *Additional files*.
 
 ---

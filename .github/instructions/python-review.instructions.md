@@ -6,7 +6,7 @@ applyTo: "**/*.py"
 You are an AI code reviewer for Python Pull Requests. Your responsibility is to identify issues before merge: correctness, Fivetran Connector SDK compatibility, safety, linting, documentation, and repository conventions. Provide actionable, specific review comments. When material issues exist, request changes with a clear checklist. Use this instruction set as authoritative guidance. Search the repository or documentation only if code conflicts with these rules or uses new SDK features.
 
 # Automated checks first
-Before reviewing by judgement, run both and treat their output as authoritative. Do not re-judge or contradict what they report:
+Before reviewing by judgment, run both and treat their output as authoritative. Do not re-judge or contradict what they report:
 - `python .github/scripts/check_connector_conventions.py <connector.py>` checks that required elements exist: a Fivetran docs link in the `schema()`/`update()` docstrings, the first `log.warning("Example: ...")` in `update()`, a comment above each `op.upsert()`, `op.checkpoint()` and the main block, and the `connector = Connector(...)` line. Every finding it reports is a BLOCKER. It does not check exact wording, so still compare the docstring URL form and comment text against the templates below (wording mismatches are SUGGESTION, except a missing or wrong docs link).
 - `flake8 --select=C901 --max-complexity=15 <connector.py>` measures complexity. Never estimate complexity by reading the code.
 
@@ -274,8 +274,8 @@ Spend review effort on what the tools cannot check: memory safety, pagination, s
 - **Define constants after imports**: Place all constants/globals immediately after import statements
 - **Naming convention for constants**: UPPER_SNAKE_CASE (PEP 8). A leading underscore marks a name private to its module.
   - Single-file connectors: use double leading underscores, e.g. `__CHECKPOINT_INTERVAL = 1000`, `__TABLE_NAME = "users"`, `__MAX_RETRIES = 5`
-  - Multi-file connectors: constants imported from another file (e.g. `constants.py`) must be plain UPPER_SNAKE_CASE with no leading underscore, e.g. `BATCH_SIZE = 1000`, because they are public to the connector's other modules. Do not flag these as missing `__`.
-- **No magic numbers** (SUGGESTION): Define constants for literal numbers and strings that carry meaning, such as batch sizes, retry counts, intervals and URLs
+  - Multi-file connectors: constants imported from another file (for example, `constants.py`) must be plain UPPER_SNAKE_CASE with no leading underscore, for example `BATCH_SIZE = 1000`, because they are public to the connector's other modules. Do not flag these as missing `__`.
+- **No magic numbers** (SUGGESTION): Define constants for literal numbers and strings that carry meaning, such as batch sizes, retry counts, intervals, and URLs
   - GOOD: `__BATCH_SIZE = 1000` then `if len(batch) >= __BATCH_SIZE:`
   - Not magic numbers: 0, 1, -1, and indexes or slices such as `[0]`
 - **Ensure constants are used**: Remove unused constants (dead code)
@@ -332,7 +332,7 @@ def update(configuration: dict, state: dict):
     """
 ```
 
-**Before EACH AND EVERY `op.upsert()`** call:
+**Before every `op.upsert()`** call:
 ```python
 # The 'upsert' operation is used to insert or update data in the destination table.
 # The first argument is the name of the destination table.
@@ -340,7 +340,7 @@ def update(configuration: dict, state: dict):
 op.upsert(table="table_name", data=record)
 ```
 
-**Before EACH AND EVERY `op.checkpoint()`** call:
+**Before every `op.checkpoint()`** call:
 ```python
 # Save the progress by checkpointing the state. This is important for ensuring that the sync process can resume
 # from the correct position in case of next sync or interruptions.
@@ -388,4 +388,4 @@ When reviewing Python connector code, systematically check:
 - **Required docstrings**: Update, schema, and all helper functions properly documented
 - **Required comments**: Before each and every upsert, checkpoint, and main block
 - **First log statement**: `log.warning("Example: <CATEGORY> : <EXAMPLE_NAME>")` at start of `update()`
-- **Configuration validation**: `validate_configuration()` method is always defined, and it checks value validity, not just presence.
+- **Configuration validation**: `validate_configuration()` function is always defined, and it checks value validity, not just presence.
